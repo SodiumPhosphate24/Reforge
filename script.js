@@ -16,8 +16,8 @@ function draw() {
   push();
   translate(-pX, -pY);
   drawWorld(gameWorld, 0);
+  fill(255);
   rect(pX + 600, pY + 375, 25, 50);
-  drawWorld(gameWorld, 1);
   controls();
   pop();
 }
@@ -75,12 +75,12 @@ function drawWorld(world, layer) {
     
     for (let j = 0; j < columns && j < world[i].length; j++){
       if (world[i][j] == 0) {
-        fill(0, 255, 255);
-        rect(i*50, j*50, 50, 50);
+        fill(24, 24, 24);
+        rect(j*50, i*50, 50, 50);
       }
       if (world[i][j] == 1) {
-        fill(0, 255, 0);
-        rect(i*50, j*50, 50, 50);
+        fill(200, 200, 200);
+        rect(j*50, i*50, 50, 50);
       }
     }
   }
