@@ -18,6 +18,7 @@ function draw() {
   drawWorld(gameWorld, 0);
   fill(255);
   rect(pX + 600, pY + 375, 25, 50);
+  drawUI();
   controls();
   pop();
 }
