@@ -6,5 +6,5 @@ function drawUI(){
     strokeColor(0, 0, 0);
     rect(400+(i*50), 650, 50, 50)
   }
-  r
+  rect(400+(inventory*50), 650, 50, 50);
 }
