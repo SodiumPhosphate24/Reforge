@@ -1,5 +1,4 @@
 function drawUI() {
-  var inventory = 1;
   for (let i = 0; i < 8; i++) {
     fill(100, 100, 100, 100);
     strokeWeight(5);
