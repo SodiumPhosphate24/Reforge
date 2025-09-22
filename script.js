@@ -1,4 +1,5 @@
 var pX = 0; var pY = 0;
+var pSpeed = 5;
 var pXVel = 0; var pYVel = 0;
 var gameWorld = [];
 var worldString = "";
@@ -115,16 +116,16 @@ function drawWorld(world, layer) {
 
 function controls() {
   if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) {
-    pXVel -= 1;
+    pXVel -= pSpeed;
   }
   if (keyIsDown(RIGHT_ARROW) || keyIsDown(68)) {
-    pXVel += 1;
+    pXVel += pSpeed;
   }
   if (keyIsDown(UP_ARROW) || keyIsDown(87)) {
-    pYVel -= 1;
+    pYVel -= pSpeed;
   }
   if (keyIsDown(DOWN_ARROW) || keyIsDown(83)) {
-    pYVel += 1;
+    pYVel += pSpeed;
   }
   pYVel *= 0.8;
   pXVel *= 0.8;
