@@ -63,6 +63,13 @@ function stringToWorld(s) {
 }
 
 
+function coordsToGrid(x, y) {
+  return {
+    col: Math.floor(x / 50),
+    row: Math.floor(y / 50)
+  };
+}
+
 function drawWorld(world, layer) {
   if (!world || world.length === 0) {
     return; // Exit if world is not properly loaded
@@ -71,10 +78,21 @@ function drawWorld(world, layer) {
   var rows = world.length;
   var columns = world[0] ? world[0].length : 0;
   
-  for (let i = 0; i < rows; i++) {
+  // Calculate viewport bounds
+  var topLeft = coordsToGrid(pX, pY);
+  var bottomRight = coordsToGrid(pX + width, pY + height);
+  
+  // Add padding to ensure smooth scrolling
+  var startRow = Math.max(0, topLeft.row - 1);
+  var endRow = Math.min(rows - 1, bottomRight.row + 1);
+  var startCol = Math.max(0, topLeft.col - 1);
+  var endCol = Math.min(columns - 1, bottomRight.col + 1);
+  
+  // Only draw tiles that are visible
+  for (let i = startRow; i <= endRow; i++) {
     if (!world[i]) continue; // Skip if row doesn't exist
     
-    for (let j = 0; j < columns && j < world[i].length; j++){
+    for (let j = startCol; j <= endCol && j < world[i].length; j++){
       if (world[i][j] == 0) {
         fill(24, 24, 24);
         rect(j*50, i*50, 50, 50);
