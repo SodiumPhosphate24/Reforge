@@ -141,7 +141,7 @@ function drawEditorUI() {
   fill(255, 255, 0);
   textSize(24);
   textAlign(CENTER);
-  text("EDITOR MODE - Press Ctrl+E to exit", width/2, 30);
+  text("EDITOR MODE - Press Shift+E to exit", width/2, 30);
   text("Click tiles to toggle them", width/2, 60);
 }
 
@@ -170,8 +170,8 @@ function keyPressed(){
     console.log("map copied to clipboard");
   }
   
-  // Toggle editor mode with Ctrl+E
-  if (keyCode == 69 && keyIsDown(17)) {
+  // Toggle editor mode with Shift+E
+  if (keyCode == 69 && keyIsDown(SHIFT)) {
     editorMode = !editorMode;
     console.log("Editor mode:", editorMode ? "ON" : "OFF");
   }
