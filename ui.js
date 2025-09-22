@@ -4,7 +4,8 @@ function drawUI() {
     fill(100, 100, 100);
     strokeWeight(5);
     stroke(0, 0, 0);
-    rect(400 + (i * 50), 650, 50, 50)
+    rect(400 + (i * 50), 650, 50, 50, 10);
   }
-  rect(400 + (inventory * 50), 650, 50, 50);
+  stroke(200, 200, 200);
+  rect(400 + (inventory * 50), 650, 50, 50, 10);
 }
