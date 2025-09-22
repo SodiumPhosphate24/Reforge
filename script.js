@@ -2,9 +2,11 @@ var pX = 0; var pY = 0;
 var pXVel = 0; var pYVel = 0;
 var gameWorld = [];
 var worldString = "";
+
 function preload() {
   worldString = loadStrings("world.txt");
 }
+
 function setup() {
   createCanvas(1200, 750);
   gameWorld = stringToWorld(worldString[0]);
@@ -18,9 +20,17 @@ function draw() {
   drawWorld(gameWorld, 0);
   fill(255);
   rect(pX + 600, pY + 375, 25, 50);
-  controls();
+  
+  if (!editorMode) {
+    controls();
+  }
+
   pop();
   drawUI();
+
+  if (editorMode) {
+    drawEditorUI();
+  }
 }
 
 function worldToString(world){
@@ -40,20 +50,20 @@ function stringToWorld(s) {
     console.log("No string provided to stringToWorld");
     return [];
   }
-  
+
   // Split rows by "|"
   let rows = s.split("|");
   let world = [];
 
   for (let i = 0; i < rows.length; i++) {
     if (rows[i].trim() === "") continue; // Skip empty rows
-    
+
     // Split each row into columns by "/"
     let cols = rows[i].split("/");
 
     // Convert each column value to an integer, filter out empty strings
     let rowArray = cols.filter(col => col !== "").map(num => parseInt(num, 10));
-    
+
     if (rowArray.length > 0) {
       world.push(rowArray);
     }
@@ -74,24 +84,24 @@ function drawWorld(world, layer) {
   if (!world || world.length === 0) {
     return; // Exit if world is not properly loaded
   }
-  
+
   var rows = world.length;
   var columns = world[0] ? world[0].length : 0;
-  
+
   // Calculate viewport bounds
   var topLeft = coordsToGrid(pX, pY);
   var bottomRight = coordsToGrid(pX + width, pY + height);
-  
+
   // Add padding to ensure smooth scrolling
   var startRow = Math.max(0, topLeft.row - 1);
   var endRow = Math.min(rows - 1, bottomRight.row + 1);
   var startCol = Math.max(0, topLeft.col - 1);
   var endCol = Math.min(columns - 1, bottomRight.col + 1);
-  
+
   // Only draw tiles that are visible
   for (let i = startRow; i <= endRow; i++) {
     if (!world[i]) continue; // Skip if row doesn't exist
-    
+
     for (let j = startCol; j <= endCol && j < world[i].length; j++){
       if (world[i][j] == 0) {
         fill(24, 24, 24);
@@ -123,9 +133,23 @@ function controls() {
   pX += pXVel;
   pY += pYVel;
 }
+
+function mousePressed() {
+  handleEditorClick();
+}
+
 function keyPressed(){
   if (keyCode == 67 && keyIsDown(17)){
     navigator.clipboard.writeText(worldToString(gameWorld));
     console.log("map copied to clipboard");
   }
+
+  handleEditorKeyPress();
 }
+
+// Editor functionality will be in editor.js
+// Assuming editor.js contains:
+// var editorMode = false;
+// function drawEditorUI() { ... }
+// function handleEditorClick() { ... }
+// function handleEditorKeyPress() { ... }
