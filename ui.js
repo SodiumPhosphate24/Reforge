@@ -6,6 +6,6 @@ function drawUI() {
     rect(300 + (i * 75), 625, 75, 75);
   }
   stroke(200, 200, 200);
-  rect(300 + ((inventory-1) * 75), 625, 75, 75);
+  //rect(300 + ((inventory-1) * 75), 625, 75, 75);
   noStroke();
 }
