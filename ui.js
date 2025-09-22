@@ -8,5 +8,5 @@ function drawUI() {
   }
   stroke(200, 200, 200);
   rect(400 + ((inventory-1) * 50), 650, 50, 50);
-  o
+  noStroke();
 }
