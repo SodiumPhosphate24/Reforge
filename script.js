@@ -21,9 +21,7 @@ function draw() {
   fill(255);
   rect(pX + 600, pY + 375, 25, 50);
   
-  if (!editorMode) {
-    controls();
-  }
+  controls();
 
   pop();
   drawUI();

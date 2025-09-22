@@ -7,16 +7,19 @@ function toggleEditorMode() {
 }
 
 function drawEditorUI() {
-  // Draw semi-transparent overlay
-  fill(0, 0, 0, 100);
-  rect(0, 0, width, height);
+  // Draw border around screen
+  stroke(255, 255, 0);
+  strokeWeight(8);
+  noFill();
+  rect(4, 4, width - 8, height - 8);
   
   // Draw editor mode indicator
   fill(255, 255, 0);
-  textSize(24);
+  noStroke();
+  textSize(18);
   textAlign(CENTER);
-  text("EDITOR MODE - Press Shift+E to exit", width/2, 30);
-  text("Click tiles to toggle them", width/2, 60);
+  text("EDITOR MODE - Press Shift+E to exit", width/2, 25);
+  text("Click tiles to toggle them", width/2, 45);
 }
 
 function handleEditorClick() {
