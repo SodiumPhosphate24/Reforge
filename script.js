@@ -164,6 +164,11 @@ function keyPressed(){
 }
 
 function mouseWheel(event) {
+  // Check if editor should handle the mouse wheel event
+  if (handleEditorMouseWheel && handleEditorMouseWheel(event)) {
+    return false; // Editor handled it, prevent default behavior
+  }
+  
   let currentTime = millis();
 
   // Ensure there's a delay between inventory updates to prevent rapid changes

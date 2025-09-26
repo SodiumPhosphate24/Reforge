@@ -1,5 +1,7 @@
 
 var editorMode = false;
+var selectedTileType = 0; // Currently selected tile type
+var maxTileTypes = 3; // Number of available tile types (0, 1, 2)
 
 function toggleEditorMode() {
   editorMode = !editorMode;
@@ -19,14 +21,59 @@ function drawEditorUI() {
   textSize(18);
   textAlign(CENTER);
   text("EDITOR MODE - Press Shift+E to exit", width/2, 25);
-  text("Click tiles to toggle them", width/2, 45);
+  text("Click tiles to place - Scroll to change tile type", width/2, 45);
+  text("Current tile: " + selectedTileType, width/2, 65);
+  
+  // Draw preview tile at mouse position
+  drawTilePreview();
+}
+
+function drawTilePreview() {
+  if (gameWorld && gameWorld.length > 0) {
+    // Convert mouse coordinates to world coordinates using camera offset
+    var worldX = mouseX - camX;
+    var worldY = mouseY - camY;
+    
+    // Convert to grid coordinates
+    var gridPos = coordsToGrid(worldX, worldY);
+    
+    // Check if the preview position is within bounds
+    if (gridPos.row >= 0 && gridPos.row < gameWorld.length &&
+        gridPos.col >= 0 && gridPos.col < gameWorld[gridPos.row].length) {
+      
+      // Draw preview tile with transparency
+      push();
+      translate(camX, camY);
+      tint(255, 128); // Make it 50% transparent
+      
+      // Snap to grid and draw the preview tile
+      var snapX = gridPos.col * 50;
+      var snapY = gridPos.row * 50;
+      
+      if (tileImgs[selectedTileType]) {
+        image(tileImgs[selectedTileType], snapX, snapY, 50, 50);
+      } else {
+        // Fallback if image isn't loaded
+        fill(100, 100, 100, 128);
+        rect(snapX, snapY, 50, 50);
+      }
+      
+      // Draw grid outline for the preview tile
+      noFill();
+      stroke(255, 255, 0, 150);
+      strokeWeight(2);
+      rect(snapX, snapY, 50, 50);
+      
+      pop();
+    }
+  }
 }
 
 function handleEditorClick() {
   if (editorMode && gameWorld && gameWorld.length > 0) {
-    // Convert mouse coordinates to world coordinates
-    var worldX = mouseX + pX;
-    var worldY = mouseY + pY;
+    // Convert mouse coordinates to world coordinates using camera offset
+    var worldX = mouseX - camX;
+    var worldY = mouseY - camY;
     
     // Convert to grid coordinates
     var gridPos = coordsToGrid(worldX, worldY);
@@ -35,8 +82,8 @@ function handleEditorClick() {
     if (gridPos.row >= 0 && gridPos.row < gameWorld.length &&
         gridPos.col >= 0 && gridPos.col < gameWorld[gridPos.row].length) {
       
-      // Toggle tile (0 becomes 1, 1 becomes 0)
-      gameWorld[gridPos.row][gridPos.col] = gameWorld[gridPos.row][gridPos.col] === 0 ? 1 : 0;
+      // Place the selected tile type
+      gameWorld[gridPos.row][gridPos.col] = selectedTileType;
     }
   }
 }
@@ -46,4 +93,17 @@ function handleEditorKeyPress() {
   if (keyCode == 69 && keyIsDown(SHIFT)) {
     toggleEditorMode();
   }
+}
+
+function handleEditorMouseWheel(event) {
+  if (editorMode) {
+    // Change selected tile type with mouse wheel
+    if (event.delta > 0) {
+      selectedTileType = (selectedTileType + 1) % maxTileTypes;
+    } else {
+      selectedTileType = (selectedTileType - 1 + maxTileTypes) % maxTileTypes;
+    }
+    return true; // Prevent default scrolling behavior in editor mode
+  }
+  return false; // Allow normal scrolling when not in editor mode
 }
