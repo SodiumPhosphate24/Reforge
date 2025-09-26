@@ -21,7 +21,7 @@ function drawEditorUI() {
   textSize(18);
   textAlign(CENTER);
   text("EDITOR MODE - Press Shift+E to exit", width/2, 25);
-  text("Click tiles to place - Scroll to change tile type", width/2, 45);
+  text("Click to place - Scroll/comma/period to change tile", width/2, 45);
   text("Current tile: " + selectedTileType, width/2, 65);
   
   // Draw preview tile at mouse position
@@ -34,33 +34,32 @@ function drawTilePreview() {
     var worldX = mouseX - camX;
     var worldY = mouseY - camY;
     
-    // Convert to grid coordinates
-    var gridPos = coordsToGrid(worldX, worldY);
+    // Convert to grid coordinates and snap to grid
+    var gridCol = Math.floor(worldX / 50);
+    var gridRow = Math.floor(worldY / 50);
     
     // Check if the preview position is within bounds
-    if (gridPos.row >= 0 && gridPos.row < gameWorld.length &&
-        gridPos.col >= 0 && gridPos.col < gameWorld[gridPos.row].length) {
+    if (gridRow >= 0 && gridRow < gameWorld.length &&
+        gridCol >= 0 && gridCol < gameWorld[gridRow].length) {
+      
+      // Calculate snapped world position
+      var snapX = gridCol * 50;
+      var snapY = gridRow * 50;
       
       // Draw preview tile with transparency
       push();
       translate(camX, camY);
-      tint(255, 128); // Make it 50% transparent
       
-      // Snap to grid and draw the preview tile
-      var snapX = gridPos.col * 50;
-      var snapY = gridPos.row * 50;
-      
+      // Draw the faded tile image
       if (tileImgs[selectedTileType]) {
+        tint(255, 150); // Make it semi-transparent
         image(tileImgs[selectedTileType], snapX, snapY, 50, 50);
-      } else {
-        // Fallback if image isn't loaded
-        fill(100, 100, 100, 128);
-        rect(snapX, snapY, 50, 50);
+        noTint();
       }
       
       // Draw grid outline for the preview tile
       noFill();
-      stroke(255, 255, 0, 150);
+      stroke(255, 255, 0, 200);
       strokeWeight(2);
       rect(snapX, snapY, 50, 50);
       
@@ -76,14 +75,16 @@ function handleEditorClick() {
     var worldY = mouseY - camY;
     
     // Convert to grid coordinates
-    var gridPos = coordsToGrid(worldX, worldY);
+    var gridCol = Math.floor(worldX / 50);
+    var gridRow = Math.floor(worldY / 50);
     
     // Check if the click is within bounds
-    if (gridPos.row >= 0 && gridPos.row < gameWorld.length &&
-        gridPos.col >= 0 && gridPos.col < gameWorld[gridPos.row].length) {
+    if (gridRow >= 0 && gridRow < gameWorld.length &&
+        gridCol >= 0 && gridCol < gameWorld[gridRow].length) {
       
       // Place the selected tile type
-      gameWorld[gridPos.row][gridPos.col] = selectedTileType;
+      gameWorld[gridRow][gridCol] = selectedTileType;
+      console.log("Placed tile type", selectedTileType, "at row", gridRow, "col", gridCol);
     }
   }
 }
@@ -92,6 +93,18 @@ function handleEditorKeyPress() {
   // Toggle editor mode with Shift+E
   if (keyCode == 69 && keyIsDown(SHIFT)) {
     toggleEditorMode();
+  }
+  
+  // Handle tile switching with comma and period keys
+  if (editorMode) {
+    if (keyCode == 188) { // Comma key (,)
+      selectedTileType = (selectedTileType - 1 + maxTileTypes) % maxTileTypes;
+      console.log("Changed to tile type:", selectedTileType);
+    }
+    if (keyCode == 190) { // Period key (.)
+      selectedTileType = (selectedTileType + 1) % maxTileTypes;
+      console.log("Changed to tile type:", selectedTileType);
+    }
   }
 }
 
@@ -103,6 +116,7 @@ function handleEditorMouseWheel(event) {
     } else {
       selectedTileType = (selectedTileType - 1 + maxTileTypes) % maxTileTypes;
     }
+    console.log("Mouse wheel changed to tile type:", selectedTileType);
     return true; // Prevent default scrolling behavior in editor mode
   }
   return false; // Allow normal scrolling when not in editor mode
