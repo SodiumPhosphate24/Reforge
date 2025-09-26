@@ -165,7 +165,7 @@ function keyPressed(){
 
 function mouseWheel(event) {
   // Check if editor should handle the mouse wheel event
-  if (handleEditorMouseWheel && handleEditorMouseWheel(event)) {
+  if (typeof handleEditorMouseWheel === 'function' && handleEditorMouseWheel(event)) {
     return false; // Editor handled it, prevent default behavior
   }
   
