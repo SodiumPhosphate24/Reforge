@@ -41,18 +41,17 @@ function drawTilePreview() {
     if (gridPos.row >= 0 && gridPos.row < gameWorld.length &&
         gridPos.col >= 0 && gridPos.col < gameWorld[gridPos.row].length) {
       
-      // Snap to grid position
-      var snapX = gridPos.col * 50;
-      var snapY = gridPos.row * 50;
-      
       // Draw preview tile with transparency
       push();
       translate(camX, camY);
+      tint(255, 128); // Make it 50% transparent
+      
+      // Snap to grid and draw the preview tile
+      var snapX = gridPos.col * 50;
+      var snapY = gridPos.row * 50;
       
       if (tileImgs[selectedTileType]) {
-        tint(255, 128); // Make it 50% transparent
         image(tileImgs[selectedTileType], snapX, snapY, 50, 50);
-        noTint(); // Reset tint immediately after drawing
       } else {
         // Fallback if image isn't loaded
         fill(100, 100, 100, 128);
@@ -66,6 +65,7 @@ function drawTilePreview() {
       strokeWeight(2);
       rect(snapX, snapY, 50, 50);
       
+      noTint(); // Reset tint
       pop();
     }
   }
@@ -86,7 +86,6 @@ function handleEditorClick() {
       
       // Place the selected tile type
       gameWorld[gridPos.row][gridPos.col] = selectedTileType;
-      console.log("Placed tile type", selectedTileType, "at", gridPos.row, gridPos.col);
     }
   }
 }
@@ -101,11 +100,9 @@ function handleEditorKeyPress() {
   if (editorMode) {
     if (keyCode == 188) { // Comma key
       selectedTileType = (selectedTileType - 1 + maxTileTypes) % maxTileTypes;
-      console.log("Changed to tile type:", selectedTileType);
     }
     if (keyCode == 190) { // Period key
       selectedTileType = (selectedTileType + 1) % maxTileTypes;
-      console.log("Changed to tile type:", selectedTileType);
     }
   }
 }
@@ -118,7 +115,6 @@ function handleEditorMouseWheel(event) {
     } else {
       selectedTileType = (selectedTileType - 1 + maxTileTypes) % maxTileTypes;
     }
-    console.log("Mouse wheel changed to tile type:", selectedTileType);
     return true; // Prevent default scrolling behavior in editor mode
   }
   return false; // Allow normal scrolling when not in editor mode
