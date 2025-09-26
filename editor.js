@@ -55,7 +55,6 @@ function drawTilePreview() {
       } else {
         // Fallback if image isn't loaded
         fill(100, 100, 100, 128);
-        noStroke();
         rect(snapX, snapY, 50, 50);
       }
       
@@ -65,7 +64,6 @@ function drawTilePreview() {
       strokeWeight(2);
       rect(snapX, snapY, 50, 50);
       
-      noTint(); // Reset tint
       pop();
     }
   }
@@ -94,16 +92,6 @@ function handleEditorKeyPress() {
   // Toggle editor mode with Shift+E
   if (keyCode == 69 && keyIsDown(SHIFT)) {
     toggleEditorMode();
-  }
-  
-  // Use comma and period keys to change tile type
-  if (editorMode) {
-    if (keyCode == 188) { // Comma key
-      selectedTileType = (selectedTileType - 1 + maxTileTypes) % maxTileTypes;
-    }
-    if (keyCode == 190) { // Period key
-      selectedTileType = (selectedTileType + 1) % maxTileTypes;
-    }
   }
 }
 
