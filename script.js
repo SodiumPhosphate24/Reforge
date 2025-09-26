@@ -1,11 +1,20 @@
+let Buschy;
 var pX = 0; var pY = 0;
-var pSpeed = 5;
+var camX = 0; var camY = 0;
+var pSpeed = 1.3;
 var pXVel = 0; var pYVel = 0;
 var gameWorld = [];
 var worldString = "";
-
+var lastScroll = 0;
+var scrollDelay = 20;
+var tileImgs = [0, 0, 0];
+const pWidth = 35, pHeight = 60;
 function preload() {
   worldString = loadStrings("world.txt");
+  Buschy = loadImage("Characters/Buschy.png");
+  tileImgs[0] = loadImage("Tiles/deadGrass.png");
+  tileImgs[1] = loadImage("Tiles/Asphalt.png");
+  tileImgs[2] = loadImage("Tiles/Asphalt2.png");
 }
 
 function setup() {
@@ -17,10 +26,14 @@ function setup() {
 function draw() {
   background(50);
   push();
-  translate(-pX, -pY);
+  controlCamera();
+  translate(camX, camY);
   drawWorld(gameWorld, 0);
   fill(255);
-  rect(pX + 600, pY + 375, 25, 50);
+  //shadow
+  fill(0, 0, 0, 80-sin(frameCount/25)*10);
+  ellipse(pX + 617, pY + 432, 35, 21);
+  image(Buschy, pX + 600, pY + 375, pWidth, pHeight);
   
   controls();
 
@@ -88,8 +101,8 @@ function drawWorld(world, layer) {
   var columns = world[0] ? world[0].length : 0;
 
   // Calculate viewport bounds
-  var topLeft = coordsToGrid(pX, pY);
-  var bottomRight = coordsToGrid(pX + width, pY + height);
+  var topLeft = coordsToGrid(-camX, -camY);
+  var bottomRight = coordsToGrid(-camX + width, -camY + height);
 
   // Add padding to ensure smooth scrolling
   var startRow = Math.max(0, topLeft.row - 1);
@@ -102,14 +115,8 @@ function drawWorld(world, layer) {
     if (!world[i]) continue; // Skip if row doesn't exist
 
     for (let j = startCol; j <= endCol && j < world[i].length; j++){
-      if (world[i][j] == 0) {
         fill(24, 24, 24);
-        rect(j*50, i*50, 50, 50);
-      }
-      if (world[i][j] == 1) {
-        fill(200, 200, 200);
-        rect(j*50, i*50, 50, 50);
-      }
+        image(tileImgs[world[i][j]], j*50, i*50, 50, 50);
     }
   }
 }
@@ -131,6 +138,8 @@ function controls() {
   pXVel *= 0.8;
   pX += pXVel;
   pY += pYVel;
+  pX = constrain(pX, -600, gameWorld[0].length*50 - width/2-pWidth);
+  pY = constrain(pY, -400, gameWorld.length*50 - height/2-pHeight);
 }
 
 function mousePressed() {
@@ -143,7 +152,32 @@ function keyPressed(){
     console.log("map copied to clipboard");
   }
 
+  if (keyCode >= 49 && keyCode <= 56){
+    inventorySlot = keyCode - 48;
+  }
+
+  if (keyCode == 32){
+    healthPoints -= 10;
+  }
+
   handleEditorKeyPress();
+}
+
+function mouseWheel(event) {
+  let currentTime = millis();
+
+  // Ensure there's a delay between inventory updates to prevent rapid changes
+  if (currentTime - lastScroll > scrollDelay) {
+    if (event.delta > 0) {
+      inventorySlot = (inventorySlot % 8) + 1;
+    } else {
+      inventorySlot = (inventorySlot - 2 + 8) % 8 + 1;
+    }
+
+    lastScroll = currentTime; // Update scroll timer
+  }
+
+  return false; // Prevents default scrolling behavior (reducing system lag)
 }
 
 // Editor functionality will be in editor.js
@@ -152,3 +186,9 @@ function keyPressed(){
 // function drawEditorUI() { ... }
 // function handleEditorClick() { ... }
 // function handleEditorKeyPress() { ... }
+function controlCamera(){
+  camX -= (camX+pX)*0.1;
+  camY -= (camY+pY)*0.1;
+  camX = constrain(camX, -(gameWorld[0].length*50) + width, 0);
+  camY = constrain(camY, -(gameWorld.length*50) + height, 0);
+}
