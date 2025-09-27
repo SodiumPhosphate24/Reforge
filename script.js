@@ -42,6 +42,9 @@ function draw() {
 
   if (editorMode) {
     drawEditorUI();
+    if(mouseIsPressed){
+    handleEditorClick();
+    }
   }
 }
 
@@ -143,7 +146,7 @@ function controls() {
 }
 
 function mousePressed() {
-  handleEditorClick();
+  
 }
 
 function keyPressed(){
