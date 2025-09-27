@@ -52,7 +52,15 @@ function worldToString(world){
   var string = "";
   for (let i = 0; i < world.length; i++) {
     for (let j = 0; j < world[i].length; j++) {
-      string += world[i][j];
+      let tile = world[i][j];
+      if (typeof tile === 'object') {
+        string += tile.type;
+        if (tile.rotation > 0) {
+          string += ":" + tile.rotation;
+        }
+      } else {
+        string += tile; // Backwards compatibility
+      }
       string += "/";
     }
     string += "|";
@@ -76,8 +84,23 @@ function stringToWorld(s) {
     // Split each row into columns by "/"
     let cols = rows[i].split("/");
 
-    // Convert each column value to an integer, filter out empty strings
-    let rowArray = cols.filter(col => col !== "").map(num => parseInt(num, 10));
+    // Convert each column value to tile object or integer for backwards compatibility
+    let rowArray = cols.filter(col => col !== "").map(tileData => {
+      if (tileData.includes(":")) {
+        // New format: "type:rotation"
+        let parts = tileData.split(":");
+        return {
+          type: parseInt(parts[0], 10),
+          rotation: parseInt(parts[1], 10) || 0
+        };
+      } else {
+        // Old format: just the tile type
+        return {
+          type: parseInt(tileData, 10),
+          rotation: 0
+        };
+      }
+    });
 
     if (rowArray.length > 0) {
       world.push(rowArray);
@@ -119,7 +142,26 @@ function drawWorld(world, layer) {
 
     for (let j = startCol; j <= endCol && j < world[i].length; j++){
         fill(24, 24, 24);
-        image(tileImgs[world[i][j]], j*50, i*50, 50, 50);
+        let tile = world[i][j];
+        let tileType, rotation;
+        
+        if (typeof tile === 'object') {
+          tileType = tile.type;
+          rotation = tile.rotation || 0;
+        } else {
+          tileType = tile; // Backwards compatibility
+          rotation = 0;
+        }
+        
+        if (rotation > 0) {
+          push();
+          translate(j*50 + 25, i*50 + 25); // Move to center of tile
+          rotate(radians(rotation));
+          image(tileImgs[tileType], -25, -25, 50, 50);
+          pop();
+        } else {
+          image(tileImgs[tileType], j*50, i*50, 50, 50);
+        }
     }
   }
 }

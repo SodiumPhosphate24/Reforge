@@ -2,6 +2,7 @@
 var editorMode = false;
 var selectedTileType = 0; // Currently selected tile type
 var maxTileTypes = 3; // Number of available tile types (0, 1, 2)
+var tileRotation = 0; // Current tile rotation (0, 90, 180, 270 degrees)
 
 function toggleEditorMode() {
   editorMode = !editorMode;
@@ -21,8 +22,8 @@ function drawEditorUI() {
   textSize(18);
   textAlign(CENTER);
   text("EDITOR MODE - Press Shift+E to exit", width / 2, 25);
-  text("Click to place - Scroll/comma/period to change tile", width / 2, 45);
-  text("Current tile: " + selectedTileType, width / 2, 65);
+  text("Click to place - Scroll/comma/period to change tile - R to rotate", width / 2, 45);
+  text("Current tile: " + selectedTileType + " | Rotation: " + tileRotation + "°", width / 2, 65);
 
   // Draw preview tile at mouse position
   drawTilePreview();
@@ -50,10 +51,14 @@ function drawTilePreview() {
       push();
       translate(camX, camY);
 
-      // Draw the faded tile image
+      // Draw the faded tile image with rotation
       if (tileImgs[selectedTileType]) {
         tint(255, 150); // Make it semi-transparent
-        image(tileImgs[selectedTileType], snapX, snapY, 50, 50);
+        push();
+        translate(snapX + 25, snapY + 25); // Move to center of tile
+        rotate(radians(tileRotation));
+        image(tileImgs[selectedTileType], -25, -25, 50, 50);
+        pop();
         noTint();
       }
 
@@ -82,9 +87,12 @@ function handleEditorClick() {
       if (gridRow >= 0 && gridRow < gameWorld.length &&
         gridCol >= 0 && gridCol < gameWorld[gridRow].length) {
 
-        // Place the selected tile type
-        gameWorld[gridRow][gridCol] = selectedTileType;
-        console.log("Placed tile type", selectedTileType, "at row", gridRow, "col", gridCol);
+        // Place the selected tile type with rotation
+        gameWorld[gridRow][gridCol] = {
+          type: selectedTileType,
+          rotation: tileRotation
+        };
+        console.log("Placed tile type", selectedTileType, "with rotation", tileRotation + "° at row", gridRow, "col", gridCol);
       }
     }
 }
@@ -104,6 +112,10 @@ function handleEditorKeyPress() {
     if (keyCode == 190) { // Period key (.)
       selectedTileType = (selectedTileType + 1) % maxTileTypes;
       console.log("Changed to tile type:", selectedTileType);
+    }
+    if (keyCode == 82) { // R key
+      tileRotation = (tileRotation + 90) % 360;
+      console.log("Rotated tile to:", tileRotation + "°");
     }
   }
 }
