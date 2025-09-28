@@ -1,7 +1,7 @@
 class Enemy {
   constructor(type) {
-    this.x = 0;
-    this.y = 0;
+    this.x = 100;
+    this.y = 100;
     if (type = "zombie") {
       this.type = "zombie";
       this.health = 3;
