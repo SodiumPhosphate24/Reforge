@@ -32,7 +32,7 @@ function draw() {
   controlCamera();
   translate(camX, camY);
   drawWorld(gameWorld, 0);
-  drawEnemies();
+  //drawEnemies();
   fill(255);
   //shadow
   fill(0, 0, 0, 80-sin(frameCount/25)*10);
