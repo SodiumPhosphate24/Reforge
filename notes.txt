@@ -1,0 +1,12 @@
+Ideas for game elements
+
+Enemy types:
+Regular zombies
+Fast Zombies
+Ranged enemies (skeletons would be funny)
+Bosses
+
+Temporary upgrades/perks"
+Speed
+Lifesteal
+Increased max ammo

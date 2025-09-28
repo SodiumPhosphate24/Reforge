@@ -9,6 +9,7 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var tileImgs = [0, 0, 0];
 const pWidth = 35, pHeight = 60;
+let enemies = [];
 function preload() {
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
@@ -203,6 +204,10 @@ function keyPressed(){
 
   if (keyCode == 32){
     healthPoints -= 10;
+  }
+
+  if (keyCode == 84){
+    enemies.push(new Enemy("zombie"));
   }
 
   handleEditorKeyPress();
