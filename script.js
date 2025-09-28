@@ -16,8 +16,8 @@ function preload() {
   tileImgs[0] = loadImage("Tiles/deadGrass.png");
   tileImgs[1] = loadImage("Tiles/Asphalt.png");
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");
-  InventoryImg = loadImage("UI/Inventory.png");
-  FrameImg = loadImage("UI/Frame.png");
+  InventoryImg = loadImage("hud/Inventory.png");
+  FrameImg = loadImage("hud/Frame.png");
 }
 
 function setup() {

@@ -27,7 +27,6 @@ class Enemy{
     isDead() {
       return this.health <= 0;
     }
-  }
 }
 
 function drawEnemies(){
