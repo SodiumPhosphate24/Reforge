@@ -43,7 +43,7 @@ function draw() {
   pop();
   drawUI();
   tint(255, 100);
-  image(Fog, pX+camX, pY+camY, width, height);
+  image(Fog, pX+camX-200, pY+camY-200, width+200, height+200);
   noTint();
 
   if (editorMode) {
