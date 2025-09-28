@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg;
+let Buschy, InventoryImg, FrameImg, Fog;
 var pX = 0; var pY = 0;
 var camX = 0; var camY = 0;
 var pSpeed = 1.3;
@@ -18,6 +18,7 @@ function preload() {
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");
   InventoryImg = loadImage("hud/Inventory.png");
   FrameImg = loadImage("hud/Frame.png");
+  Fog = loadImage("hud/Fog.png")
 }
 
 function setup() {
@@ -32,27 +33,29 @@ function draw() {
   controlCamera();
   translate(camX, camY);
   drawWorld(gameWorld, 0);
-  //drawEnemies();
+  drawEnemies();
   fill(255);
   //shadow
-  fill(0, 0, 0, 80-sin(frameCount/25)*10);
+  fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
   ellipse(pX + 617, pY + 432, 35, 21);
   image(Buschy, pX + 600, pY + 375, pWidth, pHeight);
-  
   controls();
-
   pop();
   drawUI();
+  tint(255, 100);
+  image(Fog, pX+camX, pY+camY, width, height);
+  noTint();
 
   if (editorMode) {
     drawEditorUI();
-    if(mouseIsPressed){
-    handleEditorClick();
+    if (mouseIsPressed) {
+      handleEditorClick();
     }
   }
+
 }
 
-function worldToString(world){
+function worldToString(world) {
   var string = "";
   for (let i = 0; i < world.length; i++) {
     for (let j = 0; j < world[i].length; j++) {
@@ -144,28 +147,28 @@ function drawWorld(world, layer) {
   for (let i = startRow; i <= endRow; i++) {
     if (!world[i]) continue; // Skip if row doesn't exist
 
-    for (let j = startCol; j <= endCol && j < world[i].length; j++){
-        fill(24, 24, 24);
-        let tile = world[i][j];
-        let tileType, rotation;
-        
-        if (typeof tile === 'object') {
-          tileType = tile.type;
-          rotation = tile.rotation || 0;
-        } else {
-          tileType = tile; // Backwards compatibility
-          rotation = 0;
-        }
-        
-        if (rotation > 0) {
-          push();
-          translate(j*50 + 25, i*50 + 25); // Move to center of tile
-          rotate(radians(rotation));
-          image(tileImgs[tileType], -25, -25, 50, 50);
-          pop();
-        } else {
-          image(tileImgs[tileType], j*50, i*50, 50, 50);
-        }
+    for (let j = startCol; j <= endCol && j < world[i].length; j++) {
+      fill(24, 24, 24);
+      let tile = world[i][j];
+      let tileType, rotation;
+
+      if (typeof tile === 'object') {
+        tileType = tile.type;
+        rotation = tile.rotation || 0;
+      } else {
+        tileType = tile; // Backwards compatibility
+        rotation = 0;
+      }
+
+      if (rotation > 0) {
+        push();
+        translate(j * 50 + 25, i * 50 + 25); // Move to center of tile
+        rotate(radians(rotation));
+        image(tileImgs[tileType], -25, -25, 50, 50);
+        pop();
+      } else {
+        image(tileImgs[tileType], j * 50, i * 50, 50, 50);
+      }
     }
   }
 }
@@ -187,29 +190,29 @@ function controls() {
   pXVel *= 0.8;
   pX += pXVel;
   pY += pYVel;
-  pX = constrain(pX, -600, gameWorld[0].length*50 - width/2-pWidth);
-  pY = constrain(pY, -400, gameWorld.length*50 - height/2-pHeight);
+  pX = constrain(pX, -600, gameWorld[0].length * 50 - width / 2 - pWidth);
+  pY = constrain(pY, -400, gameWorld.length * 50 - height / 2 - pHeight);
 }
 
 function mousePressed() {
-  
+
 }
 
-function keyPressed(){
-  if (keyCode == 67 && keyIsDown(17)){
+function keyPressed() {
+  if (keyCode == 67 && keyIsDown(17)) {
     navigator.clipboard.writeText(worldToString(gameWorld));
     console.log("map copied to clipboard");
   }
 
-  if (keyCode >= 49 && keyCode <= 56){
+  if (keyCode >= 49 && keyCode <= 56) {
     inventorySlot = keyCode - 48;
   }
 
-  if (keyCode == 32){
+  if (keyCode == 32) {
     healthPoints -= 10;
   }
 
-  if (keyCode == 84){
+  if (keyCode == 84) {
     enemies.push(new Enemy("zombie"));
   }
 
@@ -221,7 +224,7 @@ function mouseWheel(event) {
   if (handleEditorMouseWheel && handleEditorMouseWheel(event)) {
     return false; // Editor handled it, prevent default behavior
   }
-  
+
   let currentTime = millis();
 
   // Ensure there's a delay between inventory updates to prevent rapid changes
@@ -244,9 +247,9 @@ function mouseWheel(event) {
 // function drawEditorUI() { ... }
 // function handleEditorClick() { ... }
 // function handleEditorKeyPress() { ... }
-function controlCamera(){
-  camX -= (camX+pX)*0.1;
-  camY -= (camY+pY)*0.1;
-  camX = constrain(camX, -(gameWorld[0].length*50) + width, 0);
-  camY = constrain(camY, -(gameWorld.length*50) + height, 0);
+function controlCamera() {
+  camX -= (camX + pX) * 0.1;
+  camY -= (camY + pY) * 0.1;
+  camX = constrain(camX, -(gameWorld[0].length * 50) + width, 0);
+  camY = constrain(camY, -(gameWorld.length * 50) + height, 0);
 }
