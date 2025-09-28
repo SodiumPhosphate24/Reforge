@@ -42,8 +42,8 @@ function draw() {
   controls();
   pop();
   drawUI();
-  tint(255, 100);
-  image(Fog, pX+camX-200, pY+camY-200, width+200, height+200);
+  tint(255, 200);
+  image(Fog, pX+camX-600, pY+camY-600, width+1200, height+1200);
   noTint();
 
   if (editorMode) {
@@ -247,6 +247,7 @@ function mouseWheel(event) {
 // function drawEditorUI() { ... }
 // function handleEditorClick() { ... }
 // function handleEditorKeyPress() { ... }
+
 function controlCamera() {
   camX -= (camX + pX) * 0.1;
   camY -= (camY + pY) * 0.1;
