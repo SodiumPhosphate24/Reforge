@@ -6,9 +6,10 @@ function drawUI() {
 }
 
 function inventory() {
+  console.log("cheeses")
   // draws inventory
   image(InventoryImg, 289, 650, 636, 92);
-  image(FrameImg, 329 + ((inventorySlot - 1) * 69.93), 649, 79.54, 79.54);
+  image(FrameImg, 329 + ((inventorySlot - 1) * 69.79), 649, 79.54, 79.54);
   noStroke();
 }
 
