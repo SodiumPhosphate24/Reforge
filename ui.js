@@ -22,3 +22,11 @@ function health() {
   rect(75, 75, healthPoints * 2, 25);
   noStroke();
 }
+
+function drawEnemies(){
+  for (let i = 0; i < enemies.length; i++) {
+    enemies[i].update(pX, pY);
+    fill(255, 0, 0);
+    rect(enemies[i].x, enemies[i].y, 20, 20);
+  }
+}
