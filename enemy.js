@@ -2,6 +2,7 @@ class Enemy {
   constructor(type) {
     this.x = 100;
     this.y = 100;
+    this.angle = atan2(0 - (this.y + camY), 0 - (this.x + camX))
     if (type = "zombie") {
       this.type = "zombie";
       this.health = 3;
@@ -9,15 +10,10 @@ class Enemy {
     }
   }
 
-  update(playerX, playerY) {
+  update() {
     // direction vector from enemy -> player
-    let dx = playerX - this.x;
-    let dy = playerY - this.y;
-    let distToPlayer = sqrt(dx * dx + dy * dy);
-
-    // normalize to unit vector, then scale by speed
-    this.x += (dx / distToPlayer) * this.speed;
-    this.y += (dy / distToPlayer) * this.speed;
+    this.x += this.speed * cos(this.angle);
+    this.y += this.speed * sin(this.angle);
   }
 
   takeDamage(dmg) {
@@ -31,7 +27,7 @@ class Enemy {
 
 function drawEnemies() {
   for (let i = 0; i < enemies.length; i++) {
-    enemies[i].update(pX, pY);
+    enemies[i].update();
     fill(255, 0, 0);
     rect(enemies[i].x, enemies[i].y, 20, 20);
   }
