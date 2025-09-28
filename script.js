@@ -1,4 +1,4 @@
-let Buschy;
+let Buschy, InventoryImg, FrameImg;
 var pX = 0; var pY = 0;
 var camX = 0; var camY = 0;
 var pSpeed = 1.3;
@@ -16,6 +16,8 @@ function preload() {
   tileImgs[0] = loadImage("Tiles/deadGrass.png");
   tileImgs[1] = loadImage("Tiles/Asphalt.png");
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");
+  InventoryImg = loadImage("UI/Inventory.png");
+  FrameImg = loadImage("UI/Frame.png");
 }
 
 function setup() {
@@ -30,6 +32,7 @@ function draw() {
   controlCamera();
   translate(camX, camY);
   drawWorld(gameWorld, 0);
+  drawEnemies();
   fill(255);
   //shadow
   fill(0, 0, 0, 80-sin(frameCount/25)*10);
