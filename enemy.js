@@ -2,7 +2,7 @@ class Enemy {
   constructor(type) {
     this.x = 100;
     this.y = 100;
-    this.angle = atan2(pY - (this.y + camY), pX - (this.x + camX));
+    this.angle = atan2(0 - (this.y + pY), 0 - (this.x + pX));
     if (type = "zombie") {
       this.type = "zombie";
       this.health = 3;
