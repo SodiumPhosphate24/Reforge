@@ -33,6 +33,7 @@ function draw() {
   controlCamera();
   translate(camX, camY);
   drawWorld(gameWorld, 0);
+  //test
   drawEnemies();
   fill(255);
   //shadow
