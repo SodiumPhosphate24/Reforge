@@ -7,7 +7,7 @@ function drawUI() {
 
 function inventory() {
   // draws inventory
-  image(InventoryImg, 454, 650, 908, 132);
+  image(InventoryImg, 289, 650, 636, 92);
   image(FrameImg, 300 + ((inventorySlot - 1) * 75), 625, 75, 75);
   noStroke();
 }

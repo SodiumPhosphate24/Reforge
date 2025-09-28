@@ -33,8 +33,6 @@ function draw() {
   controlCamera();
   translate(camX, camY);
   drawWorld(gameWorld, 0);
-  //test
-  drawEnemies();
   fill(255);
   //shadow
   fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
@@ -42,6 +40,7 @@ function draw() {
   image(Buschy, pX + 600, pY + 375, pWidth, pHeight);
   controls();
   pop();
+  drawEnemies();
   drawUI();
   tint(255, 200);
   image(Fog, pX+camX-600, pY+camY-600, width+1200, height+1200);
