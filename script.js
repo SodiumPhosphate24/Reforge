@@ -337,7 +337,7 @@ function checkTileCollisions(x, y, w, h) {
         let tile = gameWorld[row][col];
         let tileType = (typeof tile === 'object') ? tile.type : tile;
 
-        if (tileType > 0) { // treat >0 as solid
+        if (tileWalls[tileType]) { // use tileWalls array to check if tile is solid
           const tileLeft = col * 50;
           const tileTop = row * 50;
           const tileRight = tileLeft + 50;
