@@ -67,7 +67,7 @@ function worldToString(world) {
       if (typeof tile === 'object') {
         string += tile.type;
         if (tile.rotation > 0) {
-          string += ":" + tile.rotadtion;
+          string += ":" + tile.rotation;
         }
       } else {
         string += tile; // Backwards compatibility
@@ -259,7 +259,64 @@ function controlCamera() {
   camY = constrain(camY, -(gameWorld.length * 50) + height, 0);
 }
 function resolveCollisions(){
+  if (checkPlayerTileCollisions()) {
+    // Handle collision - for now just move player back
+    pX = prePX;
+    pY = prePY;
+  }
+}
 
+function checkPlayerTileCollisions() {
+  // Get player bounds
+  var playerLeft = pX + 600;
+  var playerTop = pY + 375;
+  var playerRight = playerLeft + pWidth;
+  var playerBottom = playerTop + pHeight;
+  
+  // Calculate which tiles the player could possibly be touching
+  var leftTile = Math.floor(playerLeft / 50);
+  var rightTile = Math.floor(playerRight / 50);
+  var topTile = Math.floor(playerTop / 50);
+  var bottomTile = Math.floor(playerBottom / 50);
+  
+  // Check only the tiles in the player's vicinity
+  for (let row = topTile; row <= bottomTile; row++) {
+    for (let col = leftTile; col <= rightTile; col++) {
+      // Make sure we're within world bounds
+      if (row >= 0 && row < gameWorld.length && 
+          col >= 0 && col < gameWorld[row].length) {
+        
+        let tile = gameWorld[row][col];
+        let tileType;
+        
+        // Get tile type (handle both object and legacy format)
+        if (typeof tile === 'object') {
+          tileType = tile.type;
+        } else {
+          tileType = tile;
+        }
+        
+        // Check if this tile has collision (value > 0)
+        if (tileType > 0) {
+          // Calculate tile bounds
+          var tileLeft = col * 50;
+          var tileTop = row * 50;
+          var tileRight = tileLeft + 50;
+          var tileBottom = tileTop + 50;
+          
+          // Check if player overlaps with this tile
+          if (playerLeft < tileRight && 
+              playerRight > tileLeft && 
+              playerTop < tileBottom && 
+              playerBottom > tileTop) {
+            return true; // Collision detected
+          }
+        }
+      }
+    }
+  }
+  
+  return false; // No collision
 }
 function checkCollision(x, y, x2, y2, w, h, w2 = 50, h2 = 50) {
   // First rectangle: (x, y) is top-left, width = w, height = h
