@@ -59,7 +59,7 @@
     fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
     ellipse(pX + 617, pY + 395, 35, 21);
     image(Buschy, pX + 600, pY + 340, pWidth, pHeight + 35);
-
+    drawEnemies();
     controls();
     resolveCollisions();
 
@@ -67,7 +67,6 @@
     drawWorldLayer(gameWorld, 2);
 
     pop();
-    drawEnemies();
     drawUI();
     tint(255, 200);
     image(Fog, pX + camX - 600, pY + camY - 600, width + 1200, height + 1200);

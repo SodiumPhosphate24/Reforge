@@ -5,7 +5,7 @@ class Enemy {
     if (type = "zombie") {
       this.type = "zombie";
       this.health = 3;
-      this.speed = 2;
+      this.speed = 1;
     }
   }
 
