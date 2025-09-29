@@ -8,8 +8,8 @@ var gameWorld = [];
 var worldString = "";
 var lastScroll = 0;
 var scrollDelay = 20;
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete"];
-var tileWalls = [0, 0, 0, 1];
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick"];
+var tileWalls = [0, 0, 0, 2, 1];
 
 const pWidth = 35, pHeight = 25;
 let enemies = [];
@@ -20,6 +20,7 @@ function preload() {
   tileImgs[1] = loadImage("Tiles/Asphalt.png");
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");
   tileImgs[3] = loadImage("Tiles/Concrete.png");
+  tileImgs[4] = loadImage("Tiles/Brick.png");
   InventoryImg = loadImage("hud/Inventory.png");
   FrameImg = loadImage("hud/Frame.png");
   Fog = loadImage("hud/Fog.png")
@@ -40,6 +41,13 @@ function draw() {
   push();
   controlCamera();
   translate(camX, camY);
+
+  // --- Roof fade update (ADDED) ---
+  const __roofSeeds = getOverlappingRoofSeeds(pX, pY, pWidth, pHeight);
+  floodFillRoof(__roofSeeds);
+  stepRoofFades();
+  // --------------------------------
+
   drawWorld(gameWorld, 0);
   fill(255);
   //shadow
@@ -169,6 +177,16 @@ function drawWorld(world, layer) {
         rotation = 0;
       }
 
+      // --- Roof tinting (ADDED) ---
+      let __useTint = false;
+      if (tileWalls[tileType] === 2) {
+        const __k = tileKey(i, j);
+        const __alpha = roofAlpha.has(__k) ? roofAlpha.get(__k) : 255;
+        if (__alpha <= 0) continue; // fully transparent; skip draw
+        if (__alpha < 255) { tint(255, __alpha); __useTint = true; }
+      }
+      // ----------------------------
+
       if (rotation > 0) {
         push();
         translate(j * 50 + 25, i * 50 + 25); // Move to center of tile
@@ -178,6 +196,10 @@ function drawWorld(world, layer) {
       } else {
         image(tileImgs[tileType], j * 50, i * 50, 50, 50);
       }
+
+      // --- clear tint if used (ADDED) ---
+      if (__useTint) noTint();
+      // -----------------------------------
     }
   }
 }
@@ -339,7 +361,7 @@ function checkTileCollisions(x, y, w, h) {
         let tile = gameWorld[row][col];
         let tileType = (typeof tile === 'object') ? tile.type : tile;
 
-        if (tileWalls[tileType]) { // use tileWalls array to check if tile is solid
+        if (tileWalls[tileType] == 1) { // use tileWalls array to check if tile is solid (ONLY 1 blocks)
           const tileLeft = col * 50;
           const tileTop = row * 50;
           const tileRight = tileLeft + 50;
@@ -375,3 +397,88 @@ function checkCollision(x, y, x2, y2, w, h, w2 = 50, h2 = 50) {
 
   return false; // no collision
 }
+
+/* ========= Roof fade system (ADDED) ========= */
+const ROOF_FADE_SPEED = 25;   // alpha change per frame (0..255)
+let roofAlpha = new Map();     // key "row,col" -> alpha
+let roofTarget = new Set();    // keys that should fade to 0 this frame
+
+function tileKey(r, c) { return r + "," + c; }
+
+function isRoof(row, col) {
+  if (row < 0 || col < 0 || row >= gameWorld.length || col >= gameWorld[row].length) return false;
+  const t = gameWorld[row][col];
+  const type = (typeof t === 'object') ? t.type : t;
+  return tileWalls[type] === 2; // 2 = roof
+}
+
+function getOverlappingRoofSeeds(x, y, w, h) {
+  // Player collider AABB (uses your existing offsets)
+  const left   = x + 600;
+  const top    = y + 375;
+  const right  = left + w;
+  const bottom = top + h;
+
+  const TILE = 50;
+  const leftTile   = Math.floor(left   / TILE);
+  const rightTile  = Math.floor(right  / TILE);
+  const topTile    = Math.floor(top    / TILE);
+  const bottomTile = Math.floor(bottom / TILE);
+
+  const seeds = [];
+  for (let r = topTile; r <= bottomTile; r++) {
+    for (let c = leftTile; c <= rightTile; c++) {
+      if (!isRoof(r, c)) continue;
+
+      // AABB vs tile
+      const tL = c * TILE, tT = r * TILE, tR = tL + TILE, tB = tT + TILE;
+      if (left < tR && right > tL && top < tB && bottom > tT) {
+        seeds.push([r, c]);
+      }
+    }
+  }
+  return seeds;
+}
+
+function floodFillRoof(seeds) {
+  roofTarget.clear();
+  if (!seeds.length) return;
+
+  const q = [];
+  const seen = new Set();
+  const dirs = [[1,0],[-1,0],[0,1],[0,-1]]; // 4-connected
+
+  for (const s of seeds) {
+    const k = tileKey(s[0], s[1]);
+    if (!seen.has(k)) { seen.add(k); q.push(s); }
+  }
+
+  while (q.length) {
+    const [r, c] = q.shift();
+    const k = tileKey(r, c);
+    roofTarget.add(k);
+
+    for (const [dr, dc] of dirs) {
+      const nr = r + dr, nc = c + dc;
+      if (!isRoof(nr, nc)) continue;
+      const nk = tileKey(nr, nc);
+      if (!seen.has(nk)) { seen.add(nk); q.push([nr, nc]); }
+    }
+  }
+}
+
+function stepRoofFades() {
+  // Fade targets toward transparent (0)
+  for (const k of roofTarget) {
+    const curr = roofAlpha.has(k) ? roofAlpha.get(k) : 255;
+    const next = Math.max(0, curr - ROOF_FADE_SPEED);
+    roofAlpha.set(k, next);
+  }
+  // Fade non-targets back toward opaque (255)
+  for (const [k, curr] of roofAlpha.entries()) {
+    if (roofTarget.has(k)) continue;
+    const next = Math.min(255, curr + ROOF_FADE_SPEED);
+    if (next === 255) roofAlpha.delete(k); else roofAlpha.set(k, next);
+  }
+}
+/* ====== End roof fade system (ADDED) ====== */

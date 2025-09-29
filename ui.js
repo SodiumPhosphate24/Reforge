@@ -14,11 +14,17 @@ function inventory() {
 
 function health() {
   // draws health
-  fill(255, 0, 0, 100);
+  if (health > 0) {
+    noStroke();
+    fill(255, 0, 0, 200);
+    rect(100, 100, 200, 25);
+    fill(0, 255, 0, 150);
+    rect(100, 100, healthPoints * 2, 25);
+  }
   strokeWeight(5);
-  stroke(0, 120, 0);
-  rect(75, 75, 200, 25);
-  fill(0, 255, 0, 100);
-  rect(75, 75, healthPoints * 2, 25);
-  noStroke();
+  stroke(0, 150, 0);
+  fill(0, 0, 0, 0);
+  for (i = 1; i <= 4; i++) {
+    rect(100, 100, i * 50, 25);
+  }
 }
