@@ -2,7 +2,6 @@ class Enemy {
   constructor(type) {
     this.x = 100;
     this.y = 100;
-    this.angle = atan2(0 - (this.y + pY), 0 - (this.x + pX));
     if (type = "zombie") {
       this.type = "zombie";
       this.health = 3;
@@ -12,7 +11,7 @@ class Enemy {
 
   update() {
     // direction vector from enemy -> player
-    this.angle = atan2(340 - (this.y + pY), 600 - (this.x + pX));
+    this.angle = atan2(pY + 340 - (this.y), pX + 600 - (this.x));
     this.x -= this.speed * cos(this.angle);
     this.y -= this.speed * sin(this.angle);
   }
