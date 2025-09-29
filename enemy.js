@@ -12,7 +12,7 @@ class Enemy {
 
   update() {
     // direction vector from enemy -> player
-    this.angle = atan2(pY - (this.y + camY), pX - (this.x + camX));
+    this.angle = atan2(340 - (this.y + pY), 600 - (this.x + pX));
     this.x -= this.speed * cos(this.angle);
     this.y -= this.speed * sin(this.angle);
   }
