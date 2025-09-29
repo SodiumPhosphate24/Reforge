@@ -1,5 +1,6 @@
 let Buschy, InventoryImg, FrameImg, Fog;
 var pX = 0; var pY = 0;
+var prePX = 0, prePY = 0;
 var camX = 0; var camY = 0;
 var pSpeed = 1.3;
 var pXVel = 0; var pYVel = 0;
@@ -28,6 +29,8 @@ function setup() {
 }
 
 function draw() {
+  prePX = pX;
+  prePY = pY;
   background(50);
   push();
   controlCamera();
@@ -39,6 +42,7 @@ function draw() {
   ellipse(pX + 617, pY + 432, 35, 21);
   image(Buschy, pX + 600, pY + 375, pWidth, pHeight);
   controls();
+  resolveCollisions();
   pop();
   drawEnemies();
   drawUI();
@@ -63,7 +67,7 @@ function worldToString(world) {
       if (typeof tile === 'object') {
         string += tile.type;
         if (tile.rotation > 0) {
-          string += ":" + tile.rotation;
+          string += ":" + tile.rotadtion;
         }
       } else {
         string += tile; // Backwards compatibility
@@ -253,4 +257,22 @@ function controlCamera() {
   camY -= (camY + pY) * 0.1;
   camX = constrain(camX, -(gameWorld[0].length * 50) + width, 0);
   camY = constrain(camY, -(gameWorld.length * 50) + height, 0);
+}
+function resolveCollisions(){
+
+}
+function checkCollision(x, y, x2, y2, w, h, w2 = 50, h2 = 50) {
+  // First rectangle: (x, y) is top-left, width = w, height = h
+  // Second rectangle: (x2, y2) is top-left, width = w2, height = h2
+
+  if (
+    x < x2 + w2 &&     // left edge of rect1 is left of right edge of rect2
+    x + w > x2 &&      // right edge of rect1 is right of left edge of rect2
+    y < y2 + h2 &&     // top edge of rect1 is above bottom edge of rect2
+    y + h > y2         // bottom edge of rect1 is below top edge of rect2
+  ) {
+    return true; // collision
+  }
+
+  return false; // no collision
 }
