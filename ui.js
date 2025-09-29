@@ -14,7 +14,7 @@ function inventory() {
 
 function health() {
   // draws health
-  if (health > 0) {
+  if (healthPoints > 0) {
     noStroke();
     fill(255, 0, 0, 200);
     rect(100, 100, 200, 25);
@@ -27,4 +27,5 @@ function health() {
   for (i = 1; i <= 4; i++) {
     rect(100, 100, i * 50, 25);
   }
+  noStroke();
 }
