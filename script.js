@@ -315,11 +315,11 @@ function resolveCollisions() {
 
 
 function checkTileCollisions(x, y, w, h) {
-  // Get rectangle bounds
-  const left = x;
-  const top = y;
-  const right = x + w;
-  const bottom = y + h;
+  // Get rectangle bounds (add offsets to match where player is actually drawn)
+  const left = x + 600;
+  const top = y + 375;
+  const right = left + w;
+  const bottom = top + h;
 
   // Convert to tile indices
   const leftTile = Math.floor(left / 50);
