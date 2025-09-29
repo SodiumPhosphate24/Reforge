@@ -8,8 +8,8 @@ var gameWorld = [];
 var worldString = "";
 var lastScroll = 0;
 var scrollDelay = 20;
-var tileImgs = ["grass", "asphalt", "lined asphalt"];
-var tileWalls = [0, 0, 1];
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete"];
+var tileWalls = [0, 0, 0, 1];
 
 const pWidth = 35, pHeight = 25;
 let enemies = [];
@@ -19,6 +19,7 @@ function preload() {
   tileImgs[0] = loadImage("Tiles/deadGrass.png");
   tileImgs[1] = loadImage("Tiles/Asphalt.png");
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");
+  tileImgs[3] = loadImage("Tiles/Concrete.png");
   InventoryImg = loadImage("hud/Inventory.png");
   FrameImg = loadImage("hud/Frame.png");
   Fog = loadImage("hud/Fog.png")
@@ -28,7 +29,8 @@ function setup() {
   createCanvas(1200, 750);
   gameWorld = stringToWorld(worldString[0]);
   console.log(worldString);
-  console.log("newestest")
+  console.log("asdf");
+  maxTileTypes = tileImgs.length;
 }
 
 function draw() {

@@ -1,7 +1,7 @@
 
 var editorMode = false;
 var selectedTileType = 0; // Currently selected tile type
-var maxTileTypes = 3; // Number of available tile types (0, 1, 2)
+var maxTileTypes = 4; // Number of available tile types (0, 1, 2)
 var tileRotation = 0; // Current tile rotation (0, 90, 180, 270 degrees)
 
 function toggleEditorMode() {
