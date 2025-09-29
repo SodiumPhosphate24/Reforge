@@ -8,8 +8,10 @@ var gameWorld = [];
 var worldString = "";
 var lastScroll = 0;
 var scrollDelay = 20;
-var tileImgs = [0, 0, 0];
-const pWidth = 35, pHeight = 60;
+var tileImgs = ["grass", "asphalt", "lined asphalt"];
+var tileWalls = [0, 0, 1];
+
+const pWidth = 35, pHeight = 25;
 let enemies = [];
 function preload() {
   worldString = loadStrings("world.txt");
@@ -26,6 +28,7 @@ function setup() {
   createCanvas(1200, 750);
   gameWorld = stringToWorld(worldString[0]);
   console.log(worldString);
+  console.log("newestest")
 }
 
 function draw() {
@@ -39,15 +42,15 @@ function draw() {
   fill(255);
   //shadow
   fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
-  ellipse(pX + 617, pY + 432, 35, 21);
-  image(Buschy, pX + 600, pY + 375, pWidth, pHeight);
+  ellipse(pX + 617, pY + 395, 35, 21);
+  image(Buschy, pX + 600, pY + 340, pWidth, pHeight + 35);
   controls();
   resolveCollisions();
   pop();
   drawEnemies();
   drawUI();
   tint(255, 200);
-  image(Fog, pX+camX-600, pY+camY-600, width+1200, height+1200);
+  image(Fog, pX + camX - 600, pY + camY - 600, width + 1200, height + 1200);
   noTint();
 
   if (editorMode) {
@@ -261,43 +264,46 @@ function controlCamera() {
 function resolveCollisions() {
   const w = pWidth, h = pHeight;
 
-  // If we're not colliding at the new position, nothing to do
+  // If new position isn't colliding, we're done
   if (!checkTileCollisions(pX, pY, w, h)) return;
 
   const dx = pX - prePX;
   const dy = pY - prePY;
 
-  const xCaused = checkTileCollisions(prePX, pY, w, h); // reverting X alone still collides? => X movement caused it
-  const yCaused = checkTileCollisions(pX, prePY, w, h); // reverting Y alone still collides? => Y movement caused it
+  // Test each axis independently by substituting the previous coordinate
+  const collIfRevertX = checkTileCollisions(prePX, pY, w, h);
+  const collIfRevertY = checkTileCollisions(pX, prePY, w, h);
 
-  // Revert axes responsible for the collision
+  // "Caused" means: reverting that axis removes the collision
+  const xCaused = !collIfRevertX;
+  const yCaused = !collIfRevertY;
+
+  // If neither alone resolves it (corner squeeze), revert both
+  if (!xCaused && !yCaused) {
+    pX = prePX;
+    pY = prePY;
+    return;
+  }
+
+  // Revert only the axes that caused the collision
   if (xCaused) pX = prePX;
   if (yCaused) pY = prePY;
 
-  // Corner case: neither axis alone seems to be "responsible" but current position collides (diagonal squeeze)
-  if (!xCaused && !yCaused && checkTileCollisions(pX, pY, w, h)) {
-    pX = prePX;
-    pY = prePY;
-  }
+  // Pixel-walk toward the intended direction until just before collision
+  const maxSteps = 1000;
 
-  // Nudge along each reverted axis toward the original intent until just before collision
-  const maxSteps = 200; // safety guard
-
-  // Only nudge X if we changed X (or we reverted both)
-  if (prePX !== pX) {
-    const stepX = Math.sign(dx) || 0; // direction we tried to move in X
+  if (xCaused) {
+    const stepX = Math.sign(dx) || 0;
     let steps = 0;
     while (stepX !== 0 && !checkTileCollisions(pX + stepX, pY, w, h) && steps < maxSteps) {
       pX += stepX;
       steps++;
     }
-    // stop one step before collision (loop ensures we never step into collision)
     pXVel = 0;
   }
 
-  // Only nudge Y if we changed Y (or we reverted both)
-  if (prePY !== pY) {
-    const stepY = Math.sign(dy) || 0; // direction we tried to move in Y
+  if (yCaused) {
+    const stepY = Math.sign(dy) || 0;
     let steps = 0;
     while (stepY !== 0 && !checkTileCollisions(pX, pY + stepY, w, h) && steps < maxSteps) {
       pY += stepY;
@@ -305,12 +311,6 @@ function resolveCollisions() {
     }
     pYVel = 0;
   }
-
-  // Final clamp (optional, in case of edge cases)
-  // if (checkTileCollisions(pX, pY, w, h)) {
-  //   pX = prePX;
-  //   pY = prePY;
-  // }
 }
 
 
@@ -332,7 +332,7 @@ function checkTileCollisions(x, y, w, h) {
     for (let col = leftTile; col <= rightTile; col++) {
       // Check bounds
       if (row >= 0 && row < gameWorld.length &&
-          col >= 0 && col < gameWorld[row].length) {
+        col >= 0 && col < gameWorld[row].length) {
 
         let tile = gameWorld[row][col];
         let tileType = (typeof tile === 'object') ? tile.type : tile;
@@ -345,9 +345,9 @@ function checkTileCollisions(x, y, w, h) {
 
           // AABB check
           if (left < tileRight &&
-              right > tileLeft &&
-              top < tileBottom &&
-              bottom > tileTop) {
+            right > tileLeft &&
+            top < tileBottom &&
+            bottom > tileTop) {
             return true; // Collision
           }
         }

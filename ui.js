@@ -6,7 +6,6 @@ function drawUI() {
 }
 
 function inventory() {
-  console.log("chjggggggggadsf")
   // draws inventory
   image(InventoryImg, 289, 650, 636, 92);
   image(FrameImg, 329 + ((inventorySlot - 1) * 69.71), 649, 79.54, 79.54);
