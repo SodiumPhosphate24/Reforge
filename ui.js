@@ -35,4 +35,7 @@ function buffs(){
   if (speedBuff){
     pSpeed = 3;
   }
+  else {
+    pSpeed = 1.3;
+  }
 }
