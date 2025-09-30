@@ -25,7 +25,7 @@ class Enemy {
   }
 
   hitsPlayer(){
-    return checkCollision(this.x, this.y, pX + 600 + camX, pY + 340 + camY, 20, 20, 35, 25);
+    return checkCollision(this.x, this.y, pX + 600, pY + 340, 20, 20, 35, 25);
   }
 }
 

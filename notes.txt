@@ -5,6 +5,9 @@ Regular zombies
 Fast Zombies
 Ranged enemies (skeletons would be funny)
 Bosses
+Enemy ai
+https://www.youtube.com/watch?v=OtSZMeHr_S8
+breadcrumbs
 
 Temporary upgrades/perks
 Speed
