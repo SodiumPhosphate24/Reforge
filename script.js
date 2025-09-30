@@ -297,8 +297,8 @@
       inventorySlot = keyCode - 48;
     }
 
-    if (keyCode == 32) {
-      healthPoints -= 10;
+    if (keyCode == 71) {
+      speedBuff = !speedBuff;
     }
 
     if (keyCode == 84) {

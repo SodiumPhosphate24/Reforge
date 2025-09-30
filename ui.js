@@ -1,5 +1,6 @@
 var inventorySlot = 1;
 var healthPoints = 100;
+var speedBuff = false;
 function drawUI() {
   inventory();
   health();
@@ -28,4 +29,10 @@ function health() {
     rect(100, 100, i * 50, 25);
   }
   noStroke();
+}
+
+function buffs(){
+  if (speedBuff){
+    pSpeed = 3;
+  }
 }
