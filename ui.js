@@ -4,6 +4,7 @@ var speedBuff = false;
 function drawUI() {
   inventory();
   health();
+  buffs();
 }
 
 function inventory() {

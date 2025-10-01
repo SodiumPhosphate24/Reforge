@@ -48,14 +48,9 @@ function drawBullets() {
 
 
 function calculateAim() {
-  // Player center (on screen)
-  let playerX = pX + 600 + pWidth / 2;
-  let playerY = pY + 375 + pHeight / 2;
+  // player center in SCREEN space
+  const pxs = pX + camX + pWidth / 2 + 600;
+  const pys = pY + camY + pHeight / 2+370;
 
-  // Mouse position already in screen coords
-  let dx = mouseX - playerX;
-  let dy = mouseY - playerY;
-
-  // atan2 gives angle in radians (-PI..PI), 0 pointing right
-  return atan2(dy, dx);
+  return atan2(mouseY - pys, mouseX - pxs);
 }

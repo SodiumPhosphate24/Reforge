@@ -66,10 +66,12 @@ function draw() {
   fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
   ellipse(pX + 617, pY + 395, 35, 21);
   image(Buschy, pX + 600, pY + 340, pWidth, pHeight + 35);
-  rotate(calculateAim());
-  rect(100, 0, 20, 10);
+
+  // --- Only the gun rotates (isolated) ---
+  drawGunDebugRect(); // uses calculateAim() you said exists
+  // ---------------------------------------
+
   mainHand();
-  rotate(0);
   drawEnemies();
   drawBullets();
   controls();
@@ -544,6 +546,24 @@ function stepRoofFades() {
   }
 }
 /* ====== End roof fade system ====== */
+
+// --- Only-gun-rotates helper (uses your calculateAim()) ---
+function drawGunDebugRect() {
+  push(); // isolate transforms
+
+  // Move pivot to player's on-screen center (mouseX/mouseY are screen coords)
+  translate(pX + 600 + pWidth / 2, pY + 375 + pHeight / 2);
+
+  // Rotate local axes towards the mouse
+  rotate(calculateAim()); // assumed to exist
+
+  // Draw a small “gun” rect pointing along +X, slightly forward from pivot
+  rectMode(CORNER);
+  rect(20, -5, 20, 10); // tweak 20 to move gun further/closer
+
+  pop(); // restore transforms
+}
+
 function mainHand() {
   return false;
 }
