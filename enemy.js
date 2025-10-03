@@ -30,19 +30,20 @@ class Enemy {
 }
 
 function drawEnemies() {
+  var count = 0;
   for (let i = 0; i < enemies.length; i++) {
-    enemies[i].update();
+    enemies[count].update();
     fill(255, 0, 0);
-    rect(enemies[i].x, enemies[i].y, 20, 20);
-    if (enemies[i].isDead()) {
-      enemies.splice(i, 1);
-      i--;
-    }
-    if (enemies[i].hitsPlayer()){
-      if (enemies[i].type == "zombie"){
+    rect(enemies[count].x, enemies[count].y, 20, 20);
+    if (enemies[count].hitsPlayer()){
+      if (enemies[count].type == "zombie"){
         healthPoints -= 2;
       }
     }
+    if (enemies[count].isDead()) {
+      enemies.splice(count, 1);
+      count--;
+    }
+    count++;
   }
 }
-
