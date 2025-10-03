@@ -30,7 +30,7 @@ class Enemy {
 }
 
 function drawEnemies() {
-  var count = 0;
+  let count = 0;
   for (let i = 0; i < enemies.length; i++) {
     enemies[count].update();
     fill(255, 0, 0);
