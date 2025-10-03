@@ -2,7 +2,7 @@ class Enemy {
   constructor(type) {
     this.x = 100;
     this.y = 100;
-    if (type = "zombie") {
+    if (type == "zombie") {
       this.type = "zombie";
       this.health = 3;
       this.speed = 2;
