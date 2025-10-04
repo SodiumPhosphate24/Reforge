@@ -317,12 +317,15 @@ function keyPressed() {
 
   if (keyCode == 84) {
     enemies.push(new Enemy("zombie"));
-    bullets.push(new Bullet("common"));
   }
 
   if (typeof handleEditorKeyPress === "function") {
     handleEditorKeyPress();
   }
+}
+
+function mouseClicked() {
+  bullets.push(new Bullet("common"));
 }
 
 function mouseWheel(event) {

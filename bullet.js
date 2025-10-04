@@ -29,7 +29,7 @@
       }
 
       hitsWall() {
-        return checkTileCollisions(this.x, this.y, 20, 20);
+        return checkTileCollisions(this.x, this.y, 5, 18);
       }
     }
     function drawBullets() {
