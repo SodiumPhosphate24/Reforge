@@ -40,3 +40,38 @@ function buffs(){
     pSpeed = 1.3;
   }
 }
+
+class Item {
+  constructor(type, name){
+    if (type == "gun"){
+      this.type = "gun";
+      this.name = name;
+      this.image = GunImgs[0];
+      this.damage = 1;
+      this.ammo = 100;
+      this.ammoType = "common";
+    }
+  }
+}
+
+class DroppedItem {
+  constructor(item, x, y){
+    this.item = item;
+    this.x = x;
+    this.y = y;
+  }
+  
+  draw(){
+    image(this.item.image, this.x, this.y, 50, 50);
+  }
+
+  checkPickup(){
+    let d = distance(pX + 600 + camX, pY + 340 + camY, this.x, this.y);
+    if (d < 50){
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+}

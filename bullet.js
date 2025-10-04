@@ -57,7 +57,7 @@
           bullets.splice(count, 1);
           count--;
         }
-        count--;
+        count++;
       }
     }
 
