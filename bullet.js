@@ -20,7 +20,7 @@
 
       hitsEnemy() {
         for (let i = 0; i < enemies.length; i++) {
-          if (checkCollision(this.x, this.y, enemies[i].x, enemies[i].y, 20, 20, 20, 20)) {
+          if (checkCollision(this.x, this.y, enemies[i].x, enemies[i].y, 5, 18, 20, 20)) {
             enemies[i].takeDamage(this.damage);
             return true;
           }
@@ -46,10 +46,10 @@
 
           // draw the bullet image (or fallback rect) centered
           if (b.image) {
-            image(b.image, -10, -10, 20, 20); // -10,-10 centers it
+            image(b.image, -10, -10, 5, 18); // -10,-10 centers it
           } else {
             fill(255, 0, 0);
-            rect(-10, -10, 20, 20);
+            rect(-10, -10, 5, 18);
           }
         pop();
 
