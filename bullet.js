@@ -66,7 +66,7 @@ class Bullet {
                 // If it's a crate (type 5), destroy it
                 if (t.type === 5) {
                   clearTile(row, col, L);
-                  particle(row * 50, col * 50, [255, 255, 255], 100, 10);
+                  particle(col * 50 + 25, row * 50 + 25, [139, 69, 19], 30, 5);
                 }
                 return true;
               }
