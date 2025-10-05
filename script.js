@@ -10,8 +10,8 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick"];
-var tileWalls = [0, 0, 0, 2, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate"];
+var tileWalls = [0, 0, 0, 2, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
 const pWidth = 35, pHeight = 25;
 let enemies = [], bullets = [];
 let maxTileTypes = 0; // will be set in setup()
@@ -31,6 +31,7 @@ function preload() {
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");
   tileImgs[3] = loadImage("Tiles/Concrete.png");
   tileImgs[4] = loadImage("Tiles/Brick.png");
+  tileImgs[5] = loadImage("Tiles/Crate.png");
   InventoryImg = loadImage("hud/Inventory.png");
   FrameImg = loadImage("hud/Frame.png");
   Fog = loadImage("hud/Fog.png")
