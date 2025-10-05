@@ -1,10 +1,14 @@
 class Bullet {
   constructor(type) {
-    // Spawn from gun barrel position
+    // Spawn from gun barrel position, but check for walls first
     recoil = 0;
     const barrelPos = getGunBarrelPosition();
-    this.x = barrelPos.x;
-    this.y = barrelPos.y;
+    
+    // Raycast from player to barrel to check for walls
+    const spawnPos = raycastToBarrel(barrelPos);
+    this.x = spawnPos.x;
+    this.y = spawnPos.y;
+    
     this.lifespan = 25; // frames
     this.angle = calculateAim(); // use same angle as gun
     if (type == "common") {
@@ -109,4 +113,59 @@ function calculateAim() {
   const pys = pY + camY + pHeight / 2 + 370;
 
   return atan2(mouseY - pys, mouseX - pxs);
+}
+
+// Raycast from player center to barrel position to check for walls
+function raycastToBarrel(barrelPos) {
+  const playerCenterX = pX + 600 + pWidth / 2;
+  const playerCenterY = pY + 375 + pHeight / 2;
+  
+  // Direction from player to barrel
+  const dx = barrelPos.x - playerCenterX;
+  const dy = barrelPos.y - playerCenterY;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  
+  // Step along the ray in small increments
+  const steps = Math.ceil(distance / 2); // Check every 2 pixels
+  const stepX = dx / steps;
+  const stepY = dy / steps;
+  
+  // Walk from player to barrel
+  for (let i = 1; i <= steps; i++) {
+    const checkX = playerCenterX + stepX * i;
+    const checkY = playerCenterY + stepY * i;
+    
+    // Check if this point hits a wall
+    const col = Math.floor(checkX / 50);
+    const row = Math.floor(checkY / 50);
+    
+    if (row < 0 || col < 0 || row >= gameWorld.length || col >= gameWorld[row].length) continue;
+    
+    const cell = gameWorld[row][col];
+    if (cell && 'layers' in cell) {
+      for (let L = 0; L < 3; L++) {
+        const t = cell.layers[L];
+        if (!t) continue;
+        if (tileWalls[t.type] == 1) {
+          // Hit a wall - spawn bullet at previous safe position
+          const safeI = Math.max(0, i - 1);
+          return {
+            x: playerCenterX + stepX * safeI,
+            y: playerCenterY + stepY * safeI
+          };
+        }
+      }
+    } else if (cell) { // legacy
+      if (tileWalls[cell.type] == 1) {
+        const safeI = Math.max(0, i - 1);
+        return {
+          x: playerCenterX + stepX * safeI,
+          y: playerCenterY + stepY * safeI
+        };
+      }
+    }
+  }
+  
+  // No wall hit - use barrel position
+  return barrelPos;
 }
