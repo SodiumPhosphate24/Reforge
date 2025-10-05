@@ -76,6 +76,7 @@ function draw() {
   mainHand();
   drawEnemies();
   drawBullets();
+  updateParticles(); // Draw particles
   controls();
   resolveCollisions();
 
