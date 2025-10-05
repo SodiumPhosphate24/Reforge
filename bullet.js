@@ -1,6 +1,7 @@
 class Bullet {
   constructor(type) {
     // Spawn from gun barrel position
+    recoil = 0;
     const barrelPos = getGunBarrelPosition();
     this.x = barrelPos.x;
     this.y = barrelPos.y;

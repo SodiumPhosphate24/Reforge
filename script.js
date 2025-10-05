@@ -86,7 +86,7 @@ function draw() {
   tint(255, 200);
   image(Fog, pX + camX - 600, pY + camY - 600, width + 1200, height + 1200);
   noTint();
-
+  doRecoil();
   if (editorMode) {
     drawEditorUI();
     if (mouseIsPressed) {
@@ -327,6 +327,7 @@ function keyPressed() {
 
 function mouseClicked() {
   bullets.push(new Bullet("common"));
+  
 }
 
 function mouseWheel(event) {
@@ -590,7 +591,7 @@ function drawGunDebugRect() {
 
   // Draw the gun image pointing along +X
   if (GunImgs && GunImgs[0]) {
-    image(GunImgs[0], 100, -10, 30, 20);
+    image(GunImgs[0], recoil, -10, 30, 20);
   } else {
     // Fallback rect if image not loaded
     rectMode(CORNER);
@@ -628,4 +629,9 @@ function getGunBarrelPosition() {
 
 function mainHand() {
   return false;
+}
+function doRecoil(){
+  if(recoil < 10){
+    recoil += 1;
+  }
 }
