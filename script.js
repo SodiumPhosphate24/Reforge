@@ -610,9 +610,23 @@ function getGunBarrelPosition() {
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
 
+  // Calculate the base barrel position
+  let barrelX = playerCenterX + barrelDistance * cos(angle);
+  let barrelY = playerCenterY + barrelDistance * sin(angle);
+
+  // Account for the vertical flip when gun is on the left side
+  // When flipped, the barrel appears on the opposite side vertically
+  const playerScreenX = pX + camX + 600 + pWidth / 2;
+  if (mouseX < playerScreenX) {
+    // Gun is flipped, so we need to offset the Y position
+    // The flip scale affects the vertical position
+    const flipOffset = 20 * sin(angle); // Approximate vertical offset due to flip
+    barrelY -= flipOffset * 2; // Double to account for full flip
+  }
+
   return {
-    x: playerCenterX + barrelDistance * cos(angle),
-    y: playerCenterY + barrelDistance * sin(angle)
+    x: barrelX,
+    y: barrelY
   };
 }
 
