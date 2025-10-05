@@ -1,9 +1,10 @@
     class Bullet {
       constructor(type) {
-        // Spawn from center of player sprite
-        this.x = pX + 600 + pWidth / 2;
-        this.y = pY + 340 + (pHeight + 35) / 2;
-        this.angle = atan2(mouseY - (this.y + camY), mouseX - (this.x + camX));
+        // Spawn from gun barrel position
+        const barrelPos = getGunBarrelPosition();
+        this.x = barrelPos.x;
+        this.y = barrelPos.y;
+        this.angle = calculateAim(); // use same angle as gun
         if (type == "common") {
           this.type = "common";
           this.image = BulletImgs[0];

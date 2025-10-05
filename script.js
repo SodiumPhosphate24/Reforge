@@ -560,11 +560,32 @@ function drawGunDebugRect() {
   // Rotate local axes towards the mouse
   rotate(calculateAim()); // assumed to exist
 
-  // Draw a small “gun” rect pointing along +X, slightly forward from pivot
-  rectMode(CORNER);
-  rect(20, -5, 20, 10); // tweak 20 to move gun further/closer
+  // Draw the gun image pointing along +X, positioned further out
+  if (GunImgs && GunImgs[0]) {
+    image(GunImgs[0], 25, -10, 30, 20); // 25px out from center, gun is 30x20
+  } else {
+    // Fallback rect if image not loaded
+    rectMode(CORNER);
+    rect(25, -5, 20, 10);
+  }
 
   pop(); // restore transforms
+}
+
+// Helper function to get gun barrel position in world coordinates
+function getGunBarrelPosition() {
+  const angle = calculateAim();
+  const gunLength = 30; // matches gun image width
+  const gunOffset = 25; // distance from player center to gun start
+  const barrelDistance = gunOffset + gunLength; // total distance to barrel tip
+
+  const playerCenterX = pX + 600 + pWidth / 2;
+  const playerCenterY = pY + 375 + pHeight / 2;
+
+  return {
+    x: playerCenterX + barrelDistance * cos(angle),
+    y: playerCenterY + barrelDistance * sin(angle)
+  };
 }
 
 function mainHand() {
