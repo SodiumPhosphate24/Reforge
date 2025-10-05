@@ -3,12 +3,12 @@ class Bullet {
     // Spawn from gun barrel position, but check for walls first
     recoil = 0;
     const barrelPos = getGunBarrelPosition();
-    
+
     // Raycast from player to barrel to check for walls
     const spawnPos = raycastToBarrel(barrelPos);
     this.x = spawnPos.x;
     this.y = spawnPos.y;
-    
+
     this.lifespan = 25; // frames
     this.angle = calculateAim(); // use same angle as gun
     if (type == "common") {
@@ -66,6 +66,7 @@ class Bullet {
                 // If it's a crate (type 5), destroy it
                 if (t.type === 5) {
                   clearTile(row, col, L);
+                  particle(row * 50, col * 50, [255, 255, 255], 100, 10);
                 }
                 return true;
               }
@@ -131,28 +132,28 @@ function calculateAim() {
 function raycastToBarrel(barrelPos) {
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
-  
+
   // Direction from player to barrel
   const dx = barrelPos.x - playerCenterX;
   const dy = barrelPos.y - playerCenterY;
   const distance = Math.sqrt(dx * dx + dy * dy);
-  
+
   // Step along the ray in small increments
   const steps = Math.ceil(distance / 2); // Check every 2 pixels
   const stepX = dx / steps;
   const stepY = dy / steps;
-  
+
   // Walk from player to barrel
   for (let i = 1; i <= steps; i++) {
     const checkX = playerCenterX + stepX * i;
     const checkY = playerCenterY + stepY * i;
-    
+
     // Check if this point hits a wall
     const col = Math.floor(checkX / 50);
     const row = Math.floor(checkY / 50);
-    
+
     if (row < 0 || col < 0 || row >= gameWorld.length || col >= gameWorld[row].length) continue;
-    
+
     const cell = gameWorld[row][col];
     if (cell && 'layers' in cell) {
       for (let L = 0; L < 3; L++) {
@@ -177,7 +178,7 @@ function raycastToBarrel(barrelPos) {
       }
     }
   }
-  
+
   // No wall hit - use barrel position
   return barrelPos;
 }
