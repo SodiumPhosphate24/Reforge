@@ -34,7 +34,42 @@ class Bullet {
   }
 
   hitsWall() {
-    return checkTileCollisions(this.x, this.y, 18, 5);
+    // Bullets are already in world coordinates, so we need a direct tile check
+    const w = 18, h = 5;
+    const left = this.x;
+    const top = this.y;
+    const right = left + w;
+    const bottom = top + h;
+
+    const leftTile = Math.floor(left / 50);
+    const rightTile = Math.floor(right / 50);
+    const topTile = Math.floor(top / 50);
+    const bottomTile = Math.floor(bottom / 50);
+
+    for (let row = topTile; row <= bottomTile; row++) {
+      for (let col = leftTile; col <= rightTile; col++) {
+        if (row < 0 || col < 0 || row >= gameWorld.length || col >= gameWorld[row].length) continue;
+
+        const cell = gameWorld[row][col];
+
+        if (cell && 'layers' in cell) {
+          for (let L = 0; L < 3; L++) {
+            const t = cell.layers[L];
+            if (!t) continue;
+            if (tileWalls[t.type] == 1) {
+              const tL = col * 50, tT = row * 50, tR = tL + 50, tB = tT + 50;
+              if (left < tR && right > tL && top < tB && bottom > tT) return true;
+            }
+          }
+        } else if (cell) { // legacy
+          if (tileWalls[cell.type] == 1) {
+            const tL = col * 50, tT = row * 50, tR = tL + 50, tB = tT + 50;
+            if (left < tR && right > tL && top < tB && bottom > tT) return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 }
 function drawBullets() {
