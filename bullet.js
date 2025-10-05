@@ -1,7 +1,8 @@
     class Bullet {
       constructor(type) {
-        this.x = pX + 600;
-        this.y = pY + 375;
+        // Spawn from center of player sprite
+        this.x = pX + 600 + pWidth / 2;
+        this.y = pY + 340 + (pHeight + 35) / 2;
         this.angle = atan2(mouseY - (this.y + camY), mouseX - (this.x + camX));
         if (type == "common") {
           this.type = "common";
