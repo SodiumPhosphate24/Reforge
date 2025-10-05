@@ -20,7 +20,6 @@ class Bullet {
     this.x += this.speed * cos(this.angle);
     this.y += this.speed * sin(this.angle);
     this.lifespan--;
-    console.log(this.lifespan);
   }
 
   hitsEnemy() {

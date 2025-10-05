@@ -9,6 +9,7 @@ var worldString = "";
 var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
+var recoil = 10;
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick"];
 var tileWalls = [0, 0, 0, 2, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
 const pWidth = 35, pHeight = 25;
@@ -568,7 +569,7 @@ function drawGunDebugRect() {
   // Determine if gun should flip based on mouse position relative to player
   // Calculate player center in screen coordinates
   const playerScreenX = pX + camX + 600 + pWidth / 2;
-  
+
   // If mouse is to the left of player, flip the gun
   if (mouseX < playerScreenX) {
     targetGunFlip = 180;
@@ -582,14 +583,14 @@ function drawGunDebugRect() {
   // Apply the flip rotation (around X-axis conceptually, but we scale Y)
   push();
   translate(25, 0); // move to gun position
-  
+
   // Flip by scaling Y when needed
   const flipScale = cos(radians(currentGunFlip));
   scale(1, flipScale);
 
   // Draw the gun image pointing along +X
   if (GunImgs && GunImgs[0]) {
-    image(GunImgs[0], 0, -10, 30, 20);
+    image(GunImgs[0], 100, -10, 30, 20);
   } else {
     // Fallback rect if image not loaded
     rectMode(CORNER);
