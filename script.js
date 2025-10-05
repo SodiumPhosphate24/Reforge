@@ -565,9 +565,12 @@ function drawGunDebugRect() {
   const aimAngle = calculateAim();
   rotate(aimAngle);
 
-  // Determine if gun should flip based on aim direction
-  // If aiming left (angle between -180 and 0 or PI/2 to 3*PI/2), flip the gun
-  if (aimAngle > HALF_PI && aimAngle < PI + HALF_PI) {
+  // Determine if gun should flip based on mouse position relative to player
+  // Calculate player center in screen coordinates
+  const playerScreenX = pX + camX + 600 + pWidth / 2;
+  
+  // If mouse is to the left of player, flip the gun
+  if (mouseX < playerScreenX) {
     targetGunFlip = 180;
   } else {
     targetGunFlip = 0;
