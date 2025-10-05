@@ -62,13 +62,25 @@ class Bullet {
             if (!t) continue;
             if (tileWalls[t.type] == 1) {
               const tL = col * 50, tT = row * 50, tR = tL + 50, tB = tT + 50;
-              if (left < tR && right > tL && top < tB && bottom > tT) return true;
+              if (left < tR && right > tL && top < tB && bottom > tT) {
+                // If it's a crate (type 5), destroy it
+                if (t.type === 5) {
+                  clearTile(row, col, L);
+                }
+                return true;
+              }
             }
           }
         } else if (cell) { // legacy
           if (tileWalls[cell.type] == 1) {
             const tL = col * 50, tT = row * 50, tR = tL + 50, tB = tT + 50;
-            if (left < tR && right > tL && top < tB && bottom > tT) return true;
+            if (left < tR && right > tL && top < tB && bottom > tT) {
+              // If it's a crate (type 5), destroy it
+              if (cell.type === 5) {
+                clearTile(row, col, 0);
+              }
+              return true;
+            }
           }
         }
       }
