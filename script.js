@@ -612,26 +612,9 @@ function getGunBarrelPosition() {
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
 
-  // Determine if gun is flipped based on mouse position
-  const playerScreenX = pX + camX + 600 + pWidth / 2;
-  const isFlipped = mouseX < playerScreenX;
-
-  // Calculate barrel position
+  // Use the same calculation for both left and right sides
   const barrelX = playerCenterX + barrelDistance * cos(angle);
-  
-  // For the Y component, account for the gun flip
-  // The gun is 20px tall, drawn centered at -10 to +10
-  // When flipped, the barrel (which is at the top) appears at the bottom
-  let barrelY;
-  if (isFlipped) {
-    // When flipped, we need to negate the Y component AND add the gun height offset
-    // The barrel appears 20px lower (gun height) when flipped
-    const gunHeight = 20;
-    barrelY = playerCenterY - barrelDistance * sin(angle) + gunHeight * sin(angle);
-  } else {
-    // Normal case - barrel at top of gun
-    barrelY = playerCenterY + barrelDistance * sin(angle);
-  }
+  const barrelY = playerCenterY + barrelDistance * sin(angle);
 
   return {
     x: barrelX,
