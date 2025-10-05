@@ -550,6 +550,10 @@ function stepRoofFades() {
 }
 /* ====== End roof fade system ====== */
 
+// --- Gun flip animation state ---
+let currentGunFlip = 0; // current flip angle (0 or 180)
+let targetGunFlip = 0;  // target flip angle
+
 // --- Only-gun-rotates helper (uses your calculateAim()) ---
 function drawGunDebugRect() {
   push(); // isolate transforms
@@ -558,16 +562,37 @@ function drawGunDebugRect() {
   translate(pX + 600 + pWidth / 2, pY + 375 + pHeight / 2);
 
   // Rotate local axes towards the mouse
-  rotate(calculateAim()); // assumed to exist
+  const aimAngle = calculateAim();
+  rotate(aimAngle);
 
-  // Draw the gun image pointing along +X, positioned further out
+  // Determine if gun should flip based on aim direction
+  // If aiming left (angle between -180 and 0 or PI/2 to 3*PI/2), flip the gun
+  if (aimAngle > HALF_PI && aimAngle < PI + HALF_PI) {
+    targetGunFlip = 180;
+  } else {
+    targetGunFlip = 0;
+  }
+
+  // Smoothly interpolate current flip to target flip
+  currentGunFlip = lerp(currentGunFlip, targetGunFlip, 0.2);
+
+  // Apply the flip rotation (around X-axis conceptually, but we scale Y)
+  push();
+  translate(25, 0); // move to gun position
+  
+  // Flip by scaling Y when needed
+  const flipScale = cos(radians(currentGunFlip));
+  scale(1, flipScale);
+
+  // Draw the gun image pointing along +X
   if (GunImgs && GunImgs[0]) {
-    image(GunImgs[0], 25, -10, 30, 20); // 25px out from center, gun is 30x20
+    image(GunImgs[0], 0, -10, 30, 20);
   } else {
     // Fallback rect if image not loaded
     rectMode(CORNER);
-    rect(25, -5, 20, 10);
+    rect(0, -5, 20, 10);
   }
+  pop();
 
   pop(); // restore transforms
 }
