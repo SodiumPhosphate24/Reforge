@@ -327,8 +327,9 @@ function keyPressed() {
 }
 
 function mouseClicked() {
-  bullets.push(new Bullet("common"));
-  
+  if (!editorMode) {
+    bullets.push(new Bullet("common"));
+  }
 }
 
 function mouseWheel(event) {
@@ -626,8 +627,8 @@ function getGunBarrelPosition() {
 function mainHand() {
   return false;
 }
-function doRecoil(){
-  if(recoil < 10){
+function doRecoil() {
+  if (recoil < 10) {
     recoil += 1;
   }
 }
