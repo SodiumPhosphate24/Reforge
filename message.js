@@ -8,7 +8,9 @@ class Message {
       this.message = message;
     }
     else if (type == "dialogue") {
-
+      this.x = 600;
+      this.y = 500;
+      this.vel = 0;
     }
   }
 }
@@ -17,6 +19,7 @@ function messageDisplay() {
   textAlign(CENTER, CENTER);
 
   for (let i = 0; i < messages.length; i++) {
+    if(messages[i].type == "quest"){
     fill(100, 255, 255, messages[i].lifespan);
     textSize(60);
     textFont(Silkscreen);
@@ -30,5 +33,7 @@ function messageDisplay() {
       messages.splice(i, 1);
       i--;
     }
+  }
+    else if (messages[i].type == "dialogue"){}
   }
 }
