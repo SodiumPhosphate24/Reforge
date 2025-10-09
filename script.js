@@ -326,7 +326,7 @@ function keyPressed() {
     enemies.push(new Enemy("zombie"));
   }
   if (keyCode == 77) {
-    messages.push(new Message("quest", "You found a glock!"))
+    messages.push(new Message("quest", "Daniel is big nerd"))
   }
   if (keyCode == 86) {
     droppedItems.push(new DroppedItem(new Item("gun", "glock"), pX + 600, pY + 340));
