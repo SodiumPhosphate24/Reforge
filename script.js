@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0];
+let Buschy, InventoryImg, FrameImg, Fog, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0], Silkscreen;
 var pX = 0; var pY = 0;
 var prePX = 0, prePY = 0;
 var camX = 0; var camY = 0;
@@ -35,7 +35,8 @@ function preload() {
   tileImgs[5] = loadImage("Tiles/Crate.png");
   InventoryImg = loadImage("hud/Inventory.png");
   FrameImg = loadImage("hud/Frame.png");
-  Fog = loadImage("hud/Fog.png")
+  Fog = loadImage("hud/Fog.png");
+  Silkscreen = loadFont("Silkscreen-Regular.ttf");
 }
 
 function setup() {
@@ -324,7 +325,9 @@ function keyPressed() {
   if (keyCode == 84) {
     enemies.push(new Enemy("zombie"));
   }
-
+  if (keyCode == 77) {
+    messages.push(new Message("quest", "You found a glock!"))
+  }
   if (keyCode == 86) {
     droppedItems.push(new DroppedItem(new Item("gun", "glock"), pX + 600, pY + 340));
   }
@@ -641,6 +644,6 @@ function doRecoil() {
   }
 }
 
-function distance(x1, y1, x2, y2){
+function distance(x1, y1, x2, y2) {
   return sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 }

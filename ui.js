@@ -16,6 +16,9 @@ function inventory() {
   image(InventoryImg, 289, 650, 636, 92);
   image(FrameImg, 329 + ((inventorySlot - 1) * 69.71), 649, 79.54, 79.54);
   noStroke();
+  for(let i = 0; i < inventory.length; i++) {
+    image(inventory[i].image, 339 + (i * 69.71), 659, 59.54, 59.54);
+  }
 }
 
 function health() {
@@ -90,6 +93,13 @@ class DroppedItem {
 
 function updateDroppedItems() {
   for (let i = 0; i < droppedItems.length; i++) {
-    droppedItems[i].draw();
+    var count = 0;
+    droppedItems[count].draw();
+    if (droppedItems[count].checkPickup() && keyIsDown(67)){
+      inventory.push(droppedItems[count].item);
+      droppedItems.splice(count, 1);
+      count--;
+    }
+    count++;
   }
 }
