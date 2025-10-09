@@ -12,5 +12,10 @@ class Message {
 }
 
 function messageDisplay(){
-  for
+  for(let i = 0; i < messages.length; i++){
+    fill(255);
+    textSize(20);
+    text(messages[i].message, messages[i].x, messages[i].y);
+    messages[i].y += 1;
+  }
 }

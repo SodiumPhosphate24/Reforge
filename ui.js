@@ -7,6 +7,10 @@ function drawUI() {
   buffs();
 }
 
+function drawItems(){
+  updateDroppedItems();
+}
+
 function inventory() {
   // draws inventory
   image(InventoryImg, 289, 650, 636, 92);
@@ -73,6 +77,13 @@ class DroppedItem {
     else {
       return false;
     }
+  }
+
+  if (this.checkPickup()){
+    stroke(255, 0, 0);
+    strokeWeight(5);
+    noFill();
+    rect(this.x, this.y, 50, 50);
   }
 }
 

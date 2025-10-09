@@ -1,3 +1,3 @@
-Character: Hes an engineer... goggles on head might be cool
+Character: Hes an engineer... goggles on head might be cool but i dont really have any sense of style so up to you
 Bunch of UI stuff: Inventory hotbar, style up to you, we have one in right now but its just kind of a metal block. I wouldnt be opposed to like a bright blue high techy hotbar, or you could stick with something similar to our current metal design
 Message bubble: Im creating a message display system to tell you new quests and point you in the right direction, a cool high tech (light bright blue) background would be cool

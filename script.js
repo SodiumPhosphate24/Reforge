@@ -77,6 +77,7 @@ function draw() {
   mainHand();
   drawEnemies();
   drawBullets();
+  updateDroppedItems();
   updateParticles(); // Draw particles
   controls();
   resolveCollisions();
@@ -86,6 +87,7 @@ function draw() {
 
   pop();
   drawUI();
+  messageDisplay();
   tint(255, 200);
   image(Fog, pX + camX - 600, pY + camY - 600, width + 1200, height + 1200);
   noTint();
