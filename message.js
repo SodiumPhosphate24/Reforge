@@ -6,11 +6,13 @@ class Message {
       this.y = -200;
       this.vel = 25;
       this.lifespan = 300;
+      this.type = type;
     }
     else if (type == "dialogue") {
       this.index = 0;
       this.x = 600;
       this.y = 500;
+      this.type = type;
     }
   }
 }
