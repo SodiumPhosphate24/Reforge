@@ -17,7 +17,7 @@ function inventory() {
   image(FrameImg, 329 + ((inventorySlot - 1) * 69.71), 649, 79.54, 79.54);
   noStroke();
   for(let i = 0; i < inventoryList.length; i++) {
-    image(inventoryList[i].image, 339 + (i * 69.71), 659, 59.54, 59.54);
+    image(inventoryList[i].image, 339 + (i * 69.71), 659, 50, 50);
   }
 }
 

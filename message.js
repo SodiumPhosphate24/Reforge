@@ -45,7 +45,7 @@ function messageDisplay() {
       textSize(20);
       text(messages[i].message[messages[i].index], messages[i].x, messages[i].y)
       rectMode(CORNER);
-      if(keyIsPressed(90)){
+      if(keyPressedOnce(90)){
         messages[i].index++;
         if(messages[i].index >= messages[i].message.length){
           messages.splice(i, 1);
