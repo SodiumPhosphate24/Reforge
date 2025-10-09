@@ -10,7 +10,7 @@ class Message {
     else if (type == "dialogue") {
       this.x = 600;
       this.y = 500;
-      this.vel = 0;
+      this.message;
     }
   }
 }
