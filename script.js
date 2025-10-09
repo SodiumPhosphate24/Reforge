@@ -326,7 +326,7 @@ function keyPressed() {
     enemies.push(new Enemy("zombie"));
   }
   if (keyCode == 77) {
-    messages.push(new Message("quest", "granny smith apple"))
+    messages.push(new Message("quest", ["granny smith apple", "Red delicious apple", "Honeycrisp apple", "Carrot", "Haha u thought I was gon say apple"]))
   }
   if (keyCode == 86) {
     droppedItems.push(new DroppedItem(new Item("gun", "glock"), pX + 600, pY + 340));
@@ -604,7 +604,7 @@ function drawGunDebugRect() {
 
   // Draw the gun image pointing along +X
   if (inventoryList.length > 0) {
-    image(inventoryList[inventorySlot], recoil, -10, 30, 20);
+    image(inventoryList[inventorySlot-1], recoil, -10, 30, 20);
   } else {
     // Fallback rect if image not loaded
     rectMode(CORNER);
