@@ -17,7 +17,7 @@ function messageDisplay(){
   textAlign(CENTER, CENTER);
   
   for(let i = 0; i < messages.length; i++){
-    fill(100, 255, 255);
+    fill(100, 255, 255, 55+);
     textSize(20);
     textFont(Silkscreen);
     text(messages[i].message, messages[i].x, messages[i].y);
