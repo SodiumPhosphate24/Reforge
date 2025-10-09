@@ -37,7 +37,6 @@ function messageDisplay() {
       }
     }
     if (messages[i].type == "dialogue") {
-      console.log("cheeseburger is big cool");
       rectMode(CENTER);
       fill(0, 0, 0, 200);
       rect(messages[i].x, messages[i].y, 1000, 200);
@@ -46,6 +45,13 @@ function messageDisplay() {
       textSize(20);
       text(messages[i].message[messages[i].index], messages[i].x, messages[i].y)
       rectMode(CORNER);
+      if(keyIsPressed(90)){
+        messages[i].index++;
+        if(messages[i].index >= messages[i].message.length){
+          messages.splice(i, 1);
+          i--;
+        }
+      }
     }
   }
 }

@@ -603,8 +603,8 @@ function drawGunDebugRect() {
   scale(1, flipScale);
 
   // Draw the gun image pointing along +X
-  if (inventoryList.length > 0) {
-    image(inventoryList[inventorySlot-1], recoil, -10, 30, 20);
+  if (inventoryList.length > 0 && inventorySlot-1 <= inventoryList.length) {
+    image(inventoryList[inventorySlot-1].image, recoil, -10, 30, 20);
   } else {
     // Fallback rect if image not loaded
     rectMode(CORNER);
