@@ -67,6 +67,13 @@ class DroppedItem {
   
   draw(){
     image(this.item.image, this.x, this.y, 50, 50);
+    
+    if (this.checkPickup()){
+      stroke(255, 0, 0);
+      strokeWeight(5);
+      noFill();
+      rect(this.x, this.y, 50, 50);
+    }
   }
 
   checkPickup(){
@@ -77,13 +84,6 @@ class DroppedItem {
     else {
       return false;
     }
-  }
-
-  if (this.checkPickup()){
-    stroke(255, 0, 0);
-    strokeWeight(5);
-    noFill();
-    rect(this.x, this.y, 50, 50);
   }
 }
 
