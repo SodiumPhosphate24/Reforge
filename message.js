@@ -10,3 +10,7 @@ class Message {
     }
   }
 }
+
+function messageDisplay(){
+  for
+}

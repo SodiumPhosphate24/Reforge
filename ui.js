@@ -75,3 +75,9 @@ class DroppedItem {
     }
   }
 }
+
+function updateDroppedItems() {
+  for (let i = 0; i < droppedItems.length; i++) {
+    droppedItems[i].draw();
+  }
+}

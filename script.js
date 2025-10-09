@@ -13,7 +13,8 @@ var recoil = 10;
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate"];
 var tileWalls = [0, 0, 0, 2, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
 const pWidth = 35, pHeight = 25;
-let enemies = [], bullets = [];
+var enemies = [], bullets = [], messages = [], droppedItems = [];
+var inventory = [];
 let maxTileTypes = 0; // will be set in setup()
 
 function preload() {
@@ -320,6 +321,10 @@ function keyPressed() {
 
   if (keyCode == 84) {
     enemies.push(new Enemy("zombie"));
+  }
+
+  if (keyCode == 86) {
+    droppedItems.push(new DroppedItem(new Item("gun", "glock"), pX + 600, pY + 340));
   }
 
   if (typeof handleEditorKeyPress === "function") {
@@ -632,4 +637,8 @@ function doRecoil() {
   if (recoil < 10) {
     recoil += 1;
   }
+}
+
+function distance(x1, y1, x2, y2){
+  return sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 }

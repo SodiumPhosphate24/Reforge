@@ -2,6 +2,7 @@ class Enemy {
   constructor(type) {
     this.x = 100 + pX + camX;
     this.y = 100 + pY + camY;
+    this.aggro = false;
     if (type == "zombie") {
       this.type = "zombie";
       this.health = 3;
@@ -11,9 +12,15 @@ class Enemy {
 
   update() {
     // direction vector from enemy -> player
-    this.angle = atan2(pY + 340 - (this.y), pX + 600 - (this.x));
-    this.x += this.speed * cos(this.angle);
-    this.y += this.speed * sin(this.angle);
+    if(distance(this.x, this.y, pX + 600, pY + 340) < 500){
+      this.aggro = true;
+    }
+    
+    if(this.aggro){
+      this.angle = atan2(pY + 340 - (this.y), pX + 600 - (this.x));
+      this.x += this.speed * cos(this.angle);
+      this.y += this.speed * sin(this.angle);
+    }
   }
 
   takeDamage(dmg) {
