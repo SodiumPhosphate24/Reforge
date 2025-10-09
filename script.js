@@ -326,7 +326,7 @@ function keyPressed() {
     enemies.push(new Enemy("zombie"));
   }
   if (keyCode == 77) {
-    messages.push(new Message("quest", "Daniel is big nerd"))
+    messages.push(new Message("dialogue", ["Wing is big nerd", "Cheeseburger is big Cool"]))
   }
   if (keyCode == 86) {
     droppedItems.push(new DroppedItem(new Item("gun", "glock"), pX + 600, pY + 340));
@@ -603,8 +603,8 @@ function drawGunDebugRect() {
   scale(1, flipScale);
 
   // Draw the gun image pointing along +X
-  if (GunImgs && GunImgs[0]) {
-    image(GunImgs[0], recoil, -10, 30, 20);
+  if (inventoryList.length > 0) {
+    image(inventoryList[inventorySlot], recoil, -10, 30, 20);
   } else {
     // Fallback rect if image not loaded
     rectMode(CORNER);

@@ -1,16 +1,16 @@
 class Message {
   constructor(type, message) {
+    this.message = message;
     if (type == "quest") {
       this.x = 600;
       this.y = -200;
       this.vel = 25;
       this.lifespan = 300;
-      this.message = message;
     }
     else if (type == "dialogue") {
+      this.index = 0;
       this.x = 600;
       this.y = 500;
-      this.message;
     }
   }
 }
@@ -34,6 +34,15 @@ function messageDisplay() {
       i--;
     }
   }
-    else if (messages[i].type == "dialogue"){}
+    else if (messages[i].type == "dialogue"){
+      rectMode(CENTER);
+      fill(0, 0, 0, 200);
+      rect(messages[i].x, messages[i].y, 1000, 200, 50);
+      fill(255);
+      textFont(Silkscreen);
+      textSize(20);
+      text(messages[i].message[messages[i].index], messages[i].x, messages[i].y)
+      rectMode(CORNER);
+    }
   }
 }
