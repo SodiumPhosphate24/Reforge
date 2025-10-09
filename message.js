@@ -34,7 +34,7 @@ function messageDisplay() {
         i--;
       }
     }
-    else if (messages[i].type == "dialogue") {
+    if (messages[i].type == "dialogue") {
       console.log("cheeseburger is big cool");
       rectMode(CENTER);
       fill(0, 0, 0, 200);

@@ -326,7 +326,7 @@ function keyPressed() {
     enemies.push(new Enemy("zombie"));
   }
   if (keyCode == 77) {
-    messages.push(new Message("dialogue", ["Wing is big nerd", "Cheeseburger is big Cool"]))
+    messages.push(new Message("quest", "granny smith apple"))
   }
   if (keyCode == 86) {
     droppedItems.push(new DroppedItem(new Item("gun", "glock"), pX + 600, pY + 340));
