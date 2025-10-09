@@ -79,7 +79,7 @@ class DroppedItem {
   }
 
   checkPickup(){
-    let d = distance(pX + 600 + camX, pY + 340 + camY, this.x, this.y);
+    let d = distance(pX + 600, pY + 340, this.x, this.y);
     if (d < 50){
       return true;
     }
