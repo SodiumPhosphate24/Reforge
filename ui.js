@@ -67,12 +67,11 @@ class DroppedItem {
   
   draw(){
     image(this.item.image, this.x, this.y, 50, 50);
-    
     if (this.checkPickup()){
-      stroke(255, 0, 0);
-      strokeWeight(5);
-      noFill();
-      rect(this.x, this.y, 50, 50);
+    stroke(255, 0, 0);
+    strokeWeight(5);
+    noFill();
+    rect(this.x, this.y, 50, 50);
     }
   }
 
@@ -85,6 +84,8 @@ class DroppedItem {
       return false;
     }
   }
+
+  
 }
 
 function updateDroppedItems() {
