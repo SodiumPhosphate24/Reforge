@@ -1,4 +1,5 @@
 body {
+  cursor: url('Cursor.png') 16 16, auto;
   background-color: black;
   margin: 0;
   padding: 0;
