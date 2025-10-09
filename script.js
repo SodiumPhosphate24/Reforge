@@ -647,3 +647,15 @@ function doRecoil() {
 function distance(x1, y1, x2, y2) {
   return sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 }
+let pressedKeys = {};
+
+function keyPressedOnce(k) {
+  if (keyIsDown(k) && !pressedKeys[k]) {
+    pressedKeys[k] = true;
+    return true;  // fires once
+  }
+  if (!keyIsDown(k)) {
+    pressedKeys[k] = false;
+  }
+  return false;
+}
