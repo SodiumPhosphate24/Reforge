@@ -19,7 +19,6 @@ class Message {
 
 function messageDisplay() {
   textAlign(CENTER, CENTER);
-
   for (let i = 0; i < messages.length; i++) {
     if (messages[i].type == "quest") {
       fill(100, 255, 255, messages[i].lifespan);
@@ -36,18 +35,23 @@ function messageDisplay() {
         i--;
       }
     }
+    var displayMessage = "";
+    var person = "";
     if (messages[i].type == "dialogue") {
+      displayMessage = messages[i].message[messages[i].index].split(": ")[1];
+      person = messages[i].message[messages[i].index].split(": ")[0];
       rectMode(CENTER);
       fill(0, 0, 0, 200);
-      rect(messages[i].x, messages[i].y, 1000, 200);
+      rect(messages[i].x, messages[i].y, 1000, 200, 50);
       fill(255);
       textFont(Silkscreen);
       textSize(20);
-      text(messages[i].message[messages[i].index], messages[i].x, messages[i].y)
+      text(person, messages[i].x, messages[i].y - 75)
+      text(displayMessage, messages[i].x, messages[i].y)
       rectMode(CORNER);
-      if(keyPressedOnce(90)){
+      if (keyPressedOnce(90)) {
         messages[i].index++;
-        if(messages[i].index >= messages[i].message.length){
+        if (messages[i].index >= messages[i].message.length) {
           messages.splice(i, 1);
           i--;
         }

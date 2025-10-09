@@ -72,7 +72,7 @@ function draw() {
   image(Buschy, pX + 600, pY + 340, pWidth, pHeight + 35);
 
   // --- Only the gun rotates (isolated) ---
-  drawGunDebugRect(); // uses calculateAim() you said exists
+  drawGunDebugRect(); // uses calculateAim()
   // ---------------------------------------
 
   mainHand();
@@ -326,7 +326,7 @@ function keyPressed() {
     enemies.push(new Enemy("zombie"));
   }
   if (keyCode == 77) {
-    messages.push(new Message("dialogue", ["granny smith apple", "Red delicious apple", "Honeycrisp apple", "Carrot", "Haha u thought I was gon say apple"]))
+    messages.push(new Message("dialogue", ["Buschy: granny smith apple", "Wing: Red delicious apple", "Mario: Honeycrisp apple", "Luigi: Carrot", "Luigi: Haha u thought I was gon say apple"]))
   }
   if (keyCode == 86) {
     droppedItems.push(new DroppedItem(new Item("gun", "glock"), pX + 600, pY + 340));
@@ -603,12 +603,18 @@ function drawGunDebugRect() {
   scale(1, flipScale);
 
   // Draw the gun image pointing along +X
-  if (inventoryList.length > 0 && inventorySlot-1 <= inventoryList.length) {
-    image(inventoryList[inventorySlot-1].image, recoil, -10, 30, 20);
-  } else {
-    // Fallback rect if image not loaded
-    rectMode(CORNER);
+  if (inventoryList.length > 0) {
+    if(inventorySlot-1 <= inventoryList.length){
+      image(inventoryList[inventorySlot-1].image, recoil, -10, 30, 20);
+    }
+    else{
+      rectMode(CORNER);
     rect(0, -5, 20, 10);
+    }
+  } 
+  else {
+    // Fallback rect if image not loaded
+    
   }
   pop();
 
