@@ -14,7 +14,7 @@ var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate
 var tileWalls = [0, 0, 0, 2, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
 const pWidth = 35, pHeight = 25;
 var enemies = [], bullets = [], messages = [], droppedItems = [];
-var inventory = [];
+var inventoryList = [];
 let maxTileTypes = 0; // will be set in setup()
 
 function preload() {

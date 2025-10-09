@@ -3,7 +3,7 @@ class Message {
     if (type == "quest") {
       this.x = 600;
       this.y = -200;
-      this.vel = 20;
+      this.vel = 30;
       this.message = message;
     }
     else if (type == "dialogue") {
@@ -13,8 +13,10 @@ class Message {
 }
 
 function messageDisplay(){
+  textAlign(CENTER, CENTER);
+  
   for(let i = 0; i < messages.length; i++){
-    fill(255);
+    fill(200, 200, 255);
     textSize(20);
     textFont(Silkscreen);
     text(messages[i].message, messages[i].x, messages[i].y);
