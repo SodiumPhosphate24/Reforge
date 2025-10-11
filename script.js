@@ -339,7 +339,11 @@ function keyPressed() {
 
 function mouseClicked() {
   if (!editorMode) {
-    bullets.push(new Bullet("common"));
+    if(inventoryList.length > 0 && inventorySlot-1 < inventoryList.length){
+      if (inventoryList[inventorySlot-1].type == "gun"){
+        bullets.push(new Bullet("common"));
+      }
+    }
   }
 }
 
