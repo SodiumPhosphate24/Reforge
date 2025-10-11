@@ -42,7 +42,7 @@ function messageDisplay() {
       person = messages[i].message[messages[i].index].split(": ")[0];
       rectMode(CENTER);
       fill(0, 0, 0, 200);
-      rect(messages[i].x, messages[i].y, 1000, 200, 50);
+      rect(messages[i].x, messages[i].y, 1000, 200, 5);
       fill(255);
       textFont(Silkscreen);
       textSize(20);
