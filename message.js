@@ -35,11 +35,9 @@ function messageDisplay() {
         i--;
       }
     }
-    var displayMessage = "";
-    var person = "";
-    if (messages[i].type == "dialogue") {
-      displayMessage = messages[i].message[messages[i].index].split(": ")[1];
-      person = messages[i].message[messages[i].index].split(": ")[0];
+    else if (messages[i].type == "dialogue") {
+      var displayMessage = messages[i].message[messages[i].index].split(": ")[1];
+      var person = messages[i].message[messages[i].index].split(": ")[0];
       rectMode(CENTER);
       fill(0, 0, 0, 200);
       rect(messages[i].x, messages[i].y, 1000, 200, 5);
