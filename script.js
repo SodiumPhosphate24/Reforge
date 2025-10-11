@@ -604,7 +604,7 @@ function drawGunDebugRect() {
 
   // Draw the gun image pointing along +X
   if (inventoryList.length > 0) {
-    if(inventorySlot-1 <= inventoryList.length){
+    if(inventorySlot-1 < inventoryList.length){
       image(inventoryList[inventorySlot-1].image, recoil, -10, 30, 20);
     }
     else{
