@@ -322,15 +322,18 @@ function keyPressed() {
   if (keyCode == 69) {
     let count = 0;
     for(let i = 0; i < droppedItems.length; i++){
-      if (droppedItems[count].checkPickup() && inventoryList.length < 8){
-        inventoryList.push(droppedItems[count].item);
-        droppedItems.splice(count, 1);
-        count--;
-      }
-      else if (droppedItems[count].checkPickup() && inventoryList.length >= 8){
-        droppedItems.push(new DroppedItem(inventoryList[inventorySlot-1], pX + 600, pY + 340))
-        inventoryList[inventorySlot-1] = droppedItems[count].item;
-        droppedItems.splice(count, 1);
+      if (droppedItems[count].checkPickup()){
+        if (inventoryList.length < 8){
+          inventoryList.push(droppedItems[count].item);
+          droppedItems.splice(count, 1);
+          count--;
+        }
+        else if (inventoryList.length >= 8){
+          droppedItems.push(new DroppedItem(inventoryList[inventorySlot-1], pX + 600, pY + 340))
+          inventoryList[inventorySlot-1] = droppedItems[count].item;
+          droppedItems.splice(count, 1);
+        }
+        break;
       }
       count++;
     }
