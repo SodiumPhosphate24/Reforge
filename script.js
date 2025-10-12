@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0], Silkscreen;
+let Buschy, InventoryImg, FrameImg, Fog, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], Silkscreen;
 var pX = 0; var pY = 0;
 var prePX = 0, prePY = 0;
 var camX = 0; var camY = 0;
@@ -27,6 +27,7 @@ function preload() {
   BulletImgs[4] = loadImage("Items/Bullets/ExplosiveBullet.png");
   GunImgs[0] = loadImage("Items/Guns/Glock.png");
   GunImgs[1] = loadImage("Items/Guns/WesternPistol.png");
+  GunImgs[2] = loadImage("Items/Guns/RarePistol.png");
   tileImgs[0] = loadImage("Tiles/deadGrass.png");
   tileImgs[1] = loadImage("Tiles/Asphalt.png");
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");
@@ -318,6 +319,23 @@ function keyPressed() {
     inventorySlot = keyCode - 48;
   }
 
+  if (keyCode == 69) {
+    let count = 0;
+    for(let i = 0; i < droppedItems.length; i++){
+      if (droppedItems[count].checkPickup() && inventoryList.length < 8){
+        inventoryList.push(droppedItems[count].item);
+        droppedItems.splice(count, 1);
+        count--;
+      }
+      else if (droppedItems[count].checkPickup() && inventoryList.length >= 8){
+        droppedItems.push(new DroppedItem(inventoryList[inventorySlot-1], pX + 600, pY + 340))
+        inventoryList[inventorySlot-1] = droppedItems[count].item;
+        droppedItems.splice(count, 1);
+      }
+      count++;
+    }
+  }
+
   if (keyCode == 71) {
     speedBuff = !speedBuff;
   }
@@ -330,6 +348,10 @@ function keyPressed() {
   }
   if (keyCode == 86) {
     droppedItems.push(new DroppedItem(new Item("gun", "glock"), pX + 600, pY + 340));
+  }
+
+  if (keyCode == 67) {
+    droppedItems.push(new DroppedItem(new Item("gun", "western"), pX + 600, pY + 340));
   }
 
   if (typeof handleEditorKeyPress === "function") {

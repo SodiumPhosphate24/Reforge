@@ -52,11 +52,24 @@ class Item {
   constructor(type, name){
     if (type == "gun"){
       this.type = "gun";
-      this.name = name;
-      this.image = GunImgs[0];
-      this.damage = 1;
-      this.ammo = 100;
-      this.ammoType = "common";
+      if (name == "glock"){
+        this.name = name;
+        this.image = GunImgs[0];
+        this.damage = 1;
+        this.ammo = 100;
+        this.ammoType = "common";
+      }
+      if (name == "western"){
+        this.name = name;
+        this.image = GunImgs[1];
+        this.damage = 2;
+        this.ammo = 100;
+      }
+      if (name == "rare pistol"){
+        this.name = name;
+        this.image = GunImgs[2];
+        this.damage = 3;
+      }
     }
   }
 }
@@ -69,14 +82,7 @@ class DroppedItem {
   }
   
   draw(){
-      image(this.item.image, this.x, this.y, 50, 50);
-      if (this.checkPickup()){
-      stroke(255, 0, 0);
-      strokeWeight(5);
-      noFill();
-      rect(this.x, this.y, 50, 50);
-      fill(255, 255, 255);
-    }
+    image(this.item.image, this.x, this.y, 50, 50);
   }
 
   checkPickup(){
@@ -93,13 +99,16 @@ class DroppedItem {
 }
 
 function updateDroppedItems() {
+  let count = 0;
   for (let i = 0; i < droppedItems.length; i++) {
-    var count = 0;
-    droppedItems[count].draw();
-    if (droppedItems[count].checkPickup() && keyIsDown(67) && inventoryList.length < 8){
-      inventoryList.push(droppedItems[count].item);
-      droppedItems.splice(count, 1);
-      count--;
+    let item = droppedItems[count];
+    item.draw();
+    if (item.checkPickup()){
+      stroke(255, 0, 0);
+      strokeWeight(5);
+      noFill();
+      rect(item.x, item.y, 50, 50);
+      fill(255, 255, 255);
     }
     count++;
   }
