@@ -7,7 +7,7 @@ function drawUI() {
   buffs();
 }
 
-function drawItems(){
+function drawItems() {
   updateDroppedItems();
 }
 
@@ -16,8 +16,10 @@ function inventory() {
   image(InventoryImg, 289, 650, 636, 92);
   image(FrameImg, 329 + ((inventorySlot - 1) * 69.71), 649, 79.54, 79.54);
   noStroke();
-  for(let i = 0; i < inventoryList.length; i++) {
-    image(inventoryList[i].image, 346 + (i * 69.71), 666, 45, 45);
+  for (let i = 0; i < inventoryList.length; i++) {
+    imageMode(CENTER);
+    image(inventoryList[i].image, 369 + (i * 69.71), 689, 40, 40 * inventoryList[i].HtoW);
+    imageMode(CORNER);
   }
 }
 
@@ -39,8 +41,8 @@ function health() {
   noStroke();
 }
 
-function buffs(){
-  if (speedBuff){
+function buffs() {
+  if (speedBuff) {
     pSpeed = 3;
   }
   else {
@@ -49,45 +51,48 @@ function buffs(){
 }
 
 class Item {
-  constructor(type, name){
-    if (type == "gun"){
+  constructor(type, name) {
+    if (type == "gun") {
       this.type = "gun";
-      if (name == "glock"){
+      if (name == "glock") {
         this.name = name;
         this.image = GunImgs[0];
         this.damage = 1;
         this.ammo = 100;
         this.ammoType = "common";
+        this.HtoW = 0.65;
       }
-      if (name == "western"){
+      if (name == "western") {
         this.name = name;
         this.image = GunImgs[1];
         this.damage = 2;
         this.ammo = 100;
+        this.HtoW = 0.55;
       }
-      if (name == "rare pistol"){
+      if (name == "rare pistol") {
         this.name = name;
         this.image = GunImgs[2];
         this.damage = 3;
+        this.Htow = .46;
       }
     }
   }
 }
 
 class DroppedItem {
-  constructor(item, x, y){
+  constructor(item, x, y) {
     this.item = item;
     this.x = x;
     this.y = y;
   }
-  
-  draw(){
-    image(this.item.image, this.x, this.y, 50, 50);
+
+  draw() {
+    image(this.item.image, this.x, this.y, 50, 50*this.item.HtoW);
   }
 
-  checkPickup(){
+  checkPickup() {
     let d = distance(pX + 600, pY + 340, this.x, this.y);
-    if (d < 50){
+    if (d < 50) {
       return true;
     }
     else {
@@ -95,7 +100,7 @@ class DroppedItem {
     }
   }
 
-  
+
 }
 
 function updateDroppedItems() {
@@ -103,11 +108,11 @@ function updateDroppedItems() {
   for (let i = 0; i < droppedItems.length; i++) {
     let item = droppedItems[count];
     item.draw();
-    if (item.checkPickup()){
-      stroke(255, 0, 0);
+    if (item.checkPickup()) {
+      stroke(255, 0, 0, 100);
       strokeWeight(5);
       noFill();
-      rect(item.x, item.y, 50, 50);
+      rect(item.x, item.y, 50, item.item.HtoW * 50);
       fill(255, 255, 255);
     }
     count++;

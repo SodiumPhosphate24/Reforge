@@ -1,7 +1,7 @@
 class Enemy {
   constructor(type) {
-    this.x = 100 + pX + camX;
-    this.y = 100 + pY + camY;
+    this.x = 100 + pX;
+    this.y = 100 + pY;
     this.aggro = false;
     if (type == "zombie") {
       this.type = "zombie";
