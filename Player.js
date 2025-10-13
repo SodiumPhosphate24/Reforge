@@ -24,4 +24,5 @@ function switchPlayer(newPlayer){
   pSpeed = players[activePlayer].speed;
   healthPoints = players[activePlayer].health;
   playerDamage = players[activePlayer].damage;
+  PlayerImage = players[activePlayer].picture;
 }

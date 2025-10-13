@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0], Silkscreen, Player;
+let Buschy, InventoryImg, FrameImg, Fog, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0], Silkscreen, PlayerImage;
 var itemConstructors = [["gun", "glock"], ["gun", "western"], ["gun", "rare pistol"], ["bullet", "common"], ["bullet", "uncommon"], ["bullet", "rare"], ["bullet", "legendary"], ["consumable", "cheese"], ["consumable", "soda"]];
 var pX = 0; var pY = 0; var playerDamage =1;
 var prePX = 0, prePY = 0;
@@ -49,7 +49,7 @@ function setup() {
   console.log(worldString);
   console.log("asdf");
   maxTileTypes = tileImgs.length;
-  Player = Buschy;
+  PlayerImage = Buschy;
   players.push(new Player(0, 0, pWidth, pHeight, pSpeed, healthPoints, playerDamage, Player));
   players.push(new Player(100, 100, 100, 100, pSpeed, healthPoints, playerDamage, Player));
 }
