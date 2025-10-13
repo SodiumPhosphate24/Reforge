@@ -93,7 +93,7 @@ function draw() {
   pop();
   drawUI();
   messageDisplay();
-  tint(255, 200);
+  
   // Draw fog centered on screen with buffer, constrained to world
   const worldWidth = (gameWorld[0]?.length || 0) * 50;
   const worldHeight = (gameWorld.length || 0) * 50;
@@ -111,6 +111,12 @@ function draw() {
     fogY = constrain(fogY, -(fogSize - worldHeight), 0);
   }
   
+  // Layer 1: First fog layer
+  tint(255, 200);
+  image(Fog, fogX, fogY, fogSize, fogSize);
+  
+  // Layer 2: Second fog layer for darker effect
+  tint(255, 200);
   image(Fog, fogX, fogY, fogSize, fogSize);
   noTint();
   doRecoil();
