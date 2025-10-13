@@ -26,9 +26,11 @@ function switchPlayer(newPlayer){
   pWidth = players[activePlayer].w;
   pHeight = players[activePlayer].h;
   
-  // Immediately center camera on new player
-  camX = -pX;
-  camY = -pY;
+  // Reset velocity to prevent collision errors
+  pXVel = 0;
+  pYVel = 0;
+  
+  // Camera will smoothly pan to new player via controlCamera()
 }
 function drawPlayers(){
   // Draw active player at centered position with 35px visual buffer above hitbox
