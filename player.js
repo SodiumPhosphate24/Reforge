@@ -25,9 +25,19 @@ function switchPlayer(newPlayer){
   healthPoints = players[activePlayer].health;
   playerDamage = players[activePlayer].damage;
   PlayerImage = players[activePlayer].picture;
+  
+  // Immediately center camera on new player
+  camX = -pX;
+  camY = -pY;
 }
 function drawPlayers(){
+  // Draw active player at centered position (600, 375 is screen center offset)
+  image(PlayerImage, pX + 600, pY + 375, pWidth, pHeight);
+  
+  // Draw other players at their world positions
   for (let i = 0; i < players.length; i++){
-    image(players[i].picture, players[i].x, players[i].y, players[i].w, players[i].h);
+    if (i !== activePlayer) {
+      image(players[i].picture, players[i].x + 600, players[i].y + 375, players[i].w, players[i].h);
+    }
   }
 }
