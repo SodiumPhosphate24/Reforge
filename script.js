@@ -94,24 +94,22 @@ function draw() {
   drawUI();
   messageDisplay();
   tint(255, 200);
-  // Constrain fog position to prevent seeing edges
-  // Fog needs to be centered on player but constrained to world bounds
+  // Draw fog centered on screen with buffer, constrained to world
   const worldWidth = (gameWorld[0]?.length || 0) * 50;
   const worldHeight = (gameWorld.length || 0) * 50;
   const fogSize = Math.max(width + 1200, height + 1200);
   
-  // Calculate ideal fog position (centered on screen)
-  let fogX = -600;
-  let fogY = -600;
+  // Fog follows camera with offset to keep it centered
+  let fogX = -600 + camX;
+  let fogY = -600 + camY;
   
-  // Constrain so fog edges never show
-  const minFogX = -(fogSize - worldWidth);
-  const maxFogX = 0;
-  const minFogY = -(fogSize - worldHeight);
-  const maxFogY = 0;
-  
-  fogX = constrain(fogX, minFogX, maxFogX);
-  fogY = constrain(fogY, minFogY, maxFogY);
+  // Only constrain if world is smaller than fog
+  if (worldWidth < fogSize) {
+    fogX = constrain(fogX, -(fogSize - worldWidth), 0);
+  }
+  if (worldHeight < fogSize) {
+    fogY = constrain(fogY, -(fogSize - worldHeight), 0);
+  }
   
   image(Fog, fogX, fogY, fogSize, fogSize);
   noTint();
