@@ -44,44 +44,43 @@ function keyPressed() {
   }
 
   if (keyCode == 69) {
-    let count = 0;
-    for(let i = 0; i < droppedItems.length; i++){
-      if (droppedItems[count].checkPickup()){
-        if (droppedItems[count].item.stackable){
+    for(let i = droppedItems.length - 1; i >= 0; i--){
+      if (droppedItems[i].checkPickup()){
+        if (droppedItems[i].item.stackable){
+          let stacked = false;
           for (let j = 0; j < inventoryList.length; j++){
-            if (inventoryList[j].name == droppedItems[count].item.name){
-              inventoryList[j].amount += droppedItems[count].item.amount;
-              droppedItems.splice(count, 1);
-              count--;
+            if (inventoryList[j].name == droppedItems[i].item.name){
+              inventoryList[j].amount += droppedItems[i].item.amount;
+              droppedItems.splice(i, 1);
+              stacked = true;
               break;
             }
           }
-          if (inventoryList.length < 8){
-            inventoryList.push(droppedItems[count].item);
-            droppedItems.splice(count, 1);
-            count--;
-          }
-          else if (inventoryList.length >= 8){
-            droppedItems.push(new DroppedItem(inventoryList[inventorySlot-1], pX + 600, pY + 340))
-            inventoryList[inventorySlot-1] = droppedItems[count].item;
-            droppedItems.splice(count, 1);
+          if (!stacked) {
+            if (inventoryList.length < 8){
+              inventoryList.push(droppedItems[i].item);
+              droppedItems.splice(i, 1);
+            }
+            else if (inventoryList.length >= 8){
+              droppedItems.push(new DroppedItem(inventoryList[inventorySlot-1], pX + 600, pY + 340))
+              inventoryList[inventorySlot-1] = droppedItems[i].item;
+              droppedItems.splice(i, 1);
+            }
           }
         }
         else{
           if (inventoryList.length < 8){
-            inventoryList.push(droppedItems[count].item);
-            droppedItems.splice(count, 1);
-            count--;
+            inventoryList.push(droppedItems[i].item);
+            droppedItems.splice(i, 1);
           }
           else if (inventoryList.length >= 8){
             droppedItems.push(new DroppedItem(inventoryList[inventorySlot-1], pX + 600, pY + 340))
-            inventoryList[inventorySlot-1] = droppedItems[count].item;
-            droppedItems.splice(count, 1);
+            inventoryList[inventorySlot-1] = droppedItems[i].item;
+            droppedItems.splice(i, 1);
           }
           break;
         }
       }
-      count++;
     }
   }
 
