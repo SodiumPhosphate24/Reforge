@@ -73,9 +73,6 @@ function draw() {
   drawWorldLayer(gameWorld, 1);
 
   fill(255);
-  // shadow directly under player
-  fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
-  ellipse(pX + 600 + pWidth / 2, pY + 375 + pHeight, 35, 21);
   drawPlayers();
 
   // --- Only the gun rotates (isolated) ---
@@ -98,9 +95,25 @@ function draw() {
   messageDisplay();
   tint(255, 200);
   // Constrain fog position to prevent seeing edges
-  const fogX = constrain(pX + camX - 600, -width, (gameWorld[0]?.length || 0) * 50 - width);
-  const fogY = constrain(pY + camY - 600, -height, (gameWorld.length || 0) * 50 - height);
-  image(Fog, fogX, fogY, width + 1200, height + 1200);
+  // Fog needs to be centered on player but constrained to world bounds
+  const worldWidth = (gameWorld[0]?.length || 0) * 50;
+  const worldHeight = (gameWorld.length || 0) * 50;
+  const fogSize = Math.max(width + 1200, height + 1200);
+  
+  // Calculate ideal fog position (centered on screen)
+  let fogX = -600;
+  let fogY = -600;
+  
+  // Constrain so fog edges never show
+  const minFogX = -(fogSize - worldWidth);
+  const maxFogX = 0;
+  const minFogY = -(fogSize - worldHeight);
+  const maxFogY = 0;
+  
+  fogX = constrain(fogX, minFogX, maxFogX);
+  fogY = constrain(fogY, minFogY, maxFogY);
+  
+  image(Fog, fogX, fogY, fogSize, fogSize);
   noTint();
   doRecoil();
   if (editorMode) {
