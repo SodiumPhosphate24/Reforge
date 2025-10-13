@@ -73,9 +73,9 @@ function draw() {
   drawWorldLayer(gameWorld, 1);
 
   fill(255);
-  // shadow
+  // shadow (adjusted for 35px visual buffer)
   fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
-  ellipse(pX + 617, pY + 395, 35, 21);
+  ellipse(pX + 617, pY + 395 + 35, 35, 21);
   drawPlayers();
 
   // --- Only the gun rotates (isolated) ---
