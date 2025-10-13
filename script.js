@@ -1,6 +1,6 @@
 let Buschy, InventoryImg, FrameImg, Fog, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0], Silkscreen, PlayerImage;
 var itemConstructors = [["gun", "glock", 1], ["gun", "western", 1], ["gun", "rare pistol", 1], ["bullet", "common", 50], ["bullet", "uncommon", 40], ["bullet", "rare", 30], ["bullet", "legendary", 10], ["consumable", "cheese", 1], ["consumable", "soda", 1]];
-var pX = 0; var pY = 0; var playerDamage =1;
+var pX = 0; var pY = 0; var playerDamage = 1;
 var prePX = 0, prePY = 0;
 var camX = 0; var camY = 0;
 var pSpeed = 1.3;
@@ -14,7 +14,7 @@ var recoil = 10;
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate"];
 var tileWalls = [0, 0, 0, 2, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
 const pWidth = 35, pHeight = 25;
-var enemies = [], bullets = [], messages = [], droppedItems = []; 
+var enemies = [], bullets = [], messages = [], droppedItems = [];
 var inventoryList = [];
 let maxTileTypes = 0; // will be set in setup()
 
@@ -50,8 +50,8 @@ function setup() {
   console.log("asdf");
   maxTileTypes = tileImgs.length;
   PlayerImage = Buschy;
-  players.push(new Player(0, 0, pWidth, pHeight, pSpeed, healthPoints, playerDamage, Player));
-  players.push(new Player(100, 100, 100, 100, .5, healthPoints, playerDamage, Player));
+  players.push(new Player(0, 0, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
+  players.push(new Player(100, 100, 100, 100, .5, healthPoints, playerDamage, PlayerImage));
 }
 
 function draw() {
@@ -532,17 +532,17 @@ function drawGunDebugRect() {
 
   // Draw the gun image pointing along +X
   if (inventoryList.length > 0) {
-    if(inventorySlot-1 < inventoryList.length){
-      image(inventoryList[inventorySlot-1].image, recoil, -10, 30, 20);
+    if (inventorySlot - 1 < inventoryList.length) {
+      image(inventoryList[inventorySlot - 1].image, recoil, -10, 30, 20);
     }
-    else{
+    else {
       rectMode(CORNER);
-    rect(0, -5, 20, 10);
+      rect(0, -5, 20, 10);
     }
-  } 
+  }
   else {
     // Fallback rect if image not loaded
-    
+
   }
   pop();
 
