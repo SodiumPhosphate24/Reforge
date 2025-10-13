@@ -12,6 +12,6 @@ class Player {
     this.picture = picture;
   }
   getImage(){
-    
+    return picture;
   }
 }
