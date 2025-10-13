@@ -11,14 +11,14 @@ class Player {
     this.damage = damage;
     this.picture = picture;
   }
-  getImage(){
+  getImage() {
     return picture;
   }
 }
-function switchPlayer(newPlayer){
+function switchPlayer(newPlayer) {
   activePlayer = newPlayer;
-  pX = players[activePlayer].x;
-  pY = players[activePlayer].y;
+  pX = players[activePlayer].x - 600;
+  pY = players[activePlayer].y - 375;
   pWidth = players[activePlayer].w;
   pHeight = players[activePlayer].h;
   pSpeed = players[activePlayer].speed;
@@ -26,8 +26,8 @@ function switchPlayer(newPlayer){
   playerDamage = players[activePlayer].damage;
   PlayerImage = players[activePlayer].picture;
 }
-function drawPlayers(){
-  for (let i = 0; i < players.length; i++){
+function drawPlayers() {
+  for (let i = 0; i < players.length; i++) {
     image(players[i].picture, players[i].x, players[i].y, players[i].w, players[i].h);
   }
 }
