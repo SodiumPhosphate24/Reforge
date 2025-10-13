@@ -49,11 +49,13 @@ function keyPressed() {
         if (droppedItems[i].item.stackable){
           let stacked = false;
           for (let j = 0; j < inventoryList.length; j++){
-            if (inventoryList[j].name == droppedItems[i].item.name){
-              inventoryList[j].amount += droppedItems[i].item.amount;
-              droppedItems.splice(i, 1);
-              stacked = true;
-              break;
+            if (inventoryList[j] != null){
+              if (inventoryList[j].name == droppedItems[i].item.name){
+                inventoryList[j].amount += droppedItems[i].item.amount;
+                droppedItems.splice(i, 1);
+                stacked = true;
+                break;
+              }
             }
           }
           if (!stacked) {
