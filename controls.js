@@ -58,7 +58,7 @@ function keyPressed() {
           }
           if (!stacked) {
             if (inventoryList[inventorySlot-1] != null){
-              inventoryList.[inventorySlot-1] = (droppedItems[i].item);
+              inventoryList[inventorySlot-1] = (droppedItems[i].item);
               droppedItems.splice(i, 1);
             }
             else{
