@@ -51,7 +51,7 @@ function setup() {
   maxTileTypes = tileImgs.length;
   PlayerImage = Buschy;
   players.push(new Player(0, 0, pWidth, pHeight, pSpeed, healthPoints, playerDamage, Player));
-  players.push(new Player(100, 100, 100, 100, pSpeed, healthPoints, playerDamage, Player));
+  players.push(new Player(100, 100, 100, 100, .5, healthPoints, playerDamage, Player));
 }
 
 function draw() {
