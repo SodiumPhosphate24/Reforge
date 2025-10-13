@@ -76,6 +76,46 @@ class Item {
         this.Htow = .46;
       }
     }
+
+    if (type == "bullet"){
+      if (name == "common"){
+        this.name = name;
+        this.image = BulletImgs[0];
+        this.damage = 1;
+        this.HtoW = 3.5;
+      }
+      if (name == "uncommon"){
+        this.name = name;
+        this.image = BulletImgs[1];
+        this.damage = 2;
+        this.HtoW = 3.5;
+      }
+      if (name == "rare"){
+        this.name = name;
+        this.image = BulletImgs[2];
+        this.damage = 3;
+        this.HtoW = 3.5;
+      }
+      if (name == "legendary"){
+        this.name = name;
+        this.image = BulletImgs[3];
+        this.damage = 4;
+        this.HtoW = 3.5;
+      }
+    }
+
+    if (type == "consumable"){
+      if (name == "cheese") {
+        this.name = name;
+        this.image = itemImgs[0];
+        this.HtoW = .8;
+      }
+      if (name == "soda") {
+        this.name = name;
+        this.image = itemImgs[1];
+        this.HtoW = 1.64;
+      }
+    }
   }
 }
 

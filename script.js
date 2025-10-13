@@ -1,4 +1,5 @@
-let Buschy, InventoryImg, FrameImg, Fog, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], Silkscreen;
+let Buschy, InventoryImg, FrameImg, Fog, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0], Silkscreen;
+var itemConstructors = [["gun", "glock"], ["gun", "western"], ["gun", "rare pistol"], ["bullet", "common"], ["bullet", "uncommon"], ["bullet", "rare"], ["bullet", "legendary"], ["consumable", "cheese"], ["consumable", "soda"]];
 var pX = 0; var pY = 0;
 var prePX = 0, prePY = 0;
 var camX = 0; var camY = 0;
@@ -13,7 +14,7 @@ var recoil = 10;
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate"];
 var tileWalls = [0, 0, 0, 2, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
 const pWidth = 35, pHeight = 25;
-var enemies = [], bullets = [], messages = [], droppedItems = [];
+var enemies = [], bullets = [], messages = [], droppedItems = []; 
 var inventoryList = [];
 let maxTileTypes = 0; // will be set in setup()
 
@@ -34,6 +35,8 @@ function preload() {
   tileImgs[3] = loadImage("Tiles/Concrete.png");
   tileImgs[4] = loadImage("Tiles/Brick.png");
   tileImgs[5] = loadImage("Tiles/Crate.png");
+  itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
+  itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   InventoryImg = loadImage("hud/Inventory.png");
   FrameImg = loadImage("hud/Frame.png");
   Fog = loadImage("hud/Fog.png");
@@ -46,6 +49,7 @@ function setup() {
   console.log(worldString);
   console.log("asdf");
   maxTileTypes = tileImgs.length;
+  players.push(new Player(0, 0, 35, 25, 1.3, 1.3, 1, "Buschy"));
 }
 
 function draw() {
@@ -354,7 +358,8 @@ function keyPressed() {
   }
 
   if (keyCode == 67) {
-    droppedItems.push(new DroppedItem(new Item("gun", "western"), pX + 600, pY + 340));
+    let r = Math.floor(Math.random() * itemConstructors.length);
+    droppedItems.push(new DroppedItem(new Item(itemConstructors[r][0], itemConstructors[r][1]), pX + 600, pY + 340));
   }
 
   if (typeof handleEditorKeyPress === "function") {
