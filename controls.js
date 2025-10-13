@@ -86,6 +86,8 @@ function keyPressed() {
     }
   }
 
+  if (keyCode == 90)
+
   if (keyCode == 71) {
     speedBuff = !speedBuff;
   }
