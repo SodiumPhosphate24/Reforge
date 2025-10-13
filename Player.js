@@ -26,3 +26,8 @@ function switchPlayer(newPlayer){
   playerDamage = players[activePlayer].damage;
   PlayerImage = players[activePlayer].picture;
 }
+function drawPlayers(){
+  for (let i = 0; i < players.length; i++){
+    image(players[i].picture, players[i].x, players[i].y, players[i].w, players[i].h);
+  }
+}
