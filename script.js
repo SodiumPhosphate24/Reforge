@@ -94,11 +94,25 @@ function draw() {
   drawUI();
   messageDisplay();
   
-  // Draw fog following player position, constrained to screen
+  // Draw fog sticking to player position, constrained to never leave screen
   tint(255, 200);
-  const fogX = constrain(pX - 600, -width, 0);
-  const fogY = constrain(pY - 600, -height, 0);
-  image(Fog, fogX, fogY, width + 1200, height + 1200);
+  const fogSize = width + 1200;
+  const fogSizeY = height + 1200;
+  
+  // Center fog on player position
+  let fogX = pX + 600 + pWidth / 2 - fogSize / 2;
+  let fogY = pY + 375 + pHeight / 2 - fogSizeY / 2;
+  
+  // Constrain so fog never leaves the screen edges
+  const minFogX = -fogSize + width;
+  const maxFogX = 0;
+  const minFogY = -fogSizeY + height;
+  const maxFogY = 0;
+  
+  fogX = constrain(fogX, minFogX, maxFogX);
+  fogY = constrain(fogY, minFogY, maxFogY);
+  
+  image(Fog, fogX, fogY, fogSize, fogSizeY);
   noTint();
   doRecoil();
   if (editorMode) {
