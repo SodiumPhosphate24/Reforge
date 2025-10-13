@@ -57,11 +57,11 @@ function keyPressed() {
             }
           }
           if (!stacked) {
-            if (inventoryList.length < 8){
+            if (inventoryList[inventorySlot-1] != null){
               inventoryList.[inventorySlot-1] = (droppedItems[i].item);
               droppedItems.splice(i, 1);
             }
-            else if (inventoryList.length >= 8){
+            else{
               droppedItems.push(new DroppedItem(inventoryList[inventorySlot-1], pX + 600, pY + 340))
               inventoryList[inventorySlot-1] = droppedItems[i].item;
               droppedItems.splice(i, 1);
@@ -69,11 +69,11 @@ function keyPressed() {
           }
         }
         else{
-          if (inventoryList.length < 8){
+          if (inventoryList[inventorySlot-1] != null){
             inventoryList.push(droppedItems[i].item);
             droppedItems.splice(i, 1);
           }
-          else if (inventoryList.length >= 8){
+          else{
             droppedItems.push(new DroppedItem(inventoryList[inventorySlot-1], pX + 600, pY + 340))
             inventoryList[inventorySlot-1] = droppedItems[i].item;
             droppedItems.splice(i, 1);
