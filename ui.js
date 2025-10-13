@@ -17,13 +17,15 @@ function inventory() {
   image(FrameImg, 329 + ((inventorySlot - 1) * 69.71), 649, 79.54, 79.54);
   noStroke();
   for (let i = 0; i < inventoryList.length; i++) {
-    imageMode(CENTER);
-    image(inventoryList[i].image, 369 + (i * 69.71), 689, 40, 40 * inventoryList[i].HtoW);
-    if (inventoryList[i].stackable){
-      textSize(20);
-      textFont(Silkscreen);
-      fill(0, 0, 0, 200);
-      text(inventoryList[i].amount, 369 + (i * 69.71), 700);
+    if (inventoryList[i] != null){
+      imageMode(CENTER);
+      image(inventoryList[i].image, 369 + (i * 69.71), 689, 40, 40 * inventoryList[i].HtoW);
+      if (inventoryList[i].stackable){
+        textSize(20);
+        textFont(Silkscreen);
+        fill(0, 0, 0, 200);
+        text(inventoryList[i].amount, 369 + (i * 69.71), 700);
+      }
     }
     imageMode(CORNER);
   }
