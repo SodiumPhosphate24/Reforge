@@ -11,4 +11,5 @@ class Player {
     this.damage = damage;
     this.picture = picture;
   }
+  getImage()
 }
