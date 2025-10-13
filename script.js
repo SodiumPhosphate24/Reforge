@@ -94,30 +94,11 @@ function draw() {
   drawUI();
   messageDisplay();
   
-  // Draw fog centered on screen with buffer, constrained to world
-  const worldWidth = (gameWorld[0]?.length || 0) * 50;
-  const worldHeight = (gameWorld.length || 0) * 50;
-  const fogSize = Math.max(width + 1200, height + 1200);
-  
-  // Fog follows camera with offset to keep it centered
-  let fogX = -600 + camX;
-  let fogY = -600 + camY;
-  
-  // Only constrain if world is smaller than fog
-  if (worldWidth < fogSize) {
-    fogX = constrain(fogX, -(fogSize - worldWidth), 0);
-  }
-  if (worldHeight < fogSize) {
-    fogY = constrain(fogY, -(fogSize - worldHeight), 0);
-  }
-  
-  // Layer 1: First fog layer
+  // Draw fog following player position, constrained to screen
   tint(255, 200);
-  image(Fog, fogX, fogY, fogSize, fogSize);
-  
-  // Layer 2: Second fog layer for darker effect
-  tint(255, 200);
-  image(Fog, fogX, fogY, fogSize, fogSize);
+  const fogX = constrain(pX - 600, -width, 0);
+  const fogY = constrain(pY - 600, -height, 0);
+  image(Fog, fogX, fogY, width + 1200, height + 1200);
   noTint();
   doRecoil();
   if (editorMode) {
