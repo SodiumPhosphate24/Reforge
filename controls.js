@@ -86,7 +86,12 @@ function keyPressed() {
     }
   }
 
-  if (keyCode == 90)
+  if (keyCode == 88) {
+    if (inventoryList[inventorySlot-1] != null){
+      droppedItems.push(new DroppedItem(inventoryList[inventorySlot-1], pX + 600, pY + 340));
+      inventoryList[inventorySlot-1] = null;
+    }
+  }
 
   if (keyCode == 71) {
     speedBuff = !speedBuff;
