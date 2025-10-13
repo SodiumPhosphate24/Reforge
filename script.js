@@ -1,6 +1,6 @@
-let Buschy, InventoryImg, FrameImg, Fog, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0], Silkscreen;
+let Buschy, InventoryImg, FrameImg, Fog, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0], Silkscreen, Player;
 var itemConstructors = [["gun", "glock"], ["gun", "western"], ["gun", "rare pistol"], ["bullet", "common"], ["bullet", "uncommon"], ["bullet", "rare"], ["bullet", "legendary"], ["consumable", "cheese"], ["consumable", "soda"]];
-var pX = 0; var pY = 0;
+var pX = 0; var pY = 0; var playerDamage =1;
 var prePX = 0, prePY = 0;
 var camX = 0; var camY = 0;
 var pSpeed = 1.3;
@@ -49,7 +49,9 @@ function setup() {
   console.log(worldString);
   console.log("asdf");
   maxTileTypes = tileImgs.length;
-  players.push(new Player(0, 0, 35, 25, 1.3, 1.3, 1, "Buschy"));
+  Player = Buschy;
+  players.push(new Player(0, 0, pWidth, pHeight, pSpeed, healthPoints, playerDamage, Player));
+  players.push(new Player(100, 100, pWidth, pHeight, pSpeed, healthPoints, playerDamage, Player));
 }
 
 function draw() {
@@ -327,17 +329,39 @@ function keyPressed() {
     let count = 0;
     for(let i = 0; i < droppedItems.length; i++){
       if (droppedItems[count].checkPickup()){
-        if (inventoryList.length < 8){
-          inventoryList.push(droppedItems[count].item);
-          droppedItems.splice(count, 1);
-          count--;
+        if (droppedItems[count].item.stackable){
+          for (let j = 0; j < inventoryList.length; j++){
+            if (inventoryList[j].name == droppedItems[count].item.name){
+              inventoryList[j].amount += droppedItems[count].item.amount;
+              droppedItems.splice(count, 1);
+              count--;
+              break;
+            }
+          }
+          if (inventoryList.length < 8){
+            inventoryList.push(droppedItems[count].item);
+            droppedItems.splice(count, 1);
+            count--;
+          }
+          else if (inventoryList.length >= 8){
+            droppedItems.push(new DroppedItem(inventoryList[inventorySlot-1], pX + 600, pY + 340))
+            inventoryList[inventorySlot-1] = droppedItems[count].item;
+            droppedItems.splice(count, 1);
+          }
         }
-        else if (inventoryList.length >= 8){
-          droppedItems.push(new DroppedItem(inventoryList[inventorySlot-1], pX + 600, pY + 340))
-          inventoryList[inventorySlot-1] = droppedItems[count].item;
-          droppedItems.splice(count, 1);
+        else{
+          if (inventoryList.length < 8){
+            inventoryList.push(droppedItems[count].item);
+            droppedItems.splice(count, 1);
+            count--;
+          }
+          else if (inventoryList.length >= 8){
+            droppedItems.push(new DroppedItem(inventoryList[inventorySlot-1], pX + 600, pY + 340))
+            inventoryList[inventorySlot-1] = droppedItems[count].item;
+            droppedItems.splice(count, 1);
+          }
+          break;
         }
-        break;
       }
       count++;
     }

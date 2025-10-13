@@ -15,3 +15,13 @@ class Player {
     return picture;
   }
 }
+function switchPlayer(newPlayer){
+  activePlayer = newPlayer;
+  pX = players[activePlayer].x;
+  pY = players[activePlayer].y;
+  pWidth = players[activePlayer].w;
+  pHeight = players[activePlayer].h;
+  pSpeed = players[activePlayer].speed;
+  healthPoints = players[activePlayer].health;
+  playerDamage = players[activePlayer].damage;
+}

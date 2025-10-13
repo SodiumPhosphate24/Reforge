@@ -19,6 +19,12 @@ function inventory() {
   for (let i = 0; i < inventoryList.length; i++) {
     imageMode(CENTER);
     image(inventoryList[i].image, 369 + (i * 69.71), 689, 40, 40 * inventoryList[i].HtoW);
+    if (inventoryList[i].stackable){
+      textSize(20);
+      textFont(Silkscreen);
+      fill(255);
+      text(inventoryList[i].amount, 369 + (i * 69.71), 689);
+    }
     imageMode(CORNER);
   }
 }
@@ -54,6 +60,7 @@ class Item {
   constructor(type, name) {
     if (type == "gun") {
       this.type = "gun";
+      this.stackable = false;
       if (name == "glock") {
         this.name = name;
         this.image = GunImgs[0];
@@ -78,33 +85,42 @@ class Item {
     }
 
     if (type == "bullet"){
+      this.type = "bullet";
+      this.stackable = true;
       if (name == "common"){
         this.name = name;
         this.image = BulletImgs[0];
         this.damage = 1;
         this.HtoW = 3.5;
+        this.amount = 50;
       }
       if (name == "uncommon"){
         this.name = name;
         this.image = BulletImgs[1];
         this.damage = 2;
         this.HtoW = 3.5;
+        this.amount = 40;
       }
       if (name == "rare"){
         this.name = name;
         this.image = BulletImgs[2];
         this.damage = 3;
         this.HtoW = 3.5;
+        this.amount = 30;
       }
       if (name == "legendary"){
         this.name = name;
         this.image = BulletImgs[3];
         this.damage = 4;
         this.HtoW = 3.5;
+        this.amount = 10;
       }
     }
 
     if (type == "consumable"){
+      this.type = "consumable";
+      this.stackable = true;
+      this.amount = 1;
       if (name == "cheese") {
         this.name = name;
         this.image = itemImgs[0];
