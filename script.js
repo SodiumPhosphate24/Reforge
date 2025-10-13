@@ -5,6 +5,7 @@ var prePX = 0, prePY = 0;
 var camX = 0; var camY = 0;
 var pSpeed = 1.3;
 var pXVel = 0; var pYVel = 0;
+var pWidth = 35; var pHeight = 25;
 var gameWorld = [];
 var worldString = "";
 var lastScroll = 0;
@@ -13,7 +14,6 @@ var hotbar = [];
 var recoil = 10;
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate"];
 var tileWalls = [0, 0, 0, 2, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
-const pWidth = 35, pHeight = 25;
 var enemies = [], bullets = [], messages = [], droppedItems = [];
 var inventoryList = [null, null, null, null, null, null, null, null];
 let maxTileTypes = 0; // will be set in setup()
@@ -73,9 +73,9 @@ function draw() {
   drawWorldLayer(gameWorld, 1);
 
   fill(255);
-  // shadow (adjusted for 35px visual buffer)
+  // shadow directly under player
   fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
-  ellipse(pX + 617, pY + 395 + 35, 35, 21);
+  ellipse(pX + 600 + pWidth / 2, pY + 375 + pHeight, 35, 21);
   drawPlayers();
 
   // --- Only the gun rotates (isolated) ---
@@ -97,7 +97,10 @@ function draw() {
   drawUI();
   messageDisplay();
   tint(255, 200);
-  image(Fog, pX + camX - 600, pY + camY - 600, width + 1200, height + 1200);
+  // Constrain fog position to prevent seeing edges
+  const fogX = constrain(pX + camX - 600, -width, (gameWorld[0]?.length || 0) * 50 - width);
+  const fogY = constrain(pY + camY - 600, -height, (gameWorld.length || 0) * 50 - height);
+  image(Fog, fogX, fogY, width + 1200, height + 1200);
   noTint();
   doRecoil();
   if (editorMode) {
