@@ -97,16 +97,17 @@ function draw() {
   // Draw fog centered on camera, constrained to screen
   tint(255, 200);
   const fogSize = width + 1200;
-
+  imageMode(CENTER);
   // Center fog on camera position
-  let fogX = pX+camX+600 - fogSize / 2;
-  let fogY = pY+camY+375 - fogSize / 2;
+  let fogX = pX + camX + 600;
+  let fogY = pY + camY + 375;
 
   // Constrain so fog never leaves the screen edges
   // fogX = constrain(fogX, -fogSize + width, 0);
   // fogY = constrain(fogY, -fogSize + height, 0);
 
   image(Fog, fogX, fogY, fogSize, fogSize);
+  imageMode(CORNER);
   noTint();
   doRecoil();
   if (editorMode) {
