@@ -101,10 +101,8 @@ function draw() {
   // Center fog on camera position
   let fogX = pX + camX + 600;
   let fogY = pY + camY + 375;
-
-  // Constrain so fog never leaves the screen edges
-  // fogX = constrain(fogX, -fogSize + width, 0);
-  // fogY = constrain(fogY, -fogSize + height, 0);
+  fogX = constrain(fogX, width / 2, width / 2);
+  fogY = constrain(fogY, height / 2, height / 2);
 
   image(Fog, fogX, fogY, fogSize, fogSize);
   imageMode(CORNER);
