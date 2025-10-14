@@ -96,7 +96,7 @@ function draw() {
 
   // Draw fog centered on camera, constrained to screen
   tint(255, 200);
-  const fogSize = width + 300;
+  const fogSize = width + 100;
   imageMode(CENTER);
   // Center fog on camera position
   let fogX = pX + camX + 600;
