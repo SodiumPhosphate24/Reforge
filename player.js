@@ -84,8 +84,8 @@ function drawIndicator() {
   
   if (isTransitioning) {
     transitionFrames++;
-    xLerpSpeed = 0.05; // Much slower during transition
-    yLerpSpeed = 0.05;
+    xLerpSpeed = 0.08; // Faster transition
+    yLerpSpeed = 0.08;
     
     // End transition after indicator gets close enough (or after max frames)
     const distance = dist(indicatorCurrentX, indicatorCurrentY, indicatorTargetX, indicatorTargetY);
@@ -105,9 +105,17 @@ function drawIndicator() {
   const hoverOffset = sin(frameCount / 20) * 4;
 
   // Calculate angle from indicator to player (point is at bottom center of image)
+  // Only rotate if indicator is far enough from player to avoid snap
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
-  const angle = atan2(playerCenterY - (indicatorCurrentY + hoverOffset), playerCenterX - indicatorCurrentX) + PI;
+  const distToPlayer = dist(indicatorCurrentX, indicatorCurrentY + hoverOffset, playerCenterX, playerCenterY);
+  
+  let angle;
+  if (distToPlayer > 20) {
+    angle = atan2(playerCenterY - (indicatorCurrentY + hoverOffset), playerCenterX - indicatorCurrentX) + PI;
+  } else {
+    angle = PI; // Keep pointing down when very close to player
+  }
 
   // Draw indicator with fade, hover, and rotation
   push();
