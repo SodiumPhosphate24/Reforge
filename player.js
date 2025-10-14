@@ -5,6 +5,8 @@ var indicatorTargetX = 0; // Target position for smooth transition
 var indicatorTargetY = 0;
 var indicatorCurrentX = 0; // Current position for smooth transition
 var indicatorCurrentY = 0;
+var isTransitioning = false; // Track if switching between players
+var transitionFrames = 0; // Count frames since transition started
 
 class Player {
   constructor(x, y, w, h, speed, health, damage, picture) {
@@ -40,6 +42,10 @@ function switchPlayer(newPlayer) {
   indicatorTargetX = pX + 600 + pWidth / 2;
   indicatorTargetY = pY + 375 - 50; // 50px above player
 
+  // Start transition mode for slower lerp
+  isTransitioning = true;
+  transitionFrames = 0;
+
   // Camera will smoothly pan to new player via controlCamera()
 }
 function drawPlayers() {
@@ -72,9 +78,25 @@ function drawIndicator() {
   indicatorTargetX = pX + 600 + pWidth / 2;
   indicatorTargetY = pY + 375 - 50;
 
-  // Smooth transition to target position (higher Y lerp for minimal lag)
-  indicatorCurrentX = lerp(indicatorCurrentX, indicatorTargetX, 0.3);
-  indicatorCurrentY = lerp(indicatorCurrentY, indicatorTargetY, 0.7);
+  // Use slower lerp during transitions, normal speed otherwise
+  let xLerpSpeed = 0.3;
+  let yLerpSpeed = 0.7;
+  
+  if (isTransitioning) {
+    transitionFrames++;
+    xLerpSpeed = 0.05; // Much slower during transition
+    yLerpSpeed = 0.05;
+    
+    // End transition after indicator gets close enough (or after max frames)
+    const distance = dist(indicatorCurrentX, indicatorCurrentY, indicatorTargetX, indicatorTargetY);
+    if (distance < 5 || transitionFrames > 120) {
+      isTransitioning = false;
+    }
+  }
+
+  // Smooth transition to target position
+  indicatorCurrentX = lerp(indicatorCurrentX, indicatorTargetX, xLerpSpeed);
+  indicatorCurrentY = lerp(indicatorCurrentY, indicatorTargetY, yLerpSpeed);
 
   // Fade in indicator
   indicatorAlpha = lerp(indicatorAlpha, 180, 0.1); // Max alpha of 180 for subtle effect
