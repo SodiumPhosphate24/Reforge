@@ -78,19 +78,34 @@ function drawIndicator() {
   indicatorTargetX = pX + 600 + pWidth / 2;
   indicatorTargetY = pY + 375 - 50;
 
-  // Use slower lerp during transitions, normal speed otherwise
-  let xLerpSpeed = 0.3;
-  let yLerpSpeed = 0.7;
+  // Define normal and transition speeds
+  const normalXSpeed = 0.3;
+  const normalYSpeed = 0.7;
+  const transitionXSpeed = 0.15;
+  const transitionYSpeed = 0.15;
+  
+  let xLerpSpeed = normalXSpeed;
+  let yLerpSpeed = normalYSpeed;
   let waveIntensity = 4; // Default wave intensity
   
   if (isTransitioning) {
     transitionFrames++;
-    xLerpSpeed = 0.15; // Much faster transition
-    yLerpSpeed = 0.15; // Match X speed during transition
-    waveIntensity = 1.5; // Less wavy during transition
-    
-    // End transition after indicator gets close enough (or after max frames)
     const distance = dist(indicatorCurrentX, indicatorCurrentY, indicatorTargetX, indicatorTargetY);
+    
+    // When reasonably close (within 100px), lerp between transition speed and normal speed
+    if (distance < 100) {
+      // Map distance (0-100) to lerp amount (0-1)
+      const lerpAmount = map(distance, 0, 100, 1, 0); // Closer = more normal speed
+      xLerpSpeed = lerp(normalXSpeed, transitionXSpeed, lerpAmount);
+      yLerpSpeed = lerp(normalYSpeed, transitionYSpeed, lerpAmount);
+      waveIntensity = lerp(4, 1.5, lerpAmount);
+    } else {
+      xLerpSpeed = transitionXSpeed;
+      yLerpSpeed = transitionYSpeed;
+      waveIntensity = 1.5;
+    }
+    
+    // End transition after indicator gets very close (or after max frames)
     if (distance < 5 || transitionFrames > 120) {
       isTransitioning = false;
     }
