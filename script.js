@@ -99,8 +99,8 @@ function draw() {
   const fogSize = width + 1200;
 
   // Center fog on camera position
-  let fogX = pX+camX;
-  let fogY = pY+camY;
+  let fogX = pX+camX+600 - fogSize / 2;
+  let fogY = pY+camY+375 - fogSize / 2;
 
   // Constrain so fog never leaves the screen edges
   // fogX = constrain(fogX, -fogSize + width, 0);
