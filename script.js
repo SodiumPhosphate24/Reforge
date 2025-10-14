@@ -103,8 +103,8 @@ function draw() {
   let fogY = pY - camY;
 
   // Constrain so fog never leaves the screen edges
-  fogX = constrain(fogX, -fogSize + width, 0);
-  fogY = constrain(fogY, -fogSize + height, 0);
+  // fogX = constrain(fogX, -fogSize + width, 0);
+  // fogY = constrain(fogY, -fogSize + height, 0);
 
   image(Fog, fogX, fogY, fogSize, fogSize);
   noTint();
