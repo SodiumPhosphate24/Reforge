@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0], Silkscreen, PlayerImage;
+let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0], Silkscreen, PlayerImage;
 var itemConstructors = [["gun", "glock", 1], ["gun", "western", 1], ["gun", "rare pistol", 1], ["bullet", "common", 50], ["bullet", "uncommon", 40], ["bullet", "rare", 30], ["bullet", "legendary", 10], ["consumable", "cheese", 1], ["consumable", "soda", 1]];
 var pX = 0; var pY = 0; var playerDamage = 1;
 var prePX = 0, prePY = 0;
@@ -40,6 +40,7 @@ function preload() {
   InventoryImg = loadImage("hud/Inventory.png");
   FrameImg = loadImage("hud/Frame.png");
   Fog = loadImage("hud/Fog.png");
+  IndicatorImg = loadImage("Indicator.png");
   Silkscreen = loadFont("Silkscreen-Regular.ttf");
 }
 
@@ -53,6 +54,12 @@ function setup() {
   players.push(new Player(0, 0, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
   players.push(new Player(100, 100, 100, 100, .5, healthPoints, playerDamage, PlayerImage));
   players.push(new Player(500, 5000, 25, 25, 2, healthPoints, playerDamage, PlayerImage));
+  
+  // Initialize indicator position
+  indicatorCurrentX = pX + 600 + pWidth / 2;
+  indicatorCurrentY = pY + 375 - 50;
+  indicatorTargetX = indicatorCurrentX;
+  indicatorTargetY = indicatorCurrentY;
 }
 
 function draw() {
