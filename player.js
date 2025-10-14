@@ -72,9 +72,9 @@ function drawIndicator() {
   indicatorTargetX = pX + 600 + pWidth / 2;
   indicatorTargetY = pY + 375 - 50;
 
-  // Smooth transition to target position (higher lerp value for less lag)
+  // Smooth transition to target position (higher Y lerp for minimal lag)
   indicatorCurrentX = lerp(indicatorCurrentX, indicatorTargetX, 0.3);
-  indicatorCurrentY = lerp(indicatorCurrentY, indicatorTargetY, 0.3);
+  indicatorCurrentY = lerp(indicatorCurrentY, indicatorTargetY, 0.7);
 
   // Fade in indicator
   indicatorAlpha = lerp(indicatorAlpha, 180, 0.1); // Max alpha of 180 for subtle effect
