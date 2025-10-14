@@ -82,11 +82,18 @@ function drawIndicator() {
   // Sin wave hover motion (4px range - more confined)
   const hoverOffset = sin(frameCount / 20) * 4;
   
-  // Draw indicator with fade and hover
+  // Calculate angle from indicator to player (point is at bottom center of image)
+  const playerCenterX = pX + 600 + pWidth / 2;
+  const playerCenterY = pY + 375 + pHeight / 2;
+  const angle = atan2(playerCenterY - (indicatorCurrentY + hoverOffset), playerCenterX - indicatorCurrentX);
+  
+  // Draw indicator with fade, hover, and rotation
   push();
   tint(255, indicatorAlpha);
+  translate(indicatorCurrentX, indicatorCurrentY + hoverOffset);
+  rotate(angle + HALF_PI); // Add HALF_PI since point is at bottom center
   imageMode(CENTER);
-  image(IndicatorImg, indicatorCurrentX, indicatorCurrentY + hoverOffset, 30, 30);
+  image(IndicatorImg, 0, 0, 30, 30);
   imageMode(CORNER);
   noTint();
   pop();
