@@ -52,6 +52,7 @@ function setup() {
   PlayerImage = Buschy;
   players.push(new Player(0, 0, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
   players.push(new Player(100, 100, 100, 100, .5, healthPoints, playerDamage, PlayerImage));
+  players.push(new Player(500, 5000, 25, 25, 2, healthPoints, playerDamage, PlayerImage));
 }
 
 function draw() {
