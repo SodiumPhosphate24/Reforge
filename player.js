@@ -72,15 +72,15 @@ function drawIndicator() {
   indicatorTargetX = pX + 600 + pWidth / 2;
   indicatorTargetY = pY + 375 - 50;
   
-  // Smooth transition to target position
-  indicatorCurrentX = lerp(indicatorCurrentX, indicatorTargetX, 0.15);
-  indicatorCurrentY = lerp(indicatorCurrentY, indicatorTargetY, 0.15);
+  // Smooth transition to target position (higher lerp value for less lag)
+  indicatorCurrentX = lerp(indicatorCurrentX, indicatorTargetX, 0.3);
+  indicatorCurrentY = lerp(indicatorCurrentY, indicatorTargetY, 0.3);
   
   // Fade in indicator
   indicatorAlpha = lerp(indicatorAlpha, 180, 0.1); // Max alpha of 180 for subtle effect
   
-  // Sin wave hover motion (10px range)
-  const hoverOffset = sin(frameCount / 20) * 10;
+  // Sin wave hover motion (4px range - more confined)
+  const hoverOffset = sin(frameCount / 20) * 4;
   
   // Draw indicator with fade and hover
   push();
