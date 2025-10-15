@@ -29,7 +29,7 @@ function mousePressed() { }
 function keyPressed() {
   if (keyCode == 81) {
     activePlayer += 1;
-    if (activePlayer >= players.length){
+    if (activePlayer >= players.length) {
       activePlayer = 0;
     }
     switchPlayer(activePlayer);
@@ -44,13 +44,13 @@ function keyPressed() {
   }
 
   if (keyCode == 69) {
-    for(let i = droppedItems.length - 1; i >= 0; i--){
-      if (droppedItems[i].checkPickup()){
-        if (droppedItems[i].item.stackable){
+    for (let i = droppedItems.length - 1; i >= 0; i--) {
+      if (droppedItems[i].checkPickup()) {
+        if (droppedItems[i].item.stackable) {
           let stacked = false;
-          for (let j = 0; j < inventoryList.length; j++){
-            if (inventoryList[j] != null){
-              if (inventoryList[j].name == droppedItems[i].item.name){
+          for (let j = 0; j < inventoryList.length; j++) {
+            if (inventoryList[j] != null) {
+              if (inventoryList[j].name == droppedItems[i].item.name) {
                 inventoryList[j].amount += droppedItems[i].item.amount;
                 droppedItems.splice(i, 1);
                 stacked = true;
@@ -59,25 +59,25 @@ function keyPressed() {
             }
           }
           if (!stacked) {
-            if (inventoryList[inventorySlot-1] == null){
-              inventoryList[inventorySlot-1] = (droppedItems[i].item);
+            if (inventoryList[inventorySlot - 1] == null) {
+              inventoryList[inventorySlot - 1] = (droppedItems[i].item);
               droppedItems.splice(i, 1);
             }
-            else{
-              droppedItems.push(new DroppedItem(inventoryList[inventorySlot-1], pX + 600, pY + 340))
-              inventoryList[inventorySlot-1] = droppedItems[i].item;
+            else {
+              droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], pX + 600, pY + 340))
+              inventoryList[inventorySlot - 1] = droppedItems[i].item;
               droppedItems.splice(i, 1);
             }
           }
         }
-        else{
-          if (inventoryList[inventorySlot-1] == null){
-            inventoryList[inventorySlot-1] = (droppedItems[i].item);
+        else {
+          if (inventoryList[inventorySlot - 1] == null) {
+            inventoryList[inventorySlot - 1] = (droppedItems[i].item);
             droppedItems.splice(i, 1);
           }
-          else{
-            droppedItems.push(new DroppedItem(inventoryList[inventorySlot-1], pX + 600, pY + 340))
-            inventoryList[inventorySlot-1] = droppedItems[i].item;
+          else {
+            droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], pX + 600, pY + 340))
+            inventoryList[inventorySlot - 1] = droppedItems[i].item;
             droppedItems.splice(i, 1);
           }
           break;
@@ -87,9 +87,9 @@ function keyPressed() {
   }
 
   if (keyCode == 88) {
-    if (inventoryList[inventorySlot-1] != null){
-      droppedItems.push(new DroppedItem(inventoryList[inventorySlot-1], pX + 600, pY + 340));
-      inventoryList[inventorySlot-1] = null;
+    if (inventoryList[inventorySlot - 1] != null) {
+      droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], pX + 600, pY + 340));
+      inventoryList[inventorySlot - 1] = null;
     }
   }
 
@@ -102,6 +102,7 @@ function keyPressed() {
   }
   if (keyCode == 77) {
     messages.push(new Message("dialogue", ["Buschy: granny smith apple", "Wing: Red delicious apple", "Mario: Honeycrisp apple", "Luigi: Carrot", "Luigi: Haha u thought I was gon say apple"]))
+    messages.push(new Message("quest", "Big nerd time"))
   }
   if (keyCode == 86) {
     droppedItems.push(new DroppedItem(new Item("gun", "glock", 1), pX + 600, pY + 340));
@@ -119,9 +120,18 @@ function keyPressed() {
 
 function mouseClicked() {
   if (!editorMode) {
-    if(inventoryList.length > 0 && inventorySlot-1 < inventoryList.length){
-      if (inventoryList[inventorySlot-1].type == "gun"){
+    if (inventoryList[inventorySlot - 1] != null) {
+      if (inventoryList[inventorySlot - 1].type == "gun") {
         bullets.push(new Bullet("common"));
+      }
+      if (inventoryList[inventorySlot - 1].type == "consumable") {
+        if (inventoryList[inventorySlot - 1].name == "cheese") {
+          healthPoints += 10;
+          inventoryList[inventorySlot - 1].amount -= 1;
+          if (inventoryList[inventorySlot - 1].amount <= 0) {
+            inventoryList[inventorySlot - 1] = null;
+          }
+        }
       }
     }
   }
