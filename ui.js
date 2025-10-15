@@ -142,6 +142,7 @@ class Item {
       if (name == "rock") {
         this.name = name;
         this.image = projImgs[1];
+        this.HtoW = .75;
       }
     }
   }
