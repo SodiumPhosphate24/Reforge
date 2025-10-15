@@ -78,33 +78,27 @@ function drawIndicator() {
   indicatorTargetX = pX + 600 + pWidth / 2;
   indicatorTargetY = pY + 375 - 50;
 
-  // Use slower lerp during transitions, normal speed otherwise
-  let xLerpSpeed = 0.3;
-  let yLerpSpeed = 0.7;
-  let waveIntensity = 4; // Default wave intensity
+  // Constant fast lerp speed
+  const lerpSpeed = 0.25;
+
+  // Smooth transition to target position
+  indicatorCurrentX = lerp(indicatorCurrentX, indicatorTargetX, lerpSpeed);
+  indicatorCurrentY = lerp(indicatorCurrentY, indicatorTargetY, lerpSpeed);
   
+  // End transition after indicator gets close enough
   if (isTransitioning) {
     transitionFrames++;
-    xLerpSpeed = 0.15; // Much faster transition
-    yLerpSpeed = 0.15; // Match X speed during transition
-    waveIntensity = 1.5; // Less wavy during transition
-    
-    // End transition after indicator gets close enough (or after max frames)
     const distance = dist(indicatorCurrentX, indicatorCurrentY, indicatorTargetX, indicatorTargetY);
     if (distance < 5 || transitionFrames > 120) {
       isTransitioning = false;
     }
   }
 
-  // Smooth transition to target position
-  indicatorCurrentX = lerp(indicatorCurrentX, indicatorTargetX, xLerpSpeed);
-  indicatorCurrentY = lerp(indicatorCurrentY, indicatorTargetY, yLerpSpeed);
-
   // Fade in indicator
   indicatorAlpha = lerp(indicatorAlpha, 180, 0.1); // Max alpha of 180 for subtle effect
 
-  // Sin wave hover motion (variable intensity)
-  const hoverOffset = sin(frameCount / 20) * waveIntensity;
+  // Sin wave hover motion
+  const hoverOffset = sin(frameCount / 20) * 4;
 
   // Calculate angle from indicator to player (point is at bottom center of image)
   // Only rotate if indicator is far enough from player to avoid snap
