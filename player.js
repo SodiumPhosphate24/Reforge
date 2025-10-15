@@ -18,6 +18,7 @@ class Player {
     this.health = health;
     this.damage = damage;
     this.picture = picture;
+    this.inventory = [null, null, null, null, null, null, null, null];
   }
   getImage() {
     return picture;

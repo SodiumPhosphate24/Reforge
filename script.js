@@ -15,7 +15,7 @@ var recoil = 10;
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate"];
 var tileWalls = [0, 0, 0, 2, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
 var enemies = [], bullets = [], messages = [], droppedItems = [];
-var inventoryList = [null, null, null, null, null, null, null, null];
+var inventoryList;
 let maxTileTypes = 0; // will be set in setup()
 
 function preload() {
@@ -65,6 +65,7 @@ function setup() {
 function draw() {
   prePX = pX;
   prePY = pY;
+  inventoryList = players[activePlayer].inventoryList;
   background(50);
   push();
   controlCamera();

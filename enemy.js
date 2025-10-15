@@ -44,7 +44,7 @@ function drawEnemies() {
     rect(enemies[count].x, enemies[count].y, 20, 20);
     if (enemies[count].hitsPlayer()){
       if (enemies[count].type == "zombie"){
-        healthPoints -= 2;
+        players[activePlayer].health -= 2;
       }
     }
     if (enemies[count].isDead()) {
