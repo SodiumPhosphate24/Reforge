@@ -31,17 +31,8 @@ function messageDisplay() {
         messages[i].scale = lerp(messages[i].scale, 1, 0.15);
       }
 
-      // Epic shake effect when appearing
-      if (messages[i].vel > 15) {
-        messages[i].shake = sin(frameCount * 0.5) * 8;
-      } else if (messages[i].vel > 5) {
-        messages[i].shake = sin(frameCount * 0.5) * 4;
-      } else {
-        messages[i].shake = sin(frameCount * 0.3) * 2;
-      }
-
       push();
-      translate(messages[i].x + messages[i].shake, messages[i].y);
+      translate(messages[i].x, messages[i].y);
       scale(messages[i].scale);
 
       // Glow effect
