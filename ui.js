@@ -130,6 +130,20 @@ class Item {
         this.HtoW = 1.64;
       }
     }
+
+    if (type == "projectile") {
+      this.type = "projectile";
+      this.stackable = true;
+      if (name == "grenade") {
+        this.name = name;
+        this.image = projImgs[0];
+        this.HtoW = 1.2;
+      }
+      if (name == "rock") {
+        this.name = name;
+        this.image = projImgs[1];
+      }
+    }
   }
 }
 
