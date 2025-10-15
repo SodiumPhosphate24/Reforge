@@ -116,6 +116,7 @@ function keyPressed() {
   if (typeof handleEditorKeyPress === "function") {
     handleEditorKeyPress();
   }
+  
 }
 
 function mouseClicked() {
