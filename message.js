@@ -9,11 +9,9 @@ class Message {
       this.lifespan = 300;
       this.type = type;
       this.scale = 0; // Start small for scale animation
-      this.targetY = 200; // Target Y position
+      this.pulseScale = 1; // Pulsing effect
+      this.bounceOffset = 0; // Bounce animation
       this.spawnedParticles = false; // Track if particles spawned
-      this.impactGlow = 0; // Bright flash when landing
-      this.hasLanded = false; // Track if animation has landed
-      this.dissolveAmount = 0; // For creative disappear effect
     }
     else if (type == "dialogue") {
       this.index = 0;
@@ -31,89 +29,55 @@ function messageDisplay() {
   textAlign(CENTER, CENTER);
   for (let i = 0; i < messages.length; i++) {
     if (messages[i].type == "quest") {
-      // Smooth Y position lerp to target
-      messages[i].y = lerp(messages[i].y, messages[i].targetY, 0.15);
-      
-      // Smooth scale animation with overshoot
+      // Explosive scale-in animation
       if (messages[i].scale < 1) {
-        messages[i].scale = lerp(messages[i].scale, 1.2, 0.2);
+        messages[i].scale = lerp(messages[i].scale, 1.2, 0.25);
         if (messages[i].scale > 1.15) {
           messages[i].scale = 1;
-          messages[i].hasLanded = true;
-          messages[i].impactGlow = 255; // Bright flash on landing
         }
+      }
+      
+      // Pulsing scale effect for emphasis
+      messages[i].pulseScale = 1 + sin(frameCount * 0.15) * 0.08;
+      
+      // Bounce effect when appearing
+      if (messages[i].vel > 10) {
+        messages[i].bounceOffset = abs(sin(frameCount * 0.3)) * 15;
+      } else if (messages[i].vel > 0) {
+        messages[i].bounceOffset = abs(sin(frameCount * 0.3)) * 8;
+      } else {
+        messages[i].bounceOffset = abs(sin(frameCount * 0.2)) * 3;
       }
       
       // Spawn particle burst on first appearance
       if (!messages[i].spawnedParticles && messages[i].scale > 0.5) {
-        particle(messages[i].x, messages[i].y, [100, 255, 255], 60, 5);
-        particle(messages[i].x, messages[i].y, [255, 255, 255], 50, 4);
+        particle(messages[i].x, messages[i].y, [100, 255, 255], 60, 4);
+        particle(messages[i].x, messages[i].y, [255, 255, 255], 45, 3);
         messages[i].spawnedParticles = true;
       }
       
-      // Fade the impact glow from bright to soft
-      if (messages[i].impactGlow > 0) {
-        messages[i].impactGlow = lerp(messages[i].impactGlow, 0, 0.08);
-      }
-      
-      // Creative dissolve effect when lifespan gets low
-      if (messages[i].lifespan < 60) {
-        messages[i].dissolveAmount = map(messages[i].lifespan, 60, 0, 0, 1);
-      }
-      
       push();
-      translate(messages[i].x, messages[i].y);
-      scale(messages[i].scale);
+      translate(messages[i].x, messages[i].y - messages[i].bounceOffset);
+      scale(messages[i].scale * messages[i].pulseScale);
       
-      // Calculate glow intensity: bright impact fades to soft glow
-      const baseGlow = messages[i].lifespan / 300;
-      const glowIntensity = baseGlow * 0.5 + (messages[i].impactGlow / 255) * 0.8;
+      // Enhanced glow effect with multiple layers
+      drawingContext.shadowBlur = 30;
+      drawingContext.shadowColor = 'rgba(100, 255, 255, ' + (messages[i].lifespan / 300) + ')';
       
-      // Sharp bright flash on impact
-      if (messages[i].impactGlow > 200) {
-        drawingContext.shadowBlur = 50;
-        drawingContext.shadowColor = 'rgba(255, 255, 255, ' + (messages[i].impactGlow / 255) + ')';
-        fill(255, 255, 255, messages[i].impactGlow);
-        textSize(64);
-        textFont(Silkscreen);
-        text(messages[i].message, 0, 0);
-      }
+      // Outer glow
+      fill(100, 255, 255, messages[i].lifespan * 0.3);
+      textSize(64);
+      textFont(Silkscreen);
+      text(messages[i].message, 0, 0);
       
-      // Enhanced glow effect
-      drawingContext.shadowBlur = 30 + messages[i].impactGlow * 0.2;
-      drawingContext.shadowColor = 'rgba(100, 255, 255, ' + glowIntensity + ')';
-      
-      // Dissolve effect: create fragmented appearance
-      if (messages[i].dissolveAmount > 0) {
-        // Draw text in multiple offset positions for dissolve effect
-        for (let j = 0; j < 5; j++) {
-          const offsetX = random(-messages[i].dissolveAmount * 20, messages[i].dissolveAmount * 20);
-          const offsetY = random(-messages[i].dissolveAmount * 20, messages[i].dissolveAmount * 20);
-          const alpha = (1 - messages[i].dissolveAmount) * (messages[i].lifespan * 0.3 + messages[i].impactGlow * 0.5);
-          
-          fill(100, 255, 255, alpha / 5);
-          textSize(64);
-          textFont(Silkscreen);
-          text(messages[i].message, offsetX, offsetY);
-        }
-      } else {
-        // Outer glow (normal)
-        fill(100, 255, 255, messages[i].lifespan * 0.3 + messages[i].impactGlow * 0.5);
-        textSize(64);
-        textFont(Silkscreen);
-        text(messages[i].message, 0, 0);
-      }
-      
-      // Main text with impact brightness and dissolve
-      drawingContext.shadowBlur = 15 + messages[i].impactGlow * 0.15;
-      const mainAlpha = (1 - messages[i].dissolveAmount * 0.7) * (messages[i].lifespan + messages[i].impactGlow * 0.3);
-      fill(100, 255, 255, mainAlpha);
+      // Main text
+      drawingContext.shadowBlur = 15;
+      fill(100, 255, 255, messages[i].lifespan);
       textSize(60);
       text(messages[i].message, 0, 0);
       
-      // Bright inner highlight (stronger during impact, fades with dissolve)
-      const highlightAlpha = (1 - messages[i].dissolveAmount) * (messages[i].lifespan * 0.6 + messages[i].impactGlow * 0.4);
-      fill(255, 255, 255, highlightAlpha);
+      // Bright inner highlight
+      fill(255, 255, 255, messages[i].lifespan * 0.6);
       textSize(60);
       text(messages[i].message, 0, -2);
       
@@ -122,7 +86,10 @@ function messageDisplay() {
       pop();
       
       messages[i].lifespan -= 2;
-      
+      if (messages[i].vel > 0) {
+        messages[i].y += messages[i].vel;
+        messages[i].vel -= 1;
+      }
       if (messages[i].lifespan <= 0) {
         messages.splice(i, 1);
         i--;
