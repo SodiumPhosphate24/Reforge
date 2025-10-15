@@ -75,32 +75,44 @@ class Enemy {
       const prevX = this.x;
       const prevY = this.y;
       
-      // Apply velocity
+      // Try to move both axes first
       this.x += this.vx;
       this.y += this.vy;
       
-      // Check for wall collisions and resolve
+      // Check for wall collisions and resolve with sliding
       if (this.checkWallCollision()) {
-        // Try just reverting X
+        // Revert to previous position
         this.x = prevX;
-        if (this.checkWallCollision()) {
-          // Still colliding, revert Y too
+        this.y = prevY;
+        
+        // Try moving only along X axis (slide horizontally)
+        this.x += this.vx;
+        const canMoveX = !this.checkWallCollision();
+        
+        // Revert X and try moving only along Y axis (slide vertically)
+        this.x = prevX;
+        this.y += this.vy;
+        const canMoveY = !this.checkWallCollision();
+        
+        // Apply whichever direction(s) work
+        if (canMoveX && canMoveY) {
+          // Both axes work independently, use both
           this.x += this.vx;
-          this.y = prevY;
-          if (this.checkWallCollision()) {
-            // Still colliding, revert both
-            this.x = prevX;
-            this.y = prevY;
-            // Reduce velocity when hitting walls
-            this.vx *= 0.5;
-            this.vy *= 0.5;
-            // Force path recalculation if stuck
-            this.pathUpdateTimer = this.pathUpdateInterval;
-          } else {
-            this.vx = 0; // X caused collision
-          }
+        } else if (canMoveX) {
+          // Only X works, slide along wall horizontally
+          this.x += this.vx;
+          this.vy *= 0.7; // Dampen blocked axis
+        } else if (canMoveY) {
+          // Only Y works, slide along wall vertically
+          this.vx *= 0.7; // Dampen blocked axis
         } else {
-          this.vy = 0; // Y caused collision
+          // Neither works, we're stuck in a corner
+          this.x = prevX;
+          this.y = prevY;
+          this.vx *= 0.3;
+          this.vy *= 0.3;
+          // Force path recalculation when stuck
+          this.pathUpdateTimer = this.pathUpdateInterval;
         }
       }
     } else {
