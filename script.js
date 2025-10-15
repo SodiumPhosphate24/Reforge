@@ -37,8 +37,8 @@ function preload() {
   tileImgs[5] = loadImage("Tiles/Crate.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
-  itemImgs[2] = loadImage("Items/Projectiles/Grenade.png");
-  itemImgs[3] = loadImage("Items/Projectiles/Rock.png");
+  projImgs[0] = loadImage("Items/Projectiles/Grenade.png");
+  projImgs[1] = loadImage("Items/Projectiles/Rock.png");
   InventoryImg = loadImage("hud/Inventory.png");
   FrameImg = loadImage("hud/Frame.png");
   Fog = loadImage("hud/Fog.png");
