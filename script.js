@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0], Silkscreen, PlayerImage;
+let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0], Silkscreen, PlayerImage;
 var itemConstructors = [["gun", "glock", 1], ["gun", "western", 1], ["gun", "rare pistol", 1], ["bullet", "common", 50], ["bullet", "uncommon", 40], ["bullet", "rare", 30], ["bullet", "legendary", 10], ["consumable", "cheese", 1], ["consumable", "soda", 1]];
 var pX = 0; var pY = 0; var playerDamage = 1;
 var prePX = 0, prePY = 0;
@@ -37,6 +37,8 @@ function preload() {
   tileImgs[5] = loadImage("Tiles/Crate.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
+  itemImgs[2] = loadImage("Items/Consumables/Water.png");
+  itemImgs[3] = loadImage("Items/Consumables/Chips.png");
   InventoryImg = loadImage("hud/Inventory.png");
   FrameImg = loadImage("hud/Frame.png");
   Fog = loadImage("hud/Fog.png");
