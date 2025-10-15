@@ -9,7 +9,9 @@ class Message {
       this.lifespan = 300;
       this.type = type;
       this.scale = 0; // Start small for scale animation
-      this.shake = 0; // For shake effect
+      this.pulseScale = 1; // Pulsing effect
+      this.bounceOffset = 0; // Bounce animation
+      this.spawnedParticles = false; // Track if particles spawned
     }
     else if (type == "dialogue") {
       this.index = 0;
@@ -27,32 +29,57 @@ function messageDisplay() {
   textAlign(CENTER, CENTER);
   for (let i = 0; i < messages.length; i++) {
     if (messages[i].type == "quest") {
-      // Animate scale in
+      // Explosive scale-in animation
       if (messages[i].scale < 1) {
-        messages[i].scale = lerp(messages[i].scale, 1, 0.15);
+        messages[i].scale = lerp(messages[i].scale, 1.2, 0.25);
+        if (messages[i].scale > 1.15) {
+          messages[i].scale = 1;
+        }
       }
       
-      // Epic shake effect when appearing
-      if (messages[i].vel > 15) {
-        messages[i].shake = sin(frameCount * 0.5) * 8;
-      } else if (messages[i].vel > 5) {
-        messages[i].shake = sin(frameCount * 0.5) * 4;
+      // Pulsing scale effect for emphasis
+      messages[i].pulseScale = 1 + sin(frameCount * 0.15) * 0.08;
+      
+      // Bounce effect when appearing
+      if (messages[i].vel > 10) {
+        messages[i].bounceOffset = abs(sin(frameCount * 0.3)) * 15;
+      } else if (messages[i].vel > 0) {
+        messages[i].bounceOffset = abs(sin(frameCount * 0.3)) * 8;
       } else {
-        messages[i].shake = sin(frameCount * 0.3) * 2;
+        messages[i].bounceOffset = abs(sin(frameCount * 0.2)) * 3;
+      }
+      
+      // Spawn particle burst on first appearance
+      if (!messages[i].spawnedParticles && messages[i].scale > 0.5) {
+        particle(messages[i].x, messages[i].y, [100, 255, 255], 60, 4);
+        particle(messages[i].x, messages[i].y, [255, 255, 255], 45, 3);
+        messages[i].spawnedParticles = true;
       }
       
       push();
-      translate(messages[i].x + messages[i].shake, messages[i].y);
-      scale(messages[i].scale);
+      translate(messages[i].x, messages[i].y - messages[i].bounceOffset);
+      scale(messages[i].scale * messages[i].pulseScale);
       
-      // Glow effect
-      drawingContext.shadowBlur = 20;
+      // Enhanced glow effect with multiple layers
+      drawingContext.shadowBlur = 30;
       drawingContext.shadowColor = 'rgba(100, 255, 255, ' + (messages[i].lifespan / 300) + ')';
       
-      fill(100, 255, 255, messages[i].lifespan);
-      textSize(60);
+      // Outer glow
+      fill(100, 255, 255, messages[i].lifespan * 0.3);
+      textSize(64);
       textFont(Silkscreen);
       text(messages[i].message, 0, 0);
+      
+      // Main text
+      drawingContext.shadowBlur = 15;
+      fill(100, 255, 255, messages[i].lifespan);
+      textSize(60);
+      text(messages[i].message, 0, 0);
+      
+      // Bright inner highlight
+      fill(255, 255, 255, messages[i].lifespan * 0.6);
+      textSize(60);
+      text(messages[i].message, 0, -2);
       
       // Reset shadow
       drawingContext.shadowBlur = 0;
