@@ -93,6 +93,20 @@ function keyPressed() {
     }
   }
 
+  if (keyCode == 76){
+    for (let i = 0; i < inventoryList.length; i++){
+      if (inventoryList[i] != null){
+        if (inventoryList[i].name == "rock" && inventoryList[i].amount > 5){
+          inventoryList[i].amount -= 5;
+          players.push(new Player(pX + 200, pY + 200, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage))
+          if (inventoryList[i].amount <= 0){
+            inventoryList[i] = null;
+          }
+        }
+      }
+    }
+  }
+
   if (keyCode == 71) {
     speedBuff = !speedBuff;
   }
