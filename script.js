@@ -65,7 +65,7 @@ function setup() {
 function draw() {
   prePX = pX;
   prePY = pY;
-  inventoryList = players[activePlayer].inventoryList;
+  inventoryList = players[activePlayer].inventory;
   background(50);
   push();
   controlCamera();
