@@ -7,8 +7,10 @@ class Message {
       this.vel = 25;
       this.lifespan = 300;
       this.type = type;
-      this.scale = 0; // Start small for scale animation
+      this.scale = 0.1; // Start very small for dramatic entrance
+      this.targetScale = 1.5; // Overshoot target for bounce effect
       this.shake = 0; // For shake effect
+      this.glowIntensity = 0; // Animated glow
     }
     else if (type == "dialogue") {
       this.index = 0;
@@ -26,18 +28,36 @@ function messageDisplay() {
   textAlign(CENTER, CENTER);
   for (let i = 0; i < messages.length; i++) {
     if (messages[i].type == "quest") {
-      // Animate scale in
-      if (messages[i].scale < 1) {
+      // Dramatic scale animation with overshoot
+      if (messages[i].scale < messages[i].targetScale) {
+        messages[i].scale = lerp(messages[i].scale, messages[i].targetScale, 0.25);
+        messages[i].glowIntensity = lerp(messages[i].glowIntensity, 60, 0.2);
+      } else if (messages[i].targetScale > 1) {
+        // Settle back down to normal size after overshoot
+        messages[i].targetScale = 1;
         messages[i].scale = lerp(messages[i].scale, 1, 0.15);
+      }
+
+      // Fade glow after settling
+      if (messages[i].targetScale <= 1 && messages[i].scale > 0.98) {
+        messages[i].glowIntensity = lerp(messages[i].glowIntensity, 20, 0.1);
       }
 
       push();
       translate(messages[i].x, messages[i].y);
       scale(messages[i].scale);
 
-      // Glow effect
-      drawingContext.shadowBlur = 20;
+      // Intense glow effect that fades
+      drawingContext.shadowBlur = messages[i].glowIntensity;
       drawingContext.shadowColor = 'rgba(100, 255, 255, ' + (messages[i].lifespan / 300) + ')';
+
+      // Draw text multiple times for extra glow during entrance
+      if (messages[i].glowIntensity > 40) {
+        fill(100, 255, 255, 80);
+        textSize(60);
+        textFont(Silkscreen);
+        text(messages[i].message, 0, 0);
+      }
 
       fill(100, 255, 255, messages[i].lifespan);
       textSize(60);
