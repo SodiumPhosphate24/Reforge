@@ -93,16 +93,32 @@ function keyPressed() {
     }
   }
 
-  if (keyCode == 76){
-    for (let i = 0; i < inventoryList.length; i++){
-      if (inventoryList[i] != null){
-        if (inventoryList[i].name == "rock" && inventoryList[i].amount >= 5){
-          inventoryList[i].amount -= 5;
-          players.push(new Player(pX + 200, pY + 200, 35, 25, 10, 50, 1, PlayerImage));
-          if (inventoryList[i].amount <= 0){
-            inventoryList[i] = null;
-          }
+  if (keyCode == 76) {
+    let hasRocks = false;
+    let rocksIndex = 0;
+    let hasCheese = false;
+    let cheeseIndex = 0;
+    for (let i = 0; i < inventoryList.length; i++) {
+      if (inventoryList[i] != null) {
+        if (inventoryList[i].name == "rock" && inventoryList[i].amount >= 5) {
+          hasRocks = true;
+          rocksIndex = i;
         }
+        if (inventoryList[i].name == "cheese") {
+          hasCheese = true;
+          cheeseIndex = i;
+        }
+      }
+    }
+    if (hasRocks && hasCheese) {
+      inventoryList[rocksIndex].amount -= 5;
+      inventoryList[cheeseIndex].amount -= 1;
+      players.push(new Player(pX + 50, pY, 35, 25, 10, 50, 1, PlayerImage));
+      if (inventoryList[rocksIndex].amount <= 0) {
+        inventoryList[rocksIndex] = null;
+      }
+      if (inventoryList[cheeseIndex].amount <= 0) {
+        inventoryList[cheeseIndex] = null;
       }
     }
   }
@@ -130,7 +146,7 @@ function keyPressed() {
   if (typeof handleEditorKeyPress === "function") {
     handleEditorKeyPress();
   }
-  
+
 }
 
 function mouseClicked() {

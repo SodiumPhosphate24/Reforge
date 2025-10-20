@@ -15,6 +15,7 @@ class Player {
     this.w = w;
     this.h = h;
     this.speed = speed;
+    this.maxHealth = health;
     this.health = health;
     this.damage = damage;
     this.picture = picture;
