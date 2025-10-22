@@ -1,6 +1,7 @@
 
 // Crafting menu state
 var craftingMenuOpen = false;
+var craftingMenuClosing = false;
 var craftingMenuAlpha = 0; // Fade in effect
 var craftingMenuSlideY = 50; // Slide up animation
 var craftingMenuScale = 0; // Scale animation
@@ -29,27 +30,34 @@ function isNearWorkbench() {
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
   
-  const col = Math.floor(playerCenterX / 50);
-  const row = Math.floor(playerCenterY / 50);
+  const checkRadius = 175; // 3.5 tiles * 50 pixels
   
-  // Check surrounding tiles (3x3 area)
-  for (let r = row - 1; r <= row + 1; r++) {
-    for (let c = col - 1; c <= col + 1; c++) {
-      if (r < 0 || c < 0 || r >= gameWorld.length || c >= gameWorld[r].length) continue;
-      
-      const cell = gameWorld[r][c];
+  // Check all tiles within radius
+  for (let row = 0; row < gameWorld.length; row++) {
+    for (let col = 0; col < gameWorld[row].length; col++) {
+      const cell = gameWorld[row][col];
       if (!cell) continue;
       
-      // Check all layers for workbench (type 6)
-      if ('layers' in cell) {
-        for (let L = 0; L < 3; L++) {
-          const tile = cell.layers[L];
-          if (tile && tile.type === 6) {
-            return true;
+      // Calculate distance to tile center
+      const tileCenterX = col * 50 + 25;
+      const tileCenterY = row * 50 + 25;
+      const dist = Math.sqrt(
+        Math.pow(playerCenterX - tileCenterX, 2) + 
+        Math.pow(playerCenterY - tileCenterY, 2)
+      );
+      
+      if (dist <= checkRadius) {
+        // Check all layers for workbench (type 6)
+        if ('layers' in cell) {
+          for (let L = 0; L < 3; L++) {
+            const tile = cell.layers[L];
+            if (tile && tile.type === 6) {
+              return true;
+            }
           }
+        } else if (cell.type === 6) {
+          return true;
         }
-      } else if (cell.type === 6) {
-        return true;
       }
     }
   }
@@ -57,15 +65,18 @@ function isNearWorkbench() {
 }
 
 function toggleCraftingMenu() {
-  if (isNearWorkbench()) {
-    craftingMenuOpen = !craftingMenuOpen;
-    if (craftingMenuOpen) {
-      selectedRecipe = 0;
-      // Reset animation values
-      craftingMenuAlpha = 0;
-      craftingMenuSlideY = 50;
-      craftingMenuScale = 0;
-    }
+  if (craftingMenuOpen) {
+    // Start closing animation
+    craftingMenuClosing = true;
+  } else if (isNearWorkbench()) {
+    // Open menu
+    craftingMenuOpen = true;
+    craftingMenuClosing = false;
+    selectedRecipe = 0;
+    // Reset animation values
+    craftingMenuAlpha = 0;
+    craftingMenuSlideY = 50;
+    craftingMenuScale = 0;
   }
   frozen = craftingMenuOpen;
 }
@@ -131,21 +142,38 @@ function craftItem(recipe) {
 }
 
 function drawCraftingMenu() {
-  if (!craftingMenuOpen) return;
+  if (!craftingMenuOpen && !craftingMenuClosing) return;
   
-  // Animate alpha (fade in)
-  if (craftingMenuAlpha < 255) {
-    craftingMenuAlpha = lerp(craftingMenuAlpha, 255, 0.15);
+  // Auto-close if too far from workbench
+  if (craftingMenuOpen && !craftingMenuClosing && !isNearWorkbench()) {
+    craftingMenuClosing = true;
   }
   
-  // Animate slide up
-  if (craftingMenuSlideY > 0) {
-    craftingMenuSlideY = lerp(craftingMenuSlideY, 0, 0.2);
-  }
-  
-  // Animate scale
-  if (craftingMenuScale < 1) {
-    craftingMenuScale = lerp(craftingMenuScale, 1, 0.25);
+  // Handle closing animation
+  if (craftingMenuClosing) {
+    craftingMenuAlpha = lerp(craftingMenuAlpha, 0, 0.2);
+    craftingMenuSlideY = lerp(craftingMenuSlideY, 50, 0.25);
+    craftingMenuScale = lerp(craftingMenuScale, 0, 0.3);
+    
+    // Finish closing when alpha is nearly 0
+    if (craftingMenuAlpha < 1) {
+      craftingMenuOpen = false;
+      craftingMenuClosing = false;
+      frozen = false;
+    }
+  } else {
+    // Opening animations
+    if (craftingMenuAlpha < 255) {
+      craftingMenuAlpha = lerp(craftingMenuAlpha, 255, 0.15);
+    }
+    
+    if (craftingMenuSlideY > 0) {
+      craftingMenuSlideY = lerp(craftingMenuSlideY, 0, 0.2);
+    }
+    
+    if (craftingMenuScale < 1) {
+      craftingMenuScale = lerp(craftingMenuScale, 1, 0.25);
+    }
   }
   
   push();
