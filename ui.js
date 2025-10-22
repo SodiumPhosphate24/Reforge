@@ -19,7 +19,22 @@ function inventory() {
   for (let i = 0; i < inventoryList.length; i++) {
     if (inventoryList[i] != null){
       imageMode(CENTER);
-      image(inventoryList[i].image, 369 + (i * 69.71), 689, 40, 40 * inventoryList[i].HtoW);
+      
+      // Calculate proper sizing to fit within inventory slot (max 50x50)
+      const maxSize = 50;
+      let itemWidth, itemHeight;
+      
+      if (inventoryList[i].HtoW > 1) {
+        // Height is larger
+        itemHeight = maxSize;
+        itemWidth = maxSize / inventoryList[i].HtoW;
+      } else {
+        // Width is larger or equal
+        itemWidth = maxSize;
+        itemHeight = maxSize * inventoryList[i].HtoW;
+      }
+      
+      image(inventoryList[i].image, 369 + (i * 69.71), 689, itemWidth, itemHeight);
       if (inventoryList[i].stackable){
         textSize(20);
         textFont(Silkscreen);
@@ -247,7 +262,9 @@ class DroppedItem {
     pop();
     
     // Check if player is near for glow effect
-    const distToPlayer = distance(pX + 600, pY + 340, this.x + slideX + this.itemWidth / 2, this.y + slideY + this.itemHeight / 2);
+    const playerCenterX = pX + 600 + pWidth / 2;
+    const playerCenterY = pY + 375 + pHeight / 2;
+    const distToPlayer = distance(playerCenterX, playerCenterY, this.x + slideX + this.itemWidth / 2, this.y + slideY + this.itemHeight / 2);
     const isNear = distToPlayer < 50;
     
     // Draw item with proximity glow
@@ -268,7 +285,9 @@ class DroppedItem {
   }
 
   checkPickup() {
-    let d = distance(pX + 600, pY + 340, this.x + this.itemWidth / 2, this.y + this.itemHeight / 2);
+    const playerCenterX = pX + 600 + pWidth / 2;
+    const playerCenterY = pY + 375 + pHeight / 2;
+    let d = distance(playerCenterX, playerCenterY, this.x + this.itemWidth / 2, this.y + this.itemHeight / 2);
     if (d < 50) {
       return true;
     }
@@ -282,9 +301,52 @@ class DroppedItem {
 
 function updateDroppedItems() {
   let count = 0;
+  let nearestItem = null;
+  let nearestDistance = Infinity;
+  
+  const playerCenterX = pX + 600 + pWidth / 2;
+  const playerCenterY = pY + 375 + pHeight / 2;
+  
   for (let i = 0; i < droppedItems.length; i++) {
     let item = droppedItems[count];
     item.draw();
+    
+    // Check if this is the nearest pickup-able item
+    if (item.checkPickup()) {
+      const d = distance(playerCenterX, playerCenterY, item.x + item.itemWidth / 2, item.y + item.itemHeight / 2);
+      if (d < nearestDistance) {
+        nearestDistance = d;
+        nearestItem = item;
+      }
+    }
+    
     count++;
   }
+  
+  // Draw pickup prompt for nearest item
+  if (nearestItem) {
+    drawPickupPrompt(nearestItem);
+  }
+}
+
+function drawPickupPrompt(item) {
+  push();
+  fill(100, 255, 255, 200);
+  textSize(20);
+  textFont(Silkscreen);
+  textAlign(CENTER, CENTER);
+  
+  // Display at top of screen
+  const promptText = "Press E to Pick Up " + item.item.name;
+  
+  // Background for text
+  const textWidth = textWidth(promptText);
+  fill(0, 0, 0, 150);
+  rect(600 - textWidth / 2 - 10, 30, textWidth + 20, 35, 5);
+  
+  // Text
+  fill(100, 255, 255, 200);
+  text(promptText, 600, 47);
+  
+  pop();
 }

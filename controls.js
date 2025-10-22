@@ -73,7 +73,9 @@ function keyPressed() {
               droppedItems.splice(i, 1);
             }
             else {
-              droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], pX + 600, pY + 340))
+              const dropX = pX + 600 + pWidth / 2 - 15; // Center drop position
+              const dropY = pY + 375 + pHeight / 2 - 15;
+              droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], dropX, dropY))
               inventoryList[inventorySlot - 1] = droppedItems[i].item;
               droppedItems.splice(i, 1);
             }
@@ -85,7 +87,9 @@ function keyPressed() {
             droppedItems.splice(i, 1);
           }
           else {
-            droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], pX + 600, pY + 340))
+            const dropX = pX + 600 + pWidth / 2 - 15; // Center drop position
+            const dropY = pY + 375 + pHeight / 2 - 15;
+            droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], dropX, dropY))
             inventoryList[inventorySlot - 1] = droppedItems[i].item;
             droppedItems.splice(i, 1);
           }
