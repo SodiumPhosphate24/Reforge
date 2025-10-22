@@ -98,7 +98,7 @@ class Item {
         this.name = name;
         this.image = GunImgs[2];
         this.damage = 3;
-        this.Htow = .46;
+        this.HtoW = .46;
       }
     }
 

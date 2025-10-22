@@ -36,8 +36,12 @@ function messageDisplay() {
         // Smooth slide down
         messages[i].y = lerp(messages[i].y, messages[i].targetY, 0.12);
         
-        // Smooth scale up
-        messages[i].scale = lerp(messages[i].scale, messages[i].targetScale, 0.15);
+        // Eased scale up (ease-in-out using sine)
+        // Progress from 0 to 1 over 40 frames
+        const progress = min(messages[i].phaseTimer / 40, 1);
+        // Apply ease-in-out: slow start, fast middle, slow end
+        const easedProgress = (1 - cos(progress * PI)) / 2;
+        messages[i].scale = 0.3 + (messages[i].targetScale - 0.3) * easedProgress;
         
         // Transition to display phase after settling
         if (messages[i].phaseTimer > 40 && abs(messages[i].y - messages[i].targetY) < 2) {

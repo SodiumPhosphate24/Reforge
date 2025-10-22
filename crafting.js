@@ -43,7 +43,7 @@ function isNearWorkbench() {
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
   
-  const checkRadius = 175; // 3.5 tiles * 50 pixels
+  const checkRadius = 125; // 2.5 tiles * 50 pixels
   
   // Check all tiles within radius
   for (let row = 0; row < gameWorld.length; row++) {
