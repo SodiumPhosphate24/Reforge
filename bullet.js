@@ -65,16 +65,7 @@ class Bullet {
               if (left < tR && right > tL && top < tB && bottom > tT) {
                 // If it's a crate (type 5), destroy it
                 if (t.type === 5) {
-                  let spawn = Math.floor(Math.random() * 3);
-                  if (spawn == 0) {
-                    droppedItems.push(new DroppedItem(new Item("gun", "glock"), col * 50 + 25, row * 50 + 25));
-                  }
-                  else if (spawn == 1) {
-                    droppedItems.push(new DroppedItem(new Item("gun", "western"), col * 50 + 25, row * 50 + 25));
-                  }
-                  else if (spawn == 2) {
-                    droppedItems.push(new DroppedItem(new Item("gun", "rare pistol"), col * 50 + 25, row * 50 + 25));
-                  }
+                  updateDroppedItems.push(new DroppedItem())
                   clearTile(row, col, L);
                   particle(col * 50 + 25, row * 50 + 25, [139, 69, 19], 30, 5);
                 }
