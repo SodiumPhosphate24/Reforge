@@ -38,7 +38,7 @@ function health() {
     fill(255, 0, 0, 200);
     rect(100, 100, players[activePlayer].maxHealth * 2, 25);
     fill(0, 255, 0, 150);
-    rect(100, 100, players[activePlayer].health, 25);
+    rect(100, 100, healthPoints, 25);
     strokeWeight(5);
     stroke(0, 150, 0);
     fill(0, 0, 0, 0);
