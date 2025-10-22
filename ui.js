@@ -153,10 +153,72 @@ class DroppedItem {
     this.item = item;
     this.x = x;
     this.y = y;
+    
+    // Drop animation properties
+    this.dropVelocity = -8; // Start moving upward
+    this.gravity = 0.4;
+    this.yOffset = 0; // Vertical offset for drop animation
+    this.isDropping = true;
+    
+    // Floating animation properties
+    this.floatTime = random(0, TWO_PI); // Random start phase for variety
+    this.floatSpeed = 0.05;
+    this.floatAmplitude = 5; // How high it floats
+    
+    // Size properties
+    this.baseSize = 35; // Base size for items
+  }
+
+  update() {
+    // Drop animation
+    if (this.isDropping) {
+      this.yOffset += this.dropVelocity;
+      this.dropVelocity += this.gravity;
+      
+      // Stop dropping when it reaches the ground
+      if (this.yOffset >= 0) {
+        this.yOffset = 0;
+        this.dropVelocity = 0;
+        this.isDropping = false;
+      }
+    }
+    
+    // Floating animation (only when not dropping)
+    if (!this.isDropping) {
+      this.floatTime += this.floatSpeed;
+    }
   }
 
   draw() {
-    image(this.item.image, this.x, this.y, 50, 50*this.item.HtoW);
+    this.update();
+    
+    // Calculate float offset
+    const floatOffset = this.isDropping ? 0 : sin(this.floatTime) * this.floatAmplitude;
+    
+    // Calculate shadow size based on float height
+    const shadowScale = this.isDropping ? 1 : map(floatOffset, -this.floatAmplitude, this.floatAmplitude, 1.2, 0.8);
+    const shadowAlpha = this.isDropping ? 80 : map(floatOffset, -this.floatAmplitude, this.floatAmplitude, 100, 60);
+    
+    // Draw shadow
+    push();
+    fill(0, 0, 0, shadowAlpha);
+    noStroke();
+    ellipse(
+      this.x + this.baseSize / 2, 
+      this.y + this.baseSize * this.item.HtoW + this.yOffset, 
+      this.baseSize * shadowScale * 0.8, 
+      this.baseSize * shadowScale * 0.3
+    );
+    pop();
+    
+    // Draw item with proper sizing
+    image(
+      this.item.image, 
+      this.x, 
+      this.y + this.yOffset + floatOffset, 
+      this.baseSize, 
+      this.baseSize * this.item.HtoW
+    );
   }
 
   checkPickup() {
@@ -181,7 +243,7 @@ function updateDroppedItems() {
       stroke(255, 0, 0, 100);
       strokeWeight(5);
       noFill();
-      rect(item.x, item.y, 50, item.item.HtoW * 50);
+      rect(item.x, item.y, item.baseSize, item.item.HtoW * item.baseSize);
       fill(255, 255, 255);
     }
     count++;
