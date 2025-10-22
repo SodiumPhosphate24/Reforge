@@ -8,6 +8,7 @@ var craftingMenuScale = 0; // Scale animation
 var craftingRecipes = [
   {
     name: "Glock",
+    type: "item",
     ingredients: [
       { itemName: "rock", amount: 10 }
     ],
@@ -15,6 +16,7 @@ var craftingRecipes = [
   },
   {
     name: "Grenade",
+    type: "item",
     ingredients: [
       { itemName: "rock", amount: 5 },
       { itemName: "cheese", amount: 1 }
