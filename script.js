@@ -35,7 +35,7 @@ function preload() {
   tileImgs[3] = loadImage("Tiles/Concrete.png");
   tileImgs[4] = loadImage("Tiles/Brick.png");
   tileImgs[5] = loadImage("Tiles/Crate.png");
-  tileImgs[5] = loadImage("Tiles/Crafting.png");
+  tileImgs[6] = loadImage("Tiles/Crafting.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   projImgs[0] = loadImage("Items/Projectiles/Grenade.png");
