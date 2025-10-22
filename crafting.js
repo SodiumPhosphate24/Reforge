@@ -67,6 +67,7 @@ function toggleCraftingMenu() {
       craftingMenuScale = 0;
     }
   }
+  frozen = craftingMenuOpen;
 }
 
 function canCraftRecipe(recipe) {
