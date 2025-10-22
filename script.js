@@ -103,6 +103,10 @@ function draw() {
   drawWorldLayer(gameWorld, 2);
 
   pop();
+  
+  // Draw pickup prompt after camera pop (screen-fixed)
+  drawPickupPromptIfNeeded();
+  
   drawUI();
   messageDisplay();
   

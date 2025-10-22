@@ -299,9 +299,11 @@ class DroppedItem {
 
 }
 
+let nearestPickupItem = null; // Store for screen-fixed rendering
+
 function updateDroppedItems() {
   let count = 0;
-  let nearestItem = null;
+  nearestPickupItem = null;
   let nearestDistance = Infinity;
   
   const playerCenterX = pX + 600 + pWidth / 2;
@@ -316,16 +318,17 @@ function updateDroppedItems() {
       const d = distance(playerCenterX, playerCenterY, item.x + item.itemWidth / 2, item.y + item.itemHeight / 2);
       if (d < nearestDistance) {
         nearestDistance = d;
-        nearestItem = item;
+        nearestPickupItem = item;
       }
     }
     
     count++;
   }
-  
-  // Draw pickup prompt for nearest item
-  if (nearestItem) {
-    drawPickupPrompt(nearestItem);
+}
+
+function drawPickupPromptIfNeeded() {
+  if (nearestPickupItem) {
+    drawPickupPrompt(nearestPickupItem);
   }
 }
 
