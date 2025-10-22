@@ -13,7 +13,7 @@ var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench"];
-var tileWalls = [0, 0, 0, 2, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
+var tileWalls = [0, 0, 0, 2, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
 var enemies = [], bullets = [], messages = [], droppedItems = [];
 var inventoryList;
 let maxTileTypes = 0; // will be set in setup()
