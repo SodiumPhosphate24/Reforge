@@ -42,7 +42,7 @@ function health() {
     strokeWeight(5);
     stroke(0, 150, 0);
     fill(0, 0, 0, 0);
-    for (i = 1; i <= players[activePlayer].health/25; i++) {
+    for (i = 1; i <= players[activePlayer].maxHealth/25; i++) {
       rect(100, 100, i * 50, 25);
     }
     noStroke();
