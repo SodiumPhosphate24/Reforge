@@ -3,14 +3,15 @@ class Message {
     this.message = message;
     if (type == "quest") {
       this.x = 600;
-      this.y = -200;
-      this.vel = 25;
-      this.lifespan = 350;
+      this.y = -100; // Start above screen
+      this.targetY = 150; // Final resting position
       this.type = type;
-      this.scale = 0.01; // Start extremely small for dramatic entrance
-      this.targetScale = 1.8; // Much larger overshoot for more drama
-      this.shake = 0; // For shake effect
-      this.glowIntensity = 0; // Animated glow
+      this.scale = 0.3; // Start small
+      this.targetScale = 1; // Grow to normal size
+      this.alpha = 255; // Start fully visible
+      this.lifespan = 300; // Total frames to live
+      this.phase = "slide"; // "slide", "display", "fade"
+      this.phaseTimer = 0;
     }
     else if (type == "dialogue") {
       this.index = 0;
@@ -28,57 +29,61 @@ function messageDisplay() {
   textAlign(CENTER, CENTER);
   for (let i = 0; i < messages.length; i++) {
     if (messages[i].type == "quest") {
-      // Dramatic scale animation with overshoot - faster growth
-      if (messages[i].scale < messages[i].targetScale) {
-        messages[i].scale = lerp(messages[i].scale, messages[i].targetScale, 0.35);
-        messages[i].glowIntensity = lerp(messages[i].glowIntensity, 60, 0.3);
-      } else if (messages[i].targetScale > 1) {
-        // Settle back down to normal size after overshoot
-        messages[i].targetScale = 1;
-        messages[i].scale = lerp(messages[i].scale, 1, 0.2);
+      messages[i].phaseTimer++;
+      
+      // Phase 1: Slide down and grow (0-40 frames)
+      if (messages[i].phase === "slide") {
+        // Smooth slide down
+        messages[i].y = lerp(messages[i].y, messages[i].targetY, 0.12);
+        
+        // Smooth scale up
+        messages[i].scale = lerp(messages[i].scale, messages[i].targetScale, 0.15);
+        
+        // Transition to display phase after settling
+        if (messages[i].phaseTimer > 40 && abs(messages[i].y - messages[i].targetY) < 2) {
+          messages[i].phase = "display";
+          messages[i].phaseTimer = 0;
+        }
+      }
+      
+      // Phase 2: Display (hold for 120 frames)
+      else if (messages[i].phase === "display") {
+        if (messages[i].phaseTimer > 120) {
+          messages[i].phase = "fade";
+          messages[i].phaseTimer = 0;
+        }
+      }
+      
+      // Phase 3: Fade out (60 frames)
+      else if (messages[i].phase === "fade") {
+        // Gradual fade out
+        messages[i].alpha = lerp(messages[i].alpha, 0, 0.05);
+        
+        // Remove when fully transparent
+        if (messages[i].alpha < 5) {
+          messages.splice(i, 1);
+          i--;
+          continue;
+        }
       }
 
-      // Fade glow after settling
-      if (messages[i].targetScale <= 1 && messages[i].scale > 0.98) {
-        messages[i].glowIntensity = lerp(messages[i].glowIntensity, 20, 0.1);
-      }
-
+      // Draw the message
       push();
       translate(messages[i].x, messages[i].y);
       scale(messages[i].scale);
 
-      // Intense glow effect that fades
-      drawingContext.shadowBlur = messages[i].glowIntensity;
-      drawingContext.shadowColor = 'rgba(100, 255, 255, ' + (messages[i].lifespan / 300) + ')';
+      // Subtle glow effect
+      drawingContext.shadowBlur = 20;
+      drawingContext.shadowColor = 'rgba(100, 255, 255, 0.6)';
 
-      // Draw text multiple times for extra glow during entrance
-      if (messages[i].glowIntensity > 40) {
-        fill(100, 255, 255, 80);
-        textSize(60);
-        textFont(Silkscreen);
-        text(messages[i].message, 0, 0);
-      }
-
-      fill(100, 255, 255, messages[i].lifespan);
-      textSize(60);
+      fill(100, 255, 255, messages[i].alpha);
+      textSize(50);
       textFont(Silkscreen);
       text(messages[i].message, 0, 0);
 
       // Reset shadow
       drawingContext.shadowBlur = 0;
       pop();
-
-      // Slower fade for smoother disappearance
-      messages[i].lifespan -= 1.5;
-      if (messages[i].vel > 0) {
-        messages[i].y += messages[i].vel;
-        messages[i].vel -= 1;
-      }
-      // Only remove when fully transparent
-      if (messages[i].lifespan <= 0) {
-        messages.splice(i, 1);
-        i--;
-      }
     }
     else if (messages[i].type == "dialogue") {
       var displayMessage = messages[i].message[messages[i].index].split(": ")[1];
