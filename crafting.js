@@ -31,7 +31,8 @@ var craftingRecipes = [
       { itemName: "rock", amount: 5 },
       { itemName: "cheese", amount: 1 },
       { itemName: "soda", amount: 1 }
-    ]
+    ],
+    output: { type: "player", name: "fast buschy", amount: 1 }
   }
   // Add more recipes as needed
 ];
