@@ -26,7 +26,7 @@ var craftingRecipes = [
   {
     name: "Fast Buschy",
     type: "player",
-    playerConstructor: (pX + 50, pY, 35, 25, 10, 50, 1, PlayerImage),
+    playerConstructor: {width : 35, height : 25, speed : 5, health : 50, damage : 1},
     ingredients: [
       { itemName: "rock", amount: 5 },
       { itemName: "cheese", amount: 1 },
@@ -156,7 +156,8 @@ function craftItem(recipe) {
 }
 
   if (recipe.type === "player") {
-    players.push(recipe.playerConstructor);
+    let p = recipe.playerConstructor;
+    players.push(new Player(pX + 50, pY, p.width, p.height, p.speed, p.health, p.damage, PlayerImage));
   }
 
 function drawCraftingMenu() {
