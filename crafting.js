@@ -1,6 +1,9 @@
 
 // Crafting menu state
 var craftingMenuOpen = false;
+var craftingMenuAlpha = 0; // Fade in effect
+var craftingMenuSlideY = 50; // Slide up animation
+var craftingMenuScale = 0; // Scale animation
 var craftingRecipes = [
   {
     name: "Glock",
@@ -58,6 +61,10 @@ function toggleCraftingMenu() {
     craftingMenuOpen = !craftingMenuOpen;
     if (craftingMenuOpen) {
       selectedRecipe = 0;
+      // Reset animation values
+      craftingMenuAlpha = 0;
+      craftingMenuSlideY = 50;
+      craftingMenuScale = 0;
     }
   }
 }
@@ -125,59 +132,96 @@ function craftItem(recipe) {
 function drawCraftingMenu() {
   if (!craftingMenuOpen) return;
   
-  // Semi-transparent background
-  fill(0, 0, 0, 200);
-  rect(200, 100, 800, 550, 10);
+  // Animate alpha (fade in)
+  if (craftingMenuAlpha < 255) {
+    craftingMenuAlpha = lerp(craftingMenuAlpha, 255, 0.15);
+  }
   
-  // Title
-  fill(100, 255, 255);
-  textSize(32);
-  textFont(Silkscreen);
-  textAlign(CENTER, CENTER);
-  text("CRAFTING MENU", 600, 140);
+  // Animate slide up
+  if (craftingMenuSlideY > 0) {
+    craftingMenuSlideY = lerp(craftingMenuSlideY, 0, 0.2);
+  }
+  
+  // Animate scale
+  if (craftingMenuScale < 1) {
+    craftingMenuScale = lerp(craftingMenuScale, 1, 0.25);
+  }
+  
+  push();
+  translate(0, craftingMenuSlideY);
+  
+  // Semi-transparent background with scale and fade
+  fill(0, 0, 0, craftingMenuAlpha * 0.78);
+  rectMode(CENTER);
+  rect(600, 375, 800 * craftingMenuScale, 550 * craftingMenuScale, 10);
+  
+  // Accent border
+  strokeWeight(3);
+  stroke(100, 255, 255, craftingMenuAlpha * 0.8);
+  noFill();
+  rect(600, 375, 800 * craftingMenuScale, 550 * craftingMenuScale, 10);
+  noStroke();
+  rectMode(CORNER);
+  
+  // Only draw content if scale is reasonable
+  if (craftingMenuScale > 0.3) {
+    // Title
+    fill(100, 255, 255, craftingMenuAlpha);
+    textSize(32);
+    textFont(Silkscreen);
+    textAlign(CENTER, CENTER);
+    text("CRAFTING MENU", 600, 140);
   
   // Instructions
-  textSize(16);
-  text("Use UP/DOWN arrows to select, ENTER to craft, E to close", 600, 180);
-  
-  // Recipe list
-  textAlign(LEFT, TOP);
-  textSize(20);
-  let yPos = 220;
-  
-  for (let i = 0; i < craftingRecipes.length; i++) {
-    const recipe = craftingRecipes[i];
-    const canCraft = canCraftRecipe(recipe);
-    
-    // Highlight selected recipe
-    if (i === selectedRecipe) {
-      fill(100, 255, 255, 100);
-      rect(220, yPos - 5, 760, 80, 5);
-    }
-    
-    // Recipe name
-    fill(canCraft ? color(100, 255, 100) : color(255, 100, 100));
-    text(recipe.name, 240, yPos);
-    
-    // Ingredients
-    fill(255);
+    fill(100, 255, 255, craftingMenuAlpha * 0.9);
     textSize(16);
-    let ingredientText = "Requires: ";
-    for (let j = 0; j < recipe.ingredients.length; j++) {
-      ingredientText += recipe.ingredients[j].amount + "x " + recipe.ingredients[j].itemName;
-      if (j < recipe.ingredients.length - 1) {
-        ingredientText += ", ";
-      }
-    }
-    text(ingredientText, 240, yPos + 30);
+    text("Use UP/DOWN arrows to select, ENTER to craft, E to close", 600, 180);
     
-    // Output
-    text("Crafts: " + recipe.output.amount + "x " + recipe.output.name, 240, yPos + 55);
-    
+    // Recipe list
+    textAlign(LEFT, TOP);
     textSize(20);
-    yPos += 100;
+    let yPos = 220;
+    
+    for (let i = 0; i < craftingRecipes.length; i++) {
+      const recipe = craftingRecipes[i];
+      const canCraft = canCraftRecipe(recipe);
+      
+      // Highlight selected recipe
+      if (i === selectedRecipe) {
+        fill(100, 255, 255, craftingMenuAlpha * 0.4);
+        rect(220, yPos - 5, 760, 80, 5);
+      }
+      
+      // Recipe name
+      if (canCraft) {
+        fill(100, 255, 100, craftingMenuAlpha);
+      } else {
+        fill(255, 100, 100, craftingMenuAlpha);
+      }
+      text(recipe.name, 240, yPos);
+      
+      // Ingredients
+      fill(255, 255, 255, craftingMenuAlpha);
+      textSize(16);
+      let ingredientText = "Requires: ";
+      for (let j = 0; j < recipe.ingredients.length; j++) {
+        ingredientText += recipe.ingredients[j].amount + "x " + recipe.ingredients[j].itemName;
+        if (j < recipe.ingredients.length - 1) {
+          ingredientText += ", ";
+        }
+      }
+      text(ingredientText, 240, yPos + 30);
+      
+      // Output
+      text("Crafts: " + recipe.output.amount + "x " + recipe.output.name, 240, yPos + 55);
+      
+      textSize(20);
+      yPos += 100;
+    }
+    textAlign(CENTER, CENTER);
   }
-  textAlign(CENTER, CENTER);
+  
+  pop();
 }
 
 function handleCraftingInput() {
