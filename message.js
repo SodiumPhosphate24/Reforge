@@ -7,9 +7,9 @@ class Message {
       this.targetY = 150; // Final resting position
       this.type = type;
       this.scale = 0.3; // Start small
-      this.targetScale = 2.0; // Grow to larger size
+      this.targetScale = 2.0; // Final size
       this.alpha = 255; // Start fully visible
-      this.phase = "slide"; // "slide", "grow", "display", "fade"
+      this.phase = "animate"; // "animate", "display", "fade"
       this.phaseTimer = 0;
     }
     else if (type == "dialogue") {
@@ -30,62 +30,54 @@ function messageDisplay() {
     if (messages[i].type == "quest") {
       messages[i].phaseTimer++;
       
-      // Phase 1: Slide down smoothly (0-30 frames)
-      if (messages[i].phase === "slide") {
-        messages[i].y = lerp(messages[i].y, messages[i].targetY, 0.15);
+      // Phase 1: Simultaneous slide and grow with three-stage recoil (0-90 frames)
+      if (messages[i].phase === "animate") {
+        const totalFrames = 90;
+        const progress = min(messages[i].phaseTimer / totalFrames, 1);
         
-        // Transition to grow phase when close to target
-        if (messages[i].phaseTimer > 25 && abs(messages[i].y - messages[i].targetY) < 3) {
-          messages[i].phase = "grow";
-          messages[i].phaseTimer = 0;
-        }
-      }
-      
-      // Phase 2: Grow with ease in-out and two-stage recoil (0-80 frames)
-      else if (messages[i].phase === "grow") {
-        const totalGrowFrames = 80;
-        const progress = min(messages[i].phaseTimer / totalGrowFrames, 1);
+        // Smooth slide down throughout animation
+        messages[i].y = lerp(messages[i].y, messages[i].targetY, 0.12);
         
+        // Three-stage growth: grow to overshoot -> shrink to undershoot -> settle to final
         let scaleProgress;
         
-        if (progress < 0.7) {
-          // First 70%: Ease in-out growth (slow -> fast -> slow)
-          const t = progress / 0.7;
-          // Cubic ease in-out
-          scaleProgress = t < 0.5
+        if (progress < 0.5) {
+          // Stage 1 (0-0.5): Grow to overshoot (exceeds final size)
+          const t = progress / 0.5;
+          // Ease in-out to 1.15 (15% overshoot)
+          const eased = t < 0.5
             ? 4 * t * t * t
             : 1 - pow(-2 * t + 2, 3) / 2;
-          scaleProgress *= 0.7; // Map to 0-0.7
-        } else if (progress < 0.85) {
-          // Next 15%: Overshoot (0.7 to 0.85)
-          const t = (progress - 0.7) / 0.15;
-          // Overshoot to 1.12
-          scaleProgress = 0.7 + (0.42 + 0.12) * t;
+          scaleProgress = eased * 1.15;
+        } else if (progress < 0.75) {
+          // Stage 2 (0.5-0.75): Shrink to undershoot (smaller than final)
+          const t = (progress - 0.5) / 0.25;
+          // Smooth transition from 1.15 to 0.90 (10% undershoot)
+          const eased = t < 0.5
+            ? 4 * t * t * t
+            : 1 - pow(-2 * t + 2, 3) / 2;
+          scaleProgress = 1.15 - (0.25 * eased);
         } else {
-          // Final 15%: Undershoot then settle (0.85 to 1.0)
-          const t = (progress - 0.85) / 0.15;
-          if (t < 0.5) {
-            // First half: drop to undershoot (1.12 to 0.94)
-            const t2 = t / 0.5;
-            scaleProgress = 1.12 - 0.18 * t2;
-          } else {
-            // Second half: settle to 1.0 (0.94 to 1.0)
-            const t2 = (t - 0.5) / 0.5;
-            scaleProgress = 0.94 + 0.06 * t2;
-          }
+          // Stage 3 (0.75-1.0): Grow to final size (1.0)
+          const t = (progress - 0.75) / 0.25;
+          // Smooth ease to final
+          const eased = t < 0.5
+            ? 4 * t * t * t
+            : 1 - pow(-2 * t + 2, 3) / 2;
+          scaleProgress = 0.90 + (0.10 * eased);
         }
         
         messages[i].scale = 0.3 + (messages[i].targetScale - 0.3) * scaleProgress;
         
         // Transition to display phase
-        if (messages[i].phaseTimer >= totalGrowFrames) {
+        if (messages[i].phaseTimer >= totalFrames) {
           messages[i].phase = "display";
           messages[i].phaseTimer = 0;
-          messages[i].scale = messages[i].targetScale; // Ensure final scale
+          messages[i].scale = messages[i].targetScale;
         }
       }
       
-      // Phase 3: Display (hold for 120 frames)
+      // Phase 2: Display (hold for 120 frames)
       else if (messages[i].phase === "display") {
         if (messages[i].phaseTimer > 120) {
           messages[i].phase = "fade";
@@ -93,7 +85,7 @@ function messageDisplay() {
         }
       }
       
-      // Phase 4: Fade out (60 frames)
+      // Phase 3: Fade out (60 frames)
       else if (messages[i].phase === "fade") {
         messages[i].alpha = lerp(messages[i].alpha, 0, 0.05);
         
