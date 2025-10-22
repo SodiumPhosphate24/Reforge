@@ -22,6 +22,15 @@ var craftingRecipes = [
       { itemName: "cheese", amount: 1 }
     ],
     output: { type: "projectile", name: "grenade", amount: 1 }
+  },
+  {
+    name: "Fast Buschy",
+    type: "player",
+    ingredients: [
+      { itemName: "rock", amount: 5 },
+      { itemName: "cheese", amount: 1 },
+      { itemName: "soda", amount: 1 }
+    ]
   }
   // Add more recipes as needed
 ];
