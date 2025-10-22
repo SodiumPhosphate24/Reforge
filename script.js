@@ -105,6 +105,14 @@ function draw() {
   pop();
   drawUI();
   messageDisplay();
+  
+  // Handle crafting menu
+  if (typeof handleCraftingInput === 'function') {
+    handleCraftingInput();
+  }
+  if (typeof drawCraftingMenu === 'function') {
+    drawCraftingMenu();
+  }
 
   // Draw fog centered on camera, constrained to screen
   tint(255, 200);

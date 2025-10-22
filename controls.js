@@ -44,6 +44,12 @@ function keyPressed() {
   }
 
   if (keyCode == 69) {
+    // Check if near workbench first
+    if (typeof isNearWorkbench === 'function' && isNearWorkbench()) {
+      toggleCraftingMenu();
+      return; // Don't pick up items when opening crafting menu
+    }
+    
     for (let i = droppedItems.length - 1; i >= 0; i--) {
       if (droppedItems[i].checkPickup()) {
         if (droppedItems[i].item.stackable) {
