@@ -153,12 +153,14 @@ function craftItem(recipe) {
       }
     }
   }
-}
 
   if (recipe.type === "player") {
     let p = recipe.playerConstructor;
     players.push(new Player(pX + 50, pY, p.width, p.height, p.speed, p.health, p.damage, PlayerImage));
   }
+}
+
+  
 
 function drawCraftingMenu() {
   if (!craftingMenuOpen && !craftingMenuClosing) return;
