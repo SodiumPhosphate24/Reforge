@@ -208,10 +208,8 @@ class DroppedItem {
       }
     }
     
-    // Floating animation (only when not sliding)
-    if (!this.isSliding) {
-      this.floatTime += this.floatSpeed;
-    }
+    // Floating animation (always running)
+    this.floatTime += this.floatSpeed;
   }
 
   draw() {
@@ -222,14 +220,19 @@ class DroppedItem {
     const slideX = cos(this.slideAngle) * this.slideDistance * slideEase;
     const slideY = sin(this.slideAngle) * this.slideDistance * slideEase;
     
-    // Calculate float offset
-    const floatOffset = this.isSliding ? 0 : sin(this.floatTime) * this.floatAmplitude;
+    // Calculate float offset (always active)
+    const floatOffset = sin(this.floatTime) * this.floatAmplitude;
     const totalHeight = this.floatHeight + floatOffset;
     
     // Calculate shadow size based on height (INVERTED - bigger when lower/closer to ground)
     // When totalHeight is low (near ground), shadow is bigger
     const shadowScale = map(totalHeight, this.floatHeight - this.floatAmplitude, this.floatHeight + this.floatAmplitude, 1.3, 0.7);
     const shadowAlpha = map(totalHeight, this.floatHeight - this.floatAmplitude, this.floatHeight + this.floatAmplitude, 100, 50);
+    
+    // Set minimum shadow size (prevent tiny shadows)
+    const minShadowSize = 12;
+    const shadowWidth = max(this.itemWidth * shadowScale * 0.9, minShadowSize);
+    const shadowHeight = max(this.itemWidth * shadowScale * 0.35, minShadowSize * 0.35);
     
     // Draw shadow
     push();
@@ -238,16 +241,21 @@ class DroppedItem {
     ellipse(
       this.x + slideX + this.itemWidth / 2, 
       this.y + slideY + this.itemHeight, 
-      this.itemWidth * shadowScale * 0.9, 
-      this.itemWidth * shadowScale * 0.35
+      shadowWidth, 
+      shadowHeight
     );
     pop();
     
-    // Draw item with proper sizing and outline
+    // Check if player is near for glow effect
+    const distToPlayer = distance(pX + 600, pY + 340, this.x + slideX + this.itemWidth / 2, this.y + slideY + this.itemHeight / 2);
+    const isNear = distToPlayer < 50;
+    
+    // Draw item with proximity glow
     push();
-    // Add subtle outline for all items
-    drawingContext.shadowBlur = 3;
-    drawingContext.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    if (isNear) {
+      drawingContext.shadowBlur = 15;
+      drawingContext.shadowColor = 'rgba(255, 255, 255, 0.9)';
+    }
     image(
       this.item.image, 
       this.x + slideX, 
@@ -277,13 +285,6 @@ function updateDroppedItems() {
   for (let i = 0; i < droppedItems.length; i++) {
     let item = droppedItems[count];
     item.draw();
-    if (item.checkPickup()) {
-      stroke(255, 0, 0, 100);
-      strokeWeight(5);
-      noFill();
-      rect(item.x, item.y - item.floatHeight, item.itemWidth, item.itemHeight);
-      fill(255, 255, 255);
-    }
     count++;
   }
 }
