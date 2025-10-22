@@ -558,10 +558,37 @@ function drawGunDebugRect() {
   const flipScale = cos(radians(currentGunFlip));
   scale(1, flipScale);
 
-  // Draw the gun image pointing along +X
+  // Draw the item image pointing along +X with proper sizing
   if (inventoryList[inventorySlot - 1] != null) {
     if (inventorySlot - 1 < inventoryList.length) {
-      image(inventoryList[inventorySlot - 1].image, recoil, -10, 30, 20);
+      const item = inventoryList[inventorySlot - 1];
+      
+      // Determine base size based on item type
+      let baseSize = 30; // Default for guns
+      
+      if (item.type === "bullet") {
+        baseSize = 18;
+      } else if (item.type === "gun") {
+        baseSize = 30;
+      } else if (item.type === "consumable") {
+        baseSize = 25;
+      } else if (item.type === "projectile") {
+        baseSize = 24;
+      }
+      
+      // Calculate width and height based on aspect ratio
+      let itemWidth, itemHeight;
+      if (item.HtoW > 1) {
+        // Height is larger
+        itemHeight = baseSize;
+        itemWidth = baseSize / item.HtoW;
+      } else {
+        // Width is larger or equal
+        itemWidth = baseSize;
+        itemHeight = baseSize * item.HtoW;
+      }
+      
+      image(item.image, recoil, -itemHeight / 2, itemWidth, itemHeight);
     }
     else {
       rectMode(CORNER);
