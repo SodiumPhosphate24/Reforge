@@ -5,10 +5,10 @@ class Message {
       this.x = 600;
       this.y = -200;
       this.vel = 25;
-      this.lifespan = 300;
+      this.lifespan = 350;
       this.type = type;
-      this.scale = 0.1; // Start very small for dramatic entrance
-      this.targetScale = 1.5; // Overshoot target for bounce effect
+      this.scale = 0.01; // Start extremely small for dramatic entrance
+      this.targetScale = 1.8; // Much larger overshoot for more drama
       this.shake = 0; // For shake effect
       this.glowIntensity = 0; // Animated glow
     }
@@ -28,14 +28,14 @@ function messageDisplay() {
   textAlign(CENTER, CENTER);
   for (let i = 0; i < messages.length; i++) {
     if (messages[i].type == "quest") {
-      // Dramatic scale animation with overshoot
+      // Dramatic scale animation with overshoot - faster growth
       if (messages[i].scale < messages[i].targetScale) {
-        messages[i].scale = lerp(messages[i].scale, messages[i].targetScale, 0.25);
-        messages[i].glowIntensity = lerp(messages[i].glowIntensity, 60, 0.2);
+        messages[i].scale = lerp(messages[i].scale, messages[i].targetScale, 0.35);
+        messages[i].glowIntensity = lerp(messages[i].glowIntensity, 60, 0.3);
       } else if (messages[i].targetScale > 1) {
         // Settle back down to normal size after overshoot
         messages[i].targetScale = 1;
-        messages[i].scale = lerp(messages[i].scale, 1, 0.15);
+        messages[i].scale = lerp(messages[i].scale, 1, 0.2);
       }
 
       // Fade glow after settling
@@ -68,11 +68,13 @@ function messageDisplay() {
       drawingContext.shadowBlur = 0;
       pop();
 
-      messages[i].lifespan -= 2;
+      // Slower fade for smoother disappearance
+      messages[i].lifespan -= 1.5;
       if (messages[i].vel > 0) {
         messages[i].y += messages[i].vel;
         messages[i].vel -= 1;
       }
+      // Only remove when fully transparent
       if (messages[i].lifespan <= 0) {
         messages.splice(i, 1);
         i--;
