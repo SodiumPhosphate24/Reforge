@@ -154,37 +154,62 @@ class DroppedItem {
     this.x = x;
     this.y = y;
     
-    // Drop animation properties
-    this.dropVelocity = -8; // Start moving upward
-    this.gravity = 0.4;
-    this.yOffset = 0; // Vertical offset for drop animation
-    this.isDropping = true;
+    // Slide animation properties
+    this.slideDistance = random(15, 30); // How far it slides
+    this.slideAngle = random(0, TWO_PI); // Random direction
+    this.slideProgress = 0; // 0 to 1
+    this.slideSpeed = 0.08; // How fast the slide animation completes
+    this.isSliding = true;
     
     // Floating animation properties
     this.floatTime = random(0, TWO_PI); // Random start phase for variety
     this.floatSpeed = 0.05;
-    this.floatAmplitude = 5; // How high it floats
+    this.floatAmplitude = 8; // How high it floats
+    this.floatHeight = 15; // Base height above ground
     
-    // Size properties
-    this.baseSize = 35; // Base size for items
+    // Size properties - categorize by item type
+    this.calculateItemSize();
+  }
+  
+  calculateItemSize() {
+    // Determine base size based on item type
+    let baseSize = 35; // Default
+    
+    if (this.item.type === "bullet") {
+      baseSize = 20; // Bullets are small
+    } else if (this.item.type === "gun") {
+      baseSize = 40; // Guns are moderately sized
+    } else if (this.item.type === "consumable") {
+      baseSize = 30; // Consumables are medium
+    } else if (this.item.type === "projectile") {
+      baseSize = 28; // Projectiles are medium-small
+    }
+    
+    // Calculate width and height based on aspect ratio
+    // Use the MAX dimension and scale the other
+    if (this.item.HtoW > 1) {
+      // Height is larger, so height = baseSize
+      this.itemHeight = baseSize;
+      this.itemWidth = baseSize / this.item.HtoW;
+    } else {
+      // Width is larger or equal, so width = baseSize
+      this.itemWidth = baseSize;
+      this.itemHeight = baseSize * this.item.HtoW;
+    }
   }
 
   update() {
-    // Drop animation
-    if (this.isDropping) {
-      this.yOffset += this.dropVelocity;
-      this.dropVelocity += this.gravity;
-      
-      // Stop dropping when it reaches the ground
-      if (this.yOffset >= 0) {
-        this.yOffset = 0;
-        this.dropVelocity = 0;
-        this.isDropping = false;
+    // Slide animation
+    if (this.isSliding) {
+      this.slideProgress += this.slideSpeed;
+      if (this.slideProgress >= 1) {
+        this.slideProgress = 1;
+        this.isSliding = false;
       }
     }
     
-    // Floating animation (only when not dropping)
-    if (!this.isDropping) {
+    // Floating animation (only when not sliding)
+    if (!this.isSliding) {
       this.floatTime += this.floatSpeed;
     }
   }
@@ -192,37 +217,50 @@ class DroppedItem {
   draw() {
     this.update();
     
-    // Calculate float offset
-    const floatOffset = this.isDropping ? 0 : sin(this.floatTime) * this.floatAmplitude;
+    // Calculate slide offset with easing
+    const slideEase = this.isSliding ? (1 - pow(1 - this.slideProgress, 3)) : 1;
+    const slideX = cos(this.slideAngle) * this.slideDistance * slideEase;
+    const slideY = sin(this.slideAngle) * this.slideDistance * slideEase;
     
-    // Calculate shadow size based on float height
-    const shadowScale = this.isDropping ? 1 : map(floatOffset, -this.floatAmplitude, this.floatAmplitude, 1.2, 0.8);
-    const shadowAlpha = this.isDropping ? 80 : map(floatOffset, -this.floatAmplitude, this.floatAmplitude, 100, 60);
+    // Calculate float offset
+    const floatOffset = this.isSliding ? 0 : sin(this.floatTime) * this.floatAmplitude;
+    const totalHeight = this.floatHeight + floatOffset;
+    
+    // Calculate shadow size based on height (INVERTED - bigger when lower/closer to ground)
+    // When totalHeight is low (near ground), shadow is bigger
+    const shadowScale = map(totalHeight, this.floatHeight - this.floatAmplitude, this.floatHeight + this.floatAmplitude, 1.3, 0.7);
+    const shadowAlpha = map(totalHeight, this.floatHeight - this.floatAmplitude, this.floatHeight + this.floatAmplitude, 100, 50);
     
     // Draw shadow
     push();
     fill(0, 0, 0, shadowAlpha);
     noStroke();
     ellipse(
-      this.x + this.baseSize / 2, 
-      this.y + this.baseSize * this.item.HtoW + this.yOffset, 
-      this.baseSize * shadowScale * 0.8, 
-      this.baseSize * shadowScale * 0.3
+      this.x + slideX + this.itemWidth / 2, 
+      this.y + slideY + this.itemHeight, 
+      this.itemWidth * shadowScale * 0.9, 
+      this.itemWidth * shadowScale * 0.35
     );
     pop();
     
-    // Draw item with proper sizing
+    // Draw item with proper sizing and outline
+    push();
+    // Add subtle outline for all items
+    drawingContext.shadowBlur = 3;
+    drawingContext.shadowColor = 'rgba(0, 0, 0, 0.5)';
     image(
       this.item.image, 
-      this.x, 
-      this.y + this.yOffset + floatOffset, 
-      this.baseSize, 
-      this.baseSize * this.item.HtoW
+      this.x + slideX, 
+      this.y + slideY - totalHeight, 
+      this.itemWidth, 
+      this.itemHeight
     );
+    drawingContext.shadowBlur = 0;
+    pop();
   }
 
   checkPickup() {
-    let d = distance(pX + 600, pY + 340, this.x, this.y);
+    let d = distance(pX + 600, pY + 340, this.x + this.itemWidth / 2, this.y + this.itemHeight / 2);
     if (d < 50) {
       return true;
     }
@@ -243,7 +281,7 @@ function updateDroppedItems() {
       stroke(255, 0, 0, 100);
       strokeWeight(5);
       noFill();
-      rect(item.x, item.y, item.baseSize, item.item.HtoW * item.baseSize);
+      rect(item.x, item.y - item.floatHeight, item.itemWidth, item.itemHeight);
       fill(255, 255, 255);
     }
     count++;
