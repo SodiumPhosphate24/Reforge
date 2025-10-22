@@ -340,9 +340,9 @@ function drawPickupPrompt(item) {
   const promptText = "Press E to Pick Up " + item.item.name;
   
   // Background for text
-  const textWidth = textWidth(promptText);
+  const promptWidth = textWidth(promptText);
   fill(0, 0, 0, 150);
-  rect(600 - textWidth / 2 - 10, 30, textWidth + 20, 35, 5);
+  rect(600 - promptWidth / 2 - 10, 30, promptWidth + 20, 35, 5);
   
   // Text
   fill(100, 255, 255, 200);
