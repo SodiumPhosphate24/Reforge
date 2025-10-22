@@ -32,32 +32,45 @@ function messageDisplay() {
     if (messages[i].type == "quest") {
       messages[i].phaseTimer++;
       
-      // Phase 1: Slide down and grow (0-50 frames)
+      // Phase 1: Slide down and grow (0-70 frames for two-stage bounce)
       if (messages[i].phase === "slide") {
         // Smooth slide down
         messages[i].y = lerp(messages[i].y, messages[i].targetY, 0.12);
         
-        // Eased scale up with bounce/recoil effect
-        // Progress from 0 to 1 over 50 frames
-        const progress = min(messages[i].phaseTimer / 50, 1);
+        // Two-stage bounce: overshoot -> undershoot -> settle
+        // Progress from 0 to 1 over 70 frames
+        const progress = min(messages[i].phaseTimer / 70, 1);
         
-        // Apply ease-out-back for overshoot/bounce effect
-        // This makes it grow past the target, then settle back
         let easedProgress;
-        const c1 = 1.70158;
-        const c3 = c1 + 1;
         
-        if (progress < 1) {
-          easedProgress = 1 + c3 * pow(progress - 1, 3) + c1 * pow(progress - 1, 2);
+        if (progress < 0.5) {
+          // First half: overshoot (0 to 0.5)
+          // Use elastic ease-out for strong overshoot
+          const p1 = progress * 2; // Map to 0-1
+          const c4 = (2 * PI) / 3;
+          
+          if (p1 === 0) {
+            easedProgress = 0;
+          } else if (p1 === 1) {
+            easedProgress = 1.15; // Overshoot peak
+          } else {
+            easedProgress = pow(2, -10 * p1) * sin((p1 * 10 - 0.75) * c4) + 1.15;
+          }
         } else {
-          easedProgress = 1;
+          // Second half: undershoot and settle (0.5 to 1)
+          // Bounce back from overshoot, dip below, then settle
+          const p2 = (progress - 0.5) * 2; // Map to 0-1
+          
+          // Custom curve: starts at overshoot (1.15), dips to undershoot (0.92), settles at 1.0
+          const bounce = -0.23 * pow(p2 - 0.5, 2) + 1.15 - 0.23 * 0.25;
+          easedProgress = bounce;
         }
         
         messages[i].currentScale = 0.3 + (messages[i].targetScale - 0.3) * easedProgress;
         messages[i].scale = messages[i].currentScale;
         
         // Transition to display phase after settling
-        if (messages[i].phaseTimer > 50 && abs(messages[i].y - messages[i].targetY) < 2) {
+        if (messages[i].phaseTimer > 70 && abs(messages[i].y - messages[i].targetY) < 2) {
           messages[i].phase = "display";
           messages[i].phaseTimer = 0;
         }
