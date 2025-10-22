@@ -51,13 +51,6 @@ function switchPlayer(newPlayer) {
   // Camera will smoothly pan to new player via controlCamera()
 }
 function drawPlayers() {
-  // Draw active player shadow
-  fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
-  ellipse(pX + 600 + pWidth / 2, pY + 375 + pHeight, pWidth, pHeight * 0.6);
-
-  // Draw active player at centered position with 35px visual buffer above hitbox
-  // The image is drawn 35px higher than the hitbox position
-  image(PlayerImage, pX + 600, pY + 375 - 35, pWidth, pHeight + 35);
 
   // Draw other players at their world positions with same visual buffer
   for (let i = 0; i < players.length; i++) {
@@ -70,6 +63,8 @@ function drawPlayers() {
       image(players[i].picture, players[i].x + 600, players[i].y + 375 - 35, players[i].w, players[i].h + 35);
     }
   }
+
+
 
   // Draw indicator above active player
   drawIndicator();
