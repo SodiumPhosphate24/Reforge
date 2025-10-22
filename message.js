@@ -7,11 +7,9 @@ class Message {
       this.targetY = 150; // Final resting position
       this.type = type;
       this.scale = 0.3; // Start small
-      this.targetScale = 1.8; // Grow to significantly larger size
-      this.currentScale = 0.3; // Track current scale for bounce effect
+      this.targetScale = 2.0; // Grow to larger size
       this.alpha = 255; // Start fully visible
-      this.lifespan = 300; // Total frames to live
-      this.phase = "slide"; // "slide", "display", "fade"
+      this.phase = "slide"; // "slide", "grow", "display", "fade"
       this.phaseTimer = 0;
     }
     else if (type == "dialogue") {
@@ -32,51 +30,62 @@ function messageDisplay() {
     if (messages[i].type == "quest") {
       messages[i].phaseTimer++;
       
-      // Phase 1: Slide down and grow (0-70 frames for two-stage bounce)
+      // Phase 1: Slide down smoothly (0-30 frames)
       if (messages[i].phase === "slide") {
-        // Smooth slide down
-        messages[i].y = lerp(messages[i].y, messages[i].targetY, 0.12);
+        messages[i].y = lerp(messages[i].y, messages[i].targetY, 0.15);
         
-        // Two-stage bounce: overshoot -> undershoot -> settle
-        // Progress from 0 to 1 over 70 frames
-        const progress = min(messages[i].phaseTimer / 70, 1);
-        
-        let easedProgress;
-        
-        if (progress < 0.5) {
-          // First half: overshoot (0 to 0.5)
-          // Use elastic ease-out for strong overshoot
-          const p1 = progress * 2; // Map to 0-1
-          const c4 = (2 * PI) / 3;
-          
-          if (p1 === 0) {
-            easedProgress = 0;
-          } else if (p1 === 1) {
-            easedProgress = 1.15; // Overshoot peak
-          } else {
-            easedProgress = pow(2, -10 * p1) * sin((p1 * 10 - 0.75) * c4) + 1.15;
-          }
-        } else {
-          // Second half: undershoot and settle (0.5 to 1)
-          // Bounce back from overshoot, dip below, then settle
-          const p2 = (progress - 0.5) * 2; // Map to 0-1
-          
-          // Custom curve: starts at overshoot (1.15), dips to undershoot (0.92), settles at 1.0
-          const bounce = -0.23 * pow(p2 - 0.5, 2) + 1.15 - 0.23 * 0.25;
-          easedProgress = bounce;
-        }
-        
-        messages[i].currentScale = 0.3 + (messages[i].targetScale - 0.3) * easedProgress;
-        messages[i].scale = messages[i].currentScale;
-        
-        // Transition to display phase after settling
-        if (messages[i].phaseTimer > 70 && abs(messages[i].y - messages[i].targetY) < 2) {
-          messages[i].phase = "display";
+        // Transition to grow phase when close to target
+        if (messages[i].phaseTimer > 25 && abs(messages[i].y - messages[i].targetY) < 3) {
+          messages[i].phase = "grow";
           messages[i].phaseTimer = 0;
         }
       }
       
-      // Phase 2: Display (hold for 120 frames)
+      // Phase 2: Grow with ease in-out and two-stage recoil (0-80 frames)
+      else if (messages[i].phase === "grow") {
+        const totalGrowFrames = 80;
+        const progress = min(messages[i].phaseTimer / totalGrowFrames, 1);
+        
+        let scaleProgress;
+        
+        if (progress < 0.7) {
+          // First 70%: Ease in-out growth (slow -> fast -> slow)
+          const t = progress / 0.7;
+          // Cubic ease in-out
+          scaleProgress = t < 0.5
+            ? 4 * t * t * t
+            : 1 - pow(-2 * t + 2, 3) / 2;
+          scaleProgress *= 0.7; // Map to 0-0.7
+        } else if (progress < 0.85) {
+          // Next 15%: Overshoot (0.7 to 0.85)
+          const t = (progress - 0.7) / 0.15;
+          // Overshoot to 1.12
+          scaleProgress = 0.7 + (0.42 + 0.12) * t;
+        } else {
+          // Final 15%: Undershoot then settle (0.85 to 1.0)
+          const t = (progress - 0.85) / 0.15;
+          if (t < 0.5) {
+            // First half: drop to undershoot (1.12 to 0.94)
+            const t2 = t / 0.5;
+            scaleProgress = 1.12 - 0.18 * t2;
+          } else {
+            // Second half: settle to 1.0 (0.94 to 1.0)
+            const t2 = (t - 0.5) / 0.5;
+            scaleProgress = 0.94 + 0.06 * t2;
+          }
+        }
+        
+        messages[i].scale = 0.3 + (messages[i].targetScale - 0.3) * scaleProgress;
+        
+        // Transition to display phase
+        if (messages[i].phaseTimer >= totalGrowFrames) {
+          messages[i].phase = "display";
+          messages[i].phaseTimer = 0;
+          messages[i].scale = messages[i].targetScale; // Ensure final scale
+        }
+      }
+      
+      // Phase 3: Display (hold for 120 frames)
       else if (messages[i].phase === "display") {
         if (messages[i].phaseTimer > 120) {
           messages[i].phase = "fade";
@@ -84,12 +93,10 @@ function messageDisplay() {
         }
       }
       
-      // Phase 3: Fade out (60 frames)
+      // Phase 4: Fade out (60 frames)
       else if (messages[i].phase === "fade") {
-        // Gradual fade out
         messages[i].alpha = lerp(messages[i].alpha, 0, 0.05);
         
-        // Remove when fully transparent
         if (messages[i].alpha < 5) {
           messages.splice(i, 1);
           i--;
