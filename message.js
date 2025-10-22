@@ -7,7 +7,8 @@ class Message {
       this.targetY = 150; // Final resting position
       this.type = type;
       this.scale = 0.3; // Start small
-      this.targetScale = 1; // Grow to normal size
+      this.targetScale = 1.8; // Grow to significantly larger size
+      this.currentScale = 0.3; // Track current scale for bounce effect
       this.alpha = 255; // Start fully visible
       this.lifespan = 300; // Total frames to live
       this.phase = "slide"; // "slide", "display", "fade"
@@ -31,20 +32,32 @@ function messageDisplay() {
     if (messages[i].type == "quest") {
       messages[i].phaseTimer++;
       
-      // Phase 1: Slide down and grow (0-40 frames)
+      // Phase 1: Slide down and grow (0-50 frames)
       if (messages[i].phase === "slide") {
         // Smooth slide down
         messages[i].y = lerp(messages[i].y, messages[i].targetY, 0.12);
         
-        // Eased scale up (ease-in-out using sine)
-        // Progress from 0 to 1 over 40 frames
-        const progress = min(messages[i].phaseTimer / 40, 1);
-        // Apply ease-in-out: slow start, fast middle, slow end
-        const easedProgress = (1 - cos(progress * PI)) / 2;
-        messages[i].scale = 0.3 + (messages[i].targetScale - 0.3) * easedProgress;
+        // Eased scale up with bounce/recoil effect
+        // Progress from 0 to 1 over 50 frames
+        const progress = min(messages[i].phaseTimer / 50, 1);
+        
+        // Apply ease-out-back for overshoot/bounce effect
+        // This makes it grow past the target, then settle back
+        let easedProgress;
+        const c1 = 1.70158;
+        const c3 = c1 + 1;
+        
+        if (progress < 1) {
+          easedProgress = 1 + c3 * pow(progress - 1, 3) + c1 * pow(progress - 1, 2);
+        } else {
+          easedProgress = 1;
+        }
+        
+        messages[i].currentScale = 0.3 + (messages[i].targetScale - 0.3) * easedProgress;
+        messages[i].scale = messages[i].currentScale;
         
         // Transition to display phase after settling
-        if (messages[i].phaseTimer > 40 && abs(messages[i].y - messages[i].targetY) < 2) {
+        if (messages[i].phaseTimer > 50 && abs(messages[i].y - messages[i].targetY) < 2) {
           messages[i].phase = "display";
           messages[i].phaseTimer = 0;
         }
