@@ -116,28 +116,30 @@ function craftItem(recipe) {
       }
     }
   }
-  
-  // Add crafted item to inventory
-  const craftedItem = new Item(recipe.output.type, recipe.output.name, recipe.output.amount);
-  
-  // Try to stack with existing items
-  let stacked = false;
-  if (craftedItem.stackable) {
-    for (let i = 0; i < inventoryList.length; i++) {
-      if (inventoryList[i] && inventoryList[i].name === craftedItem.name) {
-        inventoryList[i].amount += craftedItem.amount;
-        stacked = true;
-        break;
+
+  if (recipe.type === "item") {
+    // Add crafted item to inventory
+    const craftedItem = new Item(recipe.output.type, recipe.output.name, recipe.output.amount);
+    
+    // Try to stack with existing items
+    let stacked = false;
+    if (craftedItem.stackable) {
+      for (let i = 0; i < inventoryList.length; i++) {
+        if (inventoryList[i] && inventoryList[i].name === craftedItem.name) {
+          inventoryList[i].amount += craftedItem.amount;
+          stacked = true;
+          break;
+        }
       }
     }
-  }
-  
-  // If not stacked, find empty slot
-  if (!stacked) {
-    for (let i = 0; i < inventoryList.length; i++) {
-      if (inventoryList[i] === null) {
-        inventoryList[i] = craftedItem;
-        break;
+    
+    // If not stacked, find empty slot
+    if (!stacked) {
+      for (let i = 0; i < inventoryList.length; i++) {
+        if (inventoryList[i] === null) {
+          inventoryList[i] = craftedItem;
+          break;
+        }
       }
     }
   }
