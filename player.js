@@ -62,7 +62,7 @@ function drawPlayers() {
     if (i !== activePlayer) {
       if(players[i].isDead()){
         players.splice(i, 1);
-        i
+        i--;
       }
       // Draw shadow for this player
       fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
