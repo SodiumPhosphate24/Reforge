@@ -60,6 +60,10 @@ function drawPlayers() {
   // Draw other players at their world positions with same visual buffer
   for (let i = 0; i < players.length; i++) {
     if (i !== activePlayer) {
+      if(players[i].isDead()){
+        players.splice(i, 1);
+        i
+      }
       // Draw shadow for this player
       fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
       ellipse(players[i].x + 600 + players[i].w / 2, players[i].y + 375 + players[i].h, players[i].w, players[i].h * 0.6);
