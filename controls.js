@@ -1,14 +1,14 @@
 function controls() {
-  if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) {
+  if (keyIsDown(65)) {
     pXVel -= players[activePlayer].speed;
   }
-  if (keyIsDown(RIGHT_ARROW) || keyIsDown(68)) {
+  if (keyIsDown(68)) {
     pXVel += players[activePlayer].speed;
   }
-  if (keyIsDown(UP_ARROW) || keyIsDown(87)) {
+  if (keyIsDown(87)) {
     pYVel -= players[activePlayer].speed;
   }
-  if (keyIsDown(DOWN_ARROW) || keyIsDown(83)) {
+  if (keyIsDown(83)) {
     pYVel += players[activePlayer].speed;
   }
   pYVel *= 0.8;

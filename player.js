@@ -24,6 +24,12 @@ class Player {
   getImage() {
     return picture;
   }
+  isDead(){
+    if (this.health <= 0){
+      return true;
+    }
+    return false;
+  }
 }
 function switchPlayer(newPlayer) {
   activePlayer = newPlayer;
