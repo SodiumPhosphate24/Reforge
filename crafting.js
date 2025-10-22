@@ -177,6 +177,7 @@ function drawCraftingMenu() {
     textSize(20);
     yPos += 100;
   }
+  textAlign(CENTER, CENTER);
 }
 
 function handleCraftingInput() {
