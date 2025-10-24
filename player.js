@@ -29,6 +29,9 @@ class Player {
     if (this.health <= 0){
       this.frozen = true;
     }
+    else{
+      this.frozen = false;
+    }
   }
 }
 function switchPlayer(newPlayer) {

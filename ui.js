@@ -1,6 +1,7 @@
 var inventorySlot = 1;
 var healthPoints = 100;
 var speedBuff = false;
+var laserEnergy = 100;
 function drawUI() {
   inventory();
   health();
@@ -65,7 +66,10 @@ function health() {
   noStroke();
 }
 function projectileEnergy() {
-  image(EnergyTank, 100, 150, 140, 64);
+  fill(0, 255, 255);
+  rect(120, 160, laserEnergy, 25);
+  image(EnergyTank, 100, 148, 135, 62);
+
 }
 
 function buffs() {
