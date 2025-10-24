@@ -1,6 +1,5 @@
-var frozen = false;
 function controls() {
-  if (!frozen){
+  if (players[activePlayer].frozen == false){
   if (keyIsDown(65)) {
     pXVel -= players[activePlayer].speed;
   }
