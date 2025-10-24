@@ -4,6 +4,7 @@ var speedBuff = false;
 function drawUI() {
   inventory();
   health();
+  projectileEnergy();
   buffs();
 }
 
@@ -17,13 +18,13 @@ function inventory() {
   image(FrameImg, 329 + ((inventorySlot - 1) * 69.71), 649, 79.54, 79.54);
   noStroke();
   for (let i = 0; i < inventoryList.length; i++) {
-    if (inventoryList[i] != null){
+    if (inventoryList[i] != null) {
       imageMode(CENTER);
-      
+
       // Calculate proper sizing to fit within inventory slot (max 50x50)
       const maxSize = 50;
       let itemWidth, itemHeight;
-      
+
       if (inventoryList[i].HtoW > 1) {
         // Height is larger
         itemHeight = maxSize;
@@ -33,9 +34,9 @@ function inventory() {
         itemWidth = maxSize;
         itemHeight = maxSize * inventoryList[i].HtoW;
       }
-      
+
       image(inventoryList[i].image, 369 + (i * 69.71), 689, itemWidth, itemHeight);
-      if (inventoryList[i].stackable){
+      if (inventoryList[i].stackable) {
         textSize(20);
         textFont(Silkscreen);
         fill(0, 0, 0, 200);
@@ -50,20 +51,20 @@ function health() {
   // draws health
   noStroke();
   fill(100, 100, 100, 200);
-  rect(100 + players[activePlayer].maxHealth*1.2, 100, 0 - players[activePlayer].maxHealth * 1.2, 45);
-  fill(255 - (healthPoints/players[activePlayer].maxHealth)*255, 0 + (healthPoints/players[activePlayer].maxHealth)*255, 0, 150);
+  rect(100 + players[activePlayer].maxHealth * 1.2, 100, 0 - players[activePlayer].maxHealth * 1.2, 45);
+  fill(255 - (healthPoints / players[activePlayer].maxHealth) * 255, 0 + (healthPoints / players[activePlayer].maxHealth) * 255, 0, 150);
   rect(100, 100, healthPoints * 1.2, 45);
   strokeWeight(5);
   stroke(75, 75, 75);
   fill(0, 0, 0, 0);
-  for (i = 1; i <= players[activePlayer].maxHealth/25; i++) {
+  for (i = 1; i <= players[activePlayer].maxHealth / 25; i++) {
     rect(100, 100, i * 30, 45);
   }
-  rect(100 + players[activePlayer].maxHealth*1.2, 110, 5, 25)
+  rect(100 + players[activePlayer].maxHealth * 1.2, 110, 5, 25)
   noStroke();
 }
-function projectileEnergy(){
-  
+function projectileEnergy() {
+  image(EnergyTank, 100, 150, 150, 75);
 }
 
 function buffs() {
@@ -104,28 +105,28 @@ class Item {
       }
     }
 
-    if (type == "bullet"){
+    if (type == "bullet") {
       this.type = "bullet";
       this.stackable = true;
-      if (name == "common"){
+      if (name == "common") {
         this.name = name;
         this.image = BulletImgs[0];
         this.damage = 1;
         this.HtoW = 3.5;
       }
-      if (name == "uncommon"){
+      if (name == "uncommon") {
         this.name = name;
         this.image = BulletImgs[1];
         this.damage = 2;
         this.HtoW = 3.5;
       }
-      if (name == "rare"){
+      if (name == "rare") {
         this.name = name;
         this.image = BulletImgs[2];
         this.damage = 3;
         this.HtoW = 3.5;
       }
-      if (name == "legendary"){
+      if (name == "legendary") {
         this.name = name;
         this.image = BulletImgs[3];
         this.damage = 4;
@@ -133,7 +134,7 @@ class Item {
       }
     }
 
-    if (type == "consumable"){
+    if (type == "consumable") {
       this.type = "consumable";
       this.stackable = true;
       if (name == "cheese") {
@@ -170,28 +171,28 @@ class DroppedItem {
     this.item = item;
     this.x = x;
     this.y = y;
-    
+
     // Slide animation properties
     this.slideDistance = random(15, 30); // How far it slides
     this.slideAngle = random(0, TWO_PI); // Random direction
     this.slideProgress = 0; // 0 to 1
     this.slideSpeed = 0.08; // How fast the slide animation completes
     this.isSliding = true;
-    
+
     // Floating animation properties
     this.floatTime = random(0, TWO_PI); // Random start phase for variety
     this.floatSpeed = 0.05;
     this.floatAmplitude = 8; // How high it floats
     this.floatHeight = 15; // Base height above ground
-    
+
     // Size properties - categorize by item type
     this.calculateItemSize();
   }
-  
+
   calculateItemSize() {
     // Determine base size based on item type
     let baseSize = 35; // Default
-    
+
     if (this.item.type === "bullet") {
       baseSize = 20; // Bullets are small
     } else if (this.item.type === "gun") {
@@ -201,7 +202,7 @@ class DroppedItem {
     } else if (this.item.type === "projectile") {
       baseSize = 28; // Projectiles are medium-small
     }
-    
+
     // Calculate width and height based on aspect ratio
     // Use the MAX dimension and scale the other
     if (this.item.HtoW > 1) {
@@ -224,51 +225,51 @@ class DroppedItem {
         this.isSliding = false;
       }
     }
-    
+
     // Floating animation (always running)
     this.floatTime += this.floatSpeed;
   }
 
   draw() {
     this.update();
-    
+
     // Calculate slide offset with easing
     const slideEase = this.isSliding ? (1 - pow(1 - this.slideProgress, 3)) : 1;
     const slideX = cos(this.slideAngle) * this.slideDistance * slideEase;
     const slideY = sin(this.slideAngle) * this.slideDistance * slideEase;
-    
+
     // Calculate float offset (always active)
     const floatOffset = sin(this.floatTime) * this.floatAmplitude;
     const totalHeight = this.floatHeight + floatOffset;
-    
+
     // Calculate shadow size based on height (INVERTED - bigger when lower/closer to ground)
     // When totalHeight is low (near ground), shadow is bigger
     const shadowScale = map(totalHeight, this.floatHeight - this.floatAmplitude, this.floatHeight + this.floatAmplitude, 1.3, 0.7);
     const shadowAlpha = map(totalHeight, this.floatHeight - this.floatAmplitude, this.floatHeight + this.floatAmplitude, 100, 50);
-    
+
     // Set minimum shadow size (prevent tiny shadows)
     const minShadowSize = 12;
     const shadowWidth = max(this.itemWidth * shadowScale * 0.9, minShadowSize);
     const shadowHeight = max(this.itemWidth * shadowScale * 0.35, minShadowSize * 0.35);
-    
+
     // Draw shadow
     push();
     fill(0, 0, 0, shadowAlpha);
     noStroke();
     ellipse(
-      this.x + slideX + this.itemWidth / 2, 
-      this.y + slideY + this.itemHeight, 
-      shadowWidth, 
+      this.x + slideX + this.itemWidth / 2,
+      this.y + slideY + this.itemHeight,
+      shadowWidth,
       shadowHeight
     );
     pop();
-    
+
     // Check if player is near for glow effect
     const playerCenterX = pX + 600 + pWidth / 2;
     const playerCenterY = pY + 375 + pHeight / 2;
     const distToPlayer = distance(playerCenterX, playerCenterY, this.x + slideX + this.itemWidth / 2, this.y + slideY + this.itemHeight / 2);
     const isNear = distToPlayer < 50;
-    
+
     // Draw item with proximity glow
     push();
     if (isNear) {
@@ -276,10 +277,10 @@ class DroppedItem {
       drawingContext.shadowColor = 'rgba(255, 255, 255, 0.9)';
     }
     image(
-      this.item.image, 
-      this.x + slideX, 
-      this.y + slideY - totalHeight, 
-      this.itemWidth, 
+      this.item.image,
+      this.x + slideX,
+      this.y + slideY - totalHeight,
+      this.itemWidth,
       this.itemHeight
     );
     drawingContext.shadowBlur = 0;
@@ -307,14 +308,14 @@ function updateDroppedItems() {
   let count = 0;
   nearestPickupItem = null;
   let nearestDistance = Infinity;
-  
+
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
-  
+
   for (let i = 0; i < droppedItems.length; i++) {
     let item = droppedItems[count];
     item.draw();
-    
+
     // Check if this is the nearest pickup-able item
     if (item.checkPickup()) {
       const d = distance(playerCenterX, playerCenterY, item.x + item.itemWidth / 2, item.y + item.itemHeight / 2);
@@ -323,7 +324,7 @@ function updateDroppedItems() {
         nearestPickupItem = item;
       }
     }
-    
+
     count++;
   }
 }
@@ -340,18 +341,18 @@ function drawPickupPrompt(item) {
   textSize(20);
   textFont(Silkscreen);
   textAlign(CENTER, CENTER);
-  
+
   // Display at top of screen
   const promptText = "Press E to Pick Up " + item.item.name;
-  
+
   // Background for text
   const promptWidth = textWidth(promptText);
   fill(0, 0, 0, 150);
   rect(600 - promptWidth / 2 - 10, 30, promptWidth + 20, 35, 5);
-  
+
   // Text
   fill(100, 255, 255, 200);
   text(promptText, 600, 47);
-  
+
   pop();
 }
