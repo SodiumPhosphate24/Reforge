@@ -51,16 +51,16 @@ function health() {
   if (healthPoints > 0) {
     noStroke();
     fill(100, 100, 100, 200);
-    rect(100, 100, players[activePlayer].maxHealth, 25);
+    rect(100, 100, players[activePlayer].maxHealth * 1.2, 45);
     fill(255 - (healthPoints/players[activePlayer].maxHealth)*255, 0 + (healthPoints/players[activePlayer].maxHealth)*255, 0, 150);
-    rect(100, 100, healthPoints, 25);
+    rect(100, 100, healthPoints * 1.2, 45);
     strokeWeight(5);
     stroke(75, 75, 75);
     fill(0, 0, 0, 0);
     for (i = 1; i <= players[activePlayer].maxHealth/25; i++) {
-      rect(100, 100, i * 25, 25);
+      rect(100, 100, i * 30, 45);
     }
-    rect(100 + players[activePlayer].maxHealth, 105, 5, 15)
+    rect(100 + players[activePlayer].maxHealth*1.2, 110, 5, 25)
     noStroke();
   }
 }
