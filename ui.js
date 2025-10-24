@@ -50,12 +50,12 @@ function health() {
   // draws health
   if (healthPoints > 0) {
     noStroke();
-    fill(255, 0, 0, 200);
+    fill(100, 100, 100, 200);
     rect(100, 100, players[activePlayer].maxHealth * 2, 25);
-    fill(0, 255, 0, 150);
+    fill(255 - (healthPoints/players[activePlayer].maxHealth)*255, 0 + (healthPoints/players[activePlayer].maxHealth)*255, 0, 150);
     rect(100, 100, healthPoints * 2, 25);
     strokeWeight(5);
-    stroke(0, 150, 0);
+    stroke(75, 75, 75);
     fill(0, 0, 0, 0);
     for (i = 1; i <= players[activePlayer].maxHealth/25; i++) {
       rect(100, 100, i * 50, 25);

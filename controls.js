@@ -1,4 +1,4 @@
-var frozen = false;
+var frozen = players[activePlayer].frozen;
 function controls() {
   if (!frozen){
   if (keyIsDown(65)) {

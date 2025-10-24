@@ -20,6 +20,7 @@ class Player {
     this.damage = damage;
     this.picture = picture;
     this.inventory = [null, null, null, null, null, null, null, null];
+    this.frozen = false;
   }
   getImage() {
     return picture;
