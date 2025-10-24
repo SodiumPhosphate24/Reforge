@@ -50,7 +50,7 @@ function inventory() {
 
 function health() {
   // draws health
-  healthPoints = constrain(healthPoints, 0, players[activePlayer].maxHealth);
+  players[activePlayer].health = constrain(players[activePlayer].health, 0, players[activePlayer].maxHealth);
   noStroke();
   fill(100, 100, 100, 200);
   rect(100 + players[activePlayer].maxHealth * 1.2, 100, 0 - players[activePlayer].maxHealth * 1.2, 45);
