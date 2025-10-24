@@ -58,6 +58,7 @@ function switchPlayer(newPlayer) {
   // Camera will smoothly pan to new player via controlCamera()
 }
 function drawPlayers() {
+  frozen = players[activePlayer].frozen;
   // Draw other players at their world positions with same visual buffer
   for (let i = 0; i < players.length; i++) {
     if (i !== activePlayer) {

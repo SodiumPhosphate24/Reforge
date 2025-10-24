@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0], projImgs = [0, 0], Silkscreen, PlayerImage;
+let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0], projImgs = [0, 0], Silkscreen, PlayerImage;
 var itemConstructors = [["gun", "glock", 1], ["gun", "western", 1], ["gun", "rare pistol", 1], ["bullet", "common", 50], ["bullet", "uncommon", 40], ["bullet", "rare", 30], ["bullet", "legendary", 10], ["consumable", "cheese", 1], ["consumable", "soda", 1], ["projectile", "grenade", 1], ["projectile", "rock", 10]];
 var pX = 0; var pY = 0; var playerDamage = 1;
 var prePX = 0, prePY = 0;
@@ -45,6 +45,7 @@ function preload() {
   Fog = loadImage("hud/Fog.png");
   IndicatorImg = loadImage("Indicator.png");
   Silkscreen = loadFont("Silkscreen-Regular.ttf");
+  EnergyTank = loadImage("hud/EnergyTank.png");
 }
 
 function setup() {
