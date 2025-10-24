@@ -30,44 +30,20 @@ function messageDisplay() {
     if (messages[i].type == "quest") {
       messages[i].phaseTimer++;
       
-      // Phase 1: Simultaneous slide and grow with three-stage recoil (0-90 frames)
+      // Phase 1: Simultaneous slide and smooth grow (0-70 frames)
       if (messages[i].phase === "animate") {
-        const totalFrames = 90;
+        const totalFrames = 70;
         const progress = min(messages[i].phaseTimer / totalFrames, 1);
         
         // Smooth slide down throughout animation
         messages[i].y = lerp(messages[i].y, messages[i].targetY, 0.12);
         
-        // Three-stage growth: grow to overshoot -> shrink to undershoot -> settle to final
-        let scaleProgress;
+        // Smooth ease-in-out growth (slow -> fast -> slow)
+        const eased = progress < 0.5
+          ? 4 * progress * progress * progress
+          : 1 - pow(-2 * progress + 2, 3) / 2;
         
-        if (progress < 0.5) {
-          // Stage 1 (0-0.5): Grow to overshoot (exceeds final size)
-          const t = progress / 0.5;
-          // Ease in-out to 1.15 (15% overshoot)
-          const eased = t < 0.5
-            ? 4 * t * t * t
-            : 1 - pow(-2 * t + 2, 3) / 2;
-          scaleProgress = eased * 1.15;
-        } else if (progress < 0.75) {
-          // Stage 2 (0.5-0.75): Shrink to undershoot (smaller than final)
-          const t = (progress - 0.5) / 0.25;
-          // Smooth transition from 1.15 to 0.90 (10% undershoot)
-          const eased = t < 0.5
-            ? 4 * t * t * t
-            : 1 - pow(-2 * t + 2, 3) / 2;
-          scaleProgress = 1.15 - (0.25 * eased);
-        } else {
-          // Stage 3 (0.75-1.0): Grow to final size (1.0)
-          const t = (progress - 0.75) / 0.25;
-          // Smooth ease to final
-          const eased = t < 0.5
-            ? 4 * t * t * t
-            : 1 - pow(-2 * t + 2, 3) / 2;
-          scaleProgress = 0.90 + (0.10 * eased);
-        }
-        
-        messages[i].scale = 0.3 + (messages[i].targetScale - 0.3) * scaleProgress;
+        messages[i].scale = 0.3 + (messages[i].targetScale - 0.3) * eased;
         
         // Transition to display phase
         if (messages[i].phaseTimer >= totalFrames) {
