@@ -65,7 +65,7 @@ function health() {
   noStroke();
 }
 function projectileEnergy() {
-  image(EnergyTank, 100, 150, 140, 100);
+  image(EnergyTank, 100, 150, 140, 64);
 }
 
 function buffs() {
