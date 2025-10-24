@@ -27,8 +27,9 @@ class Player {
   }
   isDead(){
     if (this.health <= 0){
-      this.frozen = true;
+      return true;
     }
+    return false;
   }
 }
 function switchPlayer(newPlayer) {
@@ -60,7 +61,9 @@ function drawPlayers() {
   // Draw other players at their world positions with same visual buffer
   for (let i = 0; i < players.length; i++) {
     if (i !== activePlayer) {
-      players[i].isDead();
+      if(players[i].isDead()){
+        players[i].frozen = true;
+      }
       // Draw shadow for this player
       fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
       ellipse(players[i].x + 600 + players[i].w / 2, players[i].y + 375 + players[i].h, players[i].w, players[i].h * 0.6);
