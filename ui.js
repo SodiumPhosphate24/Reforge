@@ -67,7 +67,7 @@ function health() {
 }
 function projectileEnergy() {
   fill(0, 255, 255);
-  rect(120, 165, laserEnergy * .7, 25);
+  rect(120, 170, laserEnergy * .7, 25);
   image(EnergyTank, 100, 148, 135, 62);
 
 }
