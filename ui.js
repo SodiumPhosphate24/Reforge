@@ -62,6 +62,9 @@ function health() {
   rect(100 + players[activePlayer].maxHealth*1.2, 110, 5, 25)
   noStroke();
 }
+function projectileEnergy(){
+  
+}
 
 function buffs() {
   if (speedBuff) {
