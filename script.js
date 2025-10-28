@@ -70,7 +70,7 @@ function setup() {
   indicatorCurrentY = pY + 375 - 50;
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
-  NonPlayerCharacters.push(new NPC(100, 100, ["Buschy: granny smith apple", "Wing: Red delicious apple", "Mario: Honeycrisp apple", "Luigi: Carrot", "Luigi: Haha u thought I was gon say apple"]));
+  NonPlayerCharacters.push(new NPC(1000, 100, ["Buschy: granny smith apple", "Wing: Red delicious apple", "Mario: Honeycrisp apple", "Luigi: Carrot", "Luigi: Haha u thought I was gon say apple"]));
 }
 
 function draw() {
