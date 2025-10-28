@@ -300,6 +300,7 @@ class DroppedItem {
 }
 
 let nearestPickupItem = null; // Store for screen-fixed rendering
+let pickupPromptAlpha = 0; // Fade animation
 
 function updateDroppedItems() {
   let count = 0;
@@ -327,14 +328,21 @@ function updateDroppedItems() {
 }
 
 function drawPickupPromptIfNeeded() {
+  // Fade in/out based on whether item is near
   if (nearestPickupItem) {
+    pickupPromptAlpha = lerp(pickupPromptAlpha, 255, 0.2);
+  } else {
+    pickupPromptAlpha = lerp(pickupPromptAlpha, 0, 0.2);
+  }
+  
+  if (pickupPromptAlpha > 5 && nearestPickupItem) {
     drawPickupPrompt(nearestPickupItem);
   }
 }
 
 function drawPickupPrompt(item) {
   push();
-  fill(100, 255, 255, 200);
+  fill(100, 255, 255, pickupPromptAlpha * 0.78);
   textSize(20);
   textFont(Silkscreen);
   textAlign(CENTER, CENTER);
@@ -344,11 +352,11 @@ function drawPickupPrompt(item) {
 
   // Background for text
   const promptWidth = textWidth(promptText);
-  fill(0, 0, 0, 150);
+  fill(0, 0, 0, pickupPromptAlpha * 0.6);
   rect(600 - promptWidth / 2 - 10, 30, promptWidth + 20, 35, 5);
 
   // Text
-  fill(100, 255, 255, 200);
+  fill(100, 255, 255, pickupPromptAlpha);
   text(promptText, 600, 47);
 
   pop();

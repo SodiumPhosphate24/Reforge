@@ -21,6 +21,7 @@ class NPC {
 }
 
 let nearestNPC = null; // Store for screen-fixed rendering
+let npcPromptAlpha = 0; // Fade animation
 
 function drawNPCs() {
   nearestNPC = null;
@@ -37,13 +38,41 @@ function drawNPCs() {
       nearestDistance = distToPlayer;
       nearestNPC = NonPlayerCharacters[i];
     }
+    
+    // Close dialogue if player walks away from all NPCs
+    const hasActiveDialogue = messages.some(msg => msg.type === "dialogue");
+    if (hasActiveDialogue) {
+      let nearAnyNPC = false;
+      for (let j = 0; j < NonPlayerCharacters.length; j++) {
+        const dist = distance(NonPlayerCharacters[j].x, NonPlayerCharacters[j].y, pX + 600, pY + 340);
+        if (dist < 120) {
+          nearAnyNPC = true;
+          break;
+        }
+      }
+      if (!nearAnyNPC) {
+        // Remove all dialogue messages
+        for (let k = messages.length - 1; k >= 0; k--) {
+          if (messages[k].type === "dialogue") {
+            messages.splice(k, 1);
+          }
+        }
+      }
+    }
   }
 }
 
 function drawNPCPromptIfNeeded() {
+  // Fade in/out based on whether NPC is near
   if (nearestNPC) {
+    npcPromptAlpha = lerp(npcPromptAlpha, 255, 0.2);
+  } else {
+    npcPromptAlpha = lerp(npcPromptAlpha, 0, 0.2);
+  }
+  
+  if (npcPromptAlpha > 5 && nearestNPC) {
     push();
-    fill(100, 255, 255, 200);
+    fill(100, 255, 255, npcPromptAlpha * 0.78);
     textSize(20);
     textFont(Silkscreen);
     textAlign(CENTER, CENTER);
@@ -52,11 +81,11 @@ function drawNPCPromptIfNeeded() {
     
     // Background for text
     const promptWidth = textWidth(promptText);
-    fill(0, 0, 0, 150);
+    fill(0, 0, 0, npcPromptAlpha * 0.6);
     rect(600 - promptWidth / 2 - 10, 30, promptWidth + 20, 35, 5);
     
     // Text
-    fill(100, 255, 255, 200);
+    fill(100, 255, 255, npcPromptAlpha);
     text(promptText, 600, 47);
     
     pop();

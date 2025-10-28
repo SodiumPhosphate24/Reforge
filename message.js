@@ -137,6 +137,12 @@ function messageDisplay() {
 
       fill(255, 255, 255, messages[i].alpha);
       text(displayMessage, messages[i].x, messages[i].y);
+      
+      // "Press Z" indicator at bottom right with pulsing animation
+      const pulseAlpha = 100 + sin(frameCount / 15) * 50;
+      fill(150, 150, 150, messages[i].alpha * (pulseAlpha / 255));
+      textSize(14);
+      text("Press Z", messages[i].x + 420, messages[i].y + 80);
 
       rectMode(CORNER);
       pop();
