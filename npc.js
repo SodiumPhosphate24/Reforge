@@ -16,7 +16,7 @@ class NPC {
 }
 
 function drawNPCs() {
-  for (let i = 0; i < enemies.length; i++) {
+  for (let i = 0; i < NonPlayerCharacters.length; i++) {
     NonPlayerCharacters[i].update();
     fill(255, 255, 0);
     rect(NonPlayerCharacters[i].x, NonPlayerCharacters[i].y, 20, 20);
