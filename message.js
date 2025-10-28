@@ -139,8 +139,8 @@ function messageDisplay() {
       text(displayMessage, messages[i].x, messages[i].y);
       
       // "Press Z" indicator at bottom right with pulsing animation
-      const pulseAlpha = 150 + sin(frameCount / 15) * 80;
-      fill(200, 200, 200, messages[i].alpha * (pulseAlpha / 255));
+      const pulseAlpha = 100 + sin(frameCount / 15) * 50;
+      fill(150, 150, 150, messages[i].alpha * (pulseAlpha / 255));
       textSize(14);
       text("Press Z", messages[i].x + 420, messages[i].y + 80);
 
@@ -150,15 +150,8 @@ function messageDisplay() {
       if (keyPressedOnce(90)) {
         messages[i].index++;
         if (messages[i].index >= messages[i].message.length) {
-          // Animate out before removing
-          messages[i].alpha = lerp(messages[i].alpha, 0, 0.15);
-          messages[i].slideY = lerp(messages[i].slideY, 100, 0.15);
-          messages[i].boxScale = lerp(messages[i].boxScale, 0, 0.2);
-          
-          if (messages[i].alpha < 5) {
-            messages.splice(i, 1);
-            i--;
-          }
+          messages.splice(i, 1);
+          i--;
         } else {
           // Reset animations for next message
           messages[i].slideY = 30;

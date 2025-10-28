@@ -22,7 +22,6 @@ class NPC {
 
 let nearestNPC = null; // Store for screen-fixed rendering
 let npcPromptAlpha = 0; // Fade animation
-let npcPromptScale = 0; // Scale animation
 
 function drawNPCs() {
   nearestNPC = null;
@@ -52,16 +51,10 @@ function drawNPCs() {
         }
       }
       if (!nearAnyNPC) {
-        // Animate out dialogue messages before removing
+        // Remove all dialogue messages
         for (let k = messages.length - 1; k >= 0; k--) {
           if (messages[k].type === "dialogue") {
-            messages[k].alpha = lerp(messages[k].alpha, 0, 0.15);
-            messages[k].slideY = lerp(messages[k].slideY, 100, 0.15);
-            messages[k].boxScale = lerp(messages[k].boxScale, 0, 0.2);
-            
-            if (messages[k].alpha < 5) {
-              messages.splice(k, 1);
-            }
+            messages.splice(k, 1);
           }
         }
       }
@@ -70,21 +63,15 @@ function drawNPCs() {
 }
 
 function drawNPCPromptIfNeeded() {
-  // Fade in/out and scale based on whether NPC is near
+  // Fade in/out based on whether NPC is near
   if (nearestNPC) {
     npcPromptAlpha = lerp(npcPromptAlpha, 255, 0.2);
-    npcPromptScale = lerp(npcPromptScale, 1, 0.2);
   } else {
     npcPromptAlpha = lerp(npcPromptAlpha, 0, 0.2);
-    npcPromptScale = lerp(npcPromptScale, 0, 0.2);
   }
   
   if (npcPromptAlpha > 5 && nearestNPC) {
     push();
-    translate(600, 47);
-    scale(npcPromptScale);
-    translate(-600, -47);
-    
     fill(100, 255, 255, npcPromptAlpha * 0.78);
     textSize(20);
     textFont(Silkscreen);
