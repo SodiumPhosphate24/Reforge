@@ -301,6 +301,7 @@ class DroppedItem {
 
 let nearestPickupItem = null; // Store for screen-fixed rendering
 let pickupPromptAlpha = 0; // Fade animation
+let pickupPromptScale = 0; // Scale animation
 
 function updateDroppedItems() {
   let count = 0;
@@ -328,11 +329,13 @@ function updateDroppedItems() {
 }
 
 function drawPickupPromptIfNeeded() {
-  // Fade in/out based on whether item is near
+  // Fade in/out and scale based on whether item is near
   if (nearestPickupItem) {
     pickupPromptAlpha = lerp(pickupPromptAlpha, 255, 0.2);
+    pickupPromptScale = lerp(pickupPromptScale, 1, 0.2);
   } else {
     pickupPromptAlpha = lerp(pickupPromptAlpha, 0, 0.2);
+    pickupPromptScale = lerp(pickupPromptScale, 0, 0.2);
   }
   
   if (pickupPromptAlpha > 5 && nearestPickupItem) {
@@ -342,6 +345,10 @@ function drawPickupPromptIfNeeded() {
 
 function drawPickupPrompt(item) {
   push();
+  translate(600, 47);
+  scale(pickupPromptScale);
+  translate(-600, -47);
+  
   fill(100, 255, 255, pickupPromptAlpha * 0.78);
   textSize(20);
   textFont(Silkscreen);
