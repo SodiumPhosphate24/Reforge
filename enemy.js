@@ -17,6 +17,9 @@ class Enemy {
       this.health = 3;
       this.speed = 2;
       this.acceleration = 0.15; // how quickly it changes direction
+      this.image = BadGuy;
+      this.width = 24;
+      this.height = 28;
     }
   }
 
@@ -344,7 +347,7 @@ class Enemy {
   }
 
   hitsPlayer() {
-    return checkCollision(this.x, this.y, pX + 600, pY + 340, 20, 20, 35, 25);
+    return checkCollision(this.x, this.y, pX + 600, pY + 340, this.width, this.height, pWidth, pHeight);
   }
 }
 
@@ -360,7 +363,7 @@ function drawEnemies() {
       fill(150, 0, 0);
     }
     
-    rect(enemies[count].x, enemies[count].y, 20, 20);
+    image(enemies[count].image, enemies[count].x, enemies[count].y, enemies[count].width, enemies[count].height);
     
     if (enemies[count].hitsPlayer()) {
       if (enemies[count].type == "zombie") {

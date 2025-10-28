@@ -1,5 +1,5 @@
-let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0], projImgs = [0, 0], Silkscreen, PlayerImage;
-var itemConstructors = [["gun", "glock", 1], ["gun", "western", 1], ["gun", "rare pistol", 1], ["bullet", "common", 50], ["bullet", "uncommon", 40], ["bullet", "rare", 30], ["bullet", "legendary", 10], ["consumable", "cheese", 1], ["consumable", "soda", 1], ["projectile", "grenade", 1], ["projectile", "rock", 10]];
+let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], Silkscreen, PlayerImage;
+var itemConstructors = [["gun", "glock", 1], ["gun", "western", 1], ["gun", "rare pistol", 1], ["consumable", "cheese", 1], ["consumable", "soda", 1], ["consumable", "common battery", 1], ["consumable", "rare battery", 1], ["consumable", "legendary battery", 1], ["projectile", "grenade", 1], ["projectile", "rock", 10]];
 var pX = 0; var pY = 0; var playerDamage = 1;
 var prePX = 0, prePY = 0;
 var camX = 0; var camY = 0;
@@ -14,13 +14,14 @@ var hotbar = [];
 var recoil = 10;
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench"];
 var tileWalls = [0, 0, 0, 2, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
-var enemies = [], bullets = [], messages = [], droppedItems = [];
+var enemies = [], bullets = [], messages = [], droppedItems = [], NonPlayerCharacters = [];
 var inventoryList;
 let maxTileTypes = 0; // will be set in setup()
 
 function preload() {
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
+  BadGuy = loadImage("Characters/Enemy.png")
   BulletImgs[0] = loadImage("Items/Bullets/CommonBullet.png");
   BulletImgs[1] = loadImage("Items/Bullets/UncommonBullet.png");
   BulletImgs[2] = loadImage("Items/Bullets/RareBullet.png");
@@ -38,6 +39,9 @@ function preload() {
   tileImgs[6] = loadImage("Tiles/Crafting.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
+  itemImgs[2] = loadImage("Items/Consumables/CommonBattery.png");
+  itemImgs[3] = loadImage("Items/Consumables/RareBattery.png");
+  itemImgs[4] = loadImage("Items/Consumables/LegendaryBattery.png");
   projImgs[0] = loadImage("Items/Projectiles/Grenade.png");
   projImgs[1] = loadImage("Items/Projectiles/Rock.png");
   InventoryImg = loadImage("hud/Inventory.png");
@@ -66,6 +70,7 @@ function setup() {
   indicatorCurrentY = pY + 375 - 50;
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
+  NonPlayerCharacters.push(new NPC(100, 100, ["Buschy: granny smith apple", "Wing: Red delicious apple", "Mario: Honeycrisp apple", "Luigi: Carrot", "Luigi: Haha u thought I was gon say apple"]));
 }
 
 function draw() {
@@ -105,13 +110,13 @@ function draw() {
   drawWorldLayer(gameWorld, 2);
 
   pop();
-  
+
   // Draw pickup prompt after camera pop (screen-fixed)
   drawPickupPromptIfNeeded();
-  
+
   drawUI();
   messageDisplay();
-  
+
   // Handle crafting menu
   if (typeof handleCraftingInput === 'function') {
     handleCraftingInput();
@@ -568,10 +573,10 @@ function drawGunDebugRect() {
   if (inventoryList[inventorySlot - 1] != null) {
     if (inventorySlot - 1 < inventoryList.length) {
       const item = inventoryList[inventorySlot - 1];
-      
+
       // Determine base size based on item type
       let baseSize = 30; // Default for guns
-      
+
       if (item.type === "bullet") {
         baseSize = 18;
       } else if (item.type === "gun") {
@@ -581,7 +586,7 @@ function drawGunDebugRect() {
       } else if (item.type === "projectile") {
         baseSize = 24;
       }
-      
+
       // Calculate width and height based on aspect ratio
       let itemWidth, itemHeight;
       if (item.HtoW > 1) {
@@ -593,7 +598,7 @@ function drawGunDebugRect() {
         itemWidth = baseSize;
         itemHeight = baseSize * item.HtoW;
       }
-      
+
       image(item.image, recoil, -itemHeight / 2, itemWidth, itemHeight);
     }
     else {
@@ -635,9 +640,9 @@ function mainHand() {
 }
 function doRecoil() {
   let rate = 1;
-  if (inventoryList[inventorySlot-1] != null){
-    if (inventoryList[inventorySlot-1].type == "gun"){
-      rate = inventoryList[inventorySlot-1].fireRate;
+  if (inventoryList[inventorySlot - 1] != null) {
+    if (inventoryList[inventorySlot - 1].type == "gun") {
+      rate = inventoryList[inventorySlot - 1].fireRate;
     }
   }
   if (recoil < 10) {

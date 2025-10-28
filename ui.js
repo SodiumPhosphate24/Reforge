@@ -118,35 +118,6 @@ class Item {
       }
     }
 
-    if (type == "bullet") {
-      this.type = "bullet";
-      this.stackable = true;
-      if (name == "common") {
-        this.name = name;
-        this.image = BulletImgs[0];
-        this.damage = 1;
-        this.HtoW = 3.5;
-      }
-      if (name == "uncommon") {
-        this.name = name;
-        this.image = BulletImgs[1];
-        this.damage = 2;
-        this.HtoW = 3.5;
-      }
-      if (name == "rare") {
-        this.name = name;
-        this.image = BulletImgs[2];
-        this.damage = 3;
-        this.HtoW = 3.5;
-      }
-      if (name == "legendary") {
-        this.name = name;
-        this.image = BulletImgs[3];
-        this.damage = 4;
-        this.HtoW = 3.5;
-      }
-    }
-
     if (type == "consumable") {
       this.type = "consumable";
       this.stackable = true;
@@ -159,6 +130,21 @@ class Item {
         this.name = name;
         this.image = itemImgs[1];
         this.HtoW = 1.64;
+      }
+      if (name == "common battery") {
+        this.name = name;
+        this.image = itemImgs[2];
+        this.HtoW = 2;
+      }
+      if (name == "rare battery") {
+        this.name = name;
+        this.image = itemImgs[3];
+        this.HtoW = 2;
+      }
+      if (name == "legendary battery"){
+        this.name = name;
+        this.image = itemImgs[4];
+        this.HtoW = 2;
       }
     }
 
@@ -206,9 +192,7 @@ class DroppedItem {
     // Determine base size based on item type
     let baseSize = 35; // Default
 
-    if (this.item.type === "bullet") {
-      baseSize = 20; // Bullets are small
-    } else if (this.item.type === "gun") {
+    if (this.item.type === "gun") {
       baseSize = 40; // Guns are moderately sized
     } else if (this.item.type === "consumable") {
       baseSize = 30; // Consumables are medium
