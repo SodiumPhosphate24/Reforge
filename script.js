@@ -640,7 +640,7 @@ function doRecoil() {
     }
   }
   if (recoil < 10) {
-    recoil += 1;
+    recoil += rate;
   }
 }
 
