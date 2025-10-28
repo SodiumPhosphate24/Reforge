@@ -113,7 +113,11 @@ function keyPressed() {
     enemies.push(new Enemy("zombie"));
   }
   if (keyCode == 77) {
-    messages.push(new Message("dialogue", ["Buschy: granny smith apple", "Wing: Red delicious apple", "Mario: Honeycrisp apple", "Luigi: Carrot", "Luigi: Haha u thought I was gon say apple"]))
+    // Check if there's already a dialogue message active
+    const hasActiveDialogue = messages.some(msg => msg.type === "dialogue");
+    if (!hasActiveDialogue) {
+      messages.push(new Message("dialogue", ["Buschy: granny smith apple", "Wing: Red delicious apple", "Mario: Honeycrisp apple", "Luigi: Carrot", "Luigi: Haha u thought I was gon say apple"]))
+    }
     messages.push(new Message("quest", "Big nerd time"))
   }
   if (keyCode == 86) {
