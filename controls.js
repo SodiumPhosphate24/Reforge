@@ -165,9 +165,9 @@ function mouseClicked() {
   if (!editorMode) {
     if (inventoryList[inventorySlot - 1] != null) {
       if (inventoryList[inventorySlot - 1].type == "gun") {
-        if (projectileEnergy > 0 && recoil >= 10) {
-          projectileEnergy -= 10;
-          
+        if (laserEnergy > 0 && recoil >= 10) {
+          laserEnergy -= 10;
+
           bullets.push(new Bullet("common"));
         }
       }
