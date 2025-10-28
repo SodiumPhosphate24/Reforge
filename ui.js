@@ -70,7 +70,7 @@ function health() {
 function projectileEnergy() {
   fill(0, 255, 255);
   energyGauge = lerp(energyGauge, laserEnergy, 0.05);
-  rect(130, 160, laserEnergy * .63, 25);
+  rect(130, 160, energyGauge * .63, 25);
   image(EnergyTank, 100, 148, 135, 62);
 
 }
