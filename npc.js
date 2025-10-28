@@ -10,7 +10,11 @@ class NPC {
   update() {
     const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
     if (distToPlayer < 120 && keyPressedOnce(69)) {
-      messages.push(new Message("dialogue", this.message));
+      // Check if there's already a dialogue message active
+      const hasActiveDialogue = messages.some(msg => msg.type === "dialogue");
+      if (!hasActiveDialogue) {
+        messages.push(new Message("dialogue", this.message));
+      }
     }
   }
 
