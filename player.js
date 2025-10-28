@@ -20,6 +20,7 @@ class Player {
     this.damage = damage;
     this.picture = picture;
     this.inventory = [null, null, null, null, null, null, null, null];
+    this.laserEnergy = 100;
     this.frozen = false;
   }
   getImage() {
@@ -44,6 +45,7 @@ function switchPlayer(newPlayer) {
   PlayerImage = players[activePlayer].picture;
   pWidth = players[activePlayer].w;
   pHeight = players[activePlayer].h;
+  inventoryList = players[activePlayer].inventory;
 
   // Reset velocity to prevent collision errors
   pXVel = 0;
@@ -56,7 +58,7 @@ function switchPlayer(newPlayer) {
   // Start transition mode for slower lerp
   isTransitioning = true;
   transitionFrames = 0;
-
+  laserEnergy = players[activePlayer].laserEnergy;
   // Camera will smoothly pan to new player via controlCamera()
 }
 function drawPlayers() {

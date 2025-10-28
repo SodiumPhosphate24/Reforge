@@ -69,10 +69,11 @@ function health() {
 }
 function projectileEnergy() {
   fill(0, 255, 255);
-  energyGauge = lerp(energyGauge, laserEnergy, 0.05);
+  energyGauge = lerp(energyGauge, laserEnergy, 0.1);
   rect(130, 160, energyGauge * .63, 25);
   image(EnergyTank, 100, 148, 135, 62);
-
+  laserEnergy = constrain(laserEnergy, 0, 100);
+  players[activePlayer].laserEnergy = laserEnergy;
 }
 
 function buffs() {
