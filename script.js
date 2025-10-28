@@ -633,6 +633,12 @@ function mainHand() {
   return false;
 }
 function doRecoil() {
+  let rate = 1;
+  if (inventoryList[inventorySlot-1] != null){
+    if (inventoryList[inventorySlot-1].type == "gun"){
+      rate = inventoryList[inventorySlot-1].fireRate;
+    }
+  }
   if (recoil < 10) {
     recoil += 1;
   }

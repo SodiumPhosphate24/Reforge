@@ -1,18 +1,18 @@
 function controls() {
-  if (players[activePlayer].frozen == false){
-  if (keyIsDown(65)) {
-    pXVel -= players[activePlayer].speed;
+  if (players[activePlayer].frozen == false) {
+    if (keyIsDown(65)) {
+      pXVel -= players[activePlayer].speed;
+    }
+    if (keyIsDown(68)) {
+      pXVel += players[activePlayer].speed;
+    }
+    if (keyIsDown(87)) {
+      pYVel -= players[activePlayer].speed;
+    }
+    if (keyIsDown(83)) {
+      pYVel += players[activePlayer].speed;
+    }
   }
-  if (keyIsDown(68)) {
-    pXVel += players[activePlayer].speed;
-  }
-  if (keyIsDown(87)) {
-    pYVel -= players[activePlayer].speed;
-  }
-  if (keyIsDown(83)) {
-    pYVel += players[activePlayer].speed;
-  }
-}
   pYVel *= 0.8;
   pXVel *= 0.8;
   pX += pXVel;
@@ -51,7 +51,7 @@ function keyPressed() {
       toggleCraftingMenu();
       return; // Don't pick up items when opening crafting menu
     }
-    
+
     for (let i = droppedItems.length - 1; i >= 0; i--) {
       if (droppedItems[i].checkPickup()) {
         if (droppedItems[i].item.stackable) {
@@ -165,11 +165,15 @@ function mouseClicked() {
   if (!editorMode) {
     if (inventoryList[inventorySlot - 1] != null) {
       if (inventoryList[inventorySlot - 1].type == "gun") {
-        bullets.push(new Bullet("common"));
+        if (projectileEnergy > 0 && recoil >= 10) {
+          projectileEnergy -= 10;
+          
+          bullets.push(new Bullet("common"));
+        }
       }
       if (inventoryList[inventorySlot - 1].type == "consumable") {
         if (inventoryList[inventorySlot - 1].name == "cheese") {
-          healthPoints += 10;
+          players[activePlayer].health += 10;
           inventoryList[inventorySlot - 1].amount -= 1;
           if (inventoryList[inventorySlot - 1].amount <= 0) {
             inventoryList[inventorySlot - 1] = null;
