@@ -26,11 +26,11 @@ class Player {
   getImage() {
     return picture;
   }
-  isDead(){
-    if (this.health <= 0){
+  isDead() {
+    if (this.health <= 0) {
       this.frozen = true;
     }
-    else{
+    else {
       this.frozen = false;
     }
   }
@@ -46,7 +46,7 @@ function switchPlayer(newPlayer) {
   pWidth = players[activePlayer].w;
   pHeight = players[activePlayer].h;
   inventoryList = players[activePlayer].inventory;
-
+  laserEnergy = players[activePlayer].laserEnergy;
   // Reset velocity to prevent collision errors
   pXVel = 0;
   pYVel = 0;
@@ -58,7 +58,7 @@ function switchPlayer(newPlayer) {
   // Start transition mode for slower lerp
   isTransitioning = true;
   transitionFrames = 0;
-  laserEnergy = players[activePlayer].laserEnergy;
+
   // Camera will smoothly pan to new player via controlCamera()
 }
 function drawPlayers() {
@@ -98,7 +98,7 @@ function drawIndicator() {
   // Smooth transition to target position
   indicatorCurrentX = lerp(indicatorCurrentX, indicatorTargetX, lerpSpeed);
   indicatorCurrentY = lerp(indicatorCurrentY, indicatorTargetY, lerpSpeed);
-  
+
   // End transition after indicator gets close enough
   if (isTransitioning) {
     transitionFrames++;
@@ -119,7 +119,7 @@ function drawIndicator() {
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
   const distToPlayer = dist(indicatorCurrentX, indicatorCurrentY + hoverOffset, playerCenterX, playerCenterY);
-  
+
   let angle;
   if (distToPlayer > 20) {
     angle = atan2(playerCenterY - (indicatorCurrentY + hoverOffset), playerCenterX - indicatorCurrentX) + PI;

@@ -59,6 +59,8 @@ function setup() {
   players.push(new Player(100, 100, 100, 100, .5, 350, playerDamage, PlayerImage));
   players.push(new Player(500, 100, 25, 25, 2, healthPoints, playerDamage, PlayerImage));
 
+  inventoryList = players[activePlayer].inventory;
+
   // Initialize indicator position
   indicatorCurrentX = pX + 600 + pWidth / 2;
   indicatorCurrentY = pY + 375 - 50;
