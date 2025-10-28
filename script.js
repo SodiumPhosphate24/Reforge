@@ -114,6 +114,9 @@ function draw() {
 
   // Draw pickup prompt after camera pop (screen-fixed)
   drawPickupPromptIfNeeded();
+  
+  // Draw NPC prompt after camera pop (screen-fixed)
+  drawNPCPromptIfNeeded();
 
   drawUI();
   messageDisplay();

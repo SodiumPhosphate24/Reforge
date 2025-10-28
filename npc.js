@@ -16,8 +16,10 @@ class NPC {
 
 }
 
+let nearestNPC = null; // Store for screen-fixed rendering
+
 function drawNPCs() {
-  let nearestNPC = null;
+  nearestNPC = null;
   let nearestDistance = Infinity;
   
   for (let i = 0; i < NonPlayerCharacters.length; i++) {
@@ -32,8 +34,9 @@ function drawNPCs() {
       nearestNPC = NonPlayerCharacters[i];
     }
   }
-  
-  // Draw prompt for nearest NPC (after camera pop, so screen-fixed)
+}
+
+function drawNPCPromptIfNeeded() {
   if (nearestNPC) {
     push();
     fill(100, 255, 255, 200);
