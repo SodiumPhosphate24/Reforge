@@ -150,7 +150,7 @@ function mouseClicked() {
           }
         }
         if (inventoryList[inventorySlot - 1].name == "soda"){
-          players[activePlayer].laserEnergy += 50;
+          laserEnergy += 50;
           inventoryList[inventorySlot - 1].amount -= 1;
           if (inventoryList[inventorySlot - 1].amount <= 0){
             inventoryList[inventorySlot - 1] = null;
