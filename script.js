@@ -100,6 +100,7 @@ function draw() {
 
   mainHand();
   drawEnemies();
+  drawNPCs();
   drawBullets();
   updateDroppedItems();
   updateParticles(); // Draw particles
