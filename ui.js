@@ -69,7 +69,7 @@ function health() {
 }
 function projectileEnergy() {
   fill(0, 255, 255);
-  energyGauge = lerp(energyGauge, laserEnergy, 0.1);
+  energyGauge = lerp(energyGauge, laserEnergy, 0.05);
   rect(130, 160, laserEnergy * .63, 25);
   image(EnergyTank, 100, 148, 135, 62);
 
@@ -86,97 +86,97 @@ function buffs() {
 
 class Item {
   constructor(type, name, amount) {
-      this.amount = amount;
-      if (type == "gun") {
-        this.type = "gun";
-        this.stackable = false;
-        if (name == "glock") {
-          this.name = name;
-          this.image = GunImgs[0];
-          this.damage = 1;
-          this.ammo = 100;
-          this.ammoType = "common";
-          this.fireRate = .33;
-          this.HtoW = 0.68;
+    this.amount = amount;
+    if (type == "gun") {
+      this.type = "gun";
+      this.stackable = false;
+      if (name == "glock") {
+        this.name = name;
+        this.image = GunImgs[0];
+        this.damage = 1;
+        this.ammo = 100;
+        this.ammoType = "common";
+        this.fireRate = .33;
+        this.HtoW = 0.68;
 
-        }
-        if (name == "western") {
-          this.name = name;
-          this.image = GunImgs[1];
-          this.damage = 2;
-          this.ammo = 100;
-          this.fireRate = .5;
-          this.HtoW = 0.55;
-        }
-        if (name == "rare pistol") {
-          this.name = name;
-          this.image = GunImgs[2];
-          this.damage = 3;
-          this.fireRate = .67;
-          this.HtoW = .46;
-        }
       }
-
-      if (type == "bullet") {
-        this.type = "bullet";
-        this.stackable = true;
-        if (name == "common") {
-          this.name = name;
-          this.image = BulletImgs[0];
-          this.damage = 1;
-          this.HtoW = 3.5;
-        }
-        if (name == "uncommon") {
-          this.name = name;
-          this.image = BulletImgs[1];
-          this.damage = 2;
-          this.HtoW = 3.5;
-        }
-        if (name == "rare") {
-          this.name = name;
-          this.image = BulletImgs[2];
-          this.damage = 3;
-          this.HtoW = 3.5;
-        }
-        if (name == "legendary") {
-          this.name = name;
-          this.image = BulletImgs[3];
-          this.damage = 4;
-          this.HtoW = 3.5;
-        }
+      if (name == "western") {
+        this.name = name;
+        this.image = GunImgs[1];
+        this.damage = 2;
+        this.ammo = 100;
+        this.fireRate = .5;
+        this.HtoW = 0.55;
       }
-
-      if (type == "consumable") {
-        this.type = "consumable";
-        this.stackable = true;
-        if (name == "cheese") {
-          this.name = name;
-          this.image = itemImgs[0];
-          this.HtoW = .8;
-        }
-        if (name == "soda") {
-          this.name = name;
-          this.image = itemImgs[1];
-          this.HtoW = 1.64;
-        }
+      if (name == "rare pistol") {
+        this.name = name;
+        this.image = GunImgs[2];
+        this.damage = 3;
+        this.fireRate = .67;
+        this.HtoW = .46;
       }
+    }
 
-      if (type == "projectile") {
-        this.type = "projectile";
-        this.stackable = true;
-        if (name == "grenade") {
-          this.name = name;
-          this.image = projImgs[0];
-          this.HtoW = 1;
-        }
-        if (name == "rock") {
-          this.name = name;
-          this.image = projImgs[1];
-          this.HtoW = .75;
-        }
+    if (type == "bullet") {
+      this.type = "bullet";
+      this.stackable = true;
+      if (name == "common") {
+        this.name = name;
+        this.image = BulletImgs[0];
+        this.damage = 1;
+        this.HtoW = 3.5;
+      }
+      if (name == "uncommon") {
+        this.name = name;
+        this.image = BulletImgs[1];
+        this.damage = 2;
+        this.HtoW = 3.5;
+      }
+      if (name == "rare") {
+        this.name = name;
+        this.image = BulletImgs[2];
+        this.damage = 3;
+        this.HtoW = 3.5;
+      }
+      if (name == "legendary") {
+        this.name = name;
+        this.image = BulletImgs[3];
+        this.damage = 4;
+        this.HtoW = 3.5;
+      }
+    }
+
+    if (type == "consumable") {
+      this.type = "consumable";
+      this.stackable = true;
+      if (name == "cheese") {
+        this.name = name;
+        this.image = itemImgs[0];
+        this.HtoW = .8;
+      }
+      if (name == "soda") {
+        this.name = name;
+        this.image = itemImgs[1];
+        this.HtoW = 1.64;
+      }
+    }
+
+    if (type == "projectile") {
+      this.type = "projectile";
+      this.stackable = true;
+      if (name == "grenade") {
+        this.name = name;
+        this.image = projImgs[0];
+        this.HtoW = 1;
+      }
+      if (name == "rock") {
+        this.name = name;
+        this.image = projImgs[1];
+        this.HtoW = .75;
       }
     }
   }
+}
 
 class DroppedItem {
   constructor(item, x, y) {
