@@ -18,8 +18,8 @@ class Enemy {
       this.speed = 2;
       this.acceleration = 0.15; // how quickly it changes direction
       this.image = BadGuy;
-      this.width = 24;
-      this.height = 28;
+      this.width = 48;
+      this.height = 56;
     }
   }
 
