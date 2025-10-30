@@ -118,8 +118,8 @@ function drawTilePreview() {
 function handleEditorClick() {
   if (!(editorMode && gameWorld && gameWorld.length > 0)) return;
 
-  // Don't allow tile placement while editing a crate
-  if (editingCrate) return;
+  // Don't allow tile placement while editing a crate or NPC
+  if (editingCrate || editingNPC) return;
 
   // Check if clicking on existing NPC
   for (let i = 0; i < NonPlayerCharacters.length; i++) {
@@ -183,16 +183,16 @@ function handleEditorClick() {
 
   // Left click = paint current layer
   if (mouseButton === LEFT) {
-    if (typeof setTile === 'function') {
-      setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation);
-    } else {
-      // Fallback if helpers missing (legacy)
-      gameWorld[gridRow][gridCol] = { type: selectedTileType, rotation: tileRotation };
-    }
-    console.log("Placed type", selectedTileType, "rot", tileRotation, "at", gridRow, gridCol, "layer", editorLayer);
-    
     // Auto-open crate editor if placing a crate (type 5)
     if (selectedTileType === 5 && typeof tiles !== 'undefined' && typeof Tile !== 'undefined') {
+      // Place the tile first
+      if (typeof setTile === 'function') {
+        setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation);
+      } else {
+        gameWorld[gridRow][gridCol] = { type: selectedTileType, rotation: tileRotation };
+      }
+      console.log("Placed crate type", selectedTileType, "at", gridRow, gridCol, "layer", editorLayer);
+      
       // Create a new crate tile and add it to tiles array
       const crateX = gridCol * 50 + 600;
       const crateY = gridRow * 50 + 375;
@@ -200,9 +200,17 @@ function handleEditorClick() {
       newCrate.inventory = [];
       tiles.push(newCrate);
       
-      // Immediately open the crate editor
+      // Immediately open the crate editor (this blocks further tile placement)
       editingCrate = newCrate;
       showCrateEditor(newCrate);
+    } else {
+      // Normal tile placement
+      if (typeof setTile === 'function') {
+        setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation);
+      } else {
+        gameWorld[gridRow][gridCol] = { type: selectedTileType, rotation: tileRotation };
+      }
+      console.log("Placed type", selectedTileType, "rot", tileRotation, "at", gridRow, gridCol, "layer", editorLayer);
     }
   }
 }
@@ -362,7 +370,7 @@ function showCrateEditor(crate) {
   title.style('margin-bottom', '5px');
   title.parent(crateInventoryUI);
 
-  let instructions = createDiv('Press Enter for random item • Click Close to resume tile placement');
+  let instructions = createDiv('Configure items for this crate • Click Close to resume tile placement');
   instructions.style('font-size', '12px');
   instructions.style('color', '#aaa');
   instructions.style('margin-bottom', '10px');
@@ -426,6 +434,7 @@ function updateCrateInventoryDisplay() {
 
     // Item name selector
     let nameSelect = createSelect();
+    nameSelect.style('margin-left', '5px');
     let itemType = editingCrate.inventory[i].type;
     if (itemType === 'consumable') {
       nameSelect.option('cheese');
@@ -454,8 +463,10 @@ function updateCrateInventoryDisplay() {
     // Amount input
     let amountInput = createInput(editingCrate.inventory[i].amount.toString());
     amountInput.size(40);
+    amountInput.style('margin-left', '5px');
     amountInput.attribute('type', 'number');
     amountInput.attribute('min', '1');
+    amountInput.attribute('placeholder', 'Qty');
     amountInput.parent(itemDiv);
     amountInput.input(() => {
       editingCrate.inventory[i].amount = parseInt(amountInput.value()) || 1;
