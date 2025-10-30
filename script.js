@@ -117,7 +117,7 @@ function draw() {
 
   // Draw pickup prompt after camera pop (screen-fixed)
   drawPickupPromptIfNeeded();
-  
+
   // Draw NPC prompt after camera pop (screen-fixed)
   drawNPCPromptIfNeeded();
 
@@ -191,12 +191,12 @@ function clearTile(row, col, layer) {
 
 // --- Serializer / Parser (with backward compatibility) ---
 function worldToString(world) {
-  let out = "";
+  let data = ""; // Renamed from 'out' to 'data' for clarity
   for (let r = 0; r < world.length; r++) {
     const row = world[r];
     for (let c = 0; c < row.length; c++) {
       const cell = row[c];
-      if (!cell) { out += "/"; continue; }
+      if (!cell) { data += "/"; continue; }
 
       if ('layers' in cell) {
         const parts = cell.layers.map(t => {
@@ -205,16 +205,26 @@ function worldToString(world) {
           if (t.rotation && t.rotation !== 0) s += ":" + t.rotation;
           return s;
         });
-        out += parts.join(",") + "/";
+        data += parts.join(",") + "/";
       } else {
         let s = String(cell.type);
         if (cell.rotation && cell.rotation !== 0) s += ":" + cell.rotation;
-        out += s + "/";
+        data += s + "/";
       }
     }
-    out += "|";
+    data += "|";
   }
-  return out;
+  // Add crate saving logic here
+  for (var i = 0; i < tiles.length; i++) {
+    if (tiles[i].type == "crate") {
+      let inventoryData = '';
+      if (tiles[i].inventory && tiles[i].inventory.length > 0) {
+        inventoryData = ',' + JSON.stringify(tiles[i].inventory);
+      }
+      data += "crate," + tiles[i].x + "," + tiles[i].y + inventoryData + "\n";
+    }
+  }
+  return data;
 }
 
 function stringToWorld(s) {
@@ -225,6 +235,7 @@ function stringToWorld(s) {
 
   const rows = s.split("|");
   const world = [];
+  const tiles = []; // Temporary array to hold parsed tiles
 
   for (let i = 0; i < rows.length; i++) {
     const rowStr = rows[i];
@@ -262,6 +273,31 @@ function stringToWorld(s) {
     }
     if (outRow.length > 0) world.push(outRow);
   }
+
+  // Parse lines for specific tile types like crates
+  const lines = s.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].startsWith("crate,")) {
+      let parts = lines[i].split(",");
+      let crate = new Tile(parseInt(parts[1]), parseInt(parts[2]), "crate");
+      // Load inventory if present
+      if (parts.length > 3) {
+        try {
+          crate.inventory = JSON.parse(parts.slice(3).join(','));
+        } catch (e) {
+          crate.inventory = [];
+        }
+      } else {
+        crate.inventory = [];
+      }
+      tiles.push(crate);
+    }
+  }
+
+  // Combine parsed layered world data with specific tile data
+  // This part might need adjustment based on how 'tiles' are integrated into 'gameWorld'
+  // For now, assuming 'tiles' are separate entities that need to be managed
+  // A better approach would be to integrate crate data directly into the gameWorld structure if possible
   return world;
 }
 
@@ -671,4 +707,38 @@ function keyPressedOnce(k) {
     pressedKeys[k] = false;
   }
   return false;
+}
+
+function breakCrate(index) {
+  let crate = tiles[index];
+  tiles.splice(index, 1);
+
+  // Drop custom inventory if it exists
+  if (crate.inventory && crate.inventory.length > 0) {
+    for (let i = 0; i < crate.inventory.length; i++) {
+      let itemData = crate.inventory[i];
+      let item = new Item(itemData.type, itemData.name, itemData.amount);
+      droppedItems.push(new DroppedItem(item, crate.x, crate.y));
+    }
+  } else {
+    // Default random drops if no custom inventory
+    let randomNumber = random(1);
+    let selectedItem;
+    if (randomNumber < .2) {
+      selectedItem = new Item("gun", "glock", 1);
+    }
+    else if (randomNumber < .4) {
+      selectedItem = new Item("consumable", "cheese", 1);
+    }
+    else if (randomNumber < .6) {
+      selectedItem = new Item("consumable", "soda", 1);
+    }
+    else if (randomNumber < .8) {
+      selectedItem = new Item("material", "common card", 1);
+    }
+    else {
+      selectedItem = new Item("projectile", "grenade", 1);
+    }
+    droppedItems.push(new DroppedItem(selectedItem, crate.x, crate.y));
+  }
 }
