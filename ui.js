@@ -338,7 +338,7 @@ function drawPickupPromptIfNeeded() {
   } else {
     pickupPromptAlpha = lerp(pickupPromptAlpha, 0, 0.15);
     pickupPromptScale = lerp(pickupPromptScale, 0, 0.15);
-    pickupPromptGrowScale = lerp(pickupPromptGrowScale, 0.5, 0.15);
+    pickupPromptGrowScale = lerp(pickupPromptGrowScale, 0, 0.15);
   }
 
   if (pickupPromptAlpha > 5) {
