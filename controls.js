@@ -146,23 +146,25 @@ function mouseClicked() {
         }
       }
       if (inventoryList[inventorySlot - 1].type == "consumable") {
-        if (inventoryList[inventorySlot - 1].name == "cheese") {
-          healthPoints += 10;
-          useItem();
+        if (healthPoints < players[activePlayer].maxHealth){
+          if (inventoryList[inventorySlot - 1].name == "cheese") {
+            healthPoints += 10;
+            useItem();
+          }
+          if (inventoryList[inventorySlot - 1].name == "common battery"){
+            healthPoints += 25;
+            useItem();
+          }
+          if (inventoryList[inventorySlot - 1].name == "rare battery"){
+            healthPoints += 50;
+            useItem();
+          }
+          if (inventoryList[inventorySlot - 1].name == "legendary battery"){
+            healthPoints += 100;
+            useItem();
+          }
         }
-        if (inventoryList[inventorySlot - 1].name == "common battery"){
-          healthPoints += 25;
-          useItem();
-        }
-        if (inventoryList[inventorySlot - 1].name == "rare battery"){
-          healthPoints += 50;
-          useItem();
-        }
-        if (inventoryList[inventorySlot - 1].name == "legendary battery"){
-          healthPoints += 100;
-          useItem();
-        }
-        if (inventoryList[inventorySlot - 1].name == "soda"){
+        if (inventoryList[inventorySlot - 1].name == "soda" && laserEnergy < 100){
           laserEnergy += 50;
           useItem();
         }
