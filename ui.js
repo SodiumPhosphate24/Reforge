@@ -214,7 +214,7 @@ class DroppedItem {
 
     if (this.item.type === "gun") {
       baseSize = 40; // Guns are moderately sized
-    } else if (this.item.type === "consumable") {
+    } else if (this.item.type === "consumable" || this.item.type == "material") {
       baseSize = 30; // Consumables are medium
     } else if (this.item.type === "projectile") {
       baseSize = 28; // Projectiles are medium-small
