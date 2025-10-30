@@ -47,11 +47,16 @@ function inventory() {
         text(inventoryList[i].amount, 369 + (i * 69.71), 700);
       }
     }
-    if(inventoryList[inventorySlot-1] != null){
-      text(inventoryList[inventorySlot-1].name, 600, 500, 20, 255, 255, 255, 255, Silkscreen, CENTER, CENTER);
+    if (inventoryList[inventorySlot - 1] != null) {
+      textSize(20);
+      textFont(Silkscreen);
+      fill(0, 0, 0, 200);
+      strokeWeight(2);
+      stroke(255, 255, 255, 200);
+      text(inventoryList[inventorySlot - 1].name, 600, 500, 20, 255, 255, 255, 255, Silkscreen, CENTER, CENTER);
     }
     imageMode(CORNER);
-    }
+  }
 }
 
 function health() {
@@ -149,7 +154,7 @@ class Item {
         this.image = itemImgs[3];
         this.HtoW = 2;
       }
-      if (name == "legendary battery"){
+      if (name == "legendary battery") {
         this.name = name;
         this.image = itemImgs[4];
         this.HtoW = 2;
