@@ -20,8 +20,6 @@ if (typeof window !== "undefined") {
 let editingNPC = null;
 let npcDialogueInput = null;
 let npcNameInput = null;
-let editingCrate = null;
-let crateInventoryUI = null;
 
 function editor() {
   // Show UI elements if in editor mode
@@ -43,7 +41,6 @@ function toggleEditorMode() {
   console.log("Editor mode:", editorMode ? "ON" : "OFF");
   if (!editorMode) {
     closeNPCEditor();
-    closeCrateEditor();
   }
 }
 
@@ -124,8 +121,8 @@ function drawTilePreview() {
 function handleEditorClick() {
   if (!(editorMode && gameWorld && gameWorld.length > 0)) return;
 
-  // Don't allow tile placement while editing a crate or NPC
-  if (editingCrate || editingNPC) return;
+  // Don't allow tile placement while editing an NPC
+  if (editingNPC) return;
 
   // Check if clicking on existing NPC
   for (let i = 0; i < NonPlayerCharacters.length; i++) {
@@ -135,21 +132,6 @@ function handleEditorClick() {
       editingNPC = npc;
       showNPCEditor(npc);
       return;
-    }
-  }
-
-  // Check if clicking on existing Crate
-  if (typeof tiles !== 'undefined' && tiles.length > 0) {
-    for (let i = 0; i < tiles.length; i++) {
-      let tile = tiles[i];
-      if (tile.type === "crate") {
-        if (mouseX > tile.x - 600 - pX && mouseX < tile.x - 600 - pX + 50 &&
-            mouseY > tile.y - 375 - pY && mouseY < tile.y - 375 - pY + 50) {
-          editingCrate = tile;
-          showCrateEditor(tile);
-          return;
-        }
-      }
     }
   }
 
@@ -189,35 +171,12 @@ function handleEditorClick() {
 
   // Left click = paint current layer
   if (mouseButton === LEFT) {
-    // Auto-open crate editor if placing a crate (type 5)
-    if (selectedTileType === 5 && typeof tiles !== 'undefined' && typeof Tile !== 'undefined') {
-      // Place the tile first
-      if (typeof setTile === 'function') {
-        setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation);
-      } else {
-        gameWorld[gridRow][gridCol] = { type: selectedTileType, rotation: tileRotation };
-      }
-      console.log("Placed crate type", selectedTileType, "at", gridRow, gridCol, "layer", editorLayer);
-      
-      // Create a new crate tile and add it to tiles array
-      const crateX = gridCol * 50 + 600;
-      const crateY = gridRow * 50 + 375;
-      const newCrate = new Tile(crateX, crateY, "crate");
-      newCrate.inventory = [];
-      tiles.push(newCrate);
-      
-      // Immediately open the crate editor (this blocks further tile placement)
-      editingCrate = newCrate;
-      showCrateEditor(newCrate);
+    if (typeof setTile === 'function') {
+      setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation);
     } else {
-      // Normal tile placement
-      if (typeof setTile === 'function') {
-        setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation);
-      } else {
-        gameWorld[gridRow][gridCol] = { type: selectedTileType, rotation: tileRotation };
-      }
-      console.log("Placed type", selectedTileType, "rot", tileRotation, "at", gridRow, gridCol, "layer", editorLayer);
+      gameWorld[gridRow][gridCol] = { type: selectedTileType, rotation: tileRotation };
     }
+    console.log("Placed type", selectedTileType, "rot", tileRotation, "at", gridRow, gridCol, "layer", editorLayer);
   }
 }
 
@@ -228,12 +187,6 @@ function handleEditorKeyPress() {
   }
 
   if (!editorMode) return;
-
-  // Enter key to add random item to crate
-  if (keyCode == 13 && editingCrate) { // Enter
-    addRandomCrateItem();
-    return;
-  }
 
   // Layer selection: 1 / 2 / 3
   if (key === '1') { editorLayer = 0; console.log("Layer -> 0"); }
@@ -259,39 +212,6 @@ function handleEditorKeyPress() {
   }
 }
 
-function addRandomCrateItem() {
-  if (!editingCrate) return;
-  
-  // Define all possible items
-  const itemTypes = ['consumable', 'gun', 'material', 'projectile'];
-  const itemsByType = {
-    'consumable': ['cheese', 'soda', 'common battery', 'rare battery', 'legendary battery'],
-    'gun': ['glock', 'western', 'rare pistol'],
-    'material': ['common card', 'rare card', 'legendary card'],
-    'projectile': ['grenade', 'rock']
-  };
-  
-  // Pick random type
-  const randomType = itemTypes[Math.floor(Math.random() * itemTypes.length)];
-  
-  // Pick random name from that type
-  const namesForType = itemsByType[randomType];
-  const randomName = namesForType[Math.floor(Math.random() * namesForType.length)];
-  
-  // Random amount (1-5)
-  const randomAmount = Math.floor(Math.random() * 5) + 1;
-  
-  // Add to inventory
-  editingCrate.inventory.push({ 
-    type: randomType, 
-    name: randomName, 
-    amount: randomAmount 
-  });
-  
-  updateCrateInventoryDisplay();
-  console.log(`Added random item: ${randomAmount}x ${randomName}`);
-}
-
 function handleEditorMouseWheel(event) {
   if (!editorMode) return false;
 
@@ -313,7 +233,6 @@ function showNPCEditor(npc) {
     npcDialogueInput.remove();
     npcNameInput.remove();
   }
-  closeCrateEditor();
 
   // Create input fields
   npcNameInput = createInput(npc.name || '');
@@ -346,169 +265,5 @@ function closeNPCEditor() {
     npcNameInput = null;
   }
   editingNPC = null;
-}
-
-function showCrateEditor(crate) {
-  // Close any existing editor
-  closeNPCEditor();
-  closeCrateEditor();
-
-  // Initialize crate inventory if it doesn't exist
-  if (!crate.inventory) {
-    crate.inventory = [];
-  }
-
-  editingCrate = crate;
-
-  // Create UI container
-  crateInventoryUI = createDiv('');
-  crateInventoryUI.position(20, 20);
-  crateInventoryUI.style('background-color', 'rgba(0, 0, 0, 0.8)');
-  crateInventoryUI.style('padding', '10px');
-  crateInventoryUI.style('border-radius', '5px');
-  crateInventoryUI.style('color', 'white');
-  crateInventoryUI.style('font-family', 'Arial');
-  crateInventoryUI.style('max-width', '400px');
-
-  let title = createDiv('Crate Inventory Editor');
-  title.style('font-size', '16px');
-  title.style('font-weight', 'bold');
-  title.style('margin-bottom', '5px');
-  title.parent(crateInventoryUI);
-
-  let instructions = createDiv('Configure items for this crate • Click Close to resume tile placement');
-  instructions.style('font-size', '12px');
-  instructions.style('color', '#aaa');
-  instructions.style('margin-bottom', '10px');
-  instructions.parent(crateInventoryUI);
-
-  // Display current items
-  updateCrateInventoryDisplay();
-
-  // Add item button
-  let addButton = createButton('+ Add Item');
-  addButton.style('margin-top', '10px');
-  addButton.parent(crateInventoryUI);
-  addButton.mousePressed(() => {
-    crate.inventory.push({ type: 'consumable', name: 'cheese', amount: 1 });
-    updateCrateInventoryDisplay();
-  });
-
-  // Close button
-  let closeButton = createButton('Close');
-  closeButton.style('margin-top', '10px');
-  closeButton.style('margin-left', '10px');
-  closeButton.parent(crateInventoryUI);
-  closeButton.mousePressed(closeCrateEditor);
-}
-
-function updateCrateInventoryDisplay() {
-  if (!crateInventoryUI || !editingCrate) return;
-
-  // Remove old item displays
-  let children = crateInventoryUI.elt.children;
-  while (children.length > 1) {
-    children[children.length - 1].remove();
-  }
-
-  // Display each item
-  for (let i = 0; i < editingCrate.inventory.length; i++) {
-    let itemDiv = createDiv('');
-    itemDiv.style('margin', '5px 0');
-    itemDiv.style('padding', '5px');
-    itemDiv.style('background-color', 'rgba(255, 255, 255, 0.1)');
-    itemDiv.style('border-radius', '3px');
-    itemDiv.parent(crateInventoryUI);
-
-    // Item type selector
-    let typeSelect = createSelect();
-    typeSelect.option('consumable');
-    typeSelect.option('gun');
-    typeSelect.option('material');
-    typeSelect.option('projectile');
-    typeSelect.selected(editingCrate.inventory[i].type);
-    typeSelect.parent(itemDiv);
-    typeSelect.changed(() => {
-      editingCrate.inventory[i].type = typeSelect.value();
-      // Reset name when type changes
-      if (typeSelect.value() === 'consumable') editingCrate.inventory[i].name = 'cheese';
-      else if (typeSelect.value() === 'gun') editingCrate.inventory[i].name = 'glock';
-      else if (typeSelect.value() === 'material') editingCrate.inventory[i].name = 'common card';
-      else if (typeSelect.value() === 'projectile') editingCrate.inventory[i].name = 'grenade';
-      updateCrateInventoryDisplay();
-    });
-
-    // Item name selector
-    let nameSelect = createSelect();
-    nameSelect.style('margin-left', '5px');
-    let itemType = editingCrate.inventory[i].type;
-    if (itemType === 'consumable') {
-      nameSelect.option('cheese');
-      nameSelect.option('soda');
-      nameSelect.option('common battery');
-      nameSelect.option('rare battery');
-      nameSelect.option('legendary battery');
-    } else if (itemType === 'gun') {
-      nameSelect.option('glock');
-      nameSelect.option('western');
-      nameSelect.option('rare pistol');
-    } else if (itemType === 'material') {
-      nameSelect.option('common card');
-      nameSelect.option('rare card');
-      nameSelect.option('legendary card');
-    } else if (itemType === 'projectile') {
-      nameSelect.option('grenade');
-      nameSelect.option('rock');
-    }
-    nameSelect.selected(editingCrate.inventory[i].name);
-    nameSelect.parent(itemDiv);
-    nameSelect.changed(() => {
-      editingCrate.inventory[i].name = nameSelect.value();
-    });
-
-    // Amount input
-    let amountInput = createInput(editingCrate.inventory[i].amount.toString());
-    amountInput.size(40);
-    amountInput.style('margin-left', '5px');
-    amountInput.attribute('type', 'number');
-    amountInput.attribute('min', '1');
-    amountInput.attribute('placeholder', 'Qty');
-    amountInput.parent(itemDiv);
-    amountInput.input(() => {
-      editingCrate.inventory[i].amount = parseInt(amountInput.value()) || 1;
-    });
-
-    // Delete button
-    let deleteBtn = createButton('✕');
-    deleteBtn.style('margin-left', '10px');
-    deleteBtn.parent(itemDiv);
-    deleteBtn.mousePressed(() => {
-      editingCrate.inventory.splice(i, 1);
-      updateCrateInventoryDisplay();
-    });
-  }
-
-  // Re-add buttons at the end
-  let addButton = createButton('+ Add Item');
-  addButton.style('margin-top', '10px');
-  addButton.parent(crateInventoryUI);
-  addButton.mousePressed(() => {
-    editingCrate.inventory.push({ type: 'consumable', name: 'cheese', amount: 1 });
-    updateCrateInventoryDisplay();
-  });
-
-  let closeButton = createButton('Close');
-  closeButton.style('margin-top', '10px');
-  closeButton.style('margin-left', '10px');
-  closeButton.parent(crateInventoryUI);
-  closeButton.mousePressed(closeCrateEditor);
-}
-
-function closeCrateEditor() {
-  if (crateInventoryUI) {
-    crateInventoryUI.remove();
-    crateInventoryUI = null;
-  }
-  editingCrate = null;
 }
 // ============== END EDITOR (3-LAYER SUPPORT) ==============
