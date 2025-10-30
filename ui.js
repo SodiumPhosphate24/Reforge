@@ -50,9 +50,9 @@ function inventory() {
     if (inventoryList[inventorySlot - 1] != null) {
       textSize(20);
       textFont(Silkscreen);
-      fill(0, 0, 0, 200);
+      fill(0, 0, 0, 200*itemLabelAlpha);
       strokeWeight(2);
-      stroke(255, 255, 255, 200);
+      stroke(255, 255, 255, 200*itemLabelAlpha);
       text(inventoryList[inventorySlot - 1].name, 600, 500, 20, 255, 255, 255, 255, Silkscreen, CENTER, CENTER);
     }
     imageMode(CORNER);
