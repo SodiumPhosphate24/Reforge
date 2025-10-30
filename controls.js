@@ -150,9 +150,10 @@ function mouseClicked() {
         if (healthPoints < players[activePlayer].maxHealth) {
           switch (currentItem.name) {
             case "cheese":
-              players[] += 10;
+              players[activePlayer].health += 10;
               break;
             case "common battery":
+              players[act]
               healthPoints += 25;
               break;
             case "rare battery":
