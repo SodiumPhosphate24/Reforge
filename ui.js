@@ -3,6 +3,9 @@ var healthPoints = 100;
 var speedBuff = false;
 var laserEnergy = 100;
 var energyGauge = 100;
+var itemLabelAlpha = 0; // Alpha for item label fade
+var itemLabelTimer = 0; // Timer for how long to show label
+var lastInventorySlot = 1; // Track last selected slot
 function drawUI() {
   inventory();
   health();
@@ -15,6 +18,24 @@ function drawItems() {
 }
 
 function inventory() {
+  // Check if inventory slot changed
+  if (lastInventorySlot !== inventorySlot) {
+    itemLabelAlpha = 255;
+    itemLabelTimer = 60; // Show for 1 second (60 frames at 60fps)
+    lastInventorySlot = inventorySlot;
+  }
+  
+  // Update label timer and alpha
+  if (itemLabelTimer > 0) {
+    itemLabelTimer--;
+    if (itemLabelTimer <= 0) {
+      // Start fading out
+      itemLabelAlpha = lerp(itemLabelAlpha, 0, 0.1);
+    }
+  } else {
+    itemLabelAlpha = lerp(itemLabelAlpha, 0, 0.1);
+  }
+  
   // draws inventory
   image(InventoryImg, 289, 650, 636, 92);
   image(FrameImg, 329 + ((inventorySlot - 1) * 69.71), 649, 79.54, 79.54);
@@ -47,11 +68,18 @@ function inventory() {
         text(inventoryList[i].amount, 369 + (i * 69.71), 700);
       }
     }
-    if(inventoryList[inventorySlot-1] != null){
-      text(inventoryList[inventorySlot-1].name, 600, 500, 20, 255, 255, 255, 255, Silkscreen, CENTER, CENTER);
-    }
     imageMode(CORNER);
-    }
+  }
+  
+  // Draw item label with fade effect
+  if (inventoryList[inventorySlot-1] != null && itemLabelAlpha > 5) {
+    noStroke();
+    textSize(20);
+    textFont(Silkscreen);
+    textAlign(CENTER, CENTER);
+    fill(255, 255, 255, itemLabelAlpha);
+    text(inventoryList[inventorySlot-1].name, 600, 500);
+  }
 }
 
 function health() {
@@ -331,6 +359,12 @@ let nearestPickupItem = null; // Store for screen-fixed rendering
 let pickupPromptAlpha = 0; // Fade animation
 let pickupPromptScale = 0; // Scale animation
 let pickupPromptGrowScale = 0.5; // Growing scale animation
+
+// Function to show item label when picking up or switching
+function showItemLabel() {
+  itemLabelAlpha = 255;
+  itemLabelTimer = 60; // Show for 1 second
+}
 
 function updateDroppedItems() {
   let count = 0;
