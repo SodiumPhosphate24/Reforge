@@ -138,37 +138,36 @@ function keyPressed() {
 function mouseClicked() {
   if (!editorMode) {
     if (inventoryList[inventorySlot - 1] != null) {
-      if (inventoryList[inventorySlot - 1].type == "gun") {
+      var currentItem = inventoryList[inventorySlot - 1];
+
+      if (currentItem.type == "gun") {
         if (laserEnergy > 0 && recoil >= 10) {
           laserEnergy -= 10;
           bullets.push(new Bullet("common"));
         }
       }
-      if (inventoryList[inventorySlot - 1].type == "consumable") {
-        if (healthPoints < players[activePlayer].maxHealth){
-          if (inventoryList[inventorySlot - 1].name == "cheese") {
-            healthPoints += 10;
-            useItem();
-            return;
+      if (currentItem.type == "consumable") {
+        if (healthPoints < players[activePlayer].maxHealth) {
+          switch (currentItem.name) {
+            case "cheese":
+              healthPoints += 10;
+              break;
+            case "common battery":
+              healthPoints += 25;
+              break;
+            case "rare battery":
+              healthPoints += 50;
+              break;
+            case "legendary battery":
+              healthPoints += 100;
+              break;
+            case "soda":
+              if (laserEnergy < 100) {
+                laserEnergy += 50;
+              }
+              break;
           }
-          if (inventoryList[inventorySlot - 1].name == "common battery"){
-            healthPoints += 25;
-            useItem();
-            return;
-          }
-          if (inventoryList[inventorySlot - 1].name == "rare battery"){
-            healthPoints += 50;
-            useItem();
-            return;
-          }
-          if (inventoryList[inventorySlot - 1].name == "legendary battery"){
-            healthPoints += 100;
-            useItem();
-            return;
-          }
-        }
-        if (inventoryList[inventorySlot - 1].name == "soda" && laserEnergy < 100){
-          laserEnergy += 50;
+          // Use the item, then check if amount is zero.
           useItem();
           return;
         }
