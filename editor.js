@@ -1,4 +1,5 @@
 // ============== EDITOR (3-LAYER SUPPORT) ==============
+var editorMode = false;
 var selectedTileType = 0;    // current tile type
 // Use global maxTileTypes from your main script; fallback to tileImgs length if missing:
 function __getMaxTileTypes() {
@@ -17,31 +18,9 @@ if (typeof window !== "undefined") {
   };
 }
 
-let editingNPC = null;
-let npcDialogueInput = null;
-let npcNameInput = null;
-
-function editor() {
-  // Show UI elements if in editor mode
-  if (editorMode) {
-    drawEditorUI();
-    // Only handle clicks when mouse is actually pressed (not held)
-    if (mouseIsPressed && !wasMousePressed) {
-      handleEditorClick();
-    }
-    handleEditorKeyPress();
-  }
-}
-
-// Track mouse state to detect single clicks
-let wasMousePressed = false;
-
 function toggleEditorMode() {
   editorMode = !editorMode;
   console.log("Editor mode:", editorMode ? "ON" : "OFF");
-  if (!editorMode) {
-    closeNPCEditor();
-  }
 }
 
 function drawEditorUI() {
@@ -121,20 +100,6 @@ function drawTilePreview() {
 function handleEditorClick() {
   if (!(editorMode && gameWorld && gameWorld.length > 0)) return;
 
-  // Don't allow tile placement while editing an NPC
-  if (editingNPC) return;
-
-  // Check if clicking on existing NPC
-  for (let i = 0; i < NonPlayerCharacters.length; i++) {
-    let npc = NonPlayerCharacters[i];
-    if (mouseX > npc.x - 600 - pX && mouseX < npc.x - 600 - pX + 50 &&
-        mouseY > npc.y - 375 - pY && mouseY < npc.y - 375 - pY + 50) {
-      editingNPC = npc;
-      showNPCEditor(npc);
-      return;
-    }
-  }
-
   var worldX = mouseX - camX;
   var worldY = mouseY - camY;
 
@@ -174,6 +139,7 @@ function handleEditorClick() {
     if (typeof setTile === 'function') {
       setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation);
     } else {
+      // Fallback if helpers missing (legacy)
       gameWorld[gridRow][gridCol] = { type: selectedTileType, rotation: tileRotation };
     }
     console.log("Placed type", selectedTileType, "rot", tileRotation, "at", gridRow, gridCol, "layer", editorLayer);
@@ -225,45 +191,5 @@ function handleEditorMouseWheel(event) {
   }
   console.log("Mouse wheel changed to tile type:", selectedTileType);
   return true; // consume wheel in editor mode
-}
-
-function showNPCEditor(npc) {
-  // Close any existing editor
-  if (npcDialogueInput) {
-    npcDialogueInput.remove();
-    npcNameInput.remove();
-  }
-
-  // Create input fields
-  npcNameInput = createInput(npc.name || '');
-  npcNameInput.position(20, 20);
-  npcNameInput.size(200);
-  npcNameInput.attribute('placeholder', 'NPC Name');
-
-  npcDialogueInput = createInput(npc.dialogue || '');
-  npcDialogueInput.position(20, 50);
-  npcDialogueInput.size(400);
-  npcDialogueInput.attribute('placeholder', 'NPC Dialogue');
-
-  // Update NPC on input change
-  npcNameInput.input(() => {
-    npc.name = npcNameInput.value();
-  });
-
-  npcDialogueInput.input(() => {
-    npc.dialogue = npcDialogueInput.value();
-  });
-}
-
-function closeNPCEditor() {
-  if (npcDialogueInput) {
-    npcDialogueInput.remove();
-    npcDialogueInput = null;
-  }
-  if (npcNameInput) {
-    npcNameInput.remove();
-    npcNameInput = null;
-  }
-  editingNPC = null;
 }
 // ============== END EDITOR (3-LAYER SUPPORT) ==============

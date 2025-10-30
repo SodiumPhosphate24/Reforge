@@ -1,7 +1,5 @@
-let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], matImgs = [0, 0, 0], projImgs = [0, 0], Silkscreen, PlayerImage;
-var itemConstructors = [["gun", "glock", 1], ["gun", "western", 1], ["gun", "rare pistol", 1], ["consumable", "cheese", 1], ["consumable", "soda", 1], ["consumable", "common battery", 1], ["consumable", "rare battery", 1], ["consumable", "legendary battery", 1], ["projectile", "grenade", 1], ["projectile", "rock", 10], ["material", "common card", 1], ["material", "rare card", 1], ["material", "legendary card", 1]];
-var editorMode = false; // Global editor mode variable
-var healthPoints = 100; // Initialize health points
+let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], Silkscreen, PlayerImage;
+var itemConstructors = [["gun", "glock", 1], ["gun", "western", 1], ["gun", "rare pistol", 1], ["consumable", "cheese", 1], ["consumable", "soda", 1], ["consumable", "common battery", 1], ["consumable", "rare battery", 1], ["consumable", "legendary battery", 1], ["projectile", "grenade", 1], ["projectile", "rock", 10]];
 var pX = 0; var pY = 0; var playerDamage = 1;
 var prePX = 0, prePY = 0;
 var camX = 0; var camY = 0;
@@ -43,9 +41,6 @@ function preload() {
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonBattery.png");
   itemImgs[3] = loadImage("Items/Consumables/RareBattery.png");
-  matImgs[0] = loadImage("Items/Materials/CommonCard.png");
-  matImgs[1] = loadImage("Items/Materials/RareCard.png");
-  matImgs[2] = loadImage("Items/Materials/LegendaryCard.png");
   itemImgs[4] = loadImage("Items/Consumables/LegendaryBattery.png");
   projImgs[0] = loadImage("Items/Projectiles/Grenade.png");
   projImgs[1] = loadImage("Items/Projectiles/Rock.png");
@@ -119,7 +114,7 @@ function draw() {
 
   // Draw pickup prompt after camera pop (screen-fixed)
   drawPickupPromptIfNeeded();
-
+  
   // Draw NPC prompt after camera pop (screen-fixed)
   drawNPCPromptIfNeeded();
 
@@ -148,11 +143,11 @@ function draw() {
   imageMode(CORNER);
   noTint();
   doRecoil();
-  editor(); // Call editor function which handles all editor UI and interactions
-  
-  // Update mouse state tracking for editor
-  if (typeof wasMousePressed !== 'undefined') {
-    wasMousePressed = mouseIsPressed;
+  if (editorMode) {
+    drawEditorUI();
+    if (mouseIsPressed) {
+      handleEditorClick();
+    }
   }
 }
 
@@ -193,12 +188,12 @@ function clearTile(row, col, layer) {
 
 // --- Serializer / Parser (with backward compatibility) ---
 function worldToString(world) {
-  let data = ""; // Renamed from 'out' to 'data' for clarity
+  let out = "";
   for (let r = 0; r < world.length; r++) {
     const row = world[r];
     for (let c = 0; c < row.length; c++) {
       const cell = row[c];
-      if (!cell) { data += "/"; continue; }
+      if (!cell) { out += "/"; continue; }
 
       if ('layers' in cell) {
         const parts = cell.layers.map(t => {
@@ -207,26 +202,16 @@ function worldToString(world) {
           if (t.rotation && t.rotation !== 0) s += ":" + t.rotation;
           return s;
         });
-        data += parts.join(",") + "/";
+        out += parts.join(",") + "/";
       } else {
         let s = String(cell.type);
         if (cell.rotation && cell.rotation !== 0) s += ":" + cell.rotation;
-        data += s + "/";
+        out += s + "/";
       }
     }
-    data += "|";
+    out += "|";
   }
-  // Add crate saving logic here
-  for (var i = 0; i < tiles.length; i++) {
-    if (tiles[i].type == "crate") {
-      let inventoryData = '';
-      if (tiles[i].inventory && tiles[i].inventory.length > 0) {
-        inventoryData = ',' + JSON.stringify(tiles[i].inventory);
-      }
-      data += "crate," + tiles[i].x + "," + tiles[i].y + inventoryData + "\n";
-    }
-  }
-  return data;
+  return out;
 }
 
 function stringToWorld(s) {
@@ -237,7 +222,6 @@ function stringToWorld(s) {
 
   const rows = s.split("|");
   const world = [];
-  const tiles = []; // Temporary array to hold parsed tiles
 
   for (let i = 0; i < rows.length; i++) {
     const rowStr = rows[i];
@@ -275,31 +259,6 @@ function stringToWorld(s) {
     }
     if (outRow.length > 0) world.push(outRow);
   }
-
-  // Parse lines for specific tile types like crates
-  const lines = s.split('\n');
-  for (let i = 0; i < lines.length; i++) {
-    if (lines[i].startsWith("crate,")) {
-      let parts = lines[i].split(",");
-      let crate = new Tile(parseInt(parts[1]), parseInt(parts[2]), "crate");
-      // Load inventory if present
-      if (parts.length > 3) {
-        try {
-          crate.inventory = JSON.parse(parts.slice(3).join(','));
-        } catch (e) {
-          crate.inventory = [];
-        }
-      } else {
-        crate.inventory = [];
-      }
-      tiles.push(crate);
-    }
-  }
-
-  // Combine parsed layered world data with specific tile data
-  // This part might need adjustment based on how 'tiles' are integrated into 'gameWorld'
-  // For now, assuming 'tiles' are separate entities that need to be managed
-  // A better approach would be to integrate crate data directly into the gameWorld structure if possible
   return world;
 }
 
@@ -709,38 +668,4 @@ function keyPressedOnce(k) {
     pressedKeys[k] = false;
   }
   return false;
-}
-
-function breakCrate(index) {
-  let crate = tiles[index];
-  tiles.splice(index, 1);
-
-  // Drop custom inventory if it exists
-  if (crate.inventory && crate.inventory.length > 0) {
-    for (let i = 0; i < crate.inventory.length; i++) {
-      let itemData = crate.inventory[i];
-      let item = new Item(itemData.type, itemData.name, itemData.amount);
-      droppedItems.push(new DroppedItem(item, crate.x, crate.y));
-    }
-  } else {
-    // Default random drops if no custom inventory
-    let randomNumber = random(1);
-    let selectedItem;
-    if (randomNumber < .2) {
-      selectedItem = new Item("gun", "glock", 1);
-    }
-    else if (randomNumber < .4) {
-      selectedItem = new Item("consumable", "cheese", 1);
-    }
-    else if (randomNumber < .6) {
-      selectedItem = new Item("consumable", "soda", 1);
-    }
-    else if (randomNumber < .8) {
-      selectedItem = new Item("material", "common card", 1);
-    }
-    else {
-      selectedItem = new Item("projectile", "grenade", 1);
-    }
-    droppedItems.push(new DroppedItem(selectedItem, crate.x, crate.y));
-  }
 }
