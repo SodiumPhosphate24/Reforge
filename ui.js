@@ -3,6 +3,10 @@ var healthPoints = 100;
 var speedBuff = false;
 var laserEnergy = 100;
 var energyGauge = 100;
+var itemNameAlpha = 0; // Alpha for item name fade
+var itemNameTimer = 0; // Timer for how long to show item name
+var lastShownItemSlot = -1; // Track which item was last shown
+
 function drawUI() {
   inventory();
   health();
@@ -47,15 +51,36 @@ function inventory() {
         text(inventoryList[i].amount, 369 + (i * 69.71), 700);
       }
     }
-    if (inventoryList[inventorySlot - 1] != null) {
-      textSize(20);
-      textFont(Silkscreen);
-      fill(0, 0, 0, 200);
-      strokeWeight(2);
-      stroke(255, 255, 255, 200);
-      text(inventoryList[inventorySlot - 1].name, 600, 500, 20, 255, 255, 255, 255, Silkscreen, CENTER, CENTER);
-    }
     imageMode(CORNER);
+  }
+  
+  // Check if inventory slot changed to trigger fade-in
+  if (lastShownItemSlot !== inventorySlot) {
+    itemNameAlpha = 255;
+    itemNameTimer = 60; // Show for ~1 second (60 frames at 60fps)
+    lastShownItemSlot = inventorySlot;
+  }
+  
+  // Update fade timer
+  if (itemNameTimer > 0) {
+    itemNameTimer--;
+    if (itemNameTimer <= 30) {
+      // Fade out during the last 30 frames (half second)
+      itemNameAlpha = itemNameTimer * (255 / 30);
+    }
+  } else {
+    itemNameAlpha = 0;
+  }
+  
+  // Draw item name with fade effect
+  if (inventoryList[inventorySlot - 1] != null && itemNameAlpha > 0) {
+    textSize(20);
+    textFont(Silkscreen);
+    fill(0, 0, 0, itemNameAlpha * 0.78);
+    strokeWeight(2);
+    stroke(255, 255, 255, itemNameAlpha * 0.78);
+    textAlign(CENTER, CENTER);
+    text(inventoryList[inventorySlot - 1].name, 600, 500);
   }
 }
 
@@ -328,8 +353,13 @@ class DroppedItem {
       return false;
     }
   }
+}
 
-
+function showItemName() {
+  // Trigger item name display (called when picking up items)
+  itemNameAlpha = 255;
+  itemNameTimer = 60;
+  lastShownItemSlot = inventorySlot;
 }
 
 let nearestPickupItem = null; // Store for screen-fixed rendering
