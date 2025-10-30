@@ -150,10 +150,6 @@ function mouseClicked() {
           healthPoints += 10;
           useItem();
         }
-        if (inventoryList[inventorySlot - 1].name == "soda"){
-          laserEnergy += 50;
-          useItem();
-        }
         if (inventoryList[inventorySlot - 1].name == "common battery"){
           healthPoints += 25;
           useItem();
@@ -164,6 +160,10 @@ function mouseClicked() {
         }
         if (inventoryList[inventorySlot - 1].name == "legendary battery"){
           healthPoints += 100;
+          useItem();
+        }
+        if (inventoryList[inventorySlot - 1].name == "soda"){
+          laserEnergy += 50;
           useItem();
         }
       }
