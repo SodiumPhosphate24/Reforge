@@ -5,7 +5,7 @@ var laserEnergy = 100;
 var energyGauge = 100;
 var itemLabelAlpha = 0;
 var lastInventorySlot = 1;
-
+var itemLabelAlpha = 0;
 function drawUI() {
   inventory();
   health();
@@ -23,13 +23,13 @@ function inventory() {
     itemLabelAlpha = 1.5; // Set to 1.5 for slight delay
     lastInventorySlot = inventorySlot;
   }
-  
+
   // Slowly decrease alpha
   if (itemLabelAlpha > 0) {
     itemLabelAlpha -= 0.02;
     if (itemLabelAlpha < 0) itemLabelAlpha = 0;
   }
-  
+
   // draws inventory
   image(InventoryImg, 289, 650, 636, 92);
   image(FrameImg, 329 + ((inventorySlot - 1) * 69.71), 649, 79.54, 79.54);
@@ -66,9 +66,9 @@ function inventory() {
       let displayAlpha = constrain(itemLabelAlpha, 0, 1);
       textSize(20);
       textFont(Silkscreen);
-      fill(0, 0, 0, 200*displayAlpha);
+      fill(0, 0, 0, 200 * displayAlpha);
       strokeWeight(2);
-      stroke(255, 255, 255, 200*displayAlpha);
+      stroke(255, 255, 255, 200 * displayAlpha);
       text(inventoryList[inventorySlot - 1].name, 600, 500, 20, 255, 255, 255, 255, Silkscreen, CENTER, CENTER);
     }
     imageMode(CORNER);
