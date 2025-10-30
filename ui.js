@@ -48,7 +48,7 @@ function inventory() {
       }
     }
     if(inventoryList[inventorySlot-1] != null){
-      Text()
+      Text(inventoryList[inventorySlot-1].name, 600, 630, 20, 255, 255, 255, 255, Silkscreen, CENTER, CENTER);
     }
     imageMode(CORNER);
   }
