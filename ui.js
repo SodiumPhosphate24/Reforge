@@ -42,6 +42,8 @@ function inventory() {
         textSize(20);
         textFont(Silkscreen);
         fill(0, 0, 0, 200);
+        strokeWeight(2);
+        stroke(255, 255, 255, 200);
         text(inventoryList[i].amount, 369 + (i * 69.71), 700);
       }
     }
