@@ -147,21 +147,24 @@ function mouseClicked() {
       }
       if (inventoryList[inventorySlot - 1].type == "consumable") {
         if (inventoryList[inventorySlot - 1].name == "cheese") {
-          players[activePlayer].health += 10
+          healthPoints += 10;
+          useItem();
         }
         if (inventoryList[inventorySlot - 1].name == "soda"){
           laserEnergy += 50;
-          inventoryList[inventorySlot - 1].amount -= 1;
-          if (inventoryList[inventorySlot - 1].amount <= 0){
-            inventoryList[inventorySlot - 1] = null;
-          }
+          useItem();
         }
         if (inventoryList[inventorySlot - 1].name == "common battery"){
-          laserEnergy += 10;
-          inventoryList[inventorySlot - 1].amount -= 1;
-          if (inventoryList[inventorySlot - 1].amount <= 0){
-            inventoryList[inventorySlot - 1] = null;
-          }
+          healthPoints += 25;
+          useItem();
+        }
+        if (inventoryList[inventorySlot - 1].name == "rare battery"){
+          healthPoints += 50;
+          useItem();
+        }
+        if (inventoryList[inventorySlot - 1].name == "legendary battery"){
+          healthPoints += 100;
+          useItem();
         }
       }
     }
@@ -169,7 +172,10 @@ function mouseClicked() {
 }
 
 function useItem(){
-  
+  inventoryList[inventorySlot - 1].amount -= 1;
+  if (inventoryList[inventorySlot - 1].amount <= 0) {
+    inventoryList[inventorySlot - 1] = null;
+  }
 }
 
 function mouseWheel(event) {
