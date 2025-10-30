@@ -3,12 +3,6 @@ var healthPoints = 100;
 var speedBuff = false;
 var laserEnergy = 100;
 var energyGauge = 100;
-
-// Variables for item name fade effect
-var lastInventorySlot = -1;
-var itemNameAlpha = 0;
-var itemNameFadeDelay = 0;
-
 function drawUI() {
   inventory();
   health();
@@ -53,39 +47,11 @@ function inventory() {
         text(inventoryList[i].amount, 369 + (i * 69.71), 700);
       }
     }
-  }
-
-  // Check if inventory slot changed
-  if (inventorySlot !== lastInventorySlot) {
-    itemNameAlpha = 255; // Reset to full opacity
-    itemNameFadeDelay = 60; // Show for 60 frames (~1 second at 60fps)
-    lastInventorySlot = inventorySlot;
-  }
-
-  // Update fade delay and alpha
-  if (itemNameFadeDelay > 0) {
-    itemNameFadeDelay--;
-  } else if (itemNameAlpha > 0) {
-    itemNameAlpha = Math.max(0, itemNameAlpha - 5); // Fade out speed
-  }
-
-  // Display selected item name above hotbar with fade
-  if(inventoryList[inventorySlot-1] != null && itemNameAlpha > 0){
-    textSize(20);
-    textFont(Silkscreen);
-    textAlign(CENTER, CENTER);
-    fill(0, 0, 0, itemNameAlpha * 0.78); // Semi-transparent background with fade
-    noStroke();
-    // Background box for text
-    let itemName = inventoryList[inventorySlot-1].name;
-    let nameWidth = textWidth(itemName);
-    rect(600 - nameWidth/2 - 10, 610, nameWidth + 20, 30, 5);
-    // Text
-    fill(255, 255, 255, itemNameAlpha);
-    text(itemName, 600, 625);
-    textAlign(LEFT);
-  }
-  imageMode(CORNER);
+    if(inventoryList[inventorySlot-1] != null){
+      text(inventoryList[inventorySlot-1].name, 600, 500, 20, 255, 255, 255, 255, Silkscreen, CENTER, CENTER);
+    }
+    imageMode(CORNER);
+    }
 }
 
 function health() {
