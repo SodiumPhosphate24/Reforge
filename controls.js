@@ -141,7 +141,6 @@ function mouseClicked() {
       if (inventoryList[inventorySlot - 1].type == "gun") {
         if (laserEnergy > 0 && recoil >= 10) {
           laserEnergy -= 10;
-
           bullets.push(new Bullet("common"));
         }
       }
@@ -150,23 +149,28 @@ function mouseClicked() {
           if (inventoryList[inventorySlot - 1].name == "cheese") {
             healthPoints += 10;
             useItem();
+            return;
           }
           if (inventoryList[inventorySlot - 1].name == "common battery"){
             healthPoints += 25;
             useItem();
+            return;
           }
           if (inventoryList[inventorySlot - 1].name == "rare battery"){
             healthPoints += 50;
             useItem();
+            return;
           }
           if (inventoryList[inventorySlot - 1].name == "legendary battery"){
             healthPoints += 100;
             useItem();
+            return;
           }
         }
         if (inventoryList[inventorySlot - 1].name == "soda" && laserEnergy < 100){
           laserEnergy += 50;
           useItem();
+          return;
         }
       }
     }

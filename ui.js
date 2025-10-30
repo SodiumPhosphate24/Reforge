@@ -100,6 +100,7 @@ class Item {
         this.ammo = 100;
         this.ammoType = "common";
         this.fireRate = .33;
+        this.energyCost = 10;
         this.HtoW = 0.68;
 
       }
@@ -109,6 +110,7 @@ class Item {
         this.damage = 2;
         this.ammo = 100;
         this.fireRate = .5;
+        this.energyCost = 7;
         this.HtoW = 0.55;
       }
       if (name == "rare pistol") {
@@ -116,6 +118,7 @@ class Item {
         this.image = GunImgs[2];
         this.damage = 3;
         this.fireRate = .67;
+        this.energyCost = 5;
         this.HtoW = .46;
       }
     }
