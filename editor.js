@@ -198,6 +198,12 @@ function handleEditorKeyPress() {
 
   if (!editorMode) return;
 
+  // Enter key to add random item to crate
+  if (keyCode == 13 && editingCrate) { // Enter
+    addRandomCrateItem();
+    return;
+  }
+
   // Layer selection: 1 / 2 / 3
   if (key === '1') { editorLayer = 0; console.log("Layer -> 0"); }
   if (key === '2') { editorLayer = 1; console.log("Layer -> 1"); }
@@ -220,6 +226,39 @@ function handleEditorKeyPress() {
     tileRotation = (tileRotation + 90) % 360;
     console.log("Rotated tile to:", tileRotation + "°");
   }
+}
+
+function addRandomCrateItem() {
+  if (!editingCrate) return;
+  
+  // Define all possible items
+  const itemTypes = ['consumable', 'gun', 'material', 'projectile'];
+  const itemsByType = {
+    'consumable': ['cheese', 'soda', 'common battery', 'rare battery', 'legendary battery'],
+    'gun': ['glock', 'western', 'rare pistol'],
+    'material': ['common card', 'rare card', 'legendary card'],
+    'projectile': ['grenade', 'rock']
+  };
+  
+  // Pick random type
+  const randomType = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+  
+  // Pick random name from that type
+  const namesForType = itemsByType[randomType];
+  const randomName = namesForType[Math.floor(Math.random() * namesForType.length)];
+  
+  // Random amount (1-5)
+  const randomAmount = Math.floor(Math.random() * 5) + 1;
+  
+  // Add to inventory
+  editingCrate.inventory.push({ 
+    type: randomType, 
+    name: randomName, 
+    amount: randomAmount 
+  });
+  
+  updateCrateInventoryDisplay();
+  console.log(`Added random item: ${randomAmount}x ${randomName}`);
 }
 
 function handleEditorMouseWheel(event) {
@@ -300,7 +339,7 @@ function showCrateEditor(crate) {
   crateInventoryUI.style('font-family', 'Arial');
   crateInventoryUI.style('max-width', '400px');
 
-  let title = createDiv('Crate Inventory Editor');
+  let title = createDiv('Crate Inventory Editor - Press Enter for random item');
   title.style('font-size', '16px');
   title.style('font-weight', 'bold');
   title.style('margin-bottom', '10px');
