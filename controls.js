@@ -54,39 +54,45 @@ function keyPressed() {
 
     for (let i = droppedItems.length - 1; i >= 0; i--) {
       if (droppedItems[i].checkPickup()) {
-        let pickedUpItem = droppedItems[i].item;
-
-        // Try to add to existing stack
-        let added = false;
-        if (pickedUpItem.stackable) {
+        if (droppedItems[i].item.stackable) {
+          let stacked = false;
           for (let j = 0; j < inventoryList.length; j++) {
-            if (inventoryList[j] && inventoryList[j].name === pickedUpItem.name) {
-              inventoryList[j].amount += pickedUpItem.amount;
-              added = true;
-              break;
+            if (inventoryList[j] != null) {
+              if (inventoryList[j].name == droppedItems[i].item.name) {
+                inventoryList[j].amount += droppedItems[i].item.amount;
+                droppedItems.splice(i, 1);
+                stacked = true;
+                return;
+              }
+            }
+          }
+          if (!stacked) {
+            if (inventoryList[inventorySlot - 1] == null) {
+              inventoryList[inventorySlot - 1] = (droppedItems[i].item);
+              droppedItems.splice(i, 1);
+            }
+            else {
+              const dropX = pX + 600 + pWidth / 2 - 15; // Center drop position
+              const dropY = pY + 375 + pHeight / 2 - 15;
+              droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], dropX, dropY))
+              inventoryList[inventorySlot - 1] = droppedItems[i].item;
+              droppedItems.splice(i, 1);
             }
           }
         }
-
-        // If not added to stack, find empty slot
-        if (!added) {
-          for (let j = 0; j < inventoryList.length; j++) {
-            if (inventoryList[j] == null) {
-              inventoryList[j] = pickedUpItem;
-              added = true;
-              break;
-            }
+        else {
+          if (inventoryList[inventorySlot - 1] == null) {
+            inventoryList[inventorySlot - 1] = (droppedItems[i].item);
+            droppedItems.splice(i, 1);
           }
-        }
-
-        // Remove from world if added
-        if (added) {
-          droppedItems.splice(i, 1);
-
-          // Trigger item name display when picking up items
-          if (typeof showItemName === 'function') {
-            showItemName();
+          else {
+            const dropX = pX + 600 + pWidth / 2 - 15; // Center drop position
+            const dropY = pY + 375 + pHeight / 2 - 15;
+            droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], dropX, dropY))
+            inventoryList[inventorySlot - 1] = droppedItems[i].item;
+            droppedItems.splice(i, 1);
           }
+          return;
         }
       }
     }
