@@ -152,11 +152,6 @@ function draw() {
       handleEditorClick();
     }
   }
-  
-  // Red overlay at 50% opacity
-  fill(255, 0, 0, 127); // 127 is 50% of 255
-  noStroke();
-  rect(0, 0, width, height);
 }
 
 /* ===================== LAYERED WORLD (3 layers: 0,1 behind; 2 above player) =====================
