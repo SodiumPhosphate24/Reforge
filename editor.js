@@ -187,6 +187,27 @@ function handleEditorClick() {
       gameWorld[gridRow][gridCol] = { type: selectedTileType, rotation: tileRotation };
     }
     console.log("Placed type", selectedTileType, "rot", tileRotation, "at", gridRow, gridCol, "layer", editorLayer);
+    
+    // Auto-open crate editor if placing a crate (type 5)
+    if (selectedTileType === 5 && typeof tiles !== 'undefined') {
+      // Find the crate we just placed by checking tiles array
+      // We need to give the tile system time to create the crate
+      setTimeout(() => {
+        for (let i = 0; i < tiles.length; i++) {
+          let tile = tiles[i];
+          if (tile.type === "crate") {
+            // Check if this crate is at the position we just placed
+            const crateGridCol = Math.floor((tile.x - 600) / 50);
+            const crateGridRow = Math.floor((tile.y - 375) / 50);
+            if (crateGridCol === gridCol && crateGridRow === gridRow) {
+              editingCrate = tile;
+              showCrateEditor(tile);
+              break;
+            }
+          }
+        }
+      }, 100);
+    }
   }
 }
 
