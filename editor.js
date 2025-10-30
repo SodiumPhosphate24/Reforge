@@ -118,6 +118,9 @@ function drawTilePreview() {
 function handleEditorClick() {
   if (!(editorMode && gameWorld && gameWorld.length > 0)) return;
 
+  // Don't allow tile placement while editing a crate
+  if (editingCrate) return;
+
   // Check if clicking on existing NPC
   for (let i = 0; i < NonPlayerCharacters.length; i++) {
     let npc = NonPlayerCharacters[i];
@@ -360,11 +363,17 @@ function showCrateEditor(crate) {
   crateInventoryUI.style('font-family', 'Arial');
   crateInventoryUI.style('max-width', '400px');
 
-  let title = createDiv('Crate Inventory Editor - Press Enter for random item');
+  let title = createDiv('Crate Inventory Editor');
   title.style('font-size', '16px');
   title.style('font-weight', 'bold');
-  title.style('margin-bottom', '10px');
+  title.style('margin-bottom', '5px');
   title.parent(crateInventoryUI);
+
+  let instructions = createDiv('Press Enter for random item • Click Close to resume tile placement');
+  instructions.style('font-size', '12px');
+  instructions.style('color', '#aaa');
+  instructions.style('margin-bottom', '10px');
+  instructions.parent(crateInventoryUI);
 
   // Display current items
   updateCrateInventoryDisplay();
