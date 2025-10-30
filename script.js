@@ -148,6 +148,11 @@ function draw() {
   noTint();
   doRecoil();
   editor(); // Call editor function which handles all editor UI and interactions
+  
+  // Update mouse state tracking for editor
+  if (typeof wasMousePressed !== 'undefined') {
+    wasMousePressed = mouseIsPressed;
+  }
 }
 
 /* ===================== LAYERED WORLD (3 layers: 0,1 behind; 2 above player) =====================

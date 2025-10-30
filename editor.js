@@ -27,10 +27,16 @@ function editor() {
   // Show UI elements if in editor mode
   if (editorMode) {
     drawEditorUI();
-    handleEditorClick();
+    // Only handle clicks when mouse is actually pressed (not held)
+    if (mouseIsPressed && !wasMousePressed) {
+      handleEditorClick();
+    }
     handleEditorKeyPress();
   }
 }
+
+// Track mouse state to detect single clicks
+let wasMousePressed = false;
 
 function toggleEditorMode() {
   editorMode = !editorMode;
