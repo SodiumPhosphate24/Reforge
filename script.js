@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], Silkscreen, PlayerImage;
+let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], matImgs = [0, 0, 0], projImgs = [0, 0], Silkscreen, PlayerImage;
 var itemConstructors = [["gun", "glock", 1], ["gun", "western", 1], ["gun", "rare pistol", 1], ["consumable", "cheese", 1], ["consumable", "soda", 1], ["consumable", "common battery", 1], ["consumable", "rare battery", 1], ["consumable", "legendary battery", 1], ["projectile", "grenade", 1], ["projectile", "rock", 10]];
 var pX = 0; var pY = 0; var playerDamage = 1;
 var prePX = 0, prePY = 0;
@@ -41,6 +41,9 @@ function preload() {
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonBattery.png");
   itemImgs[3] = loadImage("Items/Consumables/RareBattery.png");
+  matImgs[0] = loadImage("Items/Materials/CommonCard.png");
+  matImgs[1] = loadImage("Items/Materials/RareCard.png");
+  matImgs[2] = loadImage("Items/Materials/LegendaryCard.png");
   itemImgs[4] = loadImage("Items/Consumables/LegendaryBattery.png");
   projImgs[0] = loadImage("Items/Projectiles/Grenade.png");
   projImgs[1] = loadImage("Items/Projectiles/Rock.png");

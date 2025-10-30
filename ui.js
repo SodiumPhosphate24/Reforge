@@ -148,6 +148,8 @@ class Item {
       }
     }
 
+    if
+
     if (type == "projectile") {
       this.type = "projectile";
       this.stackable = true;
