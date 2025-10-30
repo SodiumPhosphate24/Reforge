@@ -47,6 +47,9 @@ function inventory() {
         text(inventoryList[i].amount, 369 + (i * 69.71), 700);
       }
     }
+    if(inventoryList[inventorySlot-1] != null){
+      Text()
+    }
     imageMode(CORNER);
   }
 }
