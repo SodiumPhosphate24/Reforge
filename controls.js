@@ -153,14 +153,13 @@ function mouseClicked() {
               players[activePlayer].health += 10;
               break;
             case "common battery":
-              players[act]
-              healthPoints += 25;
+              players[activePlayer].health += 25;
               break;
             case "rare battery":
-              healthPoints += 50;
+              players[activePlayer].health += 50;
               break;
             case "legendary battery":
-              healthPoints += 100;
+              players[activePlayer].health += 100;
               break;
             case "soda":
               if (laserEnergy < 100) {
