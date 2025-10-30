@@ -118,6 +118,30 @@ function drawTilePreview() {
 function handleEditorClick() {
   if (!(editorMode && gameWorld && gameWorld.length > 0)) return;
 
+  // Check if clicking on existing NPC
+  for (let i = 0; i < NonPlayerCharacters.length; i++) {
+    let npc = NonPlayerCharacters[i];
+    if (mouseX > npc.x - 600 - pX && mouseX < npc.x - 600 - pX + 50 &&
+        mouseY > npc.y - 375 - pY && mouseY < npc.y - 375 - pY + 50) {
+      editingNPC = npc;
+      showNPCEditor(npc);
+      return;
+    }
+  }
+
+  // Check if clicking on existing Crate
+  for (let i = 0; i < tiles.length; i++) {
+    let tile = tiles[i];
+    if (tile.type === "crate") {
+      if (mouseX > tile.x - 600 - pX && mouseX < tile.x - 600 - pX + 50 &&
+          mouseY > tile.y - 375 - pY && mouseY < tile.y - 375 - pY + 50) {
+        editingCrate = tile;
+        showCrateEditor(tile);
+        return;
+      }
+    }
+  }
+
   var worldX = mouseX - camX;
   var worldY = mouseY - camY;
 
@@ -210,30 +234,6 @@ function handleEditorMouseWheel(event) {
   console.log("Mouse wheel changed to tile type:", selectedTileType);
   return true; // consume wheel in editor mode
 }
-
-// Check if clicking on existing NPC
-    for (let i = 0; i < NonPlayerCharacters.length; i++) {
-      let npc = NonPlayerCharacters[i];
-      if (mouseX > npc.x - 600 - pX && mouseX < npc.x - 600 - pX + 50 &&
-          mouseY > npc.y - 375 - pY && mouseY < npc.y - 375 - pY + 50) {
-        editingNPC = npc;
-        showNPCEditor(npc);
-        return;
-      }
-    }
-
-    // Check if clicking on existing Crate
-    for (let i = 0; i < tiles.length; i++) {
-      let tile = tiles[i];
-      if (tile.type === "crate") {
-        if (mouseX > tile.x - 600 - pX && mouseX < tile.x - 600 - pX + 50 &&
-            mouseY > tile.y - 375 - pY && mouseY < tile.y - 375 - pY + 50) {
-          editingCrate = tile;
-          showCrateEditor(tile);
-          return;
-        }
-      }
-    }
 
 function showNPCEditor(npc) {
   // Close any existing editor
