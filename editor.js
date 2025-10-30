@@ -1,5 +1,4 @@
 // ============== EDITOR (3-LAYER SUPPORT) ==============
-var editorMode = false;
 var selectedTileType = 0;    // current tile type
 // Use global maxTileTypes from your main script; fallback to tileImgs length if missing:
 function __getMaxTileTypes() {
