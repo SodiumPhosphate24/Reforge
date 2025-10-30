@@ -179,7 +179,7 @@ function useItem(){
 }
 
 function mouseWheel(event) {
-  if (handleEditorMouseWheel && handleEditorMouseWheel(event)) {
+  if (typeof handleEditorMouseWheel === 'function' && handleEditorMouseWheel(event)) {
     return false; // Editor handled it, prevent default behavior
   }
 
