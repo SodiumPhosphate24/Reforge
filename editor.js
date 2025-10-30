@@ -130,14 +130,16 @@ function handleEditorClick() {
   }
 
   // Check if clicking on existing Crate
-  for (let i = 0; i < tiles.length; i++) {
-    let tile = tiles[i];
-    if (tile.type === "crate") {
-      if (mouseX > tile.x - 600 - pX && mouseX < tile.x - 600 - pX + 50 &&
-          mouseY > tile.y - 375 - pY && mouseY < tile.y - 375 - pY + 50) {
-        editingCrate = tile;
-        showCrateEditor(tile);
-        return;
+  if (typeof tiles !== 'undefined' && tiles.length > 0) {
+    for (let i = 0; i < tiles.length; i++) {
+      let tile = tiles[i];
+      if (tile.type === "crate") {
+        if (mouseX > tile.x - 600 - pX && mouseX < tile.x - 600 - pX + 50 &&
+            mouseY > tile.y - 375 - pY && mouseY < tile.y - 375 - pY + 50) {
+          editingCrate = tile;
+          showCrateEditor(tile);
+          return;
+        }
       }
     }
   }
