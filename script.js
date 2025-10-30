@@ -147,12 +147,7 @@ function draw() {
   imageMode(CORNER);
   noTint();
   doRecoil();
-  if (editorMode) {
-    drawEditorUI();
-    if (mouseIsPressed) {
-      handleEditorClick();
-    }
-  }
+  editor(); // Call editor function which handles all editor UI and interactions
 }
 
 /* ===================== LAYERED WORLD (3 layers: 0,1 behind; 2 above player) =====================
