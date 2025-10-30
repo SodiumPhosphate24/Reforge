@@ -15,6 +15,14 @@ var craftingRecipes = [
     output: { type: "gun", name: "glock", amount: 1 }
   },
   {
+    name: "Rare Card",
+    type: "item",
+    ingredients: [
+      { itemName: "common card", amount: 5 }
+    ],
+    output: { type: "material", name: "rare card", amount: 1 }
+  },
+  {
     name: "Grenade",
     type: "item",
     ingredients: [

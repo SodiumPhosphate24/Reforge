@@ -62,7 +62,7 @@ function keyPressed() {
                 inventoryList[j].amount += droppedItems[i].item.amount;
                 droppedItems.splice(i, 1);
                 stacked = true;
-                break;
+                return;
               }
             }
           }
@@ -92,7 +92,7 @@ function keyPressed() {
             inventoryList[inventorySlot - 1] = droppedItems[i].item;
             droppedItems.splice(i, 1);
           }
-          break;
+          return;
         }
       }
     }
