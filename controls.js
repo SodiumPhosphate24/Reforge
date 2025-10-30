@@ -62,6 +62,7 @@ function keyPressed() {
                 inventoryList[j].amount += droppedItems[i].item.amount;
                 droppedItems.splice(i, 1);
                 stacked = true;
+                itemLabelAlpha = 1.5;
                 return;
               }
             }
@@ -70,6 +71,7 @@ function keyPressed() {
             if (inventoryList[inventorySlot - 1] == null) {
               inventoryList[inventorySlot - 1] = (droppedItems[i].item);
               droppedItems.splice(i, 1);
+              itemLabelAlpha = 1.5;
             }
             else {
               const dropX = pX + 600 + pWidth / 2 - 15; // Center drop position
@@ -77,6 +79,7 @@ function keyPressed() {
               droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], dropX, dropY))
               inventoryList[inventorySlot - 1] = droppedItems[i].item;
               droppedItems.splice(i, 1);
+              itemLabelAlpha = 1.5;
             }
           }
         }
@@ -84,6 +87,7 @@ function keyPressed() {
           if (inventoryList[inventorySlot - 1] == null) {
             inventoryList[inventorySlot - 1] = (droppedItems[i].item);
             droppedItems.splice(i, 1);
+            itemLabelAlpha = 1.5;
           }
           else {
             const dropX = pX + 600 + pWidth / 2 - 15; // Center drop position
@@ -91,6 +95,7 @@ function keyPressed() {
             droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], dropX, dropY))
             inventoryList[inventorySlot - 1] = droppedItems[i].item;
             droppedItems.splice(i, 1);
+            itemLabelAlpha = 1.5;
           }
           return;
         }
