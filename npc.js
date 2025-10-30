@@ -1,4 +1,3 @@
-
 class NPC {
   constructor(x, y, name, message) {
     this.x = x;
@@ -22,23 +21,25 @@ class NPC {
 
 let nearestNPC = null; // Store for screen-fixed rendering
 let npcPromptAlpha = 0; // Fade animation
+let npcPromptScale = 0; // Scale animation
+let npcPromptGrowScale = 0.5; // Growing scale animation
 
 function drawNPCs() {
   nearestNPC = null;
   let nearestDistance = Infinity;
-  
+
   for (let i = 0; i < NonPlayerCharacters.length; i++) {
     NonPlayerCharacters[i].update();
     fill(255, 255, 0);
     rect(NonPlayerCharacters[i].x, NonPlayerCharacters[i].y, 20, 20);
-    
+
     // Check if this is the nearest interactable NPC
     const distToPlayer = distance(NonPlayerCharacters[i].x, NonPlayerCharacters[i].y, pX + 600, pY + 340);
     if (distToPlayer < 120 && distToPlayer < nearestDistance) {
       nearestDistance = distToPlayer;
       nearestNPC = NonPlayerCharacters[i];
     }
-    
+
     // Close dialogue if player walks away from all NPCs
     const hasActiveDialogue = messages.some(msg => msg.type === "dialogue");
     if (hasActiveDialogue) {
@@ -51,10 +52,10 @@ function drawNPCs() {
         }
       }
       if (!nearAnyNPC) {
-        // Remove all dialogue messages
+        // Animate out dialogue messages before removing
         for (let k = messages.length - 1; k >= 0; k--) {
           if (messages[k].type === "dialogue") {
-            messages.splice(k, 1);
+            messages[k].closing = true;
           }
         }
       }
@@ -63,31 +64,39 @@ function drawNPCs() {
 }
 
 function drawNPCPromptIfNeeded() {
-  // Fade in/out based on whether NPC is near
+  // Fade in/out and scale based on whether NPC is near
   if (nearestNPC) {
     npcPromptAlpha = lerp(npcPromptAlpha, 255, 0.2);
+    npcPromptScale = lerp(npcPromptScale, 1, 0.2);
+    npcPromptGrowScale = lerp(npcPromptGrowScale, 1, 0.15);
   } else {
-    npcPromptAlpha = lerp(npcPromptAlpha, 0, 0.2);
+    npcPromptAlpha = lerp(npcPromptAlpha, 0, 0.15);
+    npcPromptScale = lerp(npcPromptScale, 0, 0.15);
+    npcPromptGrowScale = lerp(npcPromptGrowScale, 0.5, 0.15);
   }
-  
-  if (npcPromptAlpha > 5 && nearestNPC) {
+
+  if (npcPromptAlpha > 5) {
     push();
+    translate(600, 47);
+    scale(npcPromptScale * npcPromptGrowScale);
+    translate(-600, -47);
+
     fill(100, 255, 255, npcPromptAlpha * 0.78);
     textSize(20);
     textFont(Silkscreen);
     textAlign(CENTER, CENTER);
-    
-    const promptText = "Press E to talk to " + nearestNPC.name;
-    
+
+    const promptText = nearestNPC ? "Press E to talk to " + nearestNPC.name : "";
+
     // Background for text
     const promptWidth = textWidth(promptText);
     fill(0, 0, 0, npcPromptAlpha * 0.6);
     rect(600 - promptWidth / 2 - 10, 30, promptWidth + 20, 35, 5);
-    
+
     // Text
     fill(100, 255, 255, npcPromptAlpha);
     text(promptText, 600, 47);
-    
+
     pop();
   }
 }

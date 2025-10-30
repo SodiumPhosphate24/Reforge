@@ -301,6 +301,8 @@ class DroppedItem {
 
 let nearestPickupItem = null; // Store for screen-fixed rendering
 let pickupPromptAlpha = 0; // Fade animation
+let pickupPromptScale = 0; // Scale animation
+let pickupPromptGrowScale = 0.5; // Growing scale animation
 
 function updateDroppedItems() {
   let count = 0;
@@ -328,20 +330,30 @@ function updateDroppedItems() {
 }
 
 function drawPickupPromptIfNeeded() {
-  // Fade in/out based on whether item is near
+  // Fade in/out and scale based on whether item is near
   if (nearestPickupItem) {
     pickupPromptAlpha = lerp(pickupPromptAlpha, 255, 0.2);
+    pickupPromptScale = lerp(pickupPromptScale, 1, 0.2);
+    pickupPromptGrowScale = lerp(pickupPromptGrowScale, 1, 0.15);
   } else {
-    pickupPromptAlpha = lerp(pickupPromptAlpha, 0, 0.2);
+    pickupPromptAlpha = lerp(pickupPromptAlpha, 0, 0.15);
+    pickupPromptScale = lerp(pickupPromptScale, 0, 0.15);
+    pickupPromptGrowScale = lerp(pickupPromptGrowScale, 0.5, 0.15);
   }
-  
-  if (pickupPromptAlpha > 5 && nearestPickupItem) {
+
+  if (pickupPromptAlpha > 5) {
     drawPickupPrompt(nearestPickupItem);
   }
 }
 
 function drawPickupPrompt(item) {
+  if (!item) return;
+
   push();
+  translate(600, 47);
+  scale(pickupPromptScale * pickupPromptGrowScale);
+  translate(-600, -47);
+
   fill(100, 255, 255, pickupPromptAlpha * 0.78);
   textSize(20);
   textFont(Silkscreen);

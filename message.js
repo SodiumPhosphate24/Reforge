@@ -20,6 +20,7 @@ class Message {
       this.alpha = 0; // Fade in effect
       this.slideY = 100; // Slide up animation
       this.boxScale = 0; // Box scale animation
+      this.closing = false; // New property to manage closing animation
     }
   }
 }
@@ -29,22 +30,22 @@ function messageDisplay() {
   for (let i = 0; i < messages.length; i++) {
     if (messages[i].type == "quest") {
       messages[i].phaseTimer++;
-      
+
       // Phase 1: Simultaneous slide and smooth grow (0-70 frames)
       if (messages[i].phase === "animate") {
         const totalFrames = 70;
         const progress = min(messages[i].phaseTimer / totalFrames, 1);
-        
+
         // Smooth slide down throughout animation
         messages[i].y = lerp(messages[i].y, messages[i].targetY, 0.12);
-        
+
         // Smooth ease-in-out growth (slow -> fast -> slow)
         const eased = progress < 0.5
           ? 4 * progress * progress * progress
           : 1 - pow(-2 * progress + 2, 3) / 2;
-        
+
         messages[i].scale = 0.3 + (messages[i].targetScale - 0.3) * eased;
-        
+
         // Transition to display phase
         if (messages[i].phaseTimer >= totalFrames) {
           messages[i].phase = "display";
@@ -52,7 +53,7 @@ function messageDisplay() {
           messages[i].scale = messages[i].targetScale;
         }
       }
-      
+
       // Phase 2: Display (hold for 120 frames)
       else if (messages[i].phase === "display") {
         if (messages[i].phaseTimer > 120) {
@@ -60,11 +61,11 @@ function messageDisplay() {
           messages[i].phaseTimer = 0;
         }
       }
-      
+
       // Phase 3: Fade out (60 frames)
       else if (messages[i].phase === "fade") {
         messages[i].alpha = lerp(messages[i].alpha, 0, 0.05);
-        
+
         if (messages[i].alpha < 5) {
           messages.splice(i, 1);
           i--;
@@ -95,18 +96,31 @@ function messageDisplay() {
       var person = messages[i].message[messages[i].index].split(": ")[0];
 
       // Animate alpha (fade in)
-      if (messages[i].alpha < 255) {
+      if (!messages[i].closing && messages[i].alpha < 255) {
         messages[i].alpha = lerp(messages[i].alpha, 255, 0.1);
       }
 
       // Animate slide up
-      if (messages[i].slideY > 0) {
+      if (!messages[i].closing && messages[i].slideY > 0) {
         messages[i].slideY = lerp(messages[i].slideY, 0, 0.15);
       }
 
       // Animate box scale
-      if (messages[i].boxScale < 1) {
+      if (!messages[i].closing && messages[i].boxScale < 1) {
         messages[i].boxScale = lerp(messages[i].boxScale, 1, 0.2);
+      }
+
+      // Handle closing animation
+      if (messages[i].closing) {
+        messages[i].alpha = lerp(messages[i].alpha, 0, 0.15);
+        messages[i].slideY = lerp(messages[i].slideY, 100, 0.15);
+        messages[i].boxScale = lerp(messages[i].boxScale, 0, 0.2);
+
+        if (messages[i].alpha < 5) {
+          messages.splice(i, 1);
+          i--;
+          continue;
+        }
       }
 
       push();
@@ -137,7 +151,7 @@ function messageDisplay() {
 
       fill(255, 255, 255, messages[i].alpha);
       text(displayMessage, messages[i].x, messages[i].y);
-      
+
       // "Press Z" indicator at bottom right with pulsing animation
       const pulseAlpha = 100 + sin(frameCount / 15) * 50;
       fill(150, 150, 150, messages[i].alpha * (pulseAlpha / 255));
@@ -147,11 +161,11 @@ function messageDisplay() {
       rectMode(CORNER);
       pop();
 
-      if (keyPressedOnce(90)) {
+      if (keyPressedOnce(90) && !messages[i].closing) {
         messages[i].index++;
         if (messages[i].index >= messages[i].message.length) {
-          messages.splice(i, 1);
-          i--;
+          // Trigger closing animation
+          messages[i].closing = true;
         } else {
           // Reset animations for next message
           messages[i].slideY = 30;
