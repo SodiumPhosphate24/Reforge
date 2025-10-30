@@ -147,11 +147,7 @@ function mouseClicked() {
       }
       if (inventoryList[inventorySlot - 1].type == "consumable") {
         if (inventoryList[inventorySlot - 1].name == "cheese") {
-          players[activePlayer].health += 10;
-          inventoryList[inventorySlot - 1].amount -= 1;
-          if (inventoryList[inventorySlot - 1].amount <= 0) {
-            inventoryList[inventorySlot - 1] = null;
-          }
+          players[activePlayer].health += 10
         }
         if (inventoryList[inventorySlot - 1].name == "soda"){
           laserEnergy += 50;
@@ -160,9 +156,20 @@ function mouseClicked() {
             inventoryList[inventorySlot - 1] = null;
           }
         }
+        if (inventoryList[inventorySlot - 1].name == "common battery"){
+          laserEnergy += 10;
+          inventoryList[inventorySlot - 1].amount -= 1;
+          if (inventoryList[inventorySlot - 1].amount <= 0){
+            inventoryList[inventorySlot - 1] = null;
+          }
+        }
       }
     }
   }
+}
+
+function useItem(){
+  
 }
 
 function mouseWheel(event) {
