@@ -51,11 +51,12 @@ function drawEditorUI() {
   if (cratePlacementPaused) {
     fill(0, 0, 0, 150);
     rect(0, 0, width, height);
-    
+
     fill(255, 255, 0);
-    textSize(24);
+    textSize(12);
     textAlign(CENTER, CENTER);
-    text("Crate Placed - Press ENTER to continue", width / 2, height / 2);
+    text("Crate Placed - Press ENTER to continue", 1100, 600);
+    
   } else {
     drawTilePreview();
   }
@@ -159,7 +160,7 @@ function handleEditorClick() {
       gameWorld[gridRow][gridCol] = { type: selectedTileType, rotation: tileRotation };
     }
     console.log("Placed type", selectedTileType, "rot", tileRotation, "at", gridRow, gridCol, "layer", editorLayer);
-    
+
     // Check if a crate (type 5) was placed
     if (selectedTileType === 5) {
       cratePlacementPaused = true;

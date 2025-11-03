@@ -1,5 +1,5 @@
 let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0], Silkscreen, PlayerImage;
-var itemConstructors = [["gun", "glock", 1], ["gun", "western", 1], ["gun", "rare pistol", 1], ["consumable", "cheese", 1], ["consumable", "soda", 1], ["consumable", "common battery", 1], ["consumable", "rare battery", 1], ["consumable", "legendary battery", 1], ["projectile", "grenade", 1], ["projectile", "rock", 10], ["material", "common card", 1], ["material", "rare card", 1], ["material", "legendary card", 1]];
+var itemConstructors = [["gun", "glock", 1, gunImgs[0]], ["gun", "western", 1, gunImgs[1]], ["gun", "rare pistol", 1, gunImgs[2]], ["consumable", "cheese", 1, ], ["consumable", "soda", 1], ["consumable", "common battery", 1], ["consumable", "rare battery", 1], ["consumable", "legendary battery", 1], ["projectile", "grenade", 1], ["projectile", "rock", 10], ["material", "common card", 1], ["material", "rare card", 1], ["material", "legendary card", 1]];
 var pX = 0; var pY = 0; var playerDamage = 1;
 var prePX = 0, prePY = 0;
 var camX = 0; var camY = 0;
