@@ -13,6 +13,9 @@ const EDIT_TILE_SIZE = 50;
 var cratePlacementPaused = false; // Pauses tile placement after crate is placed
 var lastCrateRow = -1;       // Row of last placed crate
 var lastCrateCol = -1;       // Column of last placed crate
+var crateItemList = [];      // Items to be added to this crate
+var selectedItemIndex = 0;   // Currently selected item in the browser
+var itemQuantity = 1;        // Quantity to add
 
 // Disable context menu so right-click can erase while editing
 if (typeof window !== "undefined") {
@@ -49,13 +52,7 @@ function drawEditorUI() {
 
   // Draw pause overlay if crate placement is paused
   if (cratePlacementPaused) {
-    fill(0, 0, 0, 150);
-    rect(0, 0, width, height);
-    
-    fill(255, 255, 0);
-    textSize(24);
-    textAlign(CENTER, CENTER);
-    text("Crate Placed - Press ENTER to continue", width / 2, height / 2);
+    drawCrateItemSelector();
   } else {
     drawTilePreview();
   }
@@ -178,13 +175,15 @@ function handleEditorKeyPress() {
 
   if (!editorMode) return;
 
-  // Resume from crate placement pause with Enter
+  // Finalize crate and resume from pause with Enter
   if (cratePlacementPaused && keyCode === 13) { // 13 is Enter
-    cratePlacementPaused = false;
-    console.log("Resumed tile placement");
+    finalizeCrate();
     return;
   }
 
+  // Handle crate item selector input
+  handleCrateItemSelectorInput();
+  
   if (cratePlacementPaused) return; // Don't allow other keys when paused
 
   // Layer selection: 1 / 2 / 3
@@ -201,6 +200,215 @@ function handleEditorKeyPress() {
   if (keyCode == 190) { // .
     const m = __getMaxTileTypes();
     if (m > 0) selectedTileType = (selectedTileType + 1) % m;
+
+
+// ============== CRATE ITEM SELECTOR UI ==============
+function drawCrateItemSelector() {
+  // Semi-transparent background
+  fill(0, 0, 0, 200);
+  rect(0, 0, width, height);
+  
+  // Main panel
+  fill(40, 40, 40);
+  stroke(255, 255, 0);
+  strokeWeight(3);
+  rect(200, 100, 800, 550, 10);
+  
+  // Title
+  fill(255, 255, 0);
+  noStroke();
+  textSize(28);
+  textFont(Silkscreen);
+  textAlign(CENTER, CENTER);
+  text("Configure Crate Contents", width / 2, 140);
+  
+  // Instructions
+  textSize(14);
+  text("Scroll/Arrow Keys: Navigate | +/-: Change Quantity | A: Add Item | ENTER: Finalize Crate", width / 2, 170);
+  
+  // Item browser section
+  fill(60, 60, 60);
+  stroke(255, 255, 0);
+  strokeWeight(2);
+  rect(220, 200, 560, 400, 5);
+  
+  // Draw available items (scrollable list)
+  textAlign(LEFT, CENTER);
+  textSize(18);
+  let yPos = 220;
+  const itemsPerPage = 8;
+  const startIndex = Math.max(0, Math.min(selectedItemIndex - 3, itemConstructors.length - itemsPerPage));
+  
+  for (let i = startIndex; i < Math.min(startIndex + itemsPerPage, itemConstructors.length); i++) {
+    const itemDef = itemConstructors[i];
+    const isSelected = (i === selectedItemIndex);
+    
+    // Highlight selected item
+    if (isSelected) {
+      fill(100, 255, 255, 100);
+      noStroke();
+      rect(230, yPos - 20, 540, 45, 5);
+    }
+    
+    // Item text
+    fill(isSelected ? 255 : 200);
+    const itemName = itemDef[1]; // name from constructor
+    const itemType = itemDef[0]; // type from constructor
+    text(`${itemType}: ${itemName}`, 250, yPos);
+    
+    yPos += 50;
+  }
+  
+  // Quantity control section
+  fill(60, 60, 60);
+  stroke(255, 255, 0);
+  strokeWeight(2);
+  rect(800, 200, 180, 150, 5);
+  
+  fill(255, 255, 0);
+  textAlign(CENTER, CENTER);
+  textSize(16);
+  text("Quantity", 890, 225);
+  
+  // Quantity display
+  fill(40, 40, 40);
+  stroke(255, 255, 0);
+  rect(820, 250, 140, 40, 5);
+  
+  fill(255);
+  textSize(24);
+  text(itemQuantity, 890, 270);
+  
+  // +/- buttons hint
+  fill(200);
+  textSize(12);
+  text("Press +/- to adjust", 890, 310);
+  
+  // Add button
+  fill(0, 200, 100);
+  stroke(255, 255, 0);
+  strokeWeight(2);
+  rect(820, 370, 140, 50, 5);
+  
+  fill(255);
+  textSize(18);
+  text("Add (A)", 890, 395);
+  
+  // Current crate contents
+  fill(60, 60, 60);
+  stroke(255, 255, 0);
+  strokeWeight(2);
+  rect(800, 370, 180, 230, 5);
+  
+  fill(255, 255, 0);
+  textAlign(CENTER, TOP);
+  textSize(16);
+  text("Crate Contents:", 890, 380);
+  
+  // List items in crate
+  textAlign(LEFT, TOP);
+  textSize(12);
+  fill(255);
+  let crateY = 410;
+  if (crateItemList.length === 0) {
+    fill(150);
+    textAlign(CENTER, TOP);
+    text("(empty)", 890, crateY);
+  } else {
+    for (let item of crateItemList) {
+      text(`${item.quantity}x ${item.name}`, 810, crateY);
+      crateY += 20;
+      if (crateY > 580) break; // Don't overflow
+    }
+  }
+  
+  // Finalize button
+  fill(100, 255, 100);
+  stroke(255, 255, 0);
+  strokeWeight(3);
+  rect(300, 615, 600, 50, 5);
+  
+  fill(0);
+  textAlign(CENTER, CENTER);
+  textSize(20);
+  text("Press ENTER to Finalize Crate", 600, 640);
+}
+
+function handleCrateItemSelectorInput() {
+  if (!cratePlacementPaused) return;
+  
+  // Navigate items with arrow keys
+  if (keyPressedOnce(UP_ARROW)) {
+    selectedItemIndex = Math.max(0, selectedItemIndex - 1);
+  }
+  if (keyPressedOnce(DOWN_ARROW)) {
+    selectedItemIndex = Math.min(itemConstructors.length - 1, selectedItemIndex + 1);
+  }
+  
+  // Adjust quantity with +/- or equals/minus keys
+  if (keyPressedOnce(187) || keyPressedOnce(61)) { // + or =
+    itemQuantity = Math.min(99, itemQuantity + 1);
+  }
+  if (keyPressedOnce(189) || keyPressedOnce(173)) { // - or _
+    itemQuantity = Math.max(1, itemQuantity - 1);
+  }
+  
+  // Add item with 'A' key
+  if (keyPressedOnce(65)) { // A key
+    addItemToCrate();
+  }
+}
+
+function addItemToCrate() {
+  if (selectedItemIndex < 0 || selectedItemIndex >= itemConstructors.length) return;
+  
+  const itemDef = itemConstructors[selectedItemIndex];
+  const itemType = itemDef[0];
+  const itemName = itemDef[1];
+  
+  // Check if item already exists in crate
+  let existingItem = crateItemList.find(item => item.name === itemName && item.type === itemType);
+  
+  if (existingItem) {
+    existingItem.quantity += itemQuantity;
+  } else {
+    crateItemList.push({
+      type: itemType,
+      name: itemName,
+      quantity: itemQuantity
+    });
+  }
+  
+  console.log(`Added ${itemQuantity}x ${itemName} to crate`);
+}
+
+function finalizeCrate() {
+  // Store crate data in the tile
+  if (lastCrateRow >= 0 && lastCrateCol >= 0) {
+    const cell = gameWorld[lastCrateRow][lastCrateCol];
+    
+    // Add crate contents to the tile object
+    if (cell && 'layers' in cell) {
+      for (let L = 0; L < 3; L++) {
+        const tile = cell.layers[L];
+        if (tile && tile.type === 5) {
+          tile.crateContents = [...crateItemList];
+          console.log(`Crate at (${lastCrateRow}, ${lastCrateCol}) configured with ${crateItemList.length} item types`);
+          break;
+        }
+      }
+    }
+  }
+  
+  // Reset state
+  cratePlacementPaused = false;
+  crateItemList = [];
+  selectedItemIndex = 0;
+  itemQuantity = 1;
+  console.log("Resumed tile placement");
+}
+// ============== END CRATE ITEM SELECTOR UI ==============
+
     console.log("Changed to tile type:", selectedTileType);
   }
 
@@ -213,7 +421,16 @@ function handleEditorKeyPress() {
 
 function handleEditorMouseWheel(event) {
   if (!editorMode) return false;
-  if (cratePlacementPaused) return true; // Consume wheel but don't change tile when paused
+  
+  // Use mouse wheel to scroll items in crate selector
+  if (cratePlacementPaused) {
+    if (event.delta > 0) {
+      selectedItemIndex = Math.min(itemConstructors.length - 1, selectedItemIndex + 1);
+    } else {
+      selectedItemIndex = Math.max(0, selectedItemIndex - 1);
+    }
+    return true;
+  }
 
   const m = __getMaxTileTypes();
   if (m > 0) {

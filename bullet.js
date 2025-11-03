@@ -65,8 +65,20 @@ class Bullet {
               if (left < tR && right > tL && top < tB && bottom > tT) {
                 // If it's a crate (type 5), destroy it
                 if (t.type === 5) {
-                  let r = Math.floor(Math.random() * itemConstructors.length);
-                  droppedItems.push(new DroppedItem(new Item(itemConstructors[r][0], itemConstructors[r][1], itemConstructors[r][2]), col * 50 + 25, row * 50 + 25));
+                  // Drop configured items if they exist
+                  if (t.crateContents && t.crateContents.length > 0) {
+                    for (let crateItem of t.crateContents) {
+                      droppedItems.push(new DroppedItem(
+                        new Item(crateItem.type, crateItem.name, crateItem.quantity),
+                        col * 50 + 25,
+                        row * 50 + 25
+                      ));
+                    }
+                  } else {
+                    // Fallback to random item if no contents configured
+                    let r = Math.floor(Math.random() * itemConstructors.length);
+                    droppedItems.push(new DroppedItem(new Item(itemConstructors[r][0], itemConstructors[r][1], itemConstructors[r][2]), col * 50 + 25, row * 50 + 25));
+                  }
                   clearTile(row, col, L);
                   particle(col * 50 + 25, row * 50 + 25, [139, 69, 19], 30, 5);
                 }
