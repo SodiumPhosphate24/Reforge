@@ -13,12 +13,68 @@ const EDIT_TILE_SIZE = 50;
 var cratePlacementPaused = false; // Pauses tile placement after crate is placed
 var lastCrateRow = -1;       // Row of last placed crate
 var lastCrateCol = -1;       // Column of last placed crate
+var selectedItemIndex = 0;   // Currently selected item from itemConstructors
 
 // Disable context menu so right-click can erase while editing
 if (typeof window !== "undefined") {
   window.oncontextmenu = function(e) {
     if (editorMode) { e.preventDefault(); return false; }
   };
+}
+
+
+
+function drawSelectedItemImage() {
+  if (typeof itemConstructors === 'undefined' || !itemConstructors.length) return;
+  
+  // Get the selected item constructor
+  const itemData = itemConstructors[selectedItemIndex];
+  const itemType = itemData[0];
+  const itemName = itemData[1];
+  
+  // Create a temporary item to get its image
+  const tempItem = new Item(itemType, itemName, 1);
+  
+  // Draw the item image centered on screen
+  push();
+  imageMode(CENTER);
+  
+  // Draw background box
+  fill(0, 0, 0, 200);
+  stroke(255, 255, 0);
+  strokeWeight(3);
+  rectMode(CENTER);
+  rect(width / 2, height / 2 - 50, 200, 200, 10);
+  
+  // Draw the item image
+  if (tempItem.image) {
+    // Calculate size to fit in box while maintaining aspect ratio
+    const maxSize = 150;
+    let displayWidth, displayHeight;
+    
+    if (tempItem.HtoW > 1) {
+      displayHeight = maxSize;
+      displayWidth = maxSize / tempItem.HtoW;
+    } else {
+      displayWidth = maxSize;
+      displayHeight = maxSize * tempItem.HtoW;
+    }
+    
+    image(tempItem.image, width / 2, height / 2 - 50, displayWidth, displayHeight);
+  }
+  
+  // Draw item name below image
+  fill(255, 255, 0);
+  noStroke();
+  textSize(16);
+  textAlign(CENTER, CENTER);
+  text(itemName, width / 2, height / 2 + 80);
+  
+  // Draw counter showing position in list
+  textSize(14);
+  text(`Item ${selectedItemIndex + 1} of ${itemConstructors.length}`, width / 2, height / 2 + 110);
+  
+  pop();
 }
 
 function toggleEditorMode() {
@@ -56,7 +112,10 @@ function drawEditorUI() {
     textSize(12);
     textAlign(CENTER, CENTER);
     text("Crate Placed - Press ENTER to continue", 1100, 600);
+    text("Use ARROW KEYS or SCROLL to browse items", width / 2, height - 50);
     
+    // Draw selected item image
+    drawSelectedItemImage();
   } else {
     drawTilePreview();
   }
@@ -186,7 +245,21 @@ function handleEditorKeyPress() {
     return;
   }
 
-  if (cratePlacementPaused) return; // Don't allow other keys when paused
+  // Handle item browsing when paused
+  if (cratePlacementPaused) {
+    if (typeof itemConstructors !== 'undefined' && itemConstructors.length > 0) {
+      // Arrow keys to browse items
+      if (keyCode === 37 || keyCode === 38) { // Left or Up arrow
+        selectedItemIndex = (selectedItemIndex - 1 + itemConstructors.length) % itemConstructors.length;
+        console.log("Selected item:", itemConstructors[selectedItemIndex][1]);
+      }
+      if (keyCode === 39 || keyCode === 40) { // Right or Down arrow
+        selectedItemIndex = (selectedItemIndex + 1) % itemConstructors.length;
+        console.log("Selected item:", itemConstructors[selectedItemIndex][1]);
+      }
+    }
+    return; // Don't allow other keys when paused
+  }
 
   // Layer selection: 1 / 2 / 3
   if (key === '1') { editorLayer = 0; console.log("Layer -> 0"); }
@@ -214,7 +287,19 @@ function handleEditorKeyPress() {
 
 function handleEditorMouseWheel(event) {
   if (!editorMode) return false;
-  if (cratePlacementPaused) return true; // Consume wheel but don't change tile when paused
+  
+  // If paused, use wheel to browse items instead
+  if (cratePlacementPaused) {
+    if (typeof itemConstructors !== 'undefined' && itemConstructors.length > 0) {
+      if (event.delta > 0) {
+        selectedItemIndex = (selectedItemIndex + 1) % itemConstructors.length;
+      } else {
+        selectedItemIndex = (selectedItemIndex - 1 + itemConstructors.length) % itemConstructors.length;
+      }
+      console.log("Selected item:", itemConstructors[selectedItemIndex][1]);
+    }
+    return true; // Consume wheel when paused
+  }
 
   const m = __getMaxTileTypes();
   if (m > 0) {
