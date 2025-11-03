@@ -15,6 +15,7 @@ class Enemy {
     if (type == "zombie") {
       this.type = "zombie";
       this.health = 3;
+      this.maxHealth = 3;
       this.speed = 2;
       this.acceleration = 0.15; // how quickly it changes direction
       this.image = BadGuy;
@@ -364,7 +365,12 @@ function drawEnemies() {
     }
     
     image(enemies[count].image, enemies[count].x, enemies[count].y, enemies[count].width, enemies[count].height);
-    if()
+    if(enemies[count].health < enemies[count].maxHealth){
+      fill(255, 0, 0);
+      rect(enemies[count].x, enemies[count].y - 10, enemies[count].width, 5);
+      fill(0, 255, 0);
+      rect(enemies[count].x, enemies[count].y - 10, enemies[count].width * (enemies[count].health / enemies[count].maxHealth), 5);
+    }
   
     
     if (enemies[count].hitsPlayer()) {
