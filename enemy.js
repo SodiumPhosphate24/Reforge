@@ -1,8 +1,8 @@
 
 class Enemy {
   constructor(type) {
-    this.x = pX + mouseX;
-    this.y = pY + mouseY;
+    this.x = 100 + mouseX;
+    this.y = 100 + mouseY;
     this.aggro = false;
     this.vx = 0; // velocity x
     this.vy = 0; // velocity y
