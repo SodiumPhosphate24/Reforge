@@ -156,7 +156,7 @@ function handleEditorClick() {
       gameWorld[gridRow][gridCol] = { type: selectedTileType, rotation: tileRotation };
     }
     console.log("Placed type", selectedTileType, "rot", tileRotation, "at", gridRow, gridCol, "layer", editorLayer);
-    
+
     // Check if a crate (type 5) was placed
     if (selectedTileType === 5) {
       cratePlacementPaused = true;
@@ -183,7 +183,7 @@ function handleEditorKeyPress() {
 
   // Handle crate item selector input
   handleCrateItemSelectorInput();
-  
+
   if (cratePlacementPaused) return; // Don't allow other keys when paused
 
   // Layer selection: 1 / 2 / 3
@@ -207,13 +207,13 @@ function drawCrateItemSelector() {
   // Semi-transparent background
   fill(0, 0, 0, 200);
   rect(0, 0, width, height);
-  
+
   // Main panel
   fill(40, 40, 40);
   stroke(255, 255, 0);
   strokeWeight(3);
   rect(200, 100, 800, 550, 10);
-  
+
   // Title
   fill(255, 255, 0);
   noStroke();
@@ -221,90 +221,90 @@ function drawCrateItemSelector() {
   textFont(Silkscreen);
   textAlign(CENTER, CENTER);
   text("Configure Crate Contents", width / 2, 140);
-  
+
   // Instructions
   textSize(14);
   text("Scroll/Arrow Keys: Navigate | +/-: Change Quantity | A: Add Item | ENTER: Finalize Crate", width / 2, 170);
-  
+
   // Item browser section
   fill(60, 60, 60);
   stroke(255, 255, 0);
   strokeWeight(2);
   rect(220, 200, 560, 400, 5);
-  
+
   // Draw available items (scrollable list)
   textAlign(LEFT, CENTER);
   textSize(18);
   let yPos = 220;
   const itemsPerPage = 8;
   const startIndex = Math.max(0, Math.min(selectedItemIndex - 3, itemConstructors.length - itemsPerPage));
-  
+
   for (let i = startIndex; i < Math.min(startIndex + itemsPerPage, itemConstructors.length); i++) {
     const itemDef = itemConstructors[i];
     const isSelected = (i === selectedItemIndex);
-    
+
     // Highlight selected item
     if (isSelected) {
       fill(100, 255, 255, 100);
       noStroke();
       rect(230, yPos - 20, 540, 45, 5);
     }
-    
+
     // Item text
     fill(isSelected ? 255 : 200);
     const itemName = itemDef[1]; // name from constructor
     const itemType = itemDef[0]; // type from constructor
     text(`${itemType}: ${itemName}`, 250, yPos);
-    
+
     yPos += 50;
   }
-  
+
   // Quantity control section
   fill(60, 60, 60);
   stroke(255, 255, 0);
   strokeWeight(2);
   rect(800, 200, 180, 150, 5);
-  
+
   fill(255, 255, 0);
   textAlign(CENTER, CENTER);
   textSize(16);
   text("Quantity", 890, 225);
-  
+
   // Quantity display
   fill(40, 40, 40);
   stroke(255, 255, 0);
   rect(820, 250, 140, 40, 5);
-  
+
   fill(255);
   textSize(24);
   text(itemQuantity, 890, 270);
-  
+
   // +/- buttons hint
   fill(200);
   textSize(12);
   text("Press +/- to adjust", 890, 310);
-  
+
   // Add button
   fill(0, 200, 100);
   stroke(255, 255, 0);
   strokeWeight(2);
   rect(820, 370, 140, 50, 5);
-  
+
   fill(255);
   textSize(18);
   text("Add (A)", 890, 395);
-  
+
   // Current crate contents
   fill(60, 60, 60);
   stroke(255, 255, 0);
   strokeWeight(2);
   rect(800, 370, 180, 230, 5);
-  
+
   fill(255, 255, 0);
   textAlign(CENTER, TOP);
   textSize(16);
   text("Crate Contents:", 890, 380);
-  
+
   // List items in crate
   textAlign(LEFT, TOP);
   textSize(12);
@@ -321,13 +321,13 @@ function drawCrateItemSelector() {
       if (crateY > 580) break; // Don't overflow
     }
   }
-  
+
   // Finalize button
   fill(100, 255, 100);
   stroke(255, 255, 0);
   strokeWeight(3);
   rect(300, 615, 600, 50, 5);
-  
+
   fill(0);
   textAlign(CENTER, CENTER);
   textSize(20);
@@ -336,7 +336,7 @@ function drawCrateItemSelector() {
 
 function handleCrateItemSelectorInput() {
   if (!cratePlacementPaused) return;
-  
+
   // Navigate items with arrow keys
   if (keyPressedOnce(UP_ARROW)) {
     selectedItemIndex = Math.max(0, selectedItemIndex - 1);
@@ -344,7 +344,7 @@ function handleCrateItemSelectorInput() {
   if (keyPressedOnce(DOWN_ARROW)) {
     selectedItemIndex = Math.min(itemConstructors.length - 1, selectedItemIndex + 1);
   }
-  
+
   // Adjust quantity with +/- or equals/minus keys
   if (keyPressedOnce(187) || keyPressedOnce(61)) { // + or =
     itemQuantity = Math.min(99, itemQuantity + 1);
@@ -352,7 +352,7 @@ function handleCrateItemSelectorInput() {
   if (keyPressedOnce(189) || keyPressedOnce(173)) { // - or _
     itemQuantity = Math.max(1, itemQuantity - 1);
   }
-  
+
   // Add item with 'A' key
   if (keyPressedOnce(65)) { // A key
     addItemToCrate();
@@ -361,14 +361,14 @@ function handleCrateItemSelectorInput() {
 
 function addItemToCrate() {
   if (selectedItemIndex < 0 || selectedItemIndex >= itemConstructors.length) return;
-  
+
   const itemDef = itemConstructors[selectedItemIndex];
   const itemType = itemDef[0];
   const itemName = itemDef[1];
-  
+
   // Check if item already exists in crate
   let existingItem = crateItemList.find(item => item.name === itemName && item.type === itemType);
-  
+
   if (existingItem) {
     existingItem.quantity += itemQuantity;
   } else {
@@ -378,7 +378,7 @@ function addItemToCrate() {
       quantity: itemQuantity
     });
   }
-  
+
   console.log(`Added ${itemQuantity}x ${itemName} to crate`);
 }
 
@@ -386,7 +386,7 @@ function finalizeCrate() {
   // Store crate data in the tile
   if (lastCrateRow >= 0 && lastCrateCol >= 0) {
     const cell = gameWorld[lastCrateRow][lastCrateCol];
-    
+
     // Add crate contents to the tile object
     if (cell && 'layers' in cell) {
       for (let L = 0; L < 3; L++) {
@@ -399,7 +399,7 @@ function finalizeCrate() {
       }
     }
   }
-  
+
   // Reset state
   cratePlacementPaused = false;
   crateItemList = [];
@@ -421,7 +421,7 @@ function finalizeCrate() {
 
 function handleEditorMouseWheel(event) {
   if (!editorMode) return false;
-  
+
   // Use mouse wheel to scroll items in crate selector
   if (cratePlacementPaused) {
     if (event.delta > 0) {
