@@ -10,6 +10,7 @@ function __getMaxTileTypes() {
 var tileRotation = 0;        // 0, 90, 180, 270
 var editorLayer = 0;         // 0 & 1 behind; 2 in front
 const EDIT_TILE_SIZE = 50;
+var cratePlacementPaused = false; // Pauses tile placement after crate is placed
 
 // Disable context menu so right-click can erase while editing
 if (typeof window !== "undefined") {
@@ -44,11 +45,23 @@ function drawEditorUI() {
     width / 2, 65
   );
 
-  drawTilePreview();
+  // Draw pause overlay if crate placement is paused
+  if (cratePlacementPaused) {
+    fill(0, 0, 0, 150);
+    rect(0, 0, width, height);
+    
+    fill(255, 255, 0);
+    textSize(24);
+    textAlign(CENTER, CENTER);
+    text("Crate Placed - Press ENTER to continue", width / 2, height / 2);
+  } else {
+    drawTilePreview();
+  }
 }
 
 function drawTilePreview() {
   if (!(gameWorld && gameWorld.length > 0)) return;
+  if (cratePlacementPaused) return; // Don't show preview when paused
 
   // World coords from mouse
   var worldX = mouseX - camX;
@@ -99,6 +112,7 @@ function drawTilePreview() {
 
 function handleEditorClick() {
   if (!(editorMode && gameWorld && gameWorld.length > 0)) return;
+  if (cratePlacementPaused) return; // Don't allow clicks when paused
 
   var worldX = mouseX - camX;
   var worldY = mouseY - camY;
@@ -143,6 +157,12 @@ function handleEditorClick() {
       gameWorld[gridRow][gridCol] = { type: selectedTileType, rotation: tileRotation };
     }
     console.log("Placed type", selectedTileType, "rot", tileRotation, "at", gridRow, gridCol, "layer", editorLayer);
+    
+    // Check if a crate (type 5) was placed
+    if (selectedTileType === 5) {
+      cratePlacementPaused = true;
+      console.log("Crate placed - press ENTER to continue");
+    }
   }
 }
 
@@ -153,6 +173,15 @@ function handleEditorKeyPress() {
   }
 
   if (!editorMode) return;
+
+  // Resume from crate placement pause with Enter
+  if (cratePlacementPaused && keyCode === 13) { // 13 is Enter
+    cratePlacementPaused = false;
+    console.log("Resumed tile placement");
+    return;
+  }
+
+  if (cratePlacementPaused) return; // Don't allow other keys when paused
 
   // Layer selection: 1 / 2 / 3
   if (key === '1') { editorLayer = 0; console.log("Layer -> 0"); }
@@ -180,6 +209,7 @@ function handleEditorKeyPress() {
 
 function handleEditorMouseWheel(event) {
   if (!editorMode) return false;
+  if (cratePlacementPaused) return true; // Consume wheel but don't change tile when paused
 
   const m = __getMaxTileTypes();
   if (m > 0) {
