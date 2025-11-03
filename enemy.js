@@ -364,6 +364,8 @@ function drawEnemies() {
     }
     
     image(enemies[count].image, enemies[count].x, enemies[count].y, enemies[count].width, enemies[count].height);
+    if()
+  
     
     if (enemies[count].hitsPlayer()) {
       if (enemies[count].type == "zombie") {
