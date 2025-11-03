@@ -11,6 +11,8 @@ var tileRotation = 0;        // 0, 90, 180, 270
 var editorLayer = 0;         // 0 & 1 behind; 2 in front
 const EDIT_TILE_SIZE = 50;
 var cratePlacementPaused = false; // Pauses tile placement after crate is placed
+var lastCrateRow = -1;       // Row of last placed crate
+var lastCrateCol = -1;       // Column of last placed crate
 
 // Disable context menu so right-click can erase while editing
 if (typeof window !== "undefined") {
@@ -161,7 +163,9 @@ function handleEditorClick() {
     // Check if a crate (type 5) was placed
     if (selectedTileType === 5) {
       cratePlacementPaused = true;
-      console.log("Crate placed - press ENTER to continue");
+      lastCrateRow = gridRow;
+      lastCrateCol = gridCol;
+      console.log("Crate placed at row", gridRow, "col", gridCol, "- press ENTER to continue");
     }
   }
 }
