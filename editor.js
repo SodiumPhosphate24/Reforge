@@ -31,9 +31,7 @@ function drawSelectedItemImage() {
   const itemData = itemConstructors[selectedItemIndex];
   const itemType = itemData[0];
   const itemName = itemData[1];
-  
-  // Create a temporary item to get its image
-  const tempItem = new Item(itemType, itemName, 1);
+  const itemImage = itemData[3]; // Get image from index 3 (4th position)
   
   // Draw the item image centered on screen
   push();
@@ -47,20 +45,27 @@ function drawSelectedItemImage() {
   rect(width / 2, height / 2 - 50, 200, 200, 10);
   
   // Draw the item image
-  if (tempItem.image) {
+  if (itemImage) {
     // Calculate size to fit in box while maintaining aspect ratio
     const maxSize = 150;
     let displayWidth, displayHeight;
     
-    if (tempItem.HtoW > 1) {
+    // Get image dimensions to calculate aspect ratio
+    const imgWidth = itemImage.width;
+    const imgHeight = itemImage.height;
+    const aspectRatio = imgHeight / imgWidth; // HtoW ratio
+    
+    if (aspectRatio > 1) {
+      // Height is larger
       displayHeight = maxSize;
-      displayWidth = maxSize / tempItem.HtoW;
+      displayWidth = maxSize / aspectRatio;
     } else {
+      // Width is larger or equal
       displayWidth = maxSize;
-      displayHeight = maxSize * tempItem.HtoW;
+      displayHeight = maxSize * aspectRatio;
     }
     
-    image(tempItem.image, width / 2, height / 2 - 50, displayWidth, displayHeight);
+    image(itemImage, width / 2, height / 2 - 50, displayWidth, displayHeight);
   }
   
   // Draw item name below image
