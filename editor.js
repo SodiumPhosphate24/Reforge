@@ -167,6 +167,31 @@ function handleEditorClick() {
   }
 }
 
+function handleCrateItemSelectorInput() {
+  if (!cratePlacementPaused) return;
+
+  // Navigate items with arrow keys
+  if (keyPressedOnce(UP_ARROW)) {
+    selectedItemIndex = Math.max(0, selectedItemIndex - 1);
+  }
+  if (keyPressedOnce(DOWN_ARROW)) {
+    selectedItemIndex = Math.min(itemConstructors.length - 1, selectedItemIndex + 1);
+  }
+
+  // Adjust quantity with +/- or equals/minus keys
+  if (keyPressedOnce(187) || keyPressedOnce(61)) { // + or =
+    itemQuantity = Math.min(99, itemQuantity + 1);
+  }
+  if (keyPressedOnce(189) || keyPressedOnce(173)) { // - or _
+    itemQuantity = Math.max(1, itemQuantity - 1);
+  }
+
+  // Add item with 'A' key
+  if (keyPressedOnce(65)) { // A key
+    addItemToCrate();
+  }
+}
+
 function handleEditorKeyPress() {
   // Toggle editor mode with Shift+E
   if (keyCode == 69 && keyIsDown(SHIFT)) { // E
@@ -332,31 +357,6 @@ function drawCrateItemSelector() {
   textAlign(CENTER, CENTER);
   textSize(20);
   text("Press ENTER to Finalize Crate", 600, 640);
-}
-
-function handleCrateItemSelectorInput() {
-  if (!cratePlacementPaused) return;
-
-  // Navigate items with arrow keys
-  if (keyPressedOnce(UP_ARROW)) {
-    selectedItemIndex = Math.max(0, selectedItemIndex - 1);
-  }
-  if (keyPressedOnce(DOWN_ARROW)) {
-    selectedItemIndex = Math.min(itemConstructors.length - 1, selectedItemIndex + 1);
-  }
-
-  // Adjust quantity with +/- or equals/minus keys
-  if (keyPressedOnce(187) || keyPressedOnce(61)) { // + or =
-    itemQuantity = Math.min(99, itemQuantity + 1);
-  }
-  if (keyPressedOnce(189) || keyPressedOnce(173)) { // - or _
-    itemQuantity = Math.max(1, itemQuantity - 1);
-  }
-
-  // Add item with 'A' key
-  if (keyPressedOnce(65)) { // A key
-    addItemToCrate();
-  }
 }
 
 function addItemToCrate() {
