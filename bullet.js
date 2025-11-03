@@ -31,7 +31,7 @@ class Bullet {
     for (let i = 0; i < enemies.length; i++) {
       if (checkCollision(this.x, this.y, enemies[i].x, enemies[i].y, 18, 5, enemies[i].width, enemies[i].height)) {
         enemies[i].takeDamage(this.damage);
-        enemies[i]
+        enemies[i].health = constrain(enemies[i].health, 0, enemies[i].maxHealth);
         return true;
       }
     }
