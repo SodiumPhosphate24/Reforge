@@ -256,13 +256,14 @@ function drawCraftingMenu() {
       }
       
       // Recipe name
-      if (recipe.unlocked)
-      if (canCraft) {
-        fill(100, 255, 100, craftingMenuAlpha);
-      } else {
-        fill(255, 100, 100, craftingMenuAlpha);
+      if (recipe.unlocked){
+        if (canCraft) {
+          fill(100, 255, 100, craftingMenuAlpha);
+        } else {
+          fill(255, 100, 100, craftingMenuAlpha);
+        }
+        text(recipe.name, 240, yPos);
       }
-      text(recipe.name, 240, yPos);
       
       // Ingredients
       fill(255, 255, 255, craftingMenuAlpha);
