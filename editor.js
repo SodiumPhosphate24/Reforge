@@ -15,6 +15,7 @@ var lastCrateRow = -1;       // Row of last placed crate
 var lastCrateCol = -1;       // Column of last placed crate
 var selectedItemIndex = 0;   // Currently selected item from itemConstructors
 var selectedCrateItems = []; // Array to store selected item constructors for this crate
+var crateInventories = new Map(); // Map to store items for each crate: key = "row,col", value = array of item constructors
 
 // Disable context menu so right-click can erase while editing
 if (typeof window !== "undefined") {
@@ -252,6 +253,15 @@ function handleEditorKeyPress() {
       console.log("Added item to crate:", itemConstructors[selectedItemIndex][1]);
       console.log("Crate now contains", selectedCrateItems.length, "items");
     }
+    
+    // Store the items for this specific crate using its coordinates
+    const crateKey = lastCrateRow + "," + lastCrateCol;
+    crateInventories.set(crateKey, [...selectedCrateItems]); // Store a copy of the array
+    console.log("Stored", selectedCrateItems.length, "items for crate at", crateKey);
+    
+    // Reset the array for the next crate
+    selectedCrateItems = [];
+    
     cratePlacementPaused = false;
     console.log("Resumed tile placement");
     return;
