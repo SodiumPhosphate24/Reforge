@@ -317,12 +317,13 @@ function stringToWorld(s) {
           if (crateItemsStr && layers[L].type === 5) {
             const itemIndices = crateItemsStr.split(".").map(idx => parseInt(idx, 10));
             const items = itemIndices
-              .filter(idx => idx >= 0 && idx < itemConstructors.length)
+              .filter(idx => !isNaN(idx) && idx >= 0 && idx < itemConstructors.length)
               .map(idx => itemConstructors[idx]);
 
             if (items.length > 0) {
               const crateKey = i + "," + j;
               crateInventories.set(crateKey, items);
+              console.log("Loaded crate at", crateKey, "with", items.length, "items:", itemIndices);
             }
           }
         }
@@ -346,12 +347,13 @@ function stringToWorld(s) {
         if (crateItemsStr && parseInt(tileData.split(":")[0], 10) === 5) {
           const itemIndices = crateItemsStr.split(".").map(idx => parseInt(idx, 10));
           const items = itemIndices
-            .filter(idx => idx >= 0 && idx < itemConstructors.length)
+            .filter(idx => !isNaN(idx) && idx >= 0 && idx < itemConstructors.length)
             .map(idx => itemConstructors[idx]);
 
           if (items.length > 0) {
             const crateKey = i + "," + j;
             crateInventories.set(crateKey, items);
+            console.log("Loaded crate at", crateKey, "with", items.length, "items:", itemIndices);
           }
         }
       }
