@@ -1,5 +1,5 @@
 let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0], Silkscreen, PlayerImage;
-var itemConstructors = []; // Will be initialized in setup() after images load
+var itemConstructors = [];
 var pX = 0; var pY = 0; var playerDamage = 1;
 var prePX = 0, prePY = 0;
 var camX = 0; var camY = 0;
