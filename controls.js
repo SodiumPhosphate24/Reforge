@@ -38,7 +38,7 @@ function keyPressed() {
   }
   if (keyCode == 67 && keyIsDown(17)) {
     navigator.clipboard.writeText(worldToString(gameWorld));
-    console.log("map copied to clipboard");
+    console.log("map and crate inventories copied to clipboard");
   }
 
   if (keyCode >= 49 && keyCode <= 56) {

@@ -17,6 +17,7 @@ var tileWalls = [0, 0, 0, 2, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-thro
 var enemies = [], bullets = [], messages = [], droppedItems = [], NonPlayerCharacters = [];
 var inventoryList;
 let maxTileTypes = 0; // will be set in setup()
+var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
 
 function preload() {
   worldString = loadStrings("world.txt");
@@ -62,7 +63,7 @@ function setup() {
   console.log("asdf");
   maxTileTypes = tileImgs.length;
   PlayerImage = Buschy;
-  
+
   // Initialize itemConstructors after images are loaded
   itemConstructors = [
     ["gun", "glock", 1, GunImgs[0]], 
@@ -134,7 +135,7 @@ function draw() {
 
   // Draw pickup prompt after camera pop (screen-fixed)
   drawPickupPromptIfNeeded();
-  
+
   // Draw NPC prompt after camera pop (screen-fixed)
   drawNPCPromptIfNeeded();
 
@@ -181,6 +182,10 @@ Rows use '|' and columns use '/' as you already had.
 Example row:
 0,,/1,3,/2,,/,,4/|
 
+Crate inventory encoding:
+- Inline with tile data: "type@itemIndex.itemIndex.itemIndex"
+  e.g., "5@1.3.0" for a crate with items (indices from itemConstructors)
+
 ================================================================================================= */
 
 // --- Editor-friendly helpers ---
@@ -220,12 +225,39 @@ function worldToString(world) {
           if (!t) return "";
           let s = String(t.type);
           if (t.rotation && t.rotation !== 0) s += ":" + t.rotation;
+          // Check if this tile has associated crate inventory data
+          const crateKey = r + "," + c;
+          if (crateInventories.has(crateKey)) {
+            const items = crateInventories.get(crateKey);
+            // Convert items back to indices
+            const itemIndices = items.map(itemConstructor => 
+              itemConstructors.findIndex(ic => 
+                ic[0] === itemConstructor[0] && ic[1] === itemConstructor[1]
+              )
+            ).filter(idx => idx !== -1); // Ensure valid indices
+            if (itemIndices.length > 0) {
+              s += "@" + itemIndices.join("."); // Append inventory data
+            }
+          }
           return s;
         });
         out += parts.join(",") + "/";
       } else {
         let s = String(cell.type);
         if (cell.rotation && cell.rotation !== 0) s += ":" + cell.rotation;
+        // Check for crate inventory in legacy format (only for crates, type 5)
+        const crateKey = r + "," + c;
+        if (crateInventories.has(crateKey) && cell.type === 5) {
+          const items = crateInventories.get(crateKey);
+          const itemIndices = items.map(itemConstructor => 
+            itemConstructors.findIndex(ic => 
+              ic[0] === itemConstructor[0] && ic[1] === itemConstructor[1]
+            )
+          ).filter(idx => idx !== -1);
+          if (itemIndices.length > 0) {
+            s += "@" + itemIndices.join(".");
+          }
+        }
         out += s + "/";
       }
     }
@@ -240,6 +272,7 @@ function stringToWorld(s) {
     return [];
   }
 
+  crateInventories.clear(); // Clear before parsing
   const rows = s.split("|");
   const world = [];
 
@@ -255,30 +288,74 @@ function stringToWorld(s) {
       if (cellStr === "") { outRow.push(undefined); continue; }
 
       if (cellStr.includes(",")) {
+        // Multi-layer format
         const layerStrs = cellStr.split(",");
         const layers = [null, null, null];
         for (let L = 0; L < Math.min(3, layerStrs.length); L++) {
           const tstr = layerStrs[L].trim();
           if (tstr === "") { layers[L] = null; continue; }
-          if (tstr.includes(":")) {
-            const [t, rot] = tstr.split(":");
+
+          // Check for crate inventory (@ separator)
+          let tileData = tstr;
+          let crateItemsStr = null;
+          if (tstr.includes("@")) {
+            [tileData, crateItemsStr] = tstr.split("@");
+          }
+
+          if (tileData.includes(":")) {
+            const [t, rot] = tileData.split(":");
             layers[L] = { type: parseInt(t, 10), rotation: parseInt(rot, 10) || 0 };
           } else {
-            layers[L] = { type: parseInt(tstr, 10), rotation: 0 };
+            layers[L] = { type: parseInt(tileData, 10), rotation: 0 };
+          }
+
+          // Parse crate items if present
+          if (crateItemsStr && layers[L].type === 5) {
+            const itemIndices = crateItemsStr.split(".").map(idx => parseInt(idx, 10));
+            const items = itemIndices
+              .filter(idx => idx >= 0 && idx < itemConstructors.length)
+              .map(idx => itemConstructors[idx]);
+
+            if (items.length > 0) {
+              const crateKey = i + "," + j;
+              crateInventories.set(crateKey, items);
+            }
           }
         }
         outRow.push({ layers });
       } else {
-        if (cellStr.includes(":")) {
-          const [t, rot] = cellStr.split(":");
+        // Legacy single-layer format
+        let tileData = cellStr;
+        let crateItemsStr = null;
+        if (cellStr.includes("@")) {
+          [tileData, crateItemsStr] = cellStr.split("@");
+        }
+
+        if (tileData.includes(":")) {
+          const [t, rot] = tileData.split(":");
           outRow.push({ type: parseInt(t, 10), rotation: parseInt(rot, 10) || 0 });
         } else {
-          outRow.push({ type: parseInt(cellStr, 10), rotation: 0 });
+          outRow.push({ type: parseInt(tileData, 10), rotation: 0 });
+        }
+
+        // Parse crate items if present
+        if (crateItemsStr && parseInt(tileData.split(":")[0], 10) === 5) {
+          const itemIndices = crateItemsStr.split(".").map(idx => parseInt(idx, 10));
+          const items = itemIndices
+            .filter(idx => idx >= 0 && idx < itemConstructors.length)
+            .map(idx => itemConstructors[idx]);
+
+          if (items.length > 0) {
+            const crateKey = i + "," + j;
+            crateInventories.set(crateKey, items);
+          }
         }
       }
     }
     if (outRow.length > 0) world.push(outRow);
   }
+
+  console.log("Loaded", crateInventories.size, "crate inventories");
   return world;
 }
 
@@ -336,6 +413,7 @@ function drawWorldLayer(world, layerIndex) {
         if (__alpha < 255) { tint(255, __alpha); __useTint = true; }
       }
 
+      // Draw the tile
       if (rotation > 0) {
         push();
         translate(j * 50 + 25, i * 50 + 25); // Move to center of tile
@@ -344,6 +422,31 @@ function drawWorldLayer(world, layerIndex) {
         pop();
       } else {
         image(tileImgs[tileType], j * 50, i * 50, 50, 50);
+      }
+
+      // Draw crate inventory if this is a crate tile (type 5) on layer 2
+      if (layerIndex === 2 && tileType === 5) {
+        const crateKey = i + "," + j;
+        if (crateInventories.has(crateKey)) {
+          const items = crateInventories.get(crateKey);
+          // Display a few items within the crate visual
+          const maxDisplayItems = 3;
+          for (let k = 0; k < Math.min(items.length, maxDisplayItems); k++) {
+            const item = items[k];
+            const itemImg = item[3]; // The image is the 4th element
+            if (itemImg) {
+              const xOffset = j * 50 + 10 + k * 15; // Position items within crate
+              const yOffset = i * 50 + 10;
+              image(itemImg, xOffset, yOffset, 15, 15);
+            }
+          }
+          // If there are more items than displayed, indicate overflow (e.g., with '+')
+          if (items.length > maxDisplayItems) {
+            fill(255);
+            textSize(10);
+            text("+", j * 50 + 10 + maxDisplayItems * 15, i * 50 + 20);
+          }
+        }
       }
 
       if (__useTint) noTint();
