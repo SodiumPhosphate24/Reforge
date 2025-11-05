@@ -148,7 +148,7 @@ function mouseClicked() {
       if (currentItem.type == "gun") {
         if (laserEnergy > 0 && recoil >= 10) {
           laserEnergy -= 10;
-          bullets.push(new Bullet("common"));
+          bullets.push(new Bullet("common", currentItem.damage));
         }
       }
       if (currentItem.type == "consumable") {

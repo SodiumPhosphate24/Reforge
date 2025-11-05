@@ -65,8 +65,31 @@ class Bullet {
               if (left < tR && right > tL && top < tB && bottom > tT) {
                 // If it's a crate (type 5), destroy it
                 if (t.type === 5) {
-                  let r = Math.floor(Math.random() * itemConstructors.length);
-                  droppedItems.push(new DroppedItem(new Item(itemConstructors[r][0], itemConstructors[r][1], itemConstructors[r][2]), col * 50 + 25, row * 50 + 25));
+                  // Get stored items for this crate
+                  const crateKey = row + "," + col;
+                  const storedItems = crateInventories.get(crateKey);
+                  
+                  if (storedItems && storedItems.length > 0) {
+                    // Drop all stored items
+                    for (const itemConstructor of storedItems) {
+                      droppedItems.push(new DroppedItem(
+                        new Item(itemConstructor[0], itemConstructor[1], itemConstructor[2]), 
+                        col * 50 + 25, 
+                        row * 50 + 25
+                      ));
+                    }
+                    // Remove from inventory map
+                    crateInventories.delete(crateKey);
+                  } else {
+                    // Fallback: drop random item if no inventory stored
+                    let r = Math.floor(Math.random() * itemConstructors.length);
+                    droppedItems.push(new DroppedItem(
+                      new Item(itemConstructors[r][0], itemConstructors[r][1], itemConstructors[r][2]), 
+                      col * 50 + 25, 
+                      row * 50 + 25
+                    ));
+                  }
+                  
                   clearTile(row, col, L);
                   particle(col * 50 + 25, row * 50 + 25, [139, 69, 19], 30, 5);
                 }
