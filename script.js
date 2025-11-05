@@ -295,6 +295,9 @@ function stringToWorld(s) {
         // Multi-layer format
         const layerStrs = cellStr.split(",");
         const layers = [null, null, null];
+        let crateItemsForCell = null;
+        let crateLayerIndex = -1;
+        
         for (let L = 0; L < Math.min(3, layerStrs.length); L++) {
           const tstr = layerStrs[L].trim();
           if (tstr === "") { layers[L] = null; continue; }
@@ -303,7 +306,9 @@ function stringToWorld(s) {
           let tileData = tstr;
           let crateItemsStr = null;
           if (tstr.includes("@")) {
-            [tileData, crateItemsStr] = tstr.split("@");
+            const parts = tstr.split("@");
+            tileData = parts[0];
+            crateItemsStr = parts[1];
           }
 
           if (tileData.includes(":")) {
@@ -313,27 +318,36 @@ function stringToWorld(s) {
             layers[L] = { type: parseInt(tileData, 10), rotation: 0 };
           }
 
-          // Parse crate items if present
-          if (crateItemsStr && layers[L].type === 5) {
-            const itemIndices = crateItemsStr.split(".").map(idx => parseInt(idx, 10));
-            const items = itemIndices
-              .filter(idx => !isNaN(idx) && idx >= 0 && idx < itemConstructors.length)
-              .map(idx => itemConstructors[idx]);
-
-            if (items.length > 0) {
-              const crateKey = i + "," + j;
-              crateInventories.set(crateKey, items);
-              console.log("Loaded crate at", crateKey, "with", items.length, "items:", itemIndices);
-            }
+          // Store crate items info for later processing
+          if (crateItemsStr && layers[L] && layers[L].type === 5) {
+            crateItemsForCell = crateItemsStr;
+            crateLayerIndex = L;
           }
         }
+        
+        // Process crate items after all layers are parsed
+        if (crateItemsForCell && crateLayerIndex >= 0) {
+          const itemIndices = crateItemsForCell.split(".").map(idx => parseInt(idx, 10));
+          const items = itemIndices
+            .filter(idx => !isNaN(idx) && idx >= 0 && idx < itemConstructors.length)
+            .map(idx => itemConstructors[idx]);
+
+          if (items.length > 0) {
+            const crateKey = i + "," + j;
+            crateInventories.set(crateKey, items);
+            console.log("Multi-layer: Loaded crate at", crateKey, "with", items.length, "items:", itemIndices);
+          }
+        }
+        
         outRow.push({ layers });
       } else {
         // Legacy single-layer format
         let tileData = cellStr;
         let crateItemsStr = null;
         if (cellStr.includes("@")) {
-          [tileData, crateItemsStr] = cellStr.split("@");
+          const parts = cellStr.split("@");
+          tileData = parts[0];
+          crateItemsStr = parts[1];
         }
 
         if (tileData.includes(":")) {
@@ -353,7 +367,7 @@ function stringToWorld(s) {
           if (items.length > 0) {
             const crateKey = i + "," + j;
             crateInventories.set(crateKey, items);
-            console.log("Loaded crate at", crateKey, "with", items.length, "items:", itemIndices);
+            console.log("Legacy: Loaded crate at", crateKey, "with", items.length, "items:", itemIndices);
           }
         }
       }
