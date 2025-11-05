@@ -268,25 +268,26 @@ function drawCraftingMenu() {
           fill(255, 100, 100, craftingMenuAlpha);
         }
         text(recipe.name, 240, yPos);
-      }
-      
-      // Ingredients
-      fill(255, 255, 255, craftingMenuAlpha);
-      textSize(16);
-      let ingredientText = "Requires: ";
-      for (let j = 0; j < recipe.ingredients.length; j++) {
-        ingredientText += recipe.ingredients[j].amount + "x " + recipe.ingredients[j].itemName;
-        if (j < recipe.ingredients.length - 1) {
-          ingredientText += ", ";
+
+        // Ingredients
+        fill(255, 255, 255, craftingMenuAlpha);
+        textSize(16);
+        let ingredientText = "Requires: ";
+        for (let j = 0; j < recipe.ingredients.length; j++) {
+          ingredientText += recipe.ingredients[j].amount + "x " + recipe.ingredients[j].itemName;
+          if (j < recipe.ingredients.length - 1) {
+            ingredientText += ", ";
+          }
         }
+        text(ingredientText, 240, yPos + 30);
+
+        // Output
+        text("Crafts: " + recipe.output.amount + "x " + recipe.output.name, 240, yPos + 55);
+
+        textSize(20);
+        yPos += 100;
       }
-      text(ingredientText, 240, yPos + 30);
       
-      // Output
-      text("Crafts: " + recipe.output.amount + "x " + recipe.output.name, 240, yPos + 55);
-      
-      textSize(20);
-      yPos += 100;
     }
     textAlign(CENTER, CENTER);
   }
