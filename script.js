@@ -227,18 +227,20 @@ function worldToString(world) {
           if (!t) return "";
           let s = String(t.type);
           if (t.rotation && t.rotation !== 0) s += ":" + t.rotation;
-          // Check if this tile has associated crate inventory data
-          const crateKey = r + "," + c;
-          if (crateInventories.has(crateKey)) {
-            const items = crateInventories.get(crateKey);
-            // Convert items back to indices
-            const itemIndices = items.map(itemConstructor => 
-              itemConstructors.findIndex(ic => 
-                ic[0] === itemConstructor[0] && ic[1] === itemConstructor[1]
-              )
-            ).filter(idx => idx !== -1); // Ensure valid indices
-            if (itemIndices.length > 0) {
-              s += "@" + itemIndices.join("."); // Append inventory data
+          // Only add crate inventory if this specific layer contains a crate (type 5)
+          if (t.type === 5) {
+            const crateKey = r + "," + c;
+            if (crateInventories.has(crateKey)) {
+              const items = crateInventories.get(crateKey);
+              // Convert items back to indices
+              const itemIndices = items.map(itemConstructor => 
+                itemConstructors.findIndex(ic => 
+                  ic[0] === itemConstructor[0] && ic[1] === itemConstructor[1]
+                )
+              ).filter(idx => idx !== -1); // Ensure valid indices
+              if (itemIndices.length > 0) {
+                s += "@" + itemIndices.join("."); // Append inventory data
+              }
             }
           }
           return s;
