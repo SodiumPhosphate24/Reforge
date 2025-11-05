@@ -9,6 +9,7 @@ var craftingRecipes = [
   {
     name: "Glock",
     type: "item",
+    unlocked : true;
     ingredients: [
       { itemName: "rock", amount: 10 }
     ],
@@ -17,6 +18,7 @@ var craftingRecipes = [
   {
     name: "Rare Card",
     type: "item",
+    unlocked : false,
     ingredients: [
       { itemName: "common card", amount: 5 }
     ],
@@ -25,6 +27,7 @@ var craftingRecipes = [
   {
     name: "Grenade",
     type: "item",
+    unlocked : true,
     ingredients: [
       { itemName: "rock", amount: 5 },
       { itemName: "cheese", amount: 1 }
@@ -34,6 +37,7 @@ var craftingRecipes = [
   {
     name: "Fast Buschy",
     type: "player",
+    unlocked : true,
     playerConstructor: {width : 35, height : 25, speed : 5, health : 50, damage : 1},
     ingredients: [
       { itemName: "rock", amount: 5 },
@@ -252,6 +256,7 @@ function drawCraftingMenu() {
       }
       
       // Recipe name
+      if (recipe.unlocked)
       if (canCraft) {
         fill(100, 255, 100, craftingMenuAlpha);
       } else {
