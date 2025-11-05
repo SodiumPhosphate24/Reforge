@@ -166,13 +166,17 @@ function mouseClicked() {
             case "legendary battery":
               players[activePlayer].health += 100;
               break;
-            case "soda":
-              if (laserEnergy < 100) {
-                laserEnergy += 50;
-              }
-              break;
           }
           // Use the item, then check if amount is zero.
+          useItem();
+          return;
+        }
+        if (laserEnergy < 100) {
+          switch (currentItem.name) {
+            case "soda":
+              laserEnergy += 50;
+              break;
+          }
           useItem();
           return;
         }
