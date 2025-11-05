@@ -118,8 +118,9 @@ function drawEditorUI() {
     fill(255, 255, 0);
     textSize(12);
     textAlign(CENTER, CENTER);
-    text("Crate Placed - Press ENTER to continue", 1100, 600);
-    text("Use ARROW KEYS or SCROLL to browse items", width / 2, height - 50);
+    text("SPACE: Add item | ENTER: Finish crate", width / 2, height - 80);
+    text("ARROW KEYS or SCROLL to browse items", width / 2, height - 50);
+    text(`Items in crate: ${selectedCrateItems.length}`, width / 2, height - 20);
     
     // Draw selected item image
     drawSelectedItemImage();
@@ -245,15 +246,18 @@ function handleEditorKeyPress() {
 
   if (!editorMode) return;
 
-  // Resume from crate placement pause with Enter
-  if (cratePlacementPaused && keyCode === 13) { // 13 is Enter
-    // Add the currently selected item constructor to the array
+  // Add item to crate with SPACE (without closing menu)
+  if (cratePlacementPaused && keyCode === 32) { // 32 is SPACE
     if (typeof itemConstructors !== 'undefined' && itemConstructors.length > 0) {
       selectedCrateItems.push(itemConstructors[selectedItemIndex]);
       console.log("Added item to crate:", itemConstructors[selectedItemIndex][1]);
       console.log("Crate now contains", selectedCrateItems.length, "items");
     }
-    
+    return;
+  }
+  
+  // Finalize and close crate menu with Enter
+  if (cratePlacementPaused && keyCode === 13) { // 13 is Enter
     // Store the items for this specific crate using its coordinates
     const crateKey = lastCrateRow + "," + lastCrateCol;
     crateInventories.set(crateKey, [...selectedCrateItems]); // Store a copy of the array
