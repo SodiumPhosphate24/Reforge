@@ -62,6 +62,8 @@ var craftingRecipes = [
 ];
 
 var selectedRecipe = 0;
+var craftingScrollOffset = 0; // Tracks scroll position
+var maxVisibleRecipes = 4; // How many recipes to show at once
 
 function isNearWorkbench() {
   const playerCenterX = pX + 600 + pWidth / 2;
@@ -109,11 +111,21 @@ function toggleCraftingMenu() {
     // Open menu
     craftingMenuOpen = true;
     craftingMenuClosing = false;
+    
+    // Find first unlocked recipe
     selectedRecipe = 0;
-    // Reset animation values
+    for (let i = 0; i < craftingRecipes.length; i++) {
+      if (craftingRecipes[i].unlocked) {
+        selectedRecipe = i;
+        break;
+      }
+    }
+    
+    // Reset animation and scroll values
     craftingMenuAlpha = 0;
     craftingMenuSlideY = 50;
     craftingMenuScale = 0;
+    craftingScrollOffset = 0;
   }
   frozen = craftingMenuOpen;
 }
@@ -252,55 +264,99 @@ function drawCraftingMenu() {
     textSize(16);
     text("Use UP/DOWN arrows to select, ENTER to craft, E to close", 600, 180);
     
-    // Recipe list
+    // Recipe list with scrolling
     textAlign(LEFT, TOP);
     textSize(20);
-    let yPos = 220;
     
+    // Filter unlocked recipes
+    let unlockedRecipes = [];
     for (let i = 0; i < craftingRecipes.length; i++) {
       const recipe = craftingRecipes[i];
       const canCraft = canCraftRecipe(recipe);
       
+      if (!recipe.unlocked && canCraft) {
+        recipe.unlocked = true;
+      }
+      
+      if (recipe.unlocked) {
+        unlockedRecipes.push({ index: i, recipe: recipe });
+      }
+    }
+    
+    // Adjust scroll offset to keep selected recipe in view
+    if (selectedRecipe < craftingScrollOffset) {
+      craftingScrollOffset = selectedRecipe;
+    }
+    if (selectedRecipe >= craftingScrollOffset + maxVisibleRecipes) {
+      craftingScrollOffset = selectedRecipe - maxVisibleRecipes + 1;
+    }
+    
+    // Clamp scroll offset
+    craftingScrollOffset = Math.max(0, Math.min(craftingScrollOffset, Math.max(0, unlockedRecipes.length - maxVisibleRecipes)));
+    
+    // Draw visible recipes
+    let yPos = 220;
+    const recipeHeight = 100;
+    
+    for (let i = craftingScrollOffset; i < Math.min(craftingScrollOffset + maxVisibleRecipes, unlockedRecipes.length); i++) {
+      const { index, recipe } = unlockedRecipes[i];
+      const canCraft = canCraftRecipe(recipe);
+      
       // Highlight selected recipe
-      if (i === selectedRecipe) {
+      if (index === selectedRecipe) {
         fill(100, 255, 255, craftingMenuAlpha * 0.4);
         rect(220, yPos - 5, 760, 80, 5);
       }
       
       // Recipe name
-      if (!recipe.unlocked){
-        if(canCraft){
-          recipe.unlocked = true;
+      if (canCraft) {
+        fill(100, 255, 100, craftingMenuAlpha);
+      } else {
+        fill(255, 100, 100, craftingMenuAlpha);
+      }
+      text(recipe.name, 240, yPos);
+
+      // Ingredients
+      fill(255, 255, 255, craftingMenuAlpha);
+      textSize(16);
+      let ingredientText = "Requires: ";
+      for (let j = 0; j < recipe.ingredients.length; j++) {
+        ingredientText += recipe.ingredients[j].amount + "x " + recipe.ingredients[j].itemName;
+        if (j < recipe.ingredients.length - 1) {
+          ingredientText += ", ";
         }
       }
-      if (recipe.unlocked){
-        if (canCraft) {
-          fill(100, 255, 100, craftingMenuAlpha);
-        } else {
-          fill(255, 100, 100, craftingMenuAlpha);
-        }
-        text(recipe.name, 240, yPos);
+      text(ingredientText, 240, yPos + 30);
 
-        // Ingredients
-        fill(255, 255, 255, craftingMenuAlpha);
-        textSize(16);
-        let ingredientText = "Requires: ";
-        for (let j = 0; j < recipe.ingredients.length; j++) {
-          ingredientText += recipe.ingredients[j].amount + "x " + recipe.ingredients[j].itemName;
-          if (j < recipe.ingredients.length - 1) {
-            ingredientText += ", ";
-          }
-        }
-        text(ingredientText, 240, yPos + 30);
+      // Output
+      text("Crafts: " + recipe.output.amount + "x " + recipe.output.name, 240, yPos + 55);
 
-        // Output
-        text("Crafts: " + recipe.output.amount + "x " + recipe.output.name, 240, yPos + 55);
-
-        textSize(20);
-        yPos += 100;
+      textSize(20);
+      yPos += recipeHeight;
+    }
+    
+    // Draw scroll indicators
+    if (unlockedRecipes.length > maxVisibleRecipes) {
+      fill(100, 255, 255, craftingMenuAlpha * 0.6);
+      textSize(14);
+      textAlign(CENTER, CENTER);
+      
+      if (craftingScrollOffset > 0) {
+        text("▲ Scroll Up", 600, 200);
+      }
+      if (craftingScrollOffset + maxVisibleRecipes < unlockedRecipes.length) {
+        text("▼ Scroll Down", 600, 630);
       }
       
+      // Show position indicator
+      const scrollPercent = craftingScrollOffset / Math.max(1, unlockedRecipes.length - maxVisibleRecipes);
+      fill(100, 255, 255, craftingMenuAlpha * 0.3);
+      rect(970, 220, 10, 400, 5);
+      fill(100, 255, 255, craftingMenuAlpha);
+      const indicatorHeight = 400 / Math.max(1, unlockedRecipes.length / maxVisibleRecipes);
+      rect(970, 220 + scrollPercent * (400 - indicatorHeight), 10, indicatorHeight, 5);
     }
+    
     textAlign(CENTER, CENTER);
   }
   
@@ -310,16 +366,38 @@ function drawCraftingMenu() {
 function handleCraftingInput() {
   if (!craftingMenuOpen) return;
   
-  // Navigate recipes
+  // Get unlocked recipe indices
+  let unlockedIndices = [];
+  for (let i = 0; i < craftingRecipes.length; i++) {
+    if (craftingRecipes[i].unlocked) {
+      unlockedIndices.push(i);
+    }
+  }
+  
+  if (unlockedIndices.length === 0) return;
+  
+  // Navigate recipes (only through unlocked ones)
   if (keyPressedOnce(UP_ARROW)) {
-    selectedRecipe = (selectedRecipe - 1 + craftingRecipes.length) % craftingRecipes.length;
+    let currentPos = unlockedIndices.indexOf(selectedRecipe);
+    if (currentPos > 0) {
+      selectedRecipe = unlockedIndices[currentPos - 1];
+    } else {
+      selectedRecipe = unlockedIndices[unlockedIndices.length - 1];
+    }
   }
   if (keyPressedOnce(DOWN_ARROW)) {
-    selectedRecipe = (selectedRecipe + 1) % craftingRecipes.length;
+    let currentPos = unlockedIndices.indexOf(selectedRecipe);
+    if (currentPos < unlockedIndices.length - 1) {
+      selectedRecipe = unlockedIndices[currentPos + 1];
+    } else {
+      selectedRecipe = unlockedIndices[0];
+    }
   }
   
   // Craft selected recipe
   if (keyPressedOnce(ENTER)) {
-    craftItem(craftingRecipes[selectedRecipe]);
+    if (craftingRecipes[selectedRecipe].unlocked) {
+      craftItem(craftingRecipes[selectedRecipe]);
+    }
   }
 }
