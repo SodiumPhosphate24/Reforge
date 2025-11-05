@@ -14,6 +14,7 @@ var cratePlacementPaused = false; // Pauses tile placement after crate is placed
 var lastCrateRow = -1;       // Row of last placed crate
 var lastCrateCol = -1;       // Column of last placed crate
 var selectedItemIndex = 0;   // Currently selected item from itemConstructors
+var selectedCrateItems = []; // Array to store selected item constructors for this crate
 
 // Disable context menu so right-click can erase while editing
 if (typeof window !== "undefined") {
@@ -245,6 +246,12 @@ function handleEditorKeyPress() {
 
   // Resume from crate placement pause with Enter
   if (cratePlacementPaused && keyCode === 13) { // 13 is Enter
+    // Add the currently selected item constructor to the array
+    if (typeof itemConstructors !== 'undefined' && itemConstructors.length > 0) {
+      selectedCrateItems.push(itemConstructors[selectedItemIndex]);
+      console.log("Added item to crate:", itemConstructors[selectedItemIndex][1]);
+      console.log("Crate now contains", selectedCrateItems.length, "items");
+    }
     cratePlacementPaused = false;
     console.log("Resumed tile placement");
     return;
