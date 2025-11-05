@@ -92,6 +92,11 @@ function messageDisplay() {
       pop();
     }
     else if (messages[i].type == "dialogue") {
+      // Bounds check to prevent crash when closing
+      if (messages[i].index >= messages[i].message.length) {
+        messages[i].index = messages[i].message.length - 1;
+      }
+      
       var displayMessage = messages[i].message[messages[i].index].split(": ")[1];
       var person = messages[i].message[messages[i].index].split(": ")[0];
 
@@ -161,7 +166,7 @@ function messageDisplay() {
       rectMode(CORNER);
       pop();
 
-      if (keyPressedOnce(90) && !messages[i].closing) {
+      if (!messages[i].closing && keyPressedOnce(90)) {
         messages[i].index++;
         if (messages[i].index >= messages[i].message.length) {
           // Trigger closing animation
