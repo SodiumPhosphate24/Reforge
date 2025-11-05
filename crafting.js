@@ -5,37 +5,16 @@ var craftingMenuClosing = false;
 var craftingMenuAlpha = 0; // Fade in effect
 var craftingMenuSlideY = 50; // Slide up animation
 var craftingMenuScale = 0; // Scale animation
+
+// Crafting tabs
+var craftingTabs = ["Robots", "Weapons", "Items"];
+var selectedTab = 0;
+
 var craftingRecipes = [
-  {
-    name: "Glock",
-    type: "item",
-    unlocked : true,
-    ingredients: [
-      { itemName: "rock", amount: 10 }
-    ],
-    output: { type: "gun", name: "glock", amount: 1 }
-  },
-  {
-    name: "Rare Card",
-    type: "item",
-    unlocked : false,
-    ingredients: [
-      { itemName: "common card", amount: 5 }
-    ],
-    output: { type: "material", name: "rare card", amount: 1 }
-  },
-  {
-    name: "Grenade",
-    type: "item",
-    unlocked : true,
-    ingredients: [
-      { itemName: "rock", amount: 5 },
-      { itemName: "cheese", amount: 1 }
-    ],
-    output: { type: "projectile", name: "grenade", amount: 1 }
-  },
+  // ROBOTS
   {
     name: "Fast Buschy",
+    category: "Robots",
     type: "player",
     unlocked : true,
     playerConstructor: {width : 35, height : 25, speed : 5, health : 50, damage : 1},
@@ -48,6 +27,7 @@ var craftingRecipes = [
   },
   {
     name: "Fat Buschy",
+    category: "Robots",
     type: "player",
     unlocked : true,
     playerConstructor: {width : 105, height : 75, speed : .5, health : 350, damage : 1},
@@ -57,6 +37,39 @@ var craftingRecipes = [
       { itemName: "legendary card", amount: 1 }
     ],
     output: { type: "player", name: "fat buschy", amount: 1 }
+  },
+  // WEAPONS
+  {
+    name: "Glock",
+    category: "Weapons",
+    type: "item",
+    unlocked : true,
+    ingredients: [
+      { itemName: "rock", amount: 10 }
+    ],
+    output: { type: "gun", name: "glock", amount: 1 }
+  },
+  {
+    name: "Grenade",
+    category: "Weapons",
+    type: "item",
+    unlocked : true,
+    ingredients: [
+      { itemName: "rock", amount: 5 },
+      { itemName: "cheese", amount: 1 }
+    ],
+    output: { type: "projectile", name: "grenade", amount: 1 }
+  },
+  // ITEMS
+  {
+    name: "Rare Card",
+    category: "Items",
+    type: "item",
+    unlocked : false,
+    ingredients: [
+      { itemName: "common card", amount: 5 }
+    ],
+    output: { type: "material", name: "rare card", amount: 1 }
   }
   // Add more recipes as needed
 ];
@@ -112,10 +125,14 @@ function toggleCraftingMenu() {
     craftingMenuOpen = true;
     craftingMenuClosing = false;
     
-    // Find first unlocked recipe
+    // Reset to first tab
+    selectedTab = 0;
+    
+    // Find first unlocked recipe in the selected tab
+    const tabRecipes = craftingRecipes.filter(r => r.category === craftingTabs[selectedTab]);
     selectedRecipe = 0;
     for (let i = 0; i < craftingRecipes.length; i++) {
-      if (craftingRecipes[i].unlocked) {
+      if (craftingRecipes[i].unlocked && craftingRecipes[i].category === craftingTabs[selectedTab]) {
         selectedRecipe = i;
         break;
       }
@@ -257,18 +274,41 @@ function drawCraftingMenu() {
     textSize(32);
     textFont(Silkscreen);
     textAlign(CENTER, CENTER);
-    text("CRAFTING MENU", 600, 140);
+    text("CRAFTING MENU", 600, 120);
   
-  // Instructions
+    // Draw tabs
+    textSize(18);
+    const tabWidth = 200;
+    const tabStartX = 600 - (craftingTabs.length * tabWidth) / 2;
+    for (let i = 0; i < craftingTabs.length; i++) {
+      const tabX = tabStartX + i * tabWidth;
+      const tabY = 155;
+      
+      // Tab background
+      if (i === selectedTab) {
+        fill(100, 255, 255, craftingMenuAlpha * 0.6);
+      } else {
+        fill(50, 50, 50, craftingMenuAlpha * 0.4);
+      }
+      rect(tabX, tabY, tabWidth - 10, 35, 5);
+      
+      // Tab text
+      fill(255, 255, 255, craftingMenuAlpha);
+      textAlign(CENTER, CENTER);
+      text(craftingTabs[i], tabX + (tabWidth - 10) / 2, tabY + 17);
+    }
+  
+    // Instructions
     fill(100, 255, 255, craftingMenuAlpha * 0.9);
-    textSize(16);
-    text("Use UP/DOWN arrows to select, ENTER to craft, E to close", 600, 180);
+    textSize(14);
+    textAlign(CENTER, CENTER);
+    text("LEFT/RIGHT: Switch tabs | UP/DOWN: Select | ENTER: Craft | E: Close", 600, 205);
     
     // Recipe list with scrolling
     textAlign(LEFT, TOP);
     textSize(20);
     
-    // Filter unlocked recipes
+    // Filter unlocked recipes for current tab
     let unlockedRecipes = [];
     for (let i = 0; i < craftingRecipes.length; i++) {
       const recipe = craftingRecipes[i];
@@ -278,7 +318,7 @@ function drawCraftingMenu() {
         recipe.unlocked = true;
       }
       
-      if (recipe.unlocked) {
+      if (recipe.unlocked && recipe.category === craftingTabs[selectedTab]) {
         unlockedRecipes.push({ index: i, recipe: recipe });
       }
     }
@@ -295,7 +335,7 @@ function drawCraftingMenu() {
     craftingScrollOffset = Math.max(0, Math.min(craftingScrollOffset, Math.max(0, unlockedRecipes.length - maxVisibleRecipes)));
     
     // Draw visible recipes
-    let yPos = 220;
+    let yPos = 235;
     const recipeHeight = 100;
     
     for (let i = craftingScrollOffset; i < Math.min(craftingScrollOffset + maxVisibleRecipes, unlockedRecipes.length); i++) {
@@ -342,7 +382,7 @@ function drawCraftingMenu() {
       textAlign(CENTER, CENTER);
       
       if (craftingScrollOffset > 0) {
-        text("▲ Scroll Up", 600, 200);
+        text("▲ Scroll Up", 600, 220);
       }
       if (craftingScrollOffset + maxVisibleRecipes < unlockedRecipes.length) {
         text("▼ Scroll Down", 600, 630);
@@ -351,10 +391,10 @@ function drawCraftingMenu() {
       // Show position indicator
       const scrollPercent = craftingScrollOffset / Math.max(1, unlockedRecipes.length - maxVisibleRecipes);
       fill(100, 255, 255, craftingMenuAlpha * 0.3);
-      rect(970, 220, 10, 400, 5);
+      rect(970, 235, 10, 385, 5);
       fill(100, 255, 255, craftingMenuAlpha);
-      const indicatorHeight = 400 / Math.max(1, unlockedRecipes.length / maxVisibleRecipes);
-      rect(970, 220 + scrollPercent * (400 - indicatorHeight), 10, indicatorHeight, 5);
+      const indicatorHeight = 385 / Math.max(1, unlockedRecipes.length / maxVisibleRecipes);
+      rect(970, 235 + scrollPercent * (385 - indicatorHeight), 10, indicatorHeight, 5);
     }
     
     textAlign(CENTER, CENTER);
@@ -366,17 +406,45 @@ function drawCraftingMenu() {
 function handleCraftingInput() {
   if (!craftingMenuOpen) return;
   
-  // Get unlocked recipe indices
+  // Switch tabs
+  if (keyPressedOnce(LEFT_ARROW)) {
+    selectedTab--;
+    if (selectedTab < 0) selectedTab = craftingTabs.length - 1;
+    craftingScrollOffset = 0;
+    
+    // Find first unlocked recipe in new tab
+    for (let i = 0; i < craftingRecipes.length; i++) {
+      if (craftingRecipes[i].unlocked && craftingRecipes[i].category === craftingTabs[selectedTab]) {
+        selectedRecipe = i;
+        break;
+      }
+    }
+  }
+  if (keyPressedOnce(RIGHT_ARROW)) {
+    selectedTab++;
+    if (selectedTab >= craftingTabs.length) selectedTab = 0;
+    craftingScrollOffset = 0;
+    
+    // Find first unlocked recipe in new tab
+    for (let i = 0; i < craftingRecipes.length; i++) {
+      if (craftingRecipes[i].unlocked && craftingRecipes[i].category === craftingTabs[selectedTab]) {
+        selectedRecipe = i;
+        break;
+      }
+    }
+  }
+  
+  // Get unlocked recipe indices for current tab
   let unlockedIndices = [];
   for (let i = 0; i < craftingRecipes.length; i++) {
-    if (craftingRecipes[i].unlocked) {
+    if (craftingRecipes[i].unlocked && craftingRecipes[i].category === craftingTabs[selectedTab]) {
       unlockedIndices.push(i);
     }
   }
   
   if (unlockedIndices.length === 0) return;
   
-  // Navigate recipes (only through unlocked ones)
+  // Navigate recipes (only through unlocked ones in current tab)
   if (keyPressedOnce(UP_ARROW)) {
     let currentPos = unlockedIndices.indexOf(selectedRecipe);
     if (currentPos > 0) {
