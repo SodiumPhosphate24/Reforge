@@ -93,8 +93,19 @@ function messageDisplay() {
     }
     else if (messages[i].type == "dialogue") {
       // Bounds check to prevent crash when closing
+      if (!messages[i].message || messages[i].message.length === 0) {
+        messages.splice(i, 1);
+        i--;
+        continue;
+      }
+      
       if (messages[i].index >= messages[i].message.length) {
         messages[i].index = messages[i].message.length - 1;
+      }
+      
+      // Additional safety check
+      if (!messages[i].message[messages[i].index]) {
+        messages[i].index = 0;
       }
       
       var displayMessage = messages[i].message[messages[i].index].split(": ")[1];

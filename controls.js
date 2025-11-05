@@ -75,6 +75,7 @@ function keyPressed() {
               droppedItems.splice(i, 1);
               itemLabelAlpha = 1.5;
             }
+            return;
           }
         }
         else {
