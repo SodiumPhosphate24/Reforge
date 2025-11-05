@@ -58,13 +58,10 @@ function preload() {
 
 function setup() {
   createCanvas(1200, 750);
-  gameWorld = stringToWorld(worldString[0]);
-  console.log(worldString);
-  console.log("asdf");
   maxTileTypes = tileImgs.length;
   PlayerImage = Buschy;
 
-  // Initialize itemConstructors after images are loaded
+  // Initialize itemConstructors BEFORE parsing world so crate inventories can be loaded
   itemConstructors = [
     ["gun", "glock", 1, GunImgs[0]], 
     ["gun", "western", 1, GunImgs[1]], 
@@ -80,6 +77,11 @@ function setup() {
     ["material", "rare card", 1, matImgs[1]], 
     ["material", "legendary card", 1, matImgs[2]]
   ];
+
+  // Now parse the world with itemConstructors available
+  gameWorld = stringToWorld(worldString[0]);
+  console.log(worldString);
+  console.log("asdf");
   players.push(new Player(0, 0, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
   players.push(new Player(0, 100, 100, 100, .5, 350, playerDamage, PlayerImage));
   players.push(new Player(500, 100, 25, 25, 2, healthPoints, playerDamage, PlayerImage));
