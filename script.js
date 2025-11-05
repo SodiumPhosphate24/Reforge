@@ -218,7 +218,9 @@ function worldToString(world) {
     const row = world[r];
     for (let c = 0; c < row.length; c++) {
       const cell = row[c];
-      if (!cell) { out += "/"; continue; }
+      if (c > 0) out += "/"; // Add separator before cell (except first)
+      
+      if (!cell) continue;
 
       if ('layers' in cell) {
         const parts = cell.layers.map(t => {
@@ -241,7 +243,7 @@ function worldToString(world) {
           }
           return s;
         });
-        out += parts.join(",") + "/";
+        out += parts.join(",");
       } else {
         let s = String(cell.type);
         if (cell.rotation && cell.rotation !== 0) s += ":" + cell.rotation;
@@ -258,7 +260,7 @@ function worldToString(world) {
             s += "@" + itemIndices.join(".");
           }
         }
-        out += s + "/";
+        out += s;
       }
     }
     out += "|";
