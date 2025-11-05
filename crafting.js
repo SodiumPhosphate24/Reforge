@@ -256,6 +256,11 @@ function drawCraftingMenu() {
       }
       
       // Recipe name
+      if (!recipe.unlocked){
+        if(canCraft){
+          recipe.unlocked = true;
+        }
+      }
       if (recipe.unlocked){
         if (canCraft) {
           fill(100, 255, 100, craftingMenuAlpha);
