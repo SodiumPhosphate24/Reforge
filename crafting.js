@@ -9,7 +9,7 @@ var craftingRecipes = [
   {
     name: "Glock",
     type: "item",
-    unlocked : true;
+    unlocked : true,
     ingredients: [
       { itemName: "rock", amount: 10 }
     ],
