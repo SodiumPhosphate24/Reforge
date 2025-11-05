@@ -52,11 +52,11 @@ var craftingRecipes = [
     unlocked : true,
     playerConstructor: {width : 105, height : 75, speed : .5, health : 350, damage : 1},
     ingredients: [
-      { itemName: "rock", amount: 5 },
-      { itemName: "cheese", amount: 1 },
-      { itemName: "soda", amount: 1 }
+      { itemName: "rock", amount: 25 },
+      { itemName: "cheese", amount: 5 },
+      { itemName: "legendary card", amount: 1 }
     ],
-    output: { type: "player", name: "fast buschy", amount: 1 }
+    output: { type: "player", name: "fat buschy", amount: 1 }
   }
   // Add more recipes as needed
 ];
