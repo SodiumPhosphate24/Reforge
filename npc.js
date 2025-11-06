@@ -1,9 +1,12 @@
 class NPC {
-  constructor(x, y, name, message) {
+  constructor(x, y, name, message, image = null) {
     this.x = x;
     this.y = y;
     this.name = name;
     this.message = message;
+    this.image = image;
+    this.width = 40;
+    this.height = 40;
   }
 
   update() {
@@ -30,8 +33,18 @@ function drawNPCs() {
 
   for (let i = 0; i < NonPlayerCharacters.length; i++) {
     NonPlayerCharacters[i].update();
-    fill(255, 255, 0);
-    rect(NonPlayerCharacters[i].x, NonPlayerCharacters[i].y, 20, 20);
+    
+    // Draw NPC image if available, otherwise draw yellow rectangle
+    if (NonPlayerCharacters[i].image) {
+      image(NonPlayerCharacters[i].image, 
+            NonPlayerCharacters[i].x, 
+            NonPlayerCharacters[i].y, 
+            NonPlayerCharacters[i].width, 
+            NonPlayerCharacters[i].height);
+    } else {
+      fill(255, 255, 0);
+      rect(NonPlayerCharacters[i].x, NonPlayerCharacters[i].y, 20, 20);
+    }
 
     // Check if this is the nearest interactable NPC
     const distToPlayer = distance(NonPlayerCharacters[i].x, NonPlayerCharacters[i].y, pX + 600, pY + 340);
