@@ -5,8 +5,15 @@ class NPC {
     this.name = name;
     this.message = message;
     this.image = image;
-    this.width = 40;
-    this.height = 40;
+    this.width = 25;
+    
+    // Calculate height based on image aspect ratio
+    if (this.image) {
+      const aspectRatio = this.image.height / this.image.width;
+      this.height = this.width * aspectRatio;
+    } else {
+      this.height = 25; // Default square for NPCs without images
+    }
   }
 
   update() {
