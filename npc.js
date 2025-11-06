@@ -5,7 +5,7 @@ class NPC {
     this.name = name;
     this.message = message;
     this.image = image;
-    this.width = 25;
+    this.width = 35;
     
     // Calculate height based on image aspect ratio
     if (this.image) {
