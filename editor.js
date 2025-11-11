@@ -208,8 +208,6 @@ function handleEditorClick() {
 
   // Left click = place tile
   if (mouseButton === LEFT) {
-    const isPlacingConcrete = concreteTypes.includes(selectedTileType);
-    
     if (typeof setTile === 'function') {
       setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation);
     } else {
@@ -217,29 +215,16 @@ function handleEditorClick() {
       if (!gameWorld[gridRow]) gameWorld[gridRow] = [];
       gameWorld[gridRow][gridCol] = { type: selectedTileType, rotation: tileRotation };
     }
-    
-    // Auto-tile concrete on layer 2
-    if (isPlacingConcrete && editorLayer === 2) {
-      updateConcreteArea(gridRow, gridCol, editorLayer);
-    }
   }
 
   // Right click = erase current layer
   if (mouseButton === RIGHT) {
-    const wasConcreteLayer = editorLayer === 2;
-    const wasConcrete = isConcrete(gridRow, gridCol, editorLayer);
-    
     if (typeof clearTile === 'function') {
       clearTile(gridRow, gridCol, editorLayer);
       console.log("Erased at row", gridRow, "col", gridCol, "layer", editorLayer);
     } else {
       // Fallback if helpers missing (legacy)
       gameWorld[gridRow][gridCol] = undefined;
-    }
-    
-    // Update surrounding concrete if we erased concrete
-    if (wasConcreteLayer && wasConcrete) {
-      updateConcreteArea(gridRow, gridCol, editorLayer);
     }
     return;
   }
