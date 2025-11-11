@@ -401,6 +401,8 @@ function isConcrete(row, col, layer = 2) {
 }
 
 // Auto-tile concrete based on neighbors
+// Edge piece has border at BOTTOM
+// Corner piece has borders at BOTTOM and LEFT
 function autoTileConcrete(row, col, layer = 2) {
   if (!isConcrete(row, col, layer)) return;
   
@@ -430,11 +432,12 @@ function autoTileConcrete(row, col, layer = 2) {
     rotation = 0;
   } else if (cardinalCount === 3) {
     // Three neighbors - use edge (border on one side)
+    // Edge has border at bottom, rotate so border faces the empty side
     tileType = 5; // concreteEdge
-    if (!n) rotation = 180; // border on top
-    else if (!s) rotation = 0;   // border on bottom
-    else if (!e) rotation = 270; // border on right
-    else if (!w) rotation = 90;  // border on left
+    if (!n) rotation = 0;   // empty north, border faces up (bottom of tile points north)
+    else if (!s) rotation = 180;   // empty south, border faces down (bottom of tile points south)
+    else if (!e) rotation = 90; // empty east, border faces right (bottom of tile points east)
+    else if (!w) rotation = 270;  // empty west, border faces left (bottom of tile points west)
   } else if (cardinalCount === 2) {
     if ((n && s) || (e && w)) {
       // Opposite sides - use center
@@ -442,19 +445,21 @@ function autoTileConcrete(row, col, layer = 2) {
       rotation = 0;
     } else {
       // Adjacent sides - use corner
+      // Corner has borders at bottom and left
       tileType = 6; // concreteCorner
-      if (n && e) rotation = 0;   // corner bottom-left
-      else if (s && e) rotation = 270; // corner top-left
-      else if (s && w) rotation = 180; // corner top-right
-      else if (n && w) rotation = 90;  // corner bottom-right
+      if (n && e) rotation = 90;   // neighbors north+east, empty south+west -> borders face south+west (rotate 90° so bottom-left corner points to south-west)
+      else if (s && e) rotation = 180; // neighbors south+east, empty north+west -> borders face north+west
+      else if (s && w) rotation = 270; // neighbors south+west, empty north+east -> borders face north+east
+      else if (n && w) rotation = 0;  // neighbors north+west, empty south+east -> borders face south+east
     }
   } else if (cardinalCount === 1) {
-    // One neighbor - use corner (acts as edge piece)
+    // One neighbor - use edge piece
+    // Edge has border at bottom, rotate so border faces away from neighbor
     tileType = 5; // concreteEdge
-    if (n) rotation = 180;
-    else if (s) rotation = 0;
-    else if (e) rotation = 270;
-    else if (w) rotation = 90;
+    if (n) rotation = 180; // neighbor north, border faces south
+    else if (s) rotation = 0; // neighbor south, border faces north
+    else if (e) rotation = 270; // neighbor east, border faces west
+    else if (w) rotation = 90; // neighbor west, border faces east
   }
   
   setTile(row, col, layer, tileType, rotation);
