@@ -12,8 +12,9 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench"];
-var tileWalls = [0, 0, 0, 2, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "ConcreteCenter", "concreteEdge", "concreteCorner", "Brick", "Crate", "Workbench"];
+var tileWalls = [0, 0, 0, 2, 2, 2, 2, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
+var concreteTypes = [3, 4, 5, 6]; // All concrete tile type indices
 var enemies = [], bullets = [], messages = [], droppedItems = [], NonPlayerCharacters = [];
 var inventoryList;
 let maxTileTypes = 0; // will be set in setup()
@@ -35,9 +36,12 @@ function preload() {
   tileImgs[1] = loadImage("Tiles/Asphalt.png");
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");
   tileImgs[3] = loadImage("Tiles/Concrete.png");
-  tileImgs[4] = loadImage("Tiles/Brick.png");
-  tileImgs[5] = loadImage("Tiles/Crate.png");
-  tileImgs[6] = loadImage("Tiles/Crafting.png");
+  tileImgs[4] = loadImage("Tiles/ConcreteCenter.png");
+  tileImgs[5] = loadImage("Tiles/concreteEdge.png");
+  tileImgs[6] = loadImage("Tiles/concreteCorner.png");
+  tileImgs[7] = loadImage("Tiles/Brick.png");
+  tileImgs[8] = loadImage("Tiles/Crate.png");
+  tileImgs[9] = loadImage("Tiles/Crafting.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonBattery.png");
@@ -387,6 +391,93 @@ function coordsToGrid(x, y) {
     col: Math.floor(x / 50),
     row: Math.floor(y / 50)
   };
+}
+
+// Check if a tile is concrete (any variant)
+function isConcrete(row, col, layer = 2) {
+  const tile = getTile(row, col, layer);
+  if (!tile) return false;
+  return concreteTypes.includes(tile.type);
+}
+
+// Auto-tile concrete based on neighbors
+function autoTileConcrete(row, col, layer = 2) {
+  if (!isConcrete(row, col, layer)) return;
+  
+  // Check all 8 neighbors
+  const n = isConcrete(row - 1, col, layer);     // north
+  const s = isConcrete(row + 1, col, layer);     // south
+  const e = isConcrete(row, col + 1, layer);     // east
+  const w = isConcrete(row, col - 1, layer);     // west
+  const ne = isConcrete(row - 1, col + 1, layer); // northeast
+  const nw = isConcrete(row - 1, col - 1, layer); // northwest
+  const se = isConcrete(row + 1, col + 1, layer); // southeast
+  const sw = isConcrete(row + 1, col - 1, layer); // southwest
+  
+  let tileType = 3; // Default to full border (Concrete.png)
+  let rotation = 0;
+  
+  // Count cardinal neighbors
+  const cardinalCount = [n, s, e, w].filter(Boolean).length;
+  
+  if (cardinalCount === 0) {
+    // Isolated tile - use full border
+    tileType = 3;
+    rotation = 0;
+  } else if (cardinalCount === 4) {
+    // Surrounded on all sides - use center
+    tileType = 4; // ConcreteCenter
+    rotation = 0;
+  } else if (cardinalCount === 3) {
+    // Three neighbors - use edge (border on one side)
+    tileType = 5; // concreteEdge
+    if (!n) rotation = 180; // border on top
+    else if (!s) rotation = 0;   // border on bottom
+    else if (!e) rotation = 270; // border on right
+    else if (!w) rotation = 90;  // border on left
+  } else if (cardinalCount === 2) {
+    if ((n && s) || (e && w)) {
+      // Opposite sides - use center
+      tileType = 4; // ConcreteCenter
+      rotation = 0;
+    } else {
+      // Adjacent sides - use corner
+      tileType = 6; // concreteCorner
+      if (n && e) rotation = 0;   // corner bottom-left
+      else if (s && e) rotation = 270; // corner top-left
+      else if (s && w) rotation = 180; // corner top-right
+      else if (n && w) rotation = 90;  // corner bottom-right
+    }
+  } else if (cardinalCount === 1) {
+    // One neighbor - use corner (acts as edge piece)
+    tileType = 5; // concreteEdge
+    if (n) rotation = 180;
+    else if (s) rotation = 0;
+    else if (e) rotation = 270;
+    else if (w) rotation = 90;
+  }
+  
+  setTile(row, col, layer, tileType, rotation);
+}
+
+// Update concrete tile and its neighbors
+function updateConcreteArea(row, col, layer = 2) {
+  // Update the tile itself
+  if (isConcrete(row, col, layer)) {
+    autoTileConcrete(row, col, layer);
+  }
+  
+  // Update all 8 neighbors
+  for (let dr = -1; dr <= 1; dr++) {
+    for (let dc = -1; dc <= 1; dc++) {
+      if (dr === 0 && dc === 0) continue;
+      const r = row + dr;
+      const c = col + dc;
+      if (isConcrete(r, c, layer)) {
+        autoTileConcrete(r, c, layer);
+      }
+    }
+  }
 }
 
 // --- Layered drawing: draw ONE layer index (0,1 behind; 2 in front) ---
