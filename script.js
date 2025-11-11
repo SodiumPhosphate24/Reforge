@@ -445,10 +445,10 @@ function getConcreteVariant(row, col, layer = 2) {
       // Adjacent sides - use corner
       // Corner has borders at bottom and left of image
       variant = 'corner';
-      if (n && e) rotation = 180;   // neighbors north+east, empty south-west, rotate 180 so bottom-left corner faces south-west
-      else if (s && e) rotation = 270; // neighbors south+east, empty north-west, rotate 270 so bottom-left corner faces north-west
-      else if (s && w) rotation = 0; // neighbors south+west, empty north-east, no rotation (bottom-left already faces that way)
-      else if (n && w) rotation = 90;  // neighbors north+west, empty south-east, rotate 90 so bottom-left corner faces south-east
+      if (n && e) rotation = 0;   // neighbors north+east, empty south-west, no rotation needed
+      else if (s && e) rotation = 90; // neighbors south+east, empty north-west, rotate 90 CW
+      else if (s && w) rotation = 180; // neighbors south+west, empty north-east, rotate 180
+      else if (n && w) rotation = 270;  // neighbors north+west, empty south-east, rotate 270 CW
     }
   } else if (cardinalCount === 1) {
     // One neighbor - use edge piece
