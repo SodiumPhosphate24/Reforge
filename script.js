@@ -430,12 +430,12 @@ function getConcreteVariant(row, col, layer = 2) {
     rotation = 0;
   } else if (cardinalCount === 3) {
     // Three neighbors - use edge (border on one side)
-    // Edge has border at bottom, rotate so border faces the empty side
+    // Edge has border at bottom of image, rotate so border faces the empty side
     variant = 'edge';
-    if (!n) rotation = 0;   // empty north, border faces up
-    else if (!s) rotation = 180;   // empty south, border faces down
-    else if (!e) rotation = 90; // empty east, border faces right
-    else if (!w) rotation = 270;  // empty west, border faces left
+    if (!n) rotation = 180;   // empty north, rotate 180 so bottom border faces north
+    else if (!s) rotation = 0;   // empty south, bottom border already faces south
+    else if (!e) rotation = 270; // empty east, rotate 270 (CCW) so bottom faces east
+    else if (!w) rotation = 90;  // empty west, rotate 90 (CW) so bottom faces west
   } else if (cardinalCount === 2) {
     if ((n && s) || (e && w)) {
       // Opposite sides - use center
@@ -443,21 +443,21 @@ function getConcreteVariant(row, col, layer = 2) {
       rotation = 0;
     } else {
       // Adjacent sides - use corner
-      // Corner has borders at bottom and left
+      // Corner has borders at bottom and left of image
       variant = 'corner';
-      if (n && e) rotation = 90;   // neighbors north+east
-      else if (s && e) rotation = 180; // neighbors south+east
-      else if (s && w) rotation = 270; // neighbors south+west
-      else if (n && w) rotation = 0;  // neighbors north+west
+      if (n && e) rotation = 180;   // neighbors north+east, empty south-west, rotate 180 so bottom-left corner faces south-west
+      else if (s && e) rotation = 270; // neighbors south+east, empty north-west, rotate 270 so bottom-left corner faces north-west
+      else if (s && w) rotation = 0; // neighbors south+west, empty north-east, no rotation (bottom-left already faces that way)
+      else if (n && w) rotation = 90;  // neighbors north+west, empty south-east, rotate 90 so bottom-left corner faces south-east
     }
   } else if (cardinalCount === 1) {
     // One neighbor - use edge piece
-    // Edge has border at bottom, rotate so border faces away from neighbor
+    // Edge has border at bottom of image, rotate so border faces away from neighbor
     variant = 'edge';
-    if (n) rotation = 180; // neighbor north, border faces south
-    else if (s) rotation = 0; // neighbor south, border faces north
-    else if (e) rotation = 270; // neighbor east, border faces west
-    else if (w) rotation = 90; // neighbor west, border faces east
+    if (n) rotation = 0; // neighbor north, border faces south (away from neighbor)
+    else if (s) rotation = 180; // neighbor south, border faces north
+    else if (e) rotation = 90; // neighbor east, border faces west
+    else if (w) rotation = 270; // neighbor west, border faces east
   }
   
   return { variant, rotation };
