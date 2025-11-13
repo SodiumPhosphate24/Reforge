@@ -26,7 +26,7 @@ var craftingRecipes = [
     name: "Fast Buschy",
     category: "Robots",
     type: "player",
-    unlocked : true,
+    unlocked : false,
     playerConstructor: {width : 35, height : 25, speed : 5, health : 50, damage : 1},
     ingredients: [
       { itemName: "rock", amount: 5 },
@@ -39,7 +39,7 @@ var craftingRecipes = [
     name: "Fat Buschy",
     category: "Robots",
     type: "player",
-    unlocked : true,
+    unlocked : false,
     playerConstructor: {width : 105, height : 75, speed : .5, health : 350, damage : 1},
     ingredients: [
       { itemName: "soda", amount: 5 },
