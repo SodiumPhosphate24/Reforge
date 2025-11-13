@@ -81,7 +81,11 @@ function preload() {
       'edge': loadImage("Tiles/DarkConcreteEdge.png"),
       'corner': loadImage("Tiles/DarkConcreteCorner.png")
     },
-  }
+    edgeInfo: {
+      edge: 'bottom',
+      corner: ['bottom', 'left']
+    }
+  };
 }
 
 function setup() {
