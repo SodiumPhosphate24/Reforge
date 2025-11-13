@@ -20,7 +20,7 @@ var craftingRecipes = [
     playerConstructor: {width : 35, height : 25, speed : 1.3, health : 100, damage : 1},
     ingredients: [
       { itemName: "common CPU", amount: 1 },
-      { itemName: "common battery", amount: 1 }
+      { itemName: "common battery", amount: 1 },
       { itemName: "cheese", amount: 1}
     ],
     output: { type: "player", name: "buschy", amount: 1 }
