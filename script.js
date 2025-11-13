@@ -23,6 +23,7 @@ let maxTileTypes = 0; // will be set in setup()
 var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
 
 function preload() {
+  console.log("Cheesey sick");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   BadGuy = loadImage("Characters/Enemy.png")
@@ -58,7 +59,7 @@ function preload() {
   IndicatorImg = loadImage("Indicator.png");
   Silkscreen = loadFont("Silkscreen-Regular.ttf");
   EnergyTank = loadImage("hud/EnergyTank.png");
-  
+
   // Load concrete tile variants
   tileVariants[3] = {
     variants: {
@@ -423,7 +424,7 @@ function getTileVariant(row, col, layer, tileType) {
 
   const config = tileVariants[tileType];
   const edgeInfo = config.edgeInfo;
-  
+
   // Check all cardinal neighbors
   const n = isSameTileType(row - 1, col, layer, tileType);     // north
   const s = isSameTileType(row + 1, col, layer, tileType);     // south
