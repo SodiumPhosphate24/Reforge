@@ -68,10 +68,6 @@ function preload() {
       'center': loadImage("Tiles/ConcreteCenter.png"),
       'edge': loadImage("Tiles/concreteEdge.png"),
       'corner': loadImage("Tiles/concreteCorner.png")
-    },
-    edgeInfo: {
-      edge: 'bottom',
-      corner: ['bottom', 'left']
     }
   };
   tileVariants[8] = {
@@ -80,10 +76,6 @@ function preload() {
       'center': loadImage("Tiles/DarkConcreteCenter.png"),
       'edge': loadImage("Tiles/DarkConcreteEdge.png"),
       'corner': loadImage("Tiles/DarkConcreteCorner.png")
-    },
-    edgeInfo: {
-      edge: 'bottom',
-      corner: ['bottom', 'left']
     }
   };
 }
@@ -429,14 +421,13 @@ function isSameTileType(row, col, layer, tileType) {
 }
 
 // Get the appropriate tile variant and rotation based on neighbors
-// Generic function that works for any tile with registered variants
+// Assumes edge piece has border on bottom, corner piece has borders on bottom-left
 function getTileVariant(row, col, layer, tileType) {
   if (!tileVariants[tileType]) {
     return { variant: 'full', rotation: 0, img: null };
   }
 
   const config = tileVariants[tileType];
-  const edgeInfo = config.edgeInfo;
 
   // Check all cardinal neighbors
   const n = isSameTileType(row - 1, col, layer, tileType);     // north
@@ -461,28 +452,11 @@ function getTileVariant(row, col, layer, tileType) {
   } else if (cardinalCount === 3) {
     // Three neighbors - use edge (border on one side)
     variant = 'edge';
-    // Rotate based on which side is empty and edge configuration
-    if (edgeInfo.edge === 'bottom') {
-      if (!n) rotation = 180;
-      else if (!s) rotation = 0;
-      else if (!e) rotation = 270;
-      else if (!w) rotation = 90;
-    } else if (edgeInfo.edge === 'top') {
-      if (!n) rotation = 0;
-      else if (!s) rotation = 180;
-      else if (!e) rotation = 90;
-      else if (!w) rotation = 270;
-    } else if (edgeInfo.edge === 'left') {
-      if (!n) rotation = 90;
-      else if (!s) rotation = 270;
-      else if (!e) rotation = 0;
-      else if (!w) rotation = 180;
-    } else if (edgeInfo.edge === 'right') {
-      if (!n) rotation = 270;
-      else if (!s) rotation = 90;
-      else if (!e) rotation = 180;
-      else if (!w) rotation = 0;
-    }
+    // Edge piece has border on bottom, so rotate to put border on the empty side
+    if (!n) rotation = 180;      // empty north = border on top
+    else if (!s) rotation = 0;   // empty south = border on bottom
+    else if (!e) rotation = 270; // empty east = border on right
+    else if (!w) rotation = 90;  // empty west = border on left
   } else if (cardinalCount === 2) {
     if ((n && s) || (e && w)) {
       // Opposite sides - use center
@@ -491,25 +465,20 @@ function getTileVariant(row, col, layer, tileType) {
     } else {
       // Adjacent sides - use corner
       variant = 'corner';
-      // Determine rotation based on corner configuration
-      if (edgeInfo.corner[0] === 'bottom' && edgeInfo.corner[1] === 'left') {
-        if (n && e) rotation = 0;
-        else if (s && e) rotation = 90;
-        else if (s && w) rotation = 180;
-        else if (n && w) rotation = 270;
-      }
-      // Add more corner configurations as needed
+      // Corner piece has borders on bottom-left, rotate to match neighbor pattern
+      if (n && e) rotation = 0;   // neighbors north+east = corner bottom-left
+      else if (s && e) rotation = 90;  // neighbors south+east = corner top-left
+      else if (s && w) rotation = 180; // neighbors south+west = corner top-right
+      else if (n && w) rotation = 270; // neighbors north+west = corner bottom-right
     }
   } else if (cardinalCount === 1) {
     // One neighbor - use edge piece
     variant = 'edge';
-    if (edgeInfo.edge === 'bottom') {
-      if (n) rotation = 0;
-      else if (s) rotation = 180;
-      else if (e) rotation = 90;
-      else if (w) rotation = 270;
-    }
-    // Add more edge configurations as needed
+    // Rotate edge to have border facing away from neighbor
+    if (n) rotation = 0;   // neighbor north = border south
+    else if (s) rotation = 180; // neighbor south = border north
+    else if (e) rotation = 90;  // neighbor east = border west
+    else if (w) rotation = 270; // neighbor west = border east
   }
 
   return { variant, rotation, img: config.variants[variant] };
