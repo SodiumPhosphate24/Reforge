@@ -19,7 +19,7 @@ var craftingRecipes = [
     unlocked : true,
     playerConstructor: {width : 35, height : 25, speed : 1.3, health : 100, damage : 1},
     ingredients: [
-      { itemName: "common card", amount: 1 }
+      { itemName: "common CPU", amount: 1 }
     ],
   },
   {
@@ -44,7 +44,7 @@ var craftingRecipes = [
     ingredients: [
       { itemName: "soda", amount: 5 },
       { itemName: "cheese", amount: 5 },
-      { itemName: "legendary card", amount: 1 }
+      { itemName: "legendary CPU", amount: 1 }
     ],
     output: { type: "player", name: "fat buschy", amount: 1 }
   },
@@ -72,14 +72,14 @@ var craftingRecipes = [
   },
   // ITEMS
   {
-    name: "Rare Card",
+    name: "Rare CPU",
     category: "Items",
     type: "item",
     unlocked : false,
     ingredients: [
-      { itemName: "common card", amount: 5 }
+      { itemName: "common CPU", amount: 5 }
     ],
-    output: { type: "material", name: "rare card", amount: 1 }
+    output: { type: "material", name: "rare CPU", amount: 1 }
   }
   // Add more recipes as needed
 ];
