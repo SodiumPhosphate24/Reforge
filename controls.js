@@ -138,6 +138,14 @@ function keyPressed() {
     handleEditorKeyPress();
   }
 
+  // Layer switching for editor mode
+  if (editorMode) {
+    if (keyPressedOnce(49)) editorLayer = 0; // Key '1'
+    if (keyPressedOnce(50)) editorLayer = 1; // Key '2'
+    if (keyPressedOnce(51)) editorLayer = 2; // Key '3'
+    if (keyPressedOnce(52)) editorLayer = 3; // Key '4'
+  }
+
 }
 
 function mouseClicked() {

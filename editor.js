@@ -8,7 +8,7 @@ function __getMaxTileTypes() {
   return 0;
 }
 var tileRotation = 0;        // 0, 90, 180, 270
-var editorLayer = 0;         // 0 & 1 behind; 2 in front
+var editorLayer = 0;         // 0 & 1 behind; 2 & 3 in front
 const EDIT_TILE_SIZE = 50;
 var cratePlacementPaused = false; // Pauses tile placement after crate is placed
 var lastCrateRow = -1;       // Row of last placed crate
@@ -102,7 +102,7 @@ function drawEditorUI() {
   textSize(18);
   textAlign(CENTER);
   text("EDITOR MODE - Press Shift+E to exit", width / 2, 25);
-  text("Left-click: place | Right-click: erase | Alt+Click: pick | R: rotate | 1/2/3: layer", width / 2, 45);
+  text("Left-click: place | Right-click: erase | Alt+Click: pick | R: rotate | 1/2/3/4: layer", width / 2, 45);
   text(
     "Layer: " + editorLayer +
     " | Current tile: " + selectedTileType +

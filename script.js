@@ -157,6 +157,9 @@ function draw() {
   // LAYER 2 in front of player
   drawWorldLayer(gameWorld, 2);
 
+  // LAYER 3 on top of layer 2
+  drawWorldLayer(gameWorld, 3);
+
   pop();
 
   // Draw pickup prompt after camera pop (screen-fixed)
@@ -225,10 +228,10 @@ function getTile(row, col, layer = 0) {
 function setTile(row, col, layer, type, rotation = 0) {
   if (!gameWorld[row]) gameWorld[row] = [];
   if (!gameWorld[row][col]) {
-    gameWorld[row][col] = { layers: [null, null, null] };
+    gameWorld[row][col] = { layers: [null, null, null, null] };
   } else if (!('layers' in gameWorld[row][col])) {
     const old = gameWorld[row][col];
-    gameWorld[row][col] = { layers: [old, null, null] };
+    gameWorld[row][col] = { layers: [old, null, null, null] };
   }
   gameWorld[row][col].layers[layer] = (type == null) ? null : { type: parseInt(type, 10), rotation: parseInt(rotation, 10) || 0 };
 }
@@ -320,11 +323,11 @@ function stringToWorld(s) {
       if (cellStr.includes(",")) {
         // Multi-layer format
         const layerStrs = cellStr.split(",");
-        const layers = [null, null, null];
+        const layers = [null, null, null, null];
         let crateItemsForCell = null;
         let crateLayerIndex = -1;
 
-        for (let L = 0; L < Math.min(3, layerStrs.length); L++) {
+        for (let L = 0; L < Math.min(4, layerStrs.length); L++) {
           const tstr = layerStrs[L].trim();
           if (tstr === "") { layers[L] = null; continue; }
 
@@ -521,9 +524,9 @@ function drawWorldLayer(world, layerIndex) {
       let tileType = tileObj.type;
       let rotation = tileObj.rotation || 0;
 
-      // Roof tinting only on foreground layer 2
+      // Roof tinting on foreground layers 2 and 3
       let __useTint = false;
-      if (layerIndex === 2 && tileWalls[tileType] === 2) {
+      if ((layerIndex === 2 || layerIndex === 3) && tileWalls[tileType] === 2) {
         const __k = tileKey(i, j);
         const __alpha = roofAlpha.has(__k) ? roofAlpha.get(__k) : 255;
         if (__alpha <= 0) continue; // fully transparent; skip draw
@@ -669,7 +672,7 @@ function checkTileCollisions(x, y, w, h) {
       const cell = gameWorld[row][col];
 
       if (cell && 'layers' in cell) {
-        for (let L = 0; L < 3; L++) {
+        for (let L = 0; L < 4; L++) {
           const t = cell.layers[L];
           if (!t) continue;
           if (tileWalls[t.type] == 1) {
@@ -709,11 +712,13 @@ function isRoof(row, col) {
   const cell = gameWorld[row][col];
   if (!cell) return false;
 
-  // Treat roof as the tile placed on FOREGROUND layer 2
+  // Treat roof as tiles placed on FOREGROUND layers 2 or 3
   if ('layers' in cell) {
+    const L3 = cell.layers?.[3];
+    if (L3 && tileWalls[L3.type] === 2) return true;
     const L2 = cell.layers?.[2];
-    if (!L2) return false;
-    return tileWalls[L2.type] === 2;
+    if (L2 && tileWalls[L2.type] === 2) return true;
+    return false;
   } else {
     // legacy single-layer maps: allow roof there too
     return tileWalls[cell.type] === 2;
