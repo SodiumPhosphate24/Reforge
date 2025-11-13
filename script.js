@@ -44,7 +44,7 @@ function preload() {
   tileImgs[4] = loadImage("Tiles/Brick.png");
   tileImgs[5] = loadImage("Tiles/Crate.png");
   tileImgs[6] = loadImage("Tiles/Crafting.png");
-  tileImgs[7] = loadImage("Tiles/dirt.png");
+  tileImgs[7] = loadImage("Tiles/Dirt.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonBattery.png");
@@ -102,6 +102,7 @@ function setup() {
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
   NonPlayerCharacters.push(new NPC(1000, 100, "Buschy", ["Buschy: granny smith apple", "Wing: Red delicious apple", "Mario: Honeycrisp apple", "Luigi: Carrot", "Luigi: Haha u thought I was gon say apple"], Buschy));
+  NonPlayerCharacters.push();
 }
 
 function draw() {
