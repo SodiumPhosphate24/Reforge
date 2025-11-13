@@ -2,7 +2,7 @@ let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = 
 var itemConstructors = [];
 var pX = 12500; var pY = 12500; var playerDamage = 1;
 var prePX = 0, prePY = 0;
-var camX = 0; var camY = 0;
+var camX = 12500; var camY = 12500;
 var pSpeed = 1.3;
 var pXVel = 0; var pYVel = 0;
 var pWidth = 35; var pHeight = 25;
@@ -64,7 +64,6 @@ function preload() {
 }
 
 function setup() {
-  alert("Cheese version 1");
   createCanvas(1200, 750);
   maxTileTypes = tileImgs.length;
   PlayerImage = Buschy;
