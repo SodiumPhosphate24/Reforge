@@ -14,8 +14,18 @@ var hotbar = [];
 var recoil = 10;
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt"];
 var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
-var concreteVariantImgs = {}; // Stores loaded concrete variant images
-var concreteTypes = [3]; // Only one concrete type
+
+// Tile variant configuration system
+// Each entry: { tileType: number, variants: { name: img }, edgeInfo: { edge: side, corner: [side1, side2] } }
+var tileVariants = {};
+
+// Helper to register a tile with auto-tiling variants
+function registerTileVariants(tileType, variantImages, edgeInfo) {
+  tileVariants[tileType] = {
+    variants: variantImages,
+    edgeInfo: edgeInfo // { edge: 'bottom', corner: ['bottom', 'left'] }
+  };
+}
 var enemies = [], bullets = [], messages = [], droppedItems = [], NonPlayerCharacters = [];
 var inventoryList;
 let maxTileTypes = 0; // will be set in setup()
@@ -37,10 +47,18 @@ function preload() {
   tileImgs[1] = loadImage("Tiles/Asphalt.png");
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");
   tileImgs[3] = loadImage("Tiles/Concrete.png");
-  concreteVariantImgs['full'] = loadImage("Tiles/Concrete.png");
-  concreteVariantImgs['center'] = loadImage("Tiles/ConcreteCenter.png");
-  concreteVariantImgs['edge'] = loadImage("Tiles/concreteEdge.png");
-  concreteVariantImgs['corner'] = loadImage("Tiles/concreteCorner.png");
+  
+  // Register concrete variants (type 3)
+  registerTileVariants(3, {
+    'full': loadImage("Tiles/Concrete.png"),
+    'center': loadImage("Tiles/ConcreteCenter.png"),
+    'edge': loadImage("Tiles/concreteEdge.png"),
+    'corner': loadImage("Tiles/concreteCorner.png")
+  }, {
+    edge: 'bottom',           // Edge piece has border at bottom
+    corner: ['bottom', 'left'] // Corner piece has borders at bottom and left
+  });
+  
   tileImgs[4] = loadImage("Tiles/Brick.png");
   tileImgs[5] = loadImage("Tiles/Crate.png");
   tileImgs[6] = loadImage("Tiles/Crafting.png");
@@ -396,26 +414,30 @@ function coordsToGrid(x, y) {
   };
 }
 
-// Check if a tile is concrete (any variant)
-function isConcrete(row, col, layer = 2) {
+// Check if a tile has the same type as another (for auto-tiling)
+function isSameTileType(row, col, layer, tileType) {
   const tile = getTile(row, col, layer);
   if (!tile) return false;
-  return concreteTypes.includes(tile.type);
+  return tile.type === tileType;
 }
 
-// Get the appropriate concrete variant and rotation based on neighbors
-// Edge piece has border at BOTTOM
-// Corner piece has borders at BOTTOM and LEFT
-function getConcreteVariant(row, col, layer = 2) {
-  if (!isConcrete(row, col, layer)) return { variant: 'full', rotation: 0 };
+// Get the appropriate tile variant and rotation based on neighbors
+// Generic function that works for any tile with registered variants
+function getTileVariant(row, col, layer, tileType) {
+  if (!tileVariants[tileType]) {
+    return { variant: 'full', rotation: 0, img: null };
+  }
 
+  const config = tileVariants[tileType];
+  const edgeInfo = config.edgeInfo;
+  
   // Check all cardinal neighbors
-  const n = isConcrete(row - 1, col, layer);     // north
-  const s = isConcrete(row + 1, col, layer);     // south
-  const e = isConcrete(row, col + 1, layer);     // east
-  const w = isConcrete(row, col - 1, layer);     // west
+  const n = isSameTileType(row - 1, col, layer, tileType);     // north
+  const s = isSameTileType(row + 1, col, layer, tileType);     // south
+  const e = isSameTileType(row, col + 1, layer, tileType);     // east
+  const w = isSameTileType(row, col - 1, layer, tileType);     // west
 
-  let variant = 'full'; // Default to full border (Concrete.png)
+  let variant = 'full';
   let rotation = 0;
 
   // Count cardinal neighbors
@@ -431,12 +453,29 @@ function getConcreteVariant(row, col, layer = 2) {
     rotation = 0;
   } else if (cardinalCount === 3) {
     // Three neighbors - use edge (border on one side)
-    // Edge has border at bottom of image, rotate so border faces the empty side
     variant = 'edge';
-    if (!n) rotation = 180;   // empty north, rotate 180 so bottom border faces north
-    else if (!s) rotation = 0;   // empty south, bottom border already faces south
-    else if (!e) rotation = 270; // empty east, rotate 270 (CCW) so bottom faces east
-    else if (!w) rotation = 90;  // empty west, rotate 90 (CW) so bottom faces west
+    // Rotate based on which side is empty and edge configuration
+    if (edgeInfo.edge === 'bottom') {
+      if (!n) rotation = 180;
+      else if (!s) rotation = 0;
+      else if (!e) rotation = 270;
+      else if (!w) rotation = 90;
+    } else if (edgeInfo.edge === 'top') {
+      if (!n) rotation = 0;
+      else if (!s) rotation = 180;
+      else if (!e) rotation = 90;
+      else if (!w) rotation = 270;
+    } else if (edgeInfo.edge === 'left') {
+      if (!n) rotation = 90;
+      else if (!s) rotation = 270;
+      else if (!e) rotation = 0;
+      else if (!w) rotation = 180;
+    } else if (edgeInfo.edge === 'right') {
+      if (!n) rotation = 270;
+      else if (!s) rotation = 90;
+      else if (!e) rotation = 180;
+      else if (!w) rotation = 0;
+    }
   } else if (cardinalCount === 2) {
     if ((n && s) || (e && w)) {
       // Opposite sides - use center
@@ -444,24 +483,29 @@ function getConcreteVariant(row, col, layer = 2) {
       rotation = 0;
     } else {
       // Adjacent sides - use corner
-      // Corner has borders at bottom and left of image
       variant = 'corner';
-      if (n && e) rotation = 0;   // neighbors north+east, empty south-west, no rotation needed
-      else if (s && e) rotation = 90; // neighbors south+east, empty north-west, rotate 90 CW
-      else if (s && w) rotation = 180; // neighbors south+west, empty north-east, rotate 180
-      else if (n && w) rotation = 270;  // neighbors north+west, empty south-east, rotate 270 CW
+      // Determine rotation based on corner configuration
+      if (edgeInfo.corner[0] === 'bottom' && edgeInfo.corner[1] === 'left') {
+        if (n && e) rotation = 0;
+        else if (s && e) rotation = 90;
+        else if (s && w) rotation = 180;
+        else if (n && w) rotation = 270;
+      }
+      // Add more corner configurations as needed
     }
   } else if (cardinalCount === 1) {
     // One neighbor - use edge piece
-    // Edge has border at bottom of image, rotate so border faces away from neighbor
     variant = 'edge';
-    if (n) rotation = 0; // neighbor north, border faces south (away from neighbor)
-    else if (s) rotation = 180; // neighbor south, border faces north
-    else if (e) rotation = 90; // neighbor east, border faces west
-    else if (w) rotation = 270; // neighbor west, border faces east
+    if (edgeInfo.edge === 'bottom') {
+      if (n) rotation = 0;
+      else if (s) rotation = 180;
+      else if (e) rotation = 90;
+      else if (w) rotation = 270;
+    }
+    // Add more edge configurations as needed
   }
 
-  return { variant, rotation };
+  return { variant, rotation, img: config.variants[variant] };
 }
 
 // --- Layered drawing: draw ONE layer index (0,1 behind; 2 in front) ---
@@ -510,14 +554,17 @@ function drawWorldLayer(world, layerIndex) {
         if (__alpha < 255) { tint(255, __alpha); __useTint = true; }
       }
 
-      // Determine which image to draw (check for concrete auto-tiling)
+      // Determine which image to draw (check for auto-tiling variants)
       let imgToDraw = tileImgs[tileType];
       let finalRotation = rotation;
 
-      if (tileType === 3) { // Concrete
-        const variantInfo = getConcreteVariant(i, j, layerIndex);
-        imgToDraw = concreteVariantImgs[variantInfo.variant];
-        finalRotation = variantInfo.rotation;
+      // Check if this tile type has variants registered
+      if (tileVariants[tileType]) {
+        const variantInfo = getTileVariant(i, j, layerIndex, tileType);
+        if (variantInfo.img) {
+          imgToDraw = variantInfo.img;
+          finalRotation = variantInfo.rotation;
+        }
       }
 
       // Draw the tile
