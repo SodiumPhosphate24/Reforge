@@ -20,7 +20,7 @@ var enemies = [], bullets = [], messages = [], droppedItems = [], NonPlayerChara
 var inventoryList;
 let maxTileTypes = 0; // will be set in setup()
 var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
-//cheese
+
 function preload() {
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
@@ -89,7 +89,7 @@ function setup() {
   gameWorld = stringToWorld(worldString[0]);
   console.log(worldString);
   console.log("asdf");
-  players.push(new Player(0, 0, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
+  players.push(new Player(12500, 12500, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
   players.push(new Player(0, 100, 100, 100, .5, 350, playerDamage, PlayerImage));
   players.push(new Player(500, 100, 25, 25, 2, healthPoints, playerDamage, PlayerImage));
 
