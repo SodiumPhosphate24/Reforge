@@ -180,17 +180,17 @@ class Item {
     if (type == "material") {
       this.type = "material";
       this.stackable = true;
-      if (name == "common card") {
+      if (name == "common CPU") {
         this.name = name;
         this.image = matImgs[0];
         this.HtoW = 1.5;
       }
-      if (name == "rare card") {
+      if (name == "rare CPU") {
         this.name = name;
         this.image = matImgs[1];
         this.HtoW = 1.5;
       }
-      if (name == "legendary card") {
+      if (name == "legendary CPU") {
         this.name = name;
         this.image = matImgs[2];
         this.HtoW = 1.5;
