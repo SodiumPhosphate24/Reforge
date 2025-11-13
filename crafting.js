@@ -21,6 +21,7 @@ var craftingRecipes = [
     ingredients: [
       { itemName: "common CPU", amount: 1 }
     ],
+    output: { type: "player", name: "buschy", amount: 1 }
   },
   {
     name: "Fast Buschy",
