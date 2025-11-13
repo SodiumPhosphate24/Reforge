@@ -1,6 +1,6 @@
 let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0], Silkscreen, PlayerImage;
 var itemConstructors = [];
-var pX = 0; var pY = 0; var playerDamage = 1;
+var pX = 12500; var pY = 12500; var playerDamage = 1;
 var prePX = 0, prePY = 0;
 var camX = 0; var camY = 0;
 var pSpeed = 1.3;
@@ -71,18 +71,18 @@ function setup() {
 
   // Initialize itemConstructors BEFORE parsing world so crate inventories can be loaded
   itemConstructors = [
-    ["gun", "glock", 1, GunImgs[0]], 
-    ["gun", "western", 1, GunImgs[1]], 
-    ["gun", "rare pistol", 1, GunImgs[2]], 
-    ["consumable", "cheese", 1, itemImgs[0]], 
-    ["consumable", "soda", 1, itemImgs[1]], 
-    ["consumable", "common battery", 1, itemImgs[2]], 
-    ["consumable", "rare battery", 1, itemImgs[3]], 
-    ["consumable", "legendary battery", 1, itemImgs[4]], 
-    ["projectile", "grenade", 1, projImgs[0]], 
-    ["projectile", "rock", 10, projImgs[1]], 
-    ["material", "common card", 1, matImgs[0]], 
-    ["material", "rare card", 1, matImgs[1]], 
+    ["gun", "glock", 1, GunImgs[0]],
+    ["gun", "western", 1, GunImgs[1]],
+    ["gun", "rare pistol", 1, GunImgs[2]],
+    ["consumable", "cheese", 1, itemImgs[0]],
+    ["consumable", "soda", 1, itemImgs[1]],
+    ["consumable", "common battery", 1, itemImgs[2]],
+    ["consumable", "rare battery", 1, itemImgs[3]],
+    ["consumable", "legendary battery", 1, itemImgs[4]],
+    ["projectile", "grenade", 1, projImgs[0]],
+    ["projectile", "rock", 10, projImgs[1]],
+    ["material", "common card", 1, matImgs[0]],
+    ["material", "rare card", 1, matImgs[1]],
     ["material", "legendary card", 1, matImgs[2]]
   ];
 
@@ -101,7 +101,6 @@ function setup() {
   indicatorCurrentY = pY + 375 - 50;
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
-  NonPlayerCharacters.push(new NPC(1000, 100, "Buschy", ["Buschy: granny smith apple", "Wing: Red delicious apple", "Mario: Honeycrisp apple", "Luigi: Carrot", "Luigi: Haha u thought I was gon say apple"], Buschy));
   NonPlayerCharacters.push(new NPC(12750, 12300, "PROMETHEUS-IV", ["PROMETHEUS-IV: HELLO WORLD"], BadGuy));
 }
 
@@ -230,7 +229,7 @@ function worldToString(world) {
     for (let c = 0; c < row.length; c++) {
       const cell = row[c];
       if (c > 0) out += "/"; // Add separator before cell (except first)
-      
+
       if (!cell) continue;
 
       if ('layers' in cell) {
@@ -244,8 +243,8 @@ function worldToString(world) {
             if (crateInventories.has(crateKey)) {
               const items = crateInventories.get(crateKey);
               // Convert items back to indices
-              const itemIndices = items.map(itemConstructor => 
-                itemConstructors.findIndex(ic => 
+              const itemIndices = items.map(itemConstructor =>
+                itemConstructors.findIndex(ic =>
                   ic[0] === itemConstructor[0] && ic[1] === itemConstructor[1]
                 )
               ).filter(idx => idx !== -1); // Ensure valid indices
@@ -264,8 +263,8 @@ function worldToString(world) {
         const crateKey = r + "," + c;
         if (crateInventories.has(crateKey) && cell.type === 5) {
           const items = crateInventories.get(crateKey);
-          const itemIndices = items.map(itemConstructor => 
-            itemConstructors.findIndex(ic => 
+          const itemIndices = items.map(itemConstructor =>
+            itemConstructors.findIndex(ic =>
               ic[0] === itemConstructor[0] && ic[1] === itemConstructor[1]
             )
           ).filter(idx => idx !== -1);
@@ -308,7 +307,7 @@ function stringToWorld(s) {
         const layers = [null, null, null];
         let crateItemsForCell = null;
         let crateLayerIndex = -1;
-        
+
         for (let L = 0; L < Math.min(3, layerStrs.length); L++) {
           const tstr = layerStrs[L].trim();
           if (tstr === "") { layers[L] = null; continue; }
@@ -335,7 +334,7 @@ function stringToWorld(s) {
             crateLayerIndex = L;
           }
         }
-        
+
         // Process crate items after all layers are parsed
         if (crateItemsForCell && crateLayerIndex >= 0) {
           const itemIndices = crateItemsForCell.split(".").map(idx => parseInt(idx, 10));
@@ -349,7 +348,7 @@ function stringToWorld(s) {
             console.log("Multi-layer: Loaded crate at", crateKey, "with", items.length, "items:", itemIndices);
           }
         }
-        
+
         outRow.push({ layers });
       } else {
         // Legacy single-layer format
@@ -410,19 +409,19 @@ function isConcrete(row, col, layer = 2) {
 // Corner piece has borders at BOTTOM and LEFT
 function getConcreteVariant(row, col, layer = 2) {
   if (!isConcrete(row, col, layer)) return { variant: 'full', rotation: 0 };
-  
+
   // Check all cardinal neighbors
   const n = isConcrete(row - 1, col, layer);     // north
   const s = isConcrete(row + 1, col, layer);     // south
   const e = isConcrete(row, col + 1, layer);     // east
   const w = isConcrete(row, col - 1, layer);     // west
-  
+
   let variant = 'full'; // Default to full border (Concrete.png)
   let rotation = 0;
-  
+
   // Count cardinal neighbors
   const cardinalCount = [n, s, e, w].filter(Boolean).length;
-  
+
   if (cardinalCount === 0) {
     // Isolated tile - use full border
     variant = 'full';
@@ -462,7 +461,7 @@ function getConcreteVariant(row, col, layer = 2) {
     else if (e) rotation = 90; // neighbor east, border faces west
     else if (w) rotation = 270; // neighbor west, border faces east
   }
-  
+
   return { variant, rotation };
 }
 
@@ -515,13 +514,13 @@ function drawWorldLayer(world, layerIndex) {
       // Determine which image to draw (check for concrete auto-tiling)
       let imgToDraw = tileImgs[tileType];
       let finalRotation = rotation;
-      
+
       if (tileType === 3) { // Concrete
         const variantInfo = getConcreteVariant(i, j, layerIndex);
         imgToDraw = concreteVariantImgs[variantInfo.variant];
         finalRotation = variantInfo.rotation;
       }
-      
+
       // Draw the tile
       if (finalRotation > 0) {
         push();
