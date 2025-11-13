@@ -13,8 +13,7 @@ var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt"];
-var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
-
+var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 // Tile variant configuration system
 // Each entry: { tileType: number, variants: { name: img }, edgeInfo: { edge: side, corner: [side1, side2] } }
 var tileVariants = {};
@@ -58,6 +57,7 @@ function preload() {
     edge: 'bottom',           // Edge piece has border at bottom
     corner: ['bottom', 'left'] // Corner piece has borders at bottom and left
   });
+  
   
   tileImgs[4] = loadImage("Tiles/Brick.png");
   tileImgs[5] = loadImage("Tiles/Crate.png");
@@ -118,7 +118,7 @@ function setup() {
   indicatorCurrentY = pY + 375 - 50;
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
-  NonPlayerCharacters.push(new NPC(13350, 12675, "PROMETHEUS-IV", ["PROMETHEUS-IV: HELLO WORLD"], BadGuy));
+  NonPlayerCharacters.push(new NPC(13350, 12675, "PROMETHEUS-IV", ["PROMETHEUS-IV: HELLO WORLD", "PROMETHEUS-IV: I AM PROMETHEUS-IV"], BadGuy));
 }
 
 function draw() {
