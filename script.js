@@ -102,7 +102,7 @@ function setup() {
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
   NonPlayerCharacters.push(new NPC(1000, 100, "Buschy", ["Buschy: granny smith apple", "Wing: Red delicious apple", "Mario: Honeycrisp apple", "Luigi: Carrot", "Luigi: Haha u thought I was gon say apple"], Buschy));
-  NonPlayerCharacters.push(new NPC(12750, 12300, "PROMETHEUS-IV", ["PROMETHEUS-IV: HELLO WORLD", ""], BadGuy));
+  NonPlayerCharacters.push(new NPC(12750, 12300, "PROMETHEUS-IV", ["PROMETHEUS-IV: HELLO WORLD"], BadGuy));
 }
 
 function draw() {
