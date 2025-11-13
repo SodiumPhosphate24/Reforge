@@ -37,7 +37,7 @@ function preload() {
   tileImgs[0] = loadImage("Tiles/deadGrass.png");
   tileImgs[1] = loadImage("Tiles/Asphalt.png");
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");
-  tileImgs[3] = loadImage("Tiles/Concrete.png");
+  tileImgs[3] = null; // Concrete uses variants, loaded below
   tileImgs[4] = loadImage("Tiles/Brick.png");
   tileImgs[5] = loadImage("Tiles/Crate.png");
   tileImgs[6] = loadImage("Tiles/Crafting.png");
