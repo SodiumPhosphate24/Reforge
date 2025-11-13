@@ -101,7 +101,7 @@ function setup() {
   indicatorCurrentY = pY + 375 - 50;
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
-  NonPlayerCharacters.push(new NPC(12750, 12300, "PROMETHEUS-IV", ["PROMETHEUS-IV: HELLO WORLD"], BadGuy));
+  NonPlayerCharacters.push(new NPC(13350, 12675, "PROMETHEUS-IV", ["PROMETHEUS-IV: HELLO WORLD"], BadGuy));
 }
 
 function draw() {
@@ -123,6 +123,7 @@ function draw() {
   drawWorldLayer(gameWorld, 1);
 
   fill(255);
+  drawNPCs();
   drawPlayers();
 
   // --- Only the gun rotates (isolated) ---
@@ -131,7 +132,6 @@ function draw() {
 
   mainHand();
   drawEnemies();
-  drawNPCs();
   drawBullets();
   updateDroppedItems();
   updateParticles(); // Draw particles
