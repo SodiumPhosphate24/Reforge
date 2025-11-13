@@ -15,27 +15,8 @@ var recoil = 10;
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt"];
 var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
-// Centralized tile variant configuration
-// Add new tiles here with their variant info
-var tileVariantConfig = [
-  // Concrete (type 3)
-  {
-    tileType: 3,
-    paths: {
-      'full': "Tiles/Concrete.png",
-      'center': "Tiles/ConcreteCenter.png",
-      'edge': "Tiles/concreteEdge.png",
-      'corner': "Tiles/concreteCorner.png"
-    },
-    edgeInfo: {
-      edge: 'bottom',
-      corner: ['bottom', 'left']
-    }
-  }
-  // Add more tile configs here as needed
-];
-
-var tileVariants = {}; // Will be populated during preload
+// Tile variants storage
+var tileVariants = {};
 var enemies = [], bullets = [], messages = [], droppedItems = [], NonPlayerCharacters = [];
 var inventoryList;
 let maxTileTypes = 0; // will be set in setup()
@@ -78,17 +59,19 @@ function preload() {
   Silkscreen = loadFont("Silkscreen-Regular.ttf");
   EnergyTank = loadImage("hud/EnergyTank.png");
   
-  // Auto-load all tile variants from configuration
-  for (let config of tileVariantConfig) {
-    let variantImages = {};
-    for (let variantName in config.paths) {
-      variantImages[variantName] = loadImage(config.paths[variantName]);
+  // Load concrete tile variants
+  tileVariants[3] = {
+    variants: {
+      'full': loadImage("Tiles/Concrete.png"),
+      'center': loadImage("Tiles/ConcreteCenter.png"),
+      'edge': loadImage("Tiles/concreteEdge.png"),
+      'corner': loadImage("Tiles/concreteCorner.png")
+    },
+    edgeInfo: {
+      edge: 'bottom',
+      corner: ['bottom', 'left']
     }
-    tileVariants[config.tileType] = {
-      variants: variantImages,
-      edgeInfo: config.edgeInfo
-    };
-  }
+  };
 }
 
 function setup() {
