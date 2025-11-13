@@ -64,6 +64,7 @@ function preload() {
 }
 
 function setup() {
+  alert("Cheese version 1");
   createCanvas(1200, 750);
   maxTileTypes = tileImgs.length;
   PlayerImage = Buschy;
