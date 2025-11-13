@@ -46,19 +46,6 @@ function preload() {
   tileImgs[1] = loadImage("Tiles/Asphalt.png");
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");
   tileImgs[3] = loadImage("Tiles/Concrete.png");
-  
-  // Register concrete variants (type 3)
-  registerTileVariants(3, {
-    'full': loadImage("Tiles/Concrete.png"),
-    'center': loadImage("Tiles/ConcreteCenter.png"),
-    'edge': loadImage("Tiles/concreteEdge.png"),
-    'corner': loadImage("Tiles/concreteCorner.png")
-  }, {
-    edge: 'bottom',           // Edge piece has border at bottom
-    corner: ['bottom', 'left'] // Corner piece has borders at bottom and left
-  });
-  
-  
   tileImgs[4] = loadImage("Tiles/Brick.png");
   tileImgs[5] = loadImage("Tiles/Crate.png");
   tileImgs[6] = loadImage("Tiles/Crafting.png");
@@ -79,6 +66,16 @@ function preload() {
   IndicatorImg = loadImage("Indicator.png");
   Silkscreen = loadFont("Silkscreen-Regular.ttf");
   EnergyTank = loadImage("hud/EnergyTank.png");
+  registerTileVariants(3, {
+    'full': loadImage("Tiles/Concrete.png"),
+    'center': loadImage("Tiles/ConcreteCenter.png"),
+    'edge': loadImage("Tiles/concreteEdge.png"),
+    'corner': loadImage("Tiles/concreteCorner.png")
+  }, {
+    edge: 'bottom',           // Edge piece has border at bottom
+    corner: ['bottom', 'left'] // Corner piece has borders at bottom and left
+  });
+
 }
 
 function setup() {

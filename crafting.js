@@ -13,6 +13,16 @@ var selectedTab = 0;
 var craftingRecipes = [
   // ROBOTS
   {
+    name: "Buschy",
+    category: "Robots",
+    type: "player",
+    unlocked : true,
+    playerConstructor: {width : 35, height : 25, speed : 1.3, health : 100, damage : 1},
+    ingredients: [
+      { itemName: "common card", amount: 1 }
+    ],
+  },
+  {
     name: "Fast Buschy",
     category: "Robots",
     type: "player",
