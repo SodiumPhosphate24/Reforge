@@ -91,9 +91,9 @@ function setup() {
     ["consumable", "legendary battery", 1, itemImgs[4]],
     ["projectile", "grenade", 1, projImgs[0]],
     ["projectile", "rock", 10, projImgs[1]],
-    ["material", "common card", 1, matImgs[0]],
-    ["material", "rare card", 1, matImgs[1]],
-    ["material", "legendary card", 1, matImgs[2]]
+    ["material", "common CPU", 1, matImgs[0]],
+    ["material", "rare CPU", 1, matImgs[1]],
+    ["material", "legendary CPU", 1, matImgs[2]]
   ];
 
   // Now parse the world with itemConstructors available
