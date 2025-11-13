@@ -19,7 +19,9 @@ var craftingRecipes = [
     unlocked : true,
     playerConstructor: {width : 35, height : 25, speed : 1.3, health : 100, damage : 1},
     ingredients: [
-      { itemName: "common CPU", amount: 1 }
+      { itemName: "common CPU", amount: 1 },
+      { itemName: "common battery", amount: 1 }
+      { itemName: "cheese", amount: 1}
     ],
     output: { type: "player", name: "buschy", amount: 1 }
   },
@@ -27,7 +29,7 @@ var craftingRecipes = [
     name: "Fast Buschy",
     category: "Robots",
     type: "player",
-    unlocked : true,
+    unlocked : false,
     playerConstructor: {width : 35, height : 25, speed : 5, health : 50, damage : 1},
     ingredients: [
       { itemName: "rock", amount: 5 },
@@ -40,7 +42,7 @@ var craftingRecipes = [
     name: "Fat Buschy",
     category: "Robots",
     type: "player",
-    unlocked : true,
+    unlocked : false,
     playerConstructor: {width : 105, height : 75, speed : .5, health : 350, damage : 1},
     ingredients: [
       { itemName: "soda", amount: 5 },
