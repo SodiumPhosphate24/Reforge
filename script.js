@@ -12,8 +12,8 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt"];
-var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete"];
+var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0, 0]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile variants storage
 var tileVariants = {};
@@ -43,6 +43,7 @@ function preload() {
   tileImgs[5] = loadImage("Tiles/Crate.png");
   tileImgs[6] = loadImage("Tiles/Crafting.png");
   tileImgs[7] = loadImage("Tiles/Dirt.png");
+  tileImgs[8] = null;
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonBattery.png");
@@ -73,6 +74,14 @@ function preload() {
       corner: ['bottom', 'left']
     }
   };
+  tileVariants[8] = {
+    variants: {
+      'full': loadImage("Tiles/DarkConcrete.png"),
+      'center': loadImage("Tiles/DarkConcreteCenter.png"),
+      'edge': loadImage("Tiles/DarkConcreteEdge.png"),
+      'corner': loadImage("Tiles/DarkConcreteCorner.png")
+    },
+  }
 }
 
 function setup() {
