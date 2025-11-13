@@ -195,6 +195,11 @@ class Item {
         this.image = matImgs[2];
         this.HtoW = 1.5;
       }
+      if (name == "wires") {
+        this.name = name;
+        this.image = matImgs[3];
+        this.HtoW = 1.25;
+      }
     }
 
     if (type == "projectile") {

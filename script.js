@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0], Silkscreen, PlayerImage;
+let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage;
 var itemConstructors = [];
 var pX = 12500; var pY = 12500; var playerDamage = 1;
 var prePX = 0, prePY = 0;
@@ -12,8 +12,8 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack"];
-var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0, 0, 2, 2, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood"];
+var tileWalls = [0, 0, 0, 2, 1, 1, 1, 2, 0, 2, 2, 2, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile variants storage
 var tileVariants = {};
@@ -47,6 +47,7 @@ function preload() {
   tileImgs[9] = loadImage("Tiles/Door.png");
   tileImgs[10] = loadImage("Tiles/Window.png");
   tileImgs[11] = loadImage("Tiles/Crack.png");
+  tileImgs[12] = loadImage("Tiles/Wood.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonBattery.png");
@@ -55,6 +56,7 @@ function preload() {
   matImgs[0] = loadImage("Items/Materials/CommonCard.png");
   matImgs[1] = loadImage("Items/Materials/RareCard.png");
   matImgs[2] = loadImage("Items/Materials/LegendaryCard.png");
+  matImgs[3] = loadImage("Items/Materials/Wires.png");
   projImgs[0] = loadImage("Items/Projectiles/Grenade.png");
   projImgs[1] = loadImage("Items/Projectiles/Rock.png");
   InventoryImg = loadImage("hud/Inventory.png");
