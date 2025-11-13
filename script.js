@@ -12,8 +12,8 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench"];
-var tileWalls = [0, 0, 0, 2, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt"];
+var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
 var concreteVariantImgs = {}; // Stores loaded concrete variant images
 var concreteTypes = [3]; // Only one concrete type
 var enemies = [], bullets = [], messages = [], droppedItems = [], NonPlayerCharacters = [];
@@ -44,6 +44,7 @@ function preload() {
   tileImgs[4] = loadImage("Tiles/Brick.png");
   tileImgs[5] = loadImage("Tiles/Crate.png");
   tileImgs[6] = loadImage("Tiles/Crafting.png");
+  tileImgs[7] = loadImage("Tiles/dirt.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonBattery.png");
