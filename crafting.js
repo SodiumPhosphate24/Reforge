@@ -13,20 +13,10 @@ var selectedTab = 0;
 var craftingRecipes = [
   // ROBOTS
   {
-    name: "Buschy",
-    category: "Robots",
-    type: "player",
-    unlocked : true,
-    playerConstructor: {width : 35, height : 25, speed : 1.3, health : 100, damage : 1},
-    ingredients: [
-      { itemName: "common CPU", amount: 1 }
-    ],
-  },
-  {
     name: "Fast Buschy",
     category: "Robots",
     type: "player",
-    unlocked : false,
+    unlocked : true,
     playerConstructor: {width : 35, height : 25, speed : 5, health : 50, damage : 1},
     ingredients: [
       { itemName: "rock", amount: 5 },
@@ -39,12 +29,12 @@ var craftingRecipes = [
     name: "Fat Buschy",
     category: "Robots",
     type: "player",
-    unlocked : false,
+    unlocked : true,
     playerConstructor: {width : 105, height : 75, speed : .5, health : 350, damage : 1},
     ingredients: [
       { itemName: "soda", amount: 5 },
       { itemName: "cheese", amount: 5 },
-      { itemName: "legendary CPU", amount: 1 }
+      { itemName: "legendary card", amount: 1 }
     ],
     output: { type: "player", name: "fat buschy", amount: 1 }
   },
@@ -72,14 +62,14 @@ var craftingRecipes = [
   },
   // ITEMS
   {
-    name: "Rare CPU",
+    name: "Rare Card",
     category: "Items",
     type: "item",
     unlocked : false,
     ingredients: [
-      { itemName: "common CPU", amount: 5 }
+      { itemName: "common card", amount: 5 }
     ],
-    output: { type: "material", name: "rare CPU", amount: 1 }
+    output: { type: "material", name: "rare card", amount: 1 }
   }
   // Add more recipes as needed
 ];
