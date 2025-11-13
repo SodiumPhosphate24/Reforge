@@ -1,8 +1,8 @@
 let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0], Silkscreen, PlayerImage;
 var itemConstructors = [];
-var pX = 0; var pY = 0; var playerDamage = 1;
+var pX = 12500; var pY = 12500; var playerDamage = 1;
 var prePX = 0, prePY = 0;
-var camX = 0; var camY = 0;
+var camX = 12500; var camY = 12500;
 var pSpeed = 1.3;
 var pXVel = 0; var pYVel = 0;
 var pWidth = 35; var pHeight = 25;
@@ -12,15 +12,35 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench"];
-var tileWalls = [0, 0, 0, 2, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades)
-var concreteVariantImgs = {}; // Stores loaded concrete variant images
-var concreteTypes = [3]; // Only one concrete type
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt"];
+var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+
+// Centralized tile variant configuration
+// Add new tiles here with their variant info
+var tileVariantConfig = [
+  // Concrete (type 3)
+  {
+    tileType: 3,
+    paths: {
+      'full': "Tiles/Concrete.png",
+      'center': "Tiles/ConcreteCenter.png",
+      'edge': "Tiles/concreteEdge.png",
+      'corner': "Tiles/concreteCorner.png"
+    },
+    edgeInfo: {
+      edge: 'bottom',
+      corner: ['bottom', 'left']
+    }
+  }
+  // Add more tile configs here as needed
+];
+
+var tileVariants = {}; // Will be populated during preload
 var enemies = [], bullets = [], messages = [], droppedItems = [], NonPlayerCharacters = [];
 var inventoryList;
 let maxTileTypes = 0; // will be set in setup()
 var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
-//cheese
+
 function preload() {
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
@@ -37,13 +57,10 @@ function preload() {
   tileImgs[1] = loadImage("Tiles/Asphalt.png");
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");
   tileImgs[3] = loadImage("Tiles/Concrete.png");
-  concreteVariantImgs['full'] = loadImage("Tiles/Concrete.png");
-  concreteVariantImgs['center'] = loadImage("Tiles/ConcreteCenter.png");
-  concreteVariantImgs['edge'] = loadImage("Tiles/concreteEdge.png");
-  concreteVariantImgs['corner'] = loadImage("Tiles/concreteCorner.png");
   tileImgs[4] = loadImage("Tiles/Brick.png");
   tileImgs[5] = loadImage("Tiles/Crate.png");
   tileImgs[6] = loadImage("Tiles/Crafting.png");
+  tileImgs[7] = loadImage("Tiles/Dirt.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonBattery.png");
@@ -60,6 +77,18 @@ function preload() {
   IndicatorImg = loadImage("Indicator.png");
   Silkscreen = loadFont("Silkscreen-Regular.ttf");
   EnergyTank = loadImage("hud/EnergyTank.png");
+  
+  // Auto-load all tile variants from configuration
+  for (let config of tileVariantConfig) {
+    let variantImages = {};
+    for (let variantName in config.paths) {
+      variantImages[variantName] = loadImage(config.paths[variantName]);
+    }
+    tileVariants[config.tileType] = {
+      variants: variantImages,
+      edgeInfo: config.edgeInfo
+    };
+  }
 }
 
 function setup() {
@@ -69,18 +98,18 @@ function setup() {
 
   // Initialize itemConstructors BEFORE parsing world so crate inventories can be loaded
   itemConstructors = [
-    ["gun", "glock", 1, GunImgs[0]], 
-    ["gun", "western", 1, GunImgs[1]], 
-    ["gun", "rare pistol", 1, GunImgs[2]], 
-    ["consumable", "cheese", 1, itemImgs[0]], 
-    ["consumable", "soda", 1, itemImgs[1]], 
-    ["consumable", "common battery", 1, itemImgs[2]], 
-    ["consumable", "rare battery", 1, itemImgs[3]], 
-    ["consumable", "legendary battery", 1, itemImgs[4]], 
-    ["projectile", "grenade", 1, projImgs[0]], 
-    ["projectile", "rock", 10, projImgs[1]], 
-    ["material", "common card", 1, matImgs[0]], 
-    ["material", "rare card", 1, matImgs[1]], 
+    ["gun", "glock", 1, GunImgs[0]],
+    ["gun", "western", 1, GunImgs[1]],
+    ["gun", "rare pistol", 1, GunImgs[2]],
+    ["consumable", "cheese", 1, itemImgs[0]],
+    ["consumable", "soda", 1, itemImgs[1]],
+    ["consumable", "common battery", 1, itemImgs[2]],
+    ["consumable", "rare battery", 1, itemImgs[3]],
+    ["consumable", "legendary battery", 1, itemImgs[4]],
+    ["projectile", "grenade", 1, projImgs[0]],
+    ["projectile", "rock", 10, projImgs[1]],
+    ["material", "common card", 1, matImgs[0]],
+    ["material", "rare card", 1, matImgs[1]],
     ["material", "legendary card", 1, matImgs[2]]
   ];
 
@@ -88,7 +117,7 @@ function setup() {
   gameWorld = stringToWorld(worldString[0]);
   console.log(worldString);
   console.log("asdf");
-  players.push(new Player(0, 0, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
+  players.push(new Player(12500, 12500, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
   players.push(new Player(0, 100, 100, 100, .5, 350, playerDamage, PlayerImage));
   players.push(new Player(500, 100, 25, 25, 2, healthPoints, playerDamage, PlayerImage));
 
@@ -99,7 +128,7 @@ function setup() {
   indicatorCurrentY = pY + 375 - 50;
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
-  NonPlayerCharacters.push(new NPC(1000, 100, "Buschy", ["Buschy: granny smith apple", "Wing: Red delicious apple", "Mario: Honeycrisp apple", "Luigi: Carrot", "Luigi: Haha u thought I was gon say apple"], Buschy));
+  NonPlayerCharacters.push(new NPC(13350, 12675, "PROMETHEUS-IV", ["PROMETHEUS-IV: HELLO WORLD", "PROMETHEUS-IV: I AM PROMETHEUS-IV"], BadGuy));
 }
 
 function draw() {
@@ -121,6 +150,7 @@ function draw() {
   drawWorldLayer(gameWorld, 1);
 
   fill(255);
+  drawNPCs();
   drawPlayers();
 
   // --- Only the gun rotates (isolated) ---
@@ -129,7 +159,6 @@ function draw() {
 
   mainHand();
   drawEnemies();
-  drawNPCs();
   drawBullets();
   updateDroppedItems();
   updateParticles(); // Draw particles
@@ -227,7 +256,7 @@ function worldToString(world) {
     for (let c = 0; c < row.length; c++) {
       const cell = row[c];
       if (c > 0) out += "/"; // Add separator before cell (except first)
-      
+
       if (!cell) continue;
 
       if ('layers' in cell) {
@@ -241,8 +270,8 @@ function worldToString(world) {
             if (crateInventories.has(crateKey)) {
               const items = crateInventories.get(crateKey);
               // Convert items back to indices
-              const itemIndices = items.map(itemConstructor => 
-                itemConstructors.findIndex(ic => 
+              const itemIndices = items.map(itemConstructor =>
+                itemConstructors.findIndex(ic =>
                   ic[0] === itemConstructor[0] && ic[1] === itemConstructor[1]
                 )
               ).filter(idx => idx !== -1); // Ensure valid indices
@@ -261,8 +290,8 @@ function worldToString(world) {
         const crateKey = r + "," + c;
         if (crateInventories.has(crateKey) && cell.type === 5) {
           const items = crateInventories.get(crateKey);
-          const itemIndices = items.map(itemConstructor => 
-            itemConstructors.findIndex(ic => 
+          const itemIndices = items.map(itemConstructor =>
+            itemConstructors.findIndex(ic =>
               ic[0] === itemConstructor[0] && ic[1] === itemConstructor[1]
             )
           ).filter(idx => idx !== -1);
@@ -305,7 +334,7 @@ function stringToWorld(s) {
         const layers = [null, null, null];
         let crateItemsForCell = null;
         let crateLayerIndex = -1;
-        
+
         for (let L = 0; L < Math.min(3, layerStrs.length); L++) {
           const tstr = layerStrs[L].trim();
           if (tstr === "") { layers[L] = null; continue; }
@@ -332,7 +361,7 @@ function stringToWorld(s) {
             crateLayerIndex = L;
           }
         }
-        
+
         // Process crate items after all layers are parsed
         if (crateItemsForCell && crateLayerIndex >= 0) {
           const itemIndices = crateItemsForCell.split(".").map(idx => parseInt(idx, 10));
@@ -346,7 +375,7 @@ function stringToWorld(s) {
             console.log("Multi-layer: Loaded crate at", crateKey, "with", items.length, "items:", itemIndices);
           }
         }
-        
+
         outRow.push({ layers });
       } else {
         // Legacy single-layer format
@@ -395,31 +424,35 @@ function coordsToGrid(x, y) {
   };
 }
 
-// Check if a tile is concrete (any variant)
-function isConcrete(row, col, layer = 2) {
+// Check if a tile has the same type as another (for auto-tiling)
+function isSameTileType(row, col, layer, tileType) {
   const tile = getTile(row, col, layer);
   if (!tile) return false;
-  return concreteTypes.includes(tile.type);
+  return tile.type === tileType;
 }
 
-// Get the appropriate concrete variant and rotation based on neighbors
-// Edge piece has border at BOTTOM
-// Corner piece has borders at BOTTOM and LEFT
-function getConcreteVariant(row, col, layer = 2) {
-  if (!isConcrete(row, col, layer)) return { variant: 'full', rotation: 0 };
+// Get the appropriate tile variant and rotation based on neighbors
+// Generic function that works for any tile with registered variants
+function getTileVariant(row, col, layer, tileType) {
+  if (!tileVariants[tileType]) {
+    return { variant: 'full', rotation: 0, img: null };
+  }
+
+  const config = tileVariants[tileType];
+  const edgeInfo = config.edgeInfo;
   
   // Check all cardinal neighbors
-  const n = isConcrete(row - 1, col, layer);     // north
-  const s = isConcrete(row + 1, col, layer);     // south
-  const e = isConcrete(row, col + 1, layer);     // east
-  const w = isConcrete(row, col - 1, layer);     // west
-  
-  let variant = 'full'; // Default to full border (Concrete.png)
+  const n = isSameTileType(row - 1, col, layer, tileType);     // north
+  const s = isSameTileType(row + 1, col, layer, tileType);     // south
+  const e = isSameTileType(row, col + 1, layer, tileType);     // east
+  const w = isSameTileType(row, col - 1, layer, tileType);     // west
+
+  let variant = 'full';
   let rotation = 0;
-  
+
   // Count cardinal neighbors
   const cardinalCount = [n, s, e, w].filter(Boolean).length;
-  
+
   if (cardinalCount === 0) {
     // Isolated tile - use full border
     variant = 'full';
@@ -430,12 +463,29 @@ function getConcreteVariant(row, col, layer = 2) {
     rotation = 0;
   } else if (cardinalCount === 3) {
     // Three neighbors - use edge (border on one side)
-    // Edge has border at bottom of image, rotate so border faces the empty side
     variant = 'edge';
-    if (!n) rotation = 180;   // empty north, rotate 180 so bottom border faces north
-    else if (!s) rotation = 0;   // empty south, bottom border already faces south
-    else if (!e) rotation = 270; // empty east, rotate 270 (CCW) so bottom faces east
-    else if (!w) rotation = 90;  // empty west, rotate 90 (CW) so bottom faces west
+    // Rotate based on which side is empty and edge configuration
+    if (edgeInfo.edge === 'bottom') {
+      if (!n) rotation = 180;
+      else if (!s) rotation = 0;
+      else if (!e) rotation = 270;
+      else if (!w) rotation = 90;
+    } else if (edgeInfo.edge === 'top') {
+      if (!n) rotation = 0;
+      else if (!s) rotation = 180;
+      else if (!e) rotation = 90;
+      else if (!w) rotation = 270;
+    } else if (edgeInfo.edge === 'left') {
+      if (!n) rotation = 90;
+      else if (!s) rotation = 270;
+      else if (!e) rotation = 0;
+      else if (!w) rotation = 180;
+    } else if (edgeInfo.edge === 'right') {
+      if (!n) rotation = 270;
+      else if (!s) rotation = 90;
+      else if (!e) rotation = 180;
+      else if (!w) rotation = 0;
+    }
   } else if (cardinalCount === 2) {
     if ((n && s) || (e && w)) {
       // Opposite sides - use center
@@ -443,24 +493,29 @@ function getConcreteVariant(row, col, layer = 2) {
       rotation = 0;
     } else {
       // Adjacent sides - use corner
-      // Corner has borders at bottom and left of image
       variant = 'corner';
-      if (n && e) rotation = 0;   // neighbors north+east, empty south-west, no rotation needed
-      else if (s && e) rotation = 90; // neighbors south+east, empty north-west, rotate 90 CW
-      else if (s && w) rotation = 180; // neighbors south+west, empty north-east, rotate 180
-      else if (n && w) rotation = 270;  // neighbors north+west, empty south-east, rotate 270 CW
+      // Determine rotation based on corner configuration
+      if (edgeInfo.corner[0] === 'bottom' && edgeInfo.corner[1] === 'left') {
+        if (n && e) rotation = 0;
+        else if (s && e) rotation = 90;
+        else if (s && w) rotation = 180;
+        else if (n && w) rotation = 270;
+      }
+      // Add more corner configurations as needed
     }
   } else if (cardinalCount === 1) {
     // One neighbor - use edge piece
-    // Edge has border at bottom of image, rotate so border faces away from neighbor
     variant = 'edge';
-    if (n) rotation = 0; // neighbor north, border faces south (away from neighbor)
-    else if (s) rotation = 180; // neighbor south, border faces north
-    else if (e) rotation = 90; // neighbor east, border faces west
-    else if (w) rotation = 270; // neighbor west, border faces east
+    if (edgeInfo.edge === 'bottom') {
+      if (n) rotation = 0;
+      else if (s) rotation = 180;
+      else if (e) rotation = 90;
+      else if (w) rotation = 270;
+    }
+    // Add more edge configurations as needed
   }
-  
-  return { variant, rotation };
+
+  return { variant, rotation, img: config.variants[variant] };
 }
 
 // --- Layered drawing: draw ONE layer index (0,1 behind; 2 in front) ---
@@ -509,16 +564,19 @@ function drawWorldLayer(world, layerIndex) {
         if (__alpha < 255) { tint(255, __alpha); __useTint = true; }
       }
 
-      // Determine which image to draw (check for concrete auto-tiling)
+      // Determine which image to draw (check for auto-tiling variants)
       let imgToDraw = tileImgs[tileType];
       let finalRotation = rotation;
-      
-      if (tileType === 3) { // Concrete
-        const variantInfo = getConcreteVariant(i, j, layerIndex);
-        imgToDraw = concreteVariantImgs[variantInfo.variant];
-        finalRotation = variantInfo.rotation;
+
+      // Check if this tile type has variants registered
+      if (tileVariants[tileType]) {
+        const variantInfo = getTileVariant(i, j, layerIndex, tileType);
+        if (variantInfo.img) {
+          imgToDraw = variantInfo.img;
+          finalRotation = variantInfo.rotation;
+        }
       }
-      
+
       // Draw the tile
       if (finalRotation > 0) {
         push();
