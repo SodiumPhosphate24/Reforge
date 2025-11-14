@@ -102,7 +102,7 @@ function drawEditorUI() {
   textSize(18);
   textAlign(CENTER);
   text("EDITOR MODE - Press Shift+E to exit", width / 2, 25);
-  text("Left-click: place | Right-click: erase | Alt+Click: pick | R: rotate | 1/2/3/4: layer", width / 2, 45);
+  text("Left-click: place | Right-click: erase | Alt+Click: pick | R: rotate | 1/2/3/4: layer | Hold M: minimap", width / 2, 45);
   text(
     "Layer: " + editorLayer +
     " | Current tile: " + selectedTileType +
@@ -127,6 +127,106 @@ function drawEditorUI() {
   } else {
     drawTilePreview();
   }
+  
+  // Draw minimap when M is held
+  if (keyIsDown(77)) { // 77 is 'M'
+    drawMinimap();
+  }
+}
+
+function drawMinimap() {
+  if (!gameWorld || gameWorld.length === 0) return;
+  
+  const minimapSize = 250;
+  const minimapX = width - minimapSize - 20;
+  const minimapY = 90;
+  
+  const rows = gameWorld.length;
+  const cols = gameWorld[0] ? gameWorld[0].length : 0;
+  
+  if (rows === 0 || cols === 0) return;
+  
+  // Background
+  fill(0, 0, 0, 200);
+  stroke(255, 255, 0);
+  strokeWeight(2);
+  rect(minimapX, minimapY, minimapSize, minimapSize);
+  
+  // Calculate tile size on minimap
+  const tileSize = Math.min(minimapSize / cols, minimapSize / rows);
+  const mapWidth = cols * tileSize;
+  const mapHeight = rows * tileSize;
+  
+  // Center the map in the minimap area
+  const offsetX = minimapX + (minimapSize - mapWidth) / 2;
+  const offsetY = minimapY + (minimapSize - mapHeight) / 2;
+  
+  noStroke();
+  
+  // Draw tiles
+  for (let i = 0; i < rows; i++) {
+    if (!gameWorld[i]) continue;
+    
+    for (let j = 0; j < cols; j++) {
+      const cell = gameWorld[i][j];
+      if (!cell) continue;
+      
+      // Find the highest visible layer
+      let tileObj = null;
+      if ('layers' in cell) {
+        // Check from layer 3 down to 0
+        for (let L = 3; L >= 0; L--) {
+          if (cell.layers[L]) {
+            tileObj = cell.layers[L];
+            break;
+          }
+        }
+      } else {
+        tileObj = cell; // legacy
+      }
+      
+      if (!tileObj) continue;
+      
+      // Color code tiles by type
+      const tileType = tileObj.type;
+      
+      // Simple color mapping
+      if (tileType === 0) fill(100, 150, 100); // grass - green
+      else if (tileType === 1) fill(80, 80, 80); // asphalt - gray
+      else if (tileType === 2) fill(90, 90, 90); // lined asphalt
+      else if (tileType === 3) fill(150, 150, 150); // concrete - light gray
+      else if (tileType === 4) fill(160, 80, 60); // brick - brown
+      else if (tileType === 5) fill(200, 150, 100); // crate - tan
+      else if (tileType === 6) fill(100, 100, 200); // workbench - blue
+      else if (tileType === 7) fill(120, 90, 60); // dirt - dark brown
+      else if (tileType === 8) fill(60, 60, 60); // dark concrete
+      else if (tileType === 9) fill(139, 90, 60); // door - wood color
+      else if (tileType === 10) fill(173, 216, 230); // window - light blue
+      else if (tileType === 11) fill(100, 100, 100); // crack
+      else if (tileType === 12) fill(139, 90, 43); // wood
+      else fill(200, 200, 200); // default
+      
+      rect(offsetX + j * tileSize, offsetY + i * tileSize, tileSize, tileSize);
+    }
+  }
+  
+  // Draw player position
+  const playerGridX = Math.floor((pX + 600) / 50);
+  const playerGridY = Math.floor((pY + 375) / 50);
+  
+  fill(255, 0, 0);
+  stroke(255, 255, 255);
+  strokeWeight(1);
+  const playerMinimapX = offsetX + playerGridX * tileSize;
+  const playerMinimapY = offsetY + playerGridY * tileSize;
+  ellipse(playerMinimapX + tileSize / 2, playerMinimapY + tileSize / 2, tileSize * 2, tileSize * 2);
+  
+  // Label
+  noStroke();
+  fill(255, 255, 0);
+  textSize(14);
+  textAlign(LEFT);
+  text("MINIMAP (Hold M)", minimapX + 5, minimapY - 5);
 }
 
 function drawTilePreview() {

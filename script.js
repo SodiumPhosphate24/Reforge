@@ -549,10 +549,10 @@ function drawWorldLayer(world, layerIndex) {
         }
       }
 
-      // Draw the tile
+      // Draw the tile (optimized - avoid push/pop when rotation is 0)
       if (finalRotation > 0) {
         push();
-        translate(j * 50 + 25, i * 50 + 25); // Move to center of tile
+        translate(j * 50 + 25, i * 50 + 25);
         rotate(radians(finalRotation));
         image(imgToDraw, -25, -25, 50, 50);
         pop();
@@ -560,25 +560,22 @@ function drawWorldLayer(world, layerIndex) {
         image(imgToDraw, j * 50, i * 50, 50, 50);
       }
 
-      // Draw crate inventory if this is a crate tile (type 5) on layer 2
+      // Draw crate inventory only when needed
       if (layerIndex === 2 && tileType === 5) {
         const crateKey = i + "," + j;
         if (crateInventories.has(crateKey)) {
           const items = crateInventories.get(crateKey);
-          // Display a few items within the crate visual
           const maxDisplayItems = 3;
           for (let k = 0; k < Math.min(items.length, maxDisplayItems); k++) {
             const item = items[k];
-            const itemImg = item[3]; // The image is the 4th element
+            const itemImg = item[3];
             if (itemImg) {
-              const xOffset = j * 50 + 10 + k * 15; // Position items within crate
-              const yOffset = i * 50 + 10;
-              image(itemImg, xOffset, yOffset, 15, 15);
+              image(itemImg, j * 50 + 10 + k * 15, i * 50 + 10, 15, 15);
             }
           }
-          // If there are more items than displayed, indicate overflow (e.g., with '+')
           if (items.length > maxDisplayItems) {
             fill(255);
+            noStroke();
             textSize(10);
             text("+", j * 50 + 10 + maxDisplayItems * 15, i * 50 + 20);
           }
