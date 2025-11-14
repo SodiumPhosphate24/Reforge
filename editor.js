@@ -107,7 +107,7 @@ function drawEditorUI() {
   textSize(18);
   textAlign(CENTER);
   text("EDITOR MODE - Press Shift+E to exit", width / 2, 25);
-  text("Left-click: place | Right-click: erase | Alt+Click: pick | R: rotate | 1/2/3/4: layer | Hold M: minimap", width / 2, 45);
+  text("Left-click: place | Right-click: erase | Alt+Click: pick | R: rotate | 1/2/3/4: layer | Hold P: minimap", width / 2, 45);
   text(
     "Layer: " + editorLayer +
     " | Current tile: " + selectedTileType +
@@ -133,11 +133,11 @@ function drawEditorUI() {
     drawTilePreview();
   }
   
-  // Draw minimap when M is held
-  const mKeyPressed = keyIsDown(77); // 77 is 'M'
+  // Draw minimap when P is held
+  const pKeyPressed = keyIsDown(80); // 80 is 'P'
   
-  if (mKeyPressed) {
-    // If M just got pressed (transition from not pressed to pressed)
+  if (pKeyPressed) {
+    // If P just got pressed (transition from not pressed to pressed)
     if (!lastMinimapPress) {
       minimapNeedsRedraw = true;
     }
@@ -150,10 +150,13 @@ function drawEditorUI() {
     
     // Draw the cached minimap
     drawCachedMinimap();
+    
+    // Draw player indicator in real-time (not cached)
+    drawMinimapPlayerIndicator();
   }
   
   // Update last frame state
-  lastMinimapPress = mKeyPressed;
+  lastMinimapPress = pKeyPressed;
 }
 
 function renderMinimapToCache() {
@@ -235,23 +238,12 @@ function renderMinimapToCache() {
     }
   }
   
-  // Draw player position
-  const playerGridX = Math.floor((pX + 600) / 50);
-  const playerGridY = Math.floor((pY + 375) / 50);
-  
-  minimapCache.fill(255, 0, 0);
-  minimapCache.stroke(255, 255, 255);
-  minimapCache.strokeWeight(1);
-  const playerMinimapX = offsetX + playerGridX * tileSize;
-  const playerMinimapY = offsetY + playerGridY * tileSize;
-  minimapCache.ellipse(playerMinimapX + tileSize / 2, playerMinimapY + tileSize / 2, tileSize * 2, tileSize * 2);
-  
   // Label
   minimapCache.noStroke();
   minimapCache.fill(255, 255, 0);
   minimapCache.textSize(14);
   minimapCache.textAlign(LEFT);
-  minimapCache.text("MINIMAP (Hold M)", 25, 15);
+  minimapCache.text("MINIMAP (Hold P)", 25, 15);
 }
 
 function drawCachedMinimap() {
@@ -263,6 +255,39 @@ function drawCachedMinimap() {
   
   // Draw the cached minimap image
   image(minimapCache, minimapX - 20, minimapY - 20);
+}
+
+function drawMinimapPlayerIndicator() {
+  if (!gameWorld || gameWorld.length === 0) return;
+  
+  const minimapSize = 250;
+  const minimapX = width - minimapSize - 20;
+  const minimapY = 90;
+  
+  const rows = gameWorld.length;
+  const cols = gameWorld[0] ? gameWorld[0].length : 0;
+  
+  if (rows === 0 || cols === 0) return;
+  
+  // Calculate tile size on minimap
+  const tileSize = Math.min(minimapSize / cols, minimapSize / rows);
+  const mapWidth = cols * tileSize;
+  const mapHeight = rows * tileSize;
+  
+  // Center the map in the minimap area
+  const offsetX = minimapX + (minimapSize - mapWidth) / 2;
+  const offsetY = minimapY + (minimapSize - mapHeight) / 2;
+  
+  // Draw player position
+  const playerGridX = Math.floor((pX + 600) / 50);
+  const playerGridY = Math.floor((pY + 375) / 50);
+  
+  fill(255, 0, 0);
+  stroke(255, 255, 255);
+  strokeWeight(1);
+  const playerMinimapX = offsetX + playerGridX * tileSize;
+  const playerMinimapY = offsetY + playerGridY * tileSize;
+  ellipse(playerMinimapX + tileSize / 2, playerMinimapY + tileSize / 2, tileSize * 2, tileSize * 2);
 }
 
 function drawTilePreview() {
