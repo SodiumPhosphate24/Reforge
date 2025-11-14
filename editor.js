@@ -1,4 +1,4 @@
-// ============== EDITOR (3-LAYER SUPPORT) ==============
+// ============== EDITOR (5-LAYER SUPPORT) ==============
 var editorMode = false;
 var selectedTileType = 0;    // current tile type
 // Use global maxTileTypes from your main script; fallback to tileImgs length if missing:
@@ -8,7 +8,7 @@ function __getMaxTileTypes() {
   return 0;
 }
 var tileRotation = 0;        // 0, 90, 180, 270
-var editorLayer = 0;         // 0 & 1 behind; 2 & 3 in front
+var editorLayer = 0;         // 0-3 behind player; 4 in front
 const EDIT_TILE_SIZE = 50;
 var cratePlacementPaused = false; // Pauses tile placement after crate is placed
 var lastCrateRow = -1;       // Row of last placed crate
@@ -107,7 +107,7 @@ function drawEditorUI() {
   textSize(18);
   textAlign(CENTER);
   text("EDITOR MODE - Press Shift+E to exit", width / 2, 25);
-  text("Left-click: place | Right-click: erase | Alt+Click: pick | R: rotate | 1/2/3/4: layer | Hold P: minimap", width / 2, 45);
+  text("Left-click: place | Right-click: erase | Alt+Click: pick | R: rotate | 1/2/3/4/5: layer | Hold P: minimap", width / 2, 45);
   text(
     "Layer: " + editorLayer +
     " | Current tile: " + selectedTileType +
@@ -204,7 +204,7 @@ function renderMinimapToCache() {
       // Find the highest visible layer
       let tileObj = null;
       if ('layers' in cell) {
-        for (let L = 3; L >= 0; L--) {
+        for (let L = 4; L >= 0; L--) {
           if (cell.layers[L]) {
             tileObj = cell.layers[L];
             break;
@@ -459,10 +459,12 @@ function handleEditorKeyPress() {
     return; // Don't allow other keys when paused
   }
 
-  // Layer selection: 1 / 2 / 3
+  // Layer selection: 1 / 2 / 3 / 4 / 5
   if (key === '1') { editorLayer = 0; console.log("Layer -> 0"); }
   if (key === '2') { editorLayer = 1; console.log("Layer -> 1"); }
   if (key === '3') { editorLayer = 2; console.log("Layer -> 2"); }
+  if (key === '4') { editorLayer = 3; console.log("Layer -> 3"); }
+  if (key === '5') { editorLayer = 4; console.log("Layer -> 4"); }
 
   // Tile switching with comma and period keys
   if (keyCode == 188) { // ,
@@ -510,4 +512,4 @@ function handleEditorMouseWheel(event) {
   console.log("Mouse wheel changed to tile type:", selectedTileType);
   return true; // consume wheel in editor mode
 }
-// ============== END EDITOR (3-LAYER SUPPORT) ==============
+// ============== END EDITOR (5-LAYER SUPPORT) ==============
