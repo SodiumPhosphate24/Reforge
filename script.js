@@ -23,7 +23,7 @@ let maxTileTypes = 0; // will be set in setup()
 var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
 
 function preload() {
-  console.log("Cheesey stick");
+  console.log("Cheesey sick");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   BadGuy = loadImage("Characters/Enemy.png")
@@ -139,13 +139,10 @@ function draw() {
   stepRoofFades();
   // -------------------------------
 
-  // LAYERS 0 and 1 behind player (no roof effects)
+  // LAYERS 0, 1, and 2 behind player
   drawWorldLayer(gameWorld, 0);
   drawWorldLayer(gameWorld, 1);
-  
-  // LAYERS 2 and 3 behind player (with roof effects)
   drawWorldLayer(gameWorld, 2);
-  drawWorldLayer(gameWorld, 3);
 
   fill(255);
   drawNPCs();
@@ -163,8 +160,8 @@ function draw() {
   controls();
   resolveCollisions();
 
-  // LAYER 4 on top of player (with roof effects)
-  drawWorldLayer(gameWorld, 4);
+  // LAYER 3 on top of player
+  drawWorldLayer(gameWorld, 3);
 
   pop();
 
@@ -207,21 +204,19 @@ function draw() {
   }
 }
 
-/* ===================== LAYERED WORLD (5 layers: 0-3 behind player; 4 above) =====================
+/* ===================== LAYERED WORLD (3 layers: 0,1 behind; 2 above player) =====================
 
 Cell encoding in world.txt (backwards compatible):
 - Legacy single layer: "3" or "3:90"
-- Multi-layer: "L0,L1,L2,L3,L4" where each Ln is "" or "type[:rot]"
+- Multi-layer: "L0,L1,L2" where each Ln is "" or "type[:rot]"
 Rows use '|' and columns use '/' as you already had.
 
 Example row:
-0,,,/1,3,,/2,,,/,,4,/|
+0,,/1,3,/2,,/,,4/|
 
 Crate inventory encoding:
 - Inline with tile data: "type@itemIndex.itemIndex.itemIndex"
   e.g., "5@1.3.0" for a crate with items (indices from itemConstructors)
-
-ROOF TILES: Only layers 2, 3, and 4 trigger roof tile fading. Layers 0 and 1 do NOT trigger roofs.
 
 ================================================================================================= */
 
@@ -236,10 +231,10 @@ function getTile(row, col, layer = 0) {
 function setTile(row, col, layer, type, rotation = 0) {
   if (!gameWorld[row]) gameWorld[row] = [];
   if (!gameWorld[row][col]) {
-    gameWorld[row][col] = { layers: [null, null, null, null, null] };
+    gameWorld[row][col] = { layers: [null, null, null, null] };
   } else if (!('layers' in gameWorld[row][col])) {
     const old = gameWorld[row][col];
-    gameWorld[row][col] = { layers: [old, null, null, null, null] };
+    gameWorld[row][col] = { layers: [old, null, null, null] };
   }
   gameWorld[row][col].layers[layer] = (type == null) ? null : { type: parseInt(type, 10), rotation: parseInt(rotation, 10) || 0 };
 }
@@ -331,11 +326,11 @@ function stringToWorld(s) {
       if (cellStr.includes(",")) {
         // Multi-layer format
         const layerStrs = cellStr.split(",");
-        const layers = [null, null, null, null, null];
+        const layers = [null, null, null, null];
         let crateItemsForCell = null;
         let crateLayerIndex = -1;
 
-        for (let L = 0; L < Math.min(5, layerStrs.length); L++) {
+        for (let L = 0; L < Math.min(4, layerStrs.length); L++) {
           const tstr = layerStrs[L].trim();
           if (tstr === "") { layers[L] = null; continue; }
 
@@ -532,9 +527,9 @@ function drawWorldLayer(world, layerIndex) {
       let tileType = tileObj.type;
       let rotation = tileObj.rotation || 0;
 
-      // Roof tinting ONLY on layers 2, 3, and 4 when tile is a roof type (NOT layers 0 and 1)
+      // Roof tinting on layers 1, 2, and 3 when tile is a roof type
       let __useTint = false;
-      if ((layerIndex === 2 || layerIndex === 3 || layerIndex === 4) && tileWalls[tileType] === 2) {
+      if ((layerIndex === 1 || layerIndex === 2 || layerIndex === 3) && tileWalls[tileType] === 2) {
         const __k = tileKey(i, j);
         const __alpha = roofAlpha.has(__k) ? roofAlpha.get(__k) : 255;
         if (__alpha <= 0) continue; // fully transparent; skip draw
@@ -706,8 +701,8 @@ function checkCollision(x, y, x2, y2, w, h, w2 = 50, h2 = 50) {
 }
 
 /* ========= Roof fade system (optimized with caching and range limiting) ========= */
-const ROOF_FADE_SPEED = 85;   // alpha change per frame (0..255) - faster fade
-const ROOF_MAX_DISTANCE = 15;  // max tiles to flood fill from player - reduced range
+const ROOF_FADE_SPEED = 25;   // alpha change per frame (0..255)
+const ROOF_MAX_DISTANCE = 20;  // max tiles to flood fill from player
 let roofAlpha = new Map();     // key "row,col" -> alpha
 let roofTarget = new Set();    // keys that should fade to 0 this frame
 let lastPlayerTile = { row: -1, col: -1 }; // cache player position
@@ -720,18 +715,18 @@ function isRoof(row, col) {
   const cell = gameWorld[row][col];
   if (!cell) return false;
 
-  // Roof tiles only on layers 2, 3, and 4 (NOT layers 0 and 1)
+  // Treat roof as tiles placed on layers 1, 2, or 3
   if ('layers' in cell) {
-    const L4 = cell.layers?.[4];
-    if (L4 && tileWalls[L4.type] === 2) return true;
     const L3 = cell.layers?.[3];
     if (L3 && tileWalls[L3.type] === 2) return true;
     const L2 = cell.layers?.[2];
     if (L2 && tileWalls[L2.type] === 2) return true;
+    const L1 = cell.layers?.[1];
+    if (L1 && tileWalls[L1.type] === 2) return true;
     return false;
   } else {
-    // legacy single-layer maps: don't treat as roof (layers 0-1 behavior)
-    return false;
+    // legacy single-layer maps: allow roof there too
+    return tileWalls[cell.type] === 2;
   }
 }
 
@@ -813,33 +808,27 @@ function floodFillRoof(seeds) {
 }
 
 function stepRoofFades() {
-  // Fade targets toward transparent (0) - optimized with early deletion
-  const keysToDelete = [];
-  
+  // Fade targets toward transparent (0)
   for (const k of roofTarget) {
     const curr = roofAlpha.has(k) ? roofAlpha.get(k) : 255;
-    if (curr <= ROOF_FADE_SPEED) {
-      // Will reach 0 this frame, delete immediately
-      keysToDelete.push(k);
-      continue;
-    }
-    roofAlpha.set(k, curr - ROOF_FADE_SPEED);
+    if (curr === 0) continue; // Skip if already fully transparent
+    const next = Math.max(0, curr - ROOF_FADE_SPEED);
+    roofAlpha.set(k, next);
   }
-  
-  // Fade non-targets back toward opaque (255) - optimized
+  // Fade non-targets back toward opaque (255)
+  const toDelete = [];
   for (const [k, curr] of roofAlpha.entries()) {
     if (roofTarget.has(k)) continue;
-    
-    const next = curr + ROOF_FADE_SPEED;
-    if (next >= 255) {
-      keysToDelete.push(k);
+    if (curr === 255) continue; // Skip if already fully opaque
+    const next = Math.min(255, curr + ROOF_FADE_SPEED);
+    if (next === 255) {
+      toDelete.push(k);
     } else {
       roofAlpha.set(k, next);
     }
   }
-  
-  // Batch delete in one pass
-  for (const k of keysToDelete) {
+  // Batch delete fully opaque tiles
+  for (const k of toDelete) {
     roofAlpha.delete(k);
   }
 }
