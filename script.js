@@ -703,10 +703,13 @@ function checkCollision(x, y, x2, y2, w, h, w2 = 50, h2 = 50) {
   );
 }
 
-/* ========= Roof fade system (unchanged logic; updated to look at layer 2) ========= */
+/* ========= Roof fade system (optimized with caching and range limiting) ========= */
 const ROOF_FADE_SPEED = 25;   // alpha change per frame (0..255)
+const ROOF_MAX_DISTANCE = 20;  // max tiles to flood fill from player
 let roofAlpha = new Map();     // key "row,col" -> alpha
 let roofTarget = new Set();    // keys that should fade to 0 this frame
+let lastPlayerTile = { row: -1, col: -1 }; // cache player position
+let cachedRoofTarget = new Set(); // cached flood fill results
 
 function tileKey(r, c) { return r + "," + c; }
 
@@ -757,8 +760,25 @@ function getOverlappingRoofSeeds(x, y, w, h) {
 }
 
 function floodFillRoof(seeds) {
+  // Check if player moved to a new tile - only recalculate if so
+  const playerTileRow = Math.floor((pY + 375) / 50);
+  const playerTileCol = Math.floor((pX + 600) / 50);
+  
+  if (playerTileRow === lastPlayerTile.row && playerTileCol === lastPlayerTile.col && cachedRoofTarget.size > 0) {
+    // Use cached results
+    roofTarget = new Set(cachedRoofTarget);
+    return;
+  }
+  
+  // Update last position
+  lastPlayerTile.row = playerTileRow;
+  lastPlayerTile.col = playerTileCol;
+  
   roofTarget.clear();
-  if (!seeds.length) return;
+  if (!seeds.length) {
+    cachedRoofTarget.clear();
+    return;
+  }
 
   const q = [];
   const seen = new Set();
@@ -774,6 +794,10 @@ function floodFillRoof(seeds) {
     const k = tileKey(r, c);
     roofTarget.add(k);
 
+    // Limit flood fill distance from player
+    const distFromPlayer = Math.abs(r - playerTileRow) + Math.abs(c - playerTileCol);
+    if (distFromPlayer >= ROOF_MAX_DISTANCE) continue;
+
     for (const [dr, dc] of dirs) {
       const nr = r + dr, nc = c + dc;
       if (!isRoof(nr, nc)) continue;
@@ -781,20 +805,34 @@ function floodFillRoof(seeds) {
       if (!seen.has(nk)) { seen.add(nk); q.push([nr, nc]); }
     }
   }
+  
+  // Cache the results
+  cachedRoofTarget = new Set(roofTarget);
 }
 
 function stepRoofFades() {
   // Fade targets toward transparent (0)
   for (const k of roofTarget) {
     const curr = roofAlpha.has(k) ? roofAlpha.get(k) : 255;
+    if (curr === 0) continue; // Skip if already fully transparent
     const next = Math.max(0, curr - ROOF_FADE_SPEED);
     roofAlpha.set(k, next);
   }
   // Fade non-targets back toward opaque (255)
+  const toDelete = [];
   for (const [k, curr] of roofAlpha.entries()) {
     if (roofTarget.has(k)) continue;
+    if (curr === 255) continue; // Skip if already fully opaque
     const next = Math.min(255, curr + ROOF_FADE_SPEED);
-    if (next === 255) roofAlpha.delete(k); else roofAlpha.set(k, next);
+    if (next === 255) {
+      toDelete.push(k);
+    } else {
+      roofAlpha.set(k, next);
+    }
+  }
+  // Batch delete fully opaque tiles
+  for (const k of toDelete) {
+    roofAlpha.delete(k);
   }
 }
 /* ====== End roof fade system ====== */
