@@ -110,7 +110,7 @@ function setup() {
   // Now parse the world with itemConstructors available
   gameWorld = stringToWorld(worldString[0]);
   console.log(worldString);
-  console.log("asdf");
+  console.log("this is the most updated version as of now");
   players.push(new Player(12500, 12500, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
   players.push(new Player(0, 100, 100, 100, .5, 350, playerDamage, PlayerImage));
   players.push(new Player(500, 100, 25, 25, 2, healthPoints, playerDamage, PlayerImage));
