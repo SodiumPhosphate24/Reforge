@@ -139,9 +139,10 @@ function draw() {
   stepRoofFades();
   // -------------------------------
 
-  // LAYERS 0 & 1 behind player
+  // LAYERS 0, 1, and 2 behind player
   drawWorldLayer(gameWorld, 0);
   drawWorldLayer(gameWorld, 1);
+  drawWorldLayer(gameWorld, 2);
 
   fill(255);
   drawNPCs();
@@ -159,10 +160,7 @@ function draw() {
   controls();
   resolveCollisions();
 
-  // LAYER 2 in front of player
-  drawWorldLayer(gameWorld, 2);
-
-  // LAYER 3 on top of layer 2
+  // LAYER 3 on top of player
   drawWorldLayer(gameWorld, 3);
 
   pop();
@@ -492,7 +490,7 @@ function getTileVariant(row, col, layer, tileType) {
   return { variant, rotation, img: config.variants[variant] };
 }
 
-// --- Layered drawing: draw ONE layer index (0,1 behind; 2 in front) ---
+// --- Layered drawing: draw ONE layer index (0,1,2 behind; 3 above) ---
 function drawWorldLayer(world, layerIndex) {
   if (!world || world.length === 0) return;
 
@@ -529,9 +527,9 @@ function drawWorldLayer(world, layerIndex) {
       let tileType = tileObj.type;
       let rotation = tileObj.rotation || 0;
 
-      // Roof tinting on foreground layers 2 and 3
+      // Roof tinting on layers 1, 2, and 3 when tile is a roof type
       let __useTint = false;
-      if ((layerIndex === 2 || layerIndex === 3) && tileWalls[tileType] === 2) {
+      if ((layerIndex === 1 || layerIndex === 2 || layerIndex === 3) && tileWalls[tileType] === 2) {
         const __k = tileKey(i, j);
         const __alpha = roofAlpha.has(__k) ? roofAlpha.get(__k) : 255;
         if (__alpha <= 0) continue; // fully transparent; skip draw
@@ -717,12 +715,14 @@ function isRoof(row, col) {
   const cell = gameWorld[row][col];
   if (!cell) return false;
 
-  // Treat roof as tiles placed on FOREGROUND layers 2 or 3
+  // Treat roof as tiles placed on layers 1, 2, or 3
   if ('layers' in cell) {
     const L3 = cell.layers?.[3];
     if (L3 && tileWalls[L3.type] === 2) return true;
     const L2 = cell.layers?.[2];
     if (L2 && tileWalls[L2.type] === 2) return true;
+    const L1 = cell.layers?.[1];
+    if (L1 && tileWalls[L1.type] === 2) return true;
     return false;
   } else {
     // legacy single-layer maps: allow roof there too
