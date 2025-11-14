@@ -108,11 +108,12 @@ function drawEditorUI() {
   textAlign(CENTER);
   text("EDITOR MODE - Press Shift+E to exit", width / 2, 25);
   text("Left-click: place | Right-click: erase | Alt+Click: pick | R: rotate | 1/2/3/4/5: layer | Hold P: minimap", width / 2, 45);
+  text("Layers 0-1: under player (no roof) | Layers 2-3: under player (roof) | Layer 4: above player (roof)", width / 2, 85);
   text(
     "Layer: " + editorLayer +
     " | Current tile: " + selectedTileType +
     " | Rotation: " + tileRotation + "°  | Scroll / , . to change tile",
-    width / 2, 65
+    width / 2, 105
   );
 
   // Draw pause overlay if crate placement is paused
@@ -121,11 +122,11 @@ function drawEditorUI() {
     rect(0, 0, width, height);
 
     fill(255, 255, 0);
-    textSize(12);
+    textSize(14);
     textAlign(CENTER, CENTER);
-    text("SPACE: Add item | ENTER: Finish crate", width / 2, height - 80);
-    text("ARROW KEYS or SCROLL to browse items", width / 2, height - 50);
-    text(`Items in crate: ${selectedCrateItems.length}`, width / 2, height - 20);
+    text("SPACE: Add item | ENTER: Finish crate", width / 2, height - 100);
+    text("ARROW KEYS or SCROLL to browse items", width / 2, height - 70);
+    text(`Items in crate: ${selectedCrateItems.length}`, width / 2, height - 40);
     
     // Draw selected item image
     drawSelectedItemImage();

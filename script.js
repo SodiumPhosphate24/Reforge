@@ -139,9 +139,11 @@ function draw() {
   stepRoofFades();
   // -------------------------------
 
-  // LAYERS 0, 1, 2, and 3 behind player
+  // LAYERS 0 and 1 behind player (no roof effects)
   drawWorldLayer(gameWorld, 0);
   drawWorldLayer(gameWorld, 1);
+  
+  // LAYERS 2 and 3 behind player (with roof effects)
   drawWorldLayer(gameWorld, 2);
   drawWorldLayer(gameWorld, 3);
 
@@ -161,7 +163,7 @@ function draw() {
   controls();
   resolveCollisions();
 
-  // LAYER 4 on top of player
+  // LAYER 4 on top of player (with roof effects)
   drawWorldLayer(gameWorld, 4);
 
   pop();
@@ -530,7 +532,7 @@ function drawWorldLayer(world, layerIndex) {
       let tileType = tileObj.type;
       let rotation = tileObj.rotation || 0;
 
-      // Roof tinting on layers 2, 3, and 4 when tile is a roof type (NOT layers 0 and 1)
+      // Roof tinting ONLY on layers 2, 3, and 4 when tile is a roof type (NOT layers 0 and 1)
       let __useTint = false;
       if ((layerIndex === 2 || layerIndex === 3 || layerIndex === 4) && tileWalls[tileType] === 2) {
         const __k = tileKey(i, j);
@@ -718,7 +720,7 @@ function isRoof(row, col) {
   const cell = gameWorld[row][col];
   if (!cell) return false;
 
-  // Treat roof as tiles placed on layers 2, 3, or 4 (NOT layers 0 and 1)
+  // Roof tiles only on layers 2, 3, and 4 (NOT layers 0 and 1)
   if ('layers' in cell) {
     const L4 = cell.layers?.[4];
     if (L4 && tileWalls[L4.type] === 2) return true;
@@ -728,8 +730,8 @@ function isRoof(row, col) {
     if (L2 && tileWalls[L2.type] === 2) return true;
     return false;
   } else {
-    // legacy single-layer maps: allow roof there too
-    return tileWalls[cell.type] === 2;
+    // legacy single-layer maps: don't treat as roof (layers 0-1 behavior)
+    return false;
   }
 }
 
