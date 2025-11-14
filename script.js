@@ -490,7 +490,7 @@ function getTileVariant(row, col, layer, tileType) {
   return { variant, rotation, img: config.variants[variant] };
 }
 
-// --- Layered drawing: draw ONE layer index (0,1,2 behind; 3 above) ---
+// --- Layered drawing: draw ONE layer index (0,1 behind; 2 above player) ---
 function drawWorldLayer(world, layerIndex) {
   if (!world || world.length === 0) return;
 
@@ -763,17 +763,17 @@ function floodFillRoof(seeds) {
   // Check if player moved to a new tile - only recalculate if so
   const playerTileRow = Math.floor((pY + 375) / 50);
   const playerTileCol = Math.floor((pX + 600) / 50);
-  
+
   if (playerTileRow === lastPlayerTile.row && playerTileCol === lastPlayerTile.col && cachedRoofTarget.size > 0) {
     // Use cached results
     roofTarget = new Set(cachedRoofTarget);
     return;
   }
-  
+
   // Update last position
   lastPlayerTile.row = playerTileRow;
   lastPlayerTile.col = playerTileCol;
-  
+
   roofTarget.clear();
   if (!seeds.length) {
     cachedRoofTarget.clear();
@@ -805,7 +805,7 @@ function floodFillRoof(seeds) {
       if (!seen.has(nk)) { seen.add(nk); q.push([nr, nc]); }
     }
   }
-  
+
   // Cache the results
   cachedRoofTarget = new Set(roofTarget);
 }
@@ -969,4 +969,27 @@ function keyPressedOnce(k) {
     pressedKeys[k] = false;
   }
   return false;
+}
+
+// Update and draw all particles
+function updateParticles() {
+  // Calculate viewport bounds in world coordinates
+  const viewLeft = -camX - 50;
+  const viewRight = -camX + width + 50;
+  const viewTop = -camY - 50;
+  const viewBottom = -camY + height + 50;
+
+  for (let i = particles.length - 1; i >= 0; i--) {
+    particles[i].update();
+
+    // Only draw particles within viewport (with padding)
+    if (particles[i].x >= viewLeft && particles[i].x <= viewRight &&
+        particles[i].y >= viewTop && particles[i].y <= viewBottom) {
+      particles[i].draw();
+    }
+
+    if (particles[i].isDead()) {
+      particles.splice(i, 1);
+    }
+  }
 }

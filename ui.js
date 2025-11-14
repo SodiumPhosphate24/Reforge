@@ -365,17 +365,31 @@ function updateDroppedItems() {
 
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
+  
+  // Calculate viewport bounds for culling
+  const viewLeft = -camX - 100;
+  const viewRight = -camX + width + 100;
+  const viewTop = -camY - 100;
+  const viewBottom = -camY + height + 100;
 
   for (let i = 0; i < droppedItems.length; i++) {
     let item = droppedItems[count];
-    item.draw();
+    
+    // Only update and draw items within extended viewport
+    const itemX = item.x + item.itemWidth / 2;
+    const itemY = item.y + item.itemHeight / 2;
+    
+    if (itemX >= viewLeft && itemX <= viewRight &&
+        itemY >= viewTop && itemY <= viewBottom) {
+      item.draw();
 
-    // Check if this is the nearest pickup-able item
-    if (item.checkPickup()) {
-      const d = distance(playerCenterX, playerCenterY, item.x + item.itemWidth / 2, item.y + item.itemHeight / 2);
-      if (d < nearestDistance) {
-        nearestDistance = d;
-        nearestPickupItem = item;
+      // Check if this is the nearest pickup-able item
+      if (item.checkPickup()) {
+        const d = distance(playerCenterX, playerCenterY, itemX, itemY);
+        if (d < nearestDistance) {
+          nearestDistance = d;
+          nearestPickupItem = item;
+        }
       }
     }
 

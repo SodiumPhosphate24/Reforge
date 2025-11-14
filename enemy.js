@@ -40,9 +40,12 @@ class Enemy {
     }
     
     if (this.aggro) {
+      // Reduce pathfinding frequency for distant enemies
+      const pathUpdateDelay = distToPlayer > 300 ? this.pathUpdateInterval * 2 : this.pathUpdateInterval;
+      
       // Update pathfinding periodically
       this.pathUpdateTimer++;
-      if (this.pathUpdateTimer >= this.pathUpdateInterval || this.path.length === 0) {
+      if (this.pathUpdateTimer >= pathUpdateDelay || this.path.length === 0) {
         this.pathUpdateTimer = 0;
         this.path = this.findPath(pX + 600, pY + 340);
       }
@@ -354,33 +357,48 @@ class Enemy {
 
 function drawEnemies() {
   let count = 0;
-  for (let i = 0; i < enemies.length; i++) {
-    enemies[count].update();
-    
-    // Visual indicator for aggro state
-    if (enemies[count].aggro) {
-      fill(255, 0, 0);
-    } else {
-      fill(150, 0, 0);
-    }
-    
-    image(enemies[count].image, enemies[count].x, enemies[count].y, enemies[count].width, enemies[count].height);
-    if(enemies[count].health < enemies[count].maxHealth){
-      fill(255, 0, 0);
-      rect(enemies[count].x, enemies[count].y - 10, enemies[count].width, 5);
-      fill(0, 255, 0);
-      rect(enemies[count].x, enemies[count].y - 10, enemies[count].width * (enemies[count].health / enemies[count].maxHealth), 5);
-    }
   
+  // Calculate viewport bounds for culling
+  const viewLeft = -camX - 100;
+  const viewRight = -camX + width + 100;
+  const viewTop = -camY - 100;
+  const viewBottom = -camY + height + 100;
+  
+  for (let i = 0; i < enemies.length; i++) {
+    const enemy = enemies[count];
     
-    if (enemies[count].hitsPlayer()) {
-      if (enemies[count].type == "zombie") {
+    // Always update logic
+    enemy.update();
+    
+    // Check if enemy is within viewport for rendering
+    const inView = enemy.x >= viewLeft && enemy.x <= viewRight &&
+                   enemy.y >= viewTop && enemy.y <= viewBottom;
+    
+    if (inView) {
+      // Visual indicator for aggro state
+      if (enemy.aggro) {
+        fill(255, 0, 0);
+      } else {
+        fill(150, 0, 0);
+      }
+      
+      image(enemy.image, enemy.x, enemy.y, enemy.width, enemy.height);
+      if(enemy.health < enemy.maxHealth){
+        fill(255, 0, 0);
+        rect(enemy.x, enemy.y - 10, enemy.width, 5);
+        fill(0, 255, 0);
+        rect(enemy.x, enemy.y - 10, enemy.width * (enemy.health / enemy.maxHealth), 5);
+      }
+    }
+    
+    if (enemy.hitsPlayer()) {
+      if (enemy.type == "zombie") {
         players[activePlayer].health -= 2;
         healthPoints = players[activePlayer].health;
         healthPoints = constrain(healthPoints, 0, players[activePlayer].maxHealth);
       }
     }
-    if (enemies[count].isDead()) {
+    if (enemy.isDead()) {
       enemies.splice(count, 1);
       count--;
     }

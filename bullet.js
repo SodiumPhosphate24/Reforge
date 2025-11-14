@@ -68,13 +68,13 @@ class Bullet {
                   // Get stored items for this crate
                   const crateKey = row + "," + col;
                   const storedItems = crateInventories.get(crateKey);
-                  
+
                   if (storedItems && storedItems.length > 0) {
                     // Drop all stored items
                     for (const itemConstructor of storedItems) {
                       droppedItems.push(new DroppedItem(
-                        new Item(itemConstructor[0], itemConstructor[1], itemConstructor[2]), 
-                        col * 50 + 25, 
+                        new Item(itemConstructor[0], itemConstructor[1], itemConstructor[2]),
+                        col * 50 + 25,
                         row * 50 + 25
                       ));
                     }
@@ -84,12 +84,12 @@ class Bullet {
                     // Fallback: drop random item if no inventory stored
                     let r = Math.floor(Math.random() * itemConstructors.length);
                     droppedItems.push(new DroppedItem(
-                      new Item(itemConstructors[r][0], itemConstructors[r][1], itemConstructors[r][2]), 
-                      col * 50 + 25, 
+                      new Item(itemConstructors[r][0], itemConstructors[r][1], itemConstructors[r][2]),
+                      col * 50 + 25,
                       row * 50 + 25
                     ));
                   }
-                  
+
                   clearTile(row, col, L);
                   particle(col * 50 + 25, row * 50 + 25, [139, 69, 19], 30, 5);
                 }
@@ -116,24 +116,35 @@ class Bullet {
 }
 function drawBullets() {
   let count = 0;
+
+  // Calculate viewport bounds for culling
+  const viewLeft = -camX - 50;
+  const viewRight = -camX + width + 50;
+  const viewTop = -camY - 50;
+  const viewBottom = -camY + height + 50;
+
   for (let i = 0; i < bullets.length; i++) {
     const b = bullets[count];
     b.update();
 
-    push();
-    // move to bullet’s world position
-    translate(b.x, b.y);
-    // rotate around its center
-    rotate(b.angle);
+    // Only draw bullets within viewport
+    if (b.x >= viewLeft && b.x <= viewRight &&
+        b.y >= viewTop && b.y <= viewBottom) {
+      push();
+      // move to bullet's world position
+      translate(b.x, b.y);
+      // rotate around its center
+      rotate(b.angle);
 
-    // draw the bullet image (or fallback rect) centered
-    if (b.image) {
-      image(b.image, -10, -10, 18, 5); // -10,-10 centers it
-    } else {
-      fill(255, 0, 0);
-      rect(-10, -10, 18, 5);
+      // draw the bullet image (or fallback rect) centered
+      if (b.image) {
+        image(b.image, -10, -10, 18, 5); // -10,-10 centers it
+      } else {
+        fill(255, 0, 0);
+        rect(-10, -10, 18, 5);
+      }
+      pop();
     }
-    pop();
 
     if (b.hitsEnemy() || b.hitsWall() || b.lifespan <= 0) {
       bullets.splice(count, 1);
