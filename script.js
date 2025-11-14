@@ -706,8 +706,8 @@ function checkCollision(x, y, x2, y2, w, h, w2 = 50, h2 = 50) {
 }
 
 /* ========= Roof fade system (optimized with caching and range limiting) ========= */
-const ROOF_FADE_SPEED = 25;   // alpha change per frame (0..255)
-const ROOF_MAX_DISTANCE = 20;  // max tiles to flood fill from player
+const ROOF_FADE_SPEED = 85;   // alpha change per frame (0..255) - faster fade
+const ROOF_MAX_DISTANCE = 15;  // max tiles to flood fill from player - reduced range
 let roofAlpha = new Map();     // key "row,col" -> alpha
 let roofTarget = new Set();    // keys that should fade to 0 this frame
 let lastPlayerTile = { row: -1, col: -1 }; // cache player position
@@ -813,27 +813,33 @@ function floodFillRoof(seeds) {
 }
 
 function stepRoofFades() {
-  // Fade targets toward transparent (0)
+  // Fade targets toward transparent (0) - optimized with early deletion
+  const keysToDelete = [];
+  
   for (const k of roofTarget) {
     const curr = roofAlpha.has(k) ? roofAlpha.get(k) : 255;
-    if (curr === 0) continue; // Skip if already fully transparent
-    const next = Math.max(0, curr - ROOF_FADE_SPEED);
-    roofAlpha.set(k, next);
+    if (curr <= ROOF_FADE_SPEED) {
+      // Will reach 0 this frame, delete immediately
+      keysToDelete.push(k);
+      continue;
+    }
+    roofAlpha.set(k, curr - ROOF_FADE_SPEED);
   }
-  // Fade non-targets back toward opaque (255)
-  const toDelete = [];
+  
+  // Fade non-targets back toward opaque (255) - optimized
   for (const [k, curr] of roofAlpha.entries()) {
     if (roofTarget.has(k)) continue;
-    if (curr === 255) continue; // Skip if already fully opaque
-    const next = Math.min(255, curr + ROOF_FADE_SPEED);
-    if (next === 255) {
-      toDelete.push(k);
+    
+    const next = curr + ROOF_FADE_SPEED;
+    if (next >= 255) {
+      keysToDelete.push(k);
     } else {
       roofAlpha.set(k, next);
     }
   }
-  // Batch delete fully opaque tiles
-  for (const k of toDelete) {
+  
+  // Batch delete in one pass
+  for (const k of keysToDelete) {
     roofAlpha.delete(k);
   }
 }
