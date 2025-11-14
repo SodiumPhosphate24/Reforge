@@ -17,6 +17,11 @@ var selectedItemIndex = 0;   // Currently selected item from itemConstructors
 var selectedCrateItems = []; // Array to store selected item constructors for this crate
 var crateInventories = new Map(); // Map to store items for each crate: key = "row,col", value = array of item constructors
 
+// Minimap caching variables
+var minimapCache = null;     // Cached screenshot of the minimap
+var lastMinimapPress = false; // Track if M was pressed last frame
+var minimapNeedsRedraw = true; // Flag to trigger minimap redraw
+
 // Disable context menu so right-click can erase while editing
 if (typeof window !== "undefined") {
   window.oncontextmenu = function(e) {
@@ -129,28 +134,44 @@ function drawEditorUI() {
   }
   
   // Draw minimap when M is held
-  if (keyIsDown(77)) { // 77 is 'M'
-    drawMinimap();
+  const mKeyPressed = keyIsDown(77); // 77 is 'M'
+  
+  if (mKeyPressed) {
+    // If M just got pressed (transition from not pressed to pressed)
+    if (!lastMinimapPress) {
+      minimapNeedsRedraw = true;
+    }
+    
+    // Render minimap (either fresh or from cache)
+    if (minimapNeedsRedraw) {
+      renderMinimapToCache();
+      minimapNeedsRedraw = false;
+    }
+    
+    // Draw the cached minimap
+    drawCachedMinimap();
   }
+  
+  // Update last frame state
+  lastMinimapPress = mKeyPressed;
 }
 
-function drawMinimap() {
+function renderMinimapToCache() {
   if (!gameWorld || gameWorld.length === 0) return;
   
   const minimapSize = 250;
-  const minimapX = width - minimapSize - 20;
-  const minimapY = 90;
-  
   const rows = gameWorld.length;
   const cols = gameWorld[0] ? gameWorld[0].length : 0;
   
   if (rows === 0 || cols === 0) return;
   
-  // Background
-  fill(0, 0, 0, 200);
-  stroke(255, 255, 0);
-  strokeWeight(2);
-  rect(minimapX, minimapY, minimapSize, minimapSize);
+  // Create graphics buffer for minimap
+  if (!minimapCache) {
+    minimapCache = createGraphics(minimapSize + 40, minimapSize + 40);
+  }
+  
+  // Clear the cache
+  minimapCache.clear();
   
   // Calculate tile size on minimap
   const tileSize = Math.min(minimapSize / cols, minimapSize / rows);
@@ -158,10 +179,16 @@ function drawMinimap() {
   const mapHeight = rows * tileSize;
   
   // Center the map in the minimap area
-  const offsetX = minimapX + (minimapSize - mapWidth) / 2;
-  const offsetY = minimapY + (minimapSize - mapHeight) / 2;
+  const offsetX = 20 + (minimapSize - mapWidth) / 2;
+  const offsetY = 20 + (minimapSize - mapHeight) / 2;
   
-  noStroke();
+  // Draw background
+  minimapCache.fill(0, 0, 0, 200);
+  minimapCache.stroke(255, 255, 0);
+  minimapCache.strokeWeight(2);
+  minimapCache.rect(20, 20, minimapSize, minimapSize);
+  
+  minimapCache.noStroke();
   
   // Draw tiles
   for (let i = 0; i < rows; i++) {
@@ -174,7 +201,6 @@ function drawMinimap() {
       // Find the highest visible layer
       let tileObj = null;
       if ('layers' in cell) {
-        // Check from layer 3 down to 0
         for (let L = 3; L >= 0; L--) {
           if (cell.layers[L]) {
             tileObj = cell.layers[L];
@@ -182,31 +208,30 @@ function drawMinimap() {
           }
         }
       } else {
-        tileObj = cell; // legacy
+        tileObj = cell;
       }
       
       if (!tileObj) continue;
       
-      // Color code tiles by type
       const tileType = tileObj.type;
       
-      // Simple color mapping
-      if (tileType === 0) fill(100, 150, 100); // grass - green
-      else if (tileType === 1) fill(80, 80, 80); // asphalt - gray
-      else if (tileType === 2) fill(90, 90, 90); // lined asphalt
-      else if (tileType === 3) fill(150, 150, 150); // concrete - light gray
-      else if (tileType === 4) fill(160, 80, 60); // brick - brown
-      else if (tileType === 5) fill(200, 150, 100); // crate - tan
-      else if (tileType === 6) fill(100, 100, 200); // workbench - blue
-      else if (tileType === 7) fill(120, 90, 60); // dirt - dark brown
-      else if (tileType === 8) fill(60, 60, 60); // dark concrete
-      else if (tileType === 9) fill(139, 90, 60); // door - wood color
-      else if (tileType === 10) fill(173, 216, 230); // window - light blue
-      else if (tileType === 11) fill(100, 100, 100); // crack
-      else if (tileType === 12) fill(139, 90, 43); // wood
-      else fill(200, 200, 200); // default
+      // Color code tiles by type
+      if (tileType === 0) minimapCache.fill(100, 150, 100);
+      else if (tileType === 1) minimapCache.fill(80, 80, 80);
+      else if (tileType === 2) minimapCache.fill(90, 90, 90);
+      else if (tileType === 3) minimapCache.fill(150, 150, 150);
+      else if (tileType === 4) minimapCache.fill(160, 80, 60);
+      else if (tileType === 5) minimapCache.fill(200, 150, 100);
+      else if (tileType === 6) minimapCache.fill(100, 100, 200);
+      else if (tileType === 7) minimapCache.fill(120, 90, 60);
+      else if (tileType === 8) minimapCache.fill(60, 60, 60);
+      else if (tileType === 9) minimapCache.fill(139, 90, 60);
+      else if (tileType === 10) minimapCache.fill(173, 216, 230);
+      else if (tileType === 11) minimapCache.fill(100, 100, 100);
+      else if (tileType === 12) minimapCache.fill(139, 90, 43);
+      else minimapCache.fill(200, 200, 200);
       
-      rect(offsetX + j * tileSize, offsetY + i * tileSize, tileSize, tileSize);
+      minimapCache.rect(offsetX + j * tileSize, offsetY + i * tileSize, tileSize, tileSize);
     }
   }
   
@@ -214,19 +239,30 @@ function drawMinimap() {
   const playerGridX = Math.floor((pX + 600) / 50);
   const playerGridY = Math.floor((pY + 375) / 50);
   
-  fill(255, 0, 0);
-  stroke(255, 255, 255);
-  strokeWeight(1);
+  minimapCache.fill(255, 0, 0);
+  minimapCache.stroke(255, 255, 255);
+  minimapCache.strokeWeight(1);
   const playerMinimapX = offsetX + playerGridX * tileSize;
   const playerMinimapY = offsetY + playerGridY * tileSize;
-  ellipse(playerMinimapX + tileSize / 2, playerMinimapY + tileSize / 2, tileSize * 2, tileSize * 2);
+  minimapCache.ellipse(playerMinimapX + tileSize / 2, playerMinimapY + tileSize / 2, tileSize * 2, tileSize * 2);
   
   // Label
-  noStroke();
-  fill(255, 255, 0);
-  textSize(14);
-  textAlign(LEFT);
-  text("MINIMAP (Hold M)", minimapX + 5, minimapY - 5);
+  minimapCache.noStroke();
+  minimapCache.fill(255, 255, 0);
+  minimapCache.textSize(14);
+  minimapCache.textAlign(LEFT);
+  minimapCache.text("MINIMAP (Hold M)", 25, 15);
+}
+
+function drawCachedMinimap() {
+  if (!minimapCache) return;
+  
+  const minimapSize = 250;
+  const minimapX = width - minimapSize - 20;
+  const minimapY = 90;
+  
+  // Draw the cached minimap image
+  image(minimapCache, minimapX - 20, minimapY - 20);
 }
 
 function drawTilePreview() {
