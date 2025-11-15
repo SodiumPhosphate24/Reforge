@@ -86,9 +86,12 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(1200, 750);
+  createCanvas(1200, 750, WEBGL);
   maxTileTypes = tileImgs.length;
   PlayerImage = Buschy;
+  
+  // Initialize roof fade shader
+  initRoofShader();
 
   // Initialize itemConstructors BEFORE parsing world so crate inventories can be loaded
   itemConstructors = [
@@ -527,13 +530,13 @@ function drawWorldLayer(world, layerIndex) {
       let tileType = tileObj.type;
       let rotation = tileObj.rotation || 0;
 
-      // Roof tinting on layers 1, 2, and 3 when tile is a roof type
-      let __useTint = false;
+      // Get roof alpha for shader
+      let roofAlphaValue = 1.0;
       if ((layerIndex === 1 || layerIndex === 2 || layerIndex === 3) && tileWalls[tileType] === 2) {
         const __k = tileKey(i, j);
         const __alpha = roofAlpha.has(__k) ? roofAlpha.get(__k) : 255;
         if (__alpha <= 0) continue; // fully transparent; skip draw
-        if (__alpha < 255) { tint(255, __alpha); __useTint = true; }
+        roofAlphaValue = __alpha / 255.0;
       }
 
       // Determine which image to draw (check for auto-tiling variants)
@@ -554,10 +557,33 @@ function drawWorldLayer(world, layerIndex) {
         push();
         translate(j * 50 + 25, i * 50 + 25);
         rotate(radians(finalRotation));
+        
+        // Apply shader for roof tiles
+        if (roofAlphaValue < 1.0 && roofFadeShader) {
+          shader(roofFadeShader);
+          roofFadeShader.setUniform('uAlpha', roofAlphaValue);
+          roofFadeShader.setUniform('tex0', imgToDraw);
+        }
+        
         image(imgToDraw, -25, -25, 50, 50);
+        
+        if (roofAlphaValue < 1.0 && roofFadeShader) {
+          resetShader();
+        }
         pop();
       } else {
+        // Apply shader for roof tiles
+        if (roofAlphaValue < 1.0 && roofFadeShader) {
+          shader(roofFadeShader);
+          roofFadeShader.setUniform('uAlpha', roofAlphaValue);
+          roofFadeShader.setUniform('tex0', imgToDraw);
+        }
+        
         image(imgToDraw, j * 50, i * 50, 50, 50);
+        
+        if (roofAlphaValue < 1.0 && roofFadeShader) {
+          resetShader();
+        }
       }
 
       // Draw crate inventory only when needed
@@ -581,8 +607,6 @@ function drawWorldLayer(world, layerIndex) {
           }
         }
       }
-
-      if (__useTint) noTint();
     }
   }
 }
@@ -700,13 +724,46 @@ function checkCollision(x, y, x2, y2, w, h, w2 = 50, h2 = 50) {
   );
 }
 
-/* ========= Roof fade system (optimized with caching and range limiting) ========= */
+/* ========= Roof fade system (optimized with shader and caching) ========= */
 const ROOF_FADE_SPEED = 85;   // alpha change per frame (0..255) - instant fade
 const ROOF_MAX_DISTANCE = 25;  // max tiles to flood fill from player - reduced range
 let roofAlpha = new Map();     // key "row,col" -> alpha
 let roofTarget = new Set();    // keys that should fade to 0 this frame
 let lastPlayerTile = { row: -1, col: -1 }; // cache player position
 let cachedRoofTarget = new Set(); // cached flood fill results
+let roofFadeShader = null;     // WebGL shader for efficient alpha rendering
+
+function initRoofShader() {
+  // Vertex shader (pass-through)
+  const vertShader = `
+    attribute vec3 aPosition;
+    attribute vec2 aTexCoord;
+    varying vec2 vTexCoord;
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+    
+    void main() {
+      vTexCoord = aTexCoord;
+      vec4 positionVec4 = vec4(aPosition, 1.0);
+      gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
+    }
+  `;
+  
+  // Fragment shader (apply alpha)
+  const fragShader = `
+    precision mediump float;
+    varying vec2 vTexCoord;
+    uniform sampler2D tex0;
+    uniform float uAlpha;
+    
+    void main() {
+      vec4 color = texture2D(tex0, vTexCoord);
+      gl_FragColor = vec4(color.rgb, color.a * uAlpha);
+    }
+  `;
+  
+  roofFadeShader = createShader(vertShader, fragShader);
+}
 
 function tileKey(r, c) { return r + "," + c; }
 
