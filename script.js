@@ -122,12 +122,7 @@ function setup() {
   indicatorCurrentY = pY + 375 - 50;
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
-  
-  // Auto-start tutorial
-  if (typeof startTutorial === 'function') {
-    console.log("Starting tutorial...");
-    startTutorial();
-  }
+  NonPlayerCharacters.push(new NPC(13350, 12675, "PROMETHEUS-IV", ["PROMETHEUS-IV: HELLO WORLD", "PROMETHEUS-IV: I AM PROMETHEUS-IV"], BadGuy));
 }
 
 function draw() {
@@ -201,15 +196,6 @@ function draw() {
   imageMode(CORNER);
   noTint();
   doRecoil();
-  
-  // Update and draw tutorial system
-  if (typeof updateTutorial === 'function') {
-    updateTutorial();
-  }
-  if (typeof drawTutorialPrompt === 'function') {
-    drawTutorialPrompt();
-  }
-  
   if (editorMode) {
     drawEditorUI();
     if (mouseIsPressed) {

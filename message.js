@@ -21,19 +21,12 @@ class Message {
       this.slideY = 100; // Slide up animation
       this.boxScale = 0; // Box scale animation
       this.closing = false; // New property to manage closing animation
-      console.log("Dialogue message created:", message);
     }
   }
 }
 
 function messageDisplay() {
   textAlign(CENTER, CENTER);
-  
-  // Debug: Log messages array state
-  if (messages.length > 0 && frameCount % 60 === 0) {
-    console.log("Messages in array:", messages.length, "Types:", messages.map(m => m.type));
-  }
-  
   for (let i = 0; i < messages.length; i++) {
     if (messages[i].type == "quest") {
       messages[i].phaseTimer++;
