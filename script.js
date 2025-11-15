@@ -23,7 +23,7 @@ let maxTileTypes = 0; // will be set in setup()
 var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
 
 function preload() {
-  console.log("Cheesey sick");
+  console.log("sepia sick");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   BadGuy = loadImage("Characters/Enemy.png")
