@@ -145,7 +145,7 @@ function draw() {
 
   // Normal gameplay
   drawGameplay();
-  
+
   // Apply sepia/tan filter over everything
   drawingContext.globalCompositeOperation = 'multiply';
   drawingContext.fillStyle = 'rgba(222, 184, 135, 0.15)'; // Tan color
