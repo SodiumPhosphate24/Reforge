@@ -163,11 +163,6 @@ function draw() {
   // LAYER 3 on top of player
   drawWorldLayer(gameWorld, 3);
 
-  // --- Raycasting Visibility System ---
-  updateVisibility(); // Update visibility before drawing the overlay
-  drawWorld(); // Draw the world with visibility overlay
-  // -----------------------------------
-
   pop();
 
   // Draw pickup prompt after camera pop (screen-fixed)
@@ -705,108 +700,63 @@ function checkCollision(x, y, x2, y2, w, h, w2 = 50, h2 = 50) {
   );
 }
 
-/* ========= Roof fade system (optimized with shader and caching) ========= */
-const ROOF_FADE_SPEED = 85;   // alpha change per frame (0..255) - instant fade
-const ROOF_MAX_DISTANCE = 25;  // max tiles to flood fill from player - reduced range
+/* ========= Roof fade system (optimized with caching and range limiting) ========= */
+const ROOF_FADE_SPEED = 255;   // alpha change per frame (0..255) - instant fade
+const ROOF_MAX_DISTANCE = 15;  // max tiles to flood fill from player - reduced range
 let roofAlpha = new Map();     // key "row,col" -> alpha
 let roofTarget = new Set();    // keys that should fade to 0 this frame
 let lastPlayerTile = { row: -1, col: -1 }; // cache player position
 let cachedRoofTarget = new Set(); // cached flood fill results
-let roofFadeShader = null;     // WebGL shader for efficient alpha rendering
-
-/* ========= Raycasting Visibility System ========= */
-let visibilityMap = new Map(); // key "row,col" -> boolean (true if visible)
-const RAYCAST_DISTANCE = 20;   // max distance to check visibility
 
 function tileKey(r, c) { return r + "," + c; }
 
-// Check if there's a clear line of sight from player to a tile position
-function hasLineOfSight(fromRow, fromCol, toRow, toCol) {
-  // Bresenham's line algorithm for raycasting
-  let x0 = Math.floor(fromCol);
-  let y0 = Math.floor(fromRow);
-  let x1 = Math.floor(toCol);
-  let y1 = Math.floor(toRow);
+function isRoof(row, col) {
+  if (row < 0 || col < 0 || row >= gameWorld.length || col >= gameWorld[row].length) return false;
+  const cell = gameWorld[row][col];
+  if (!cell) return false;
 
-  const dx = Math.abs(x1 - x0);
-  const dy = Math.abs(y1 - y0);
-  const sx = x0 < x1 ? 1 : -1;
-  const sy = y0 < y1 ? 1 : -1;
-  let err = dx - dy;
+  // Treat roof as tiles placed on layers 1, 2, or 3
+  if ('layers' in cell) {
+    const L3 = cell.layers?.[3];
+    if (L3 && tileWalls[L3.type] === 2) return true;
+    const L2 = cell.layers?.[2];
+    if (L2 && tileWalls[L2.type] === 2) return true;
+    const L1 = cell.layers?.[1];
+    if (L1 && tileWalls[L1.type] === 2) return true;
+    return false;
+  } else {
+    // legacy single-layer maps: allow roof there too
+    return tileWalls[cell.type] === 2;
+  }
+}
 
-  while (true) {
-    // Check if current tile is a wall (blocking vision)
-    if (y0 >= 0 && y0 < gameWorld.length && x0 >= 0 && x0 < gameWorld[y0].length) {
-      const cell = gameWorld[y0][x0];
-      if (cell) {
-        let layersToCheck = [];
-        if ('layers' in cell) {
-          layersToCheck = cell.layers;
-        } else {
-          layersToCheck.push(cell); // Legacy format
-        }
+function getOverlappingRoofSeeds(x, y, w, h) {
+  const left = x + 600;
+  const top = y + 375;
+  const right = left + w;
+  const bottom = top + h;
 
-        for (const tileObj of layersToCheck) {
-          if (tileObj && tileObj.type !== undefined) {
-            const tileType = tileObj.type;
-            // Wall type 1 = solid wall, blocks vision
-            if (tileWalls[tileType] === 1) {
-              // Don't block if we're at the destination tile
-              if (x0 === x1 && y0 === y1) break;
-              return false;
-            }
-          }
-        }
+  const TILE = 50;
+  const leftTile = Math.floor(left / TILE);
+  const rightTile = Math.floor(right / TILE);
+  const topTile = Math.floor(top / TILE);
+  const bottomTile = Math.floor(bottom / TILE);
+
+  const seeds = [];
+  for (let r = topTile; r <= bottomTile; r++) {
+    for (let c = leftTile; c <= rightTile; c++) {
+      if (!isRoof(r, c)) continue;
+
+      const tL = c * TILE, tT = r * TILE, tR = tL + TILE, tB = tT + TILE;
+      if (left < tR && right > tL && top < tB && bottom > tT) {
+        seeds.push([r, c]);
       }
     }
-
-    // Reached destination
-    if (x0 === x1 && y0 === y1) break;
-
-    const e2 = 2 * err;
-    if (e2 > -dy) {
-      err -= dy;
-      x0 += sx;
-    }
-    if (e2 < dx) {
-      err += dx;
-      y0 += sy;
-    }
   }
-
-  return true;
+  return seeds;
 }
 
-// Update visibility map based on player position
-function updateVisibility() {
-  // Convert player's world coordinates to tile grid coordinates
-  const playerScreenX = pX + 600;
-  const playerScreenY = pY + 375;
-  const playerRow = Math.floor(playerScreenY / 50);
-  const playerCol = Math.floor(playerScreenX / 50);
-
-  const mapHeight = gameWorld.length;
-  const mapWidth = gameWorld.length > 0 ? gameWorld[0].length : 0;
-
-  visibilityMap.clear();
-
-  // Check visibility in a radius around player
-  const minRow = Math.max(0, playerRow - RAYCAST_DISTANCE);
-  const maxRow = Math.min(mapHeight - 1, playerRow + RAYCAST_DISTANCE);
-  const minCol = Math.max(0, playerCol - RAYCAST_DISTANCE);
-  const maxCol = Math.min(mapWidth - 1, playerCol + RAYCAST_DISTANCE);
-
-  for (let r = minRow; r <= maxRow; r++) {
-    for (let c = minCol; c <= maxCol; c++) {
-      const key = tileKey(r, c);
-      // Check line of sight from player's tile center to this tile's center
-      const visible = hasLineOfSight(playerRow + 0.5, playerCol + 0.5, r + 0.5, c + 0.5);
-      visibilityMap.set(key, visible);
-    }
-  }
-}
-
-function updateRoofFade() {
+function floodFillRoof(seeds) {
   // Check if player moved to a new tile - only recalculate if so
   const playerTileRow = Math.floor((pY + 375) / 50);
   const playerTileCol = Math.floor((pX + 600) / 50);
@@ -822,10 +772,7 @@ function updateRoofFade() {
   lastPlayerTile.col = playerTileCol;
 
   roofTarget.clear();
-  // Find seeds around the player that are roofs
-  const roofSeeds = getOverlappingRoofSeeds(pX, pY, pWidth, pHeight);
-
-  if (!roofSeeds.length) {
+  if (!seeds.length) {
     cachedRoofTarget.clear();
     return;
   }
@@ -834,7 +781,7 @@ function updateRoofFade() {
   const seen = new Set();
   const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]]; // 4-connected
 
-  for (const s of roofSeeds) {
+  for (const s of seeds) {
     const k = tileKey(s[0], s[1]);
     if (!seen.has(k)) { seen.add(k); q.push(s); }
   }
@@ -1034,47 +981,12 @@ function updateParticles() {
 
     // Only draw particles within viewport (with padding)
     if (particles[i].x >= viewLeft && particles[i].x <= viewRight &&
-      particles[i].y >= viewTop && particles[i].y <= viewBottom) {
+        particles[i].y >= viewTop && particles[i].y <= viewBottom) {
       particles[i].draw();
     }
 
     if (particles[i].isDead()) {
       particles.splice(i, 1);
-    }
-  }
-}
-
-
-// This function draws the world, including the visibility overlay
-function drawWorld() {
-  // --- Draw the actual world layers (already handled by drawWorldLayer calls in draw()) ---
-
-  // --- Draw shadow overlay for tiles not visible to player ---
-  noStroke();
-  fill(0, 0, 0, 150); // Dark translucent overlay
-
-  // Calculate viewport bounds in screen coordinates
-  const viewTopLeft = coordsToGrid(-camX, -camY);
-  const viewBottomRight = coordsToGrid(-camX + width, -camY + height);
-
-  // Add padding to ensure smooth scrolling and prevent flickering
-  const startRow = Math.max(0, viewTopLeft.row - 1);
-  const endRow = Math.min(gameWorld.length - 1, viewBottomRight.row + 1);
-  const startCol = Math.max(0, viewTopLeft.col - 1);
-  const endCol = Math.min(gameWorld[0].length - 1, viewBottomRight.col + 1);
-
-  for (let r = startRow; r <= endRow; r++) {
-    for (let c = startCol; c <= endCol; c++) {
-      // Ensure we are within world bounds
-      if (r < 0 || r >= gameWorld.length || c < 0 || c >= gameWorld[r].length) continue;
-
-      const key = tileKey(r, c);
-      const isVisible = visibilityMap.get(key);
-
-      // Draw shadow if the tile is marked as not visible
-      if (isVisible === false) {
-        rect(c * 50, r * 50, 50, 50);
-      }
     }
   }
 }

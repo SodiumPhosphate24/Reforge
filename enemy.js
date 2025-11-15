@@ -1,3 +1,4 @@
+
 class Enemy {
   constructor(type) {
     this.x = pX + mouseX;
@@ -10,7 +11,7 @@ class Enemy {
     this.path = []; // pathfinding waypoints
     this.pathUpdateTimer = 0;
     this.pathUpdateInterval = 15; // recalculate path every 15 frames
-
+    
     if (type == "zombie") {
       this.type = "zombie";
       this.health = 3;
@@ -25,7 +26,7 @@ class Enemy {
 
   update() {
     const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
-
+    
     // Aggro/De-aggro logic
     if (!this.aggro && distToPlayer < this.aggroRange) {
       this.aggro = true;
@@ -37,69 +38,69 @@ class Enemy {
       this.vx *= 0.9;
       this.vy *= 0.9;
     }
-
+    
     if (this.aggro) {
       // Reduce pathfinding frequency for distant enemies
       const pathUpdateDelay = distToPlayer > 300 ? this.pathUpdateInterval * 2 : this.pathUpdateInterval;
-
+      
       // Update pathfinding periodically
       this.pathUpdateTimer++;
       if (this.pathUpdateTimer >= pathUpdateDelay || this.path.length === 0) {
         this.pathUpdateTimer = 0;
         this.path = this.findPath(pX + 600, pY + 340);
       }
-
+      
       // Follow the path
       let targetX = pX + 600;
       let targetY = pY + 340;
-
+      
       if (this.path.length > 0) {
         // Get next waypoint
         const nextWaypoint = this.path[0];
         targetX = nextWaypoint.x;
         targetY = nextWaypoint.y;
-
+        
         // Check if we reached the waypoint
         const distToWaypoint = distance(this.x + 10, this.y + 10, targetX, targetY);
         if (distToWaypoint < 25) {
           this.path.shift(); // Remove reached waypoint
         }
       }
-
+      
       // Calculate desired direction toward target
       this.angle = atan2(targetY - (this.y + 10), targetX - (this.x + 10));
-
+      
       // Target velocity based on desired direction
       const targetVx = this.speed * cos(this.angle);
       const targetVy = this.speed * sin(this.angle);
-
+      
       // Smoothly interpolate current velocity toward target
       this.vx = lerp(this.vx, targetVx, this.acceleration);
       this.vy = lerp(this.vy, targetVy, this.acceleration);
-
+      
       // Store previous position for collision resolution
       const prevX = this.x;
       const prevY = this.y;
-
+      
       // Try to move both axes first
       this.x += this.vx;
       this.y += this.vy;
-
+      
       // Check for wall collisions and resolve with sliding
       if (this.checkWallCollision()) {
         // Revert to previous position
         this.x = prevX;
         this.y = prevY;
-
+        
         // Try moving only along X axis (slide horizontally)
         this.x += this.vx;
         const canMoveX = !this.checkWallCollision();
-
+        
         // Revert X and try moving only along Y axis (slide vertically)
         this.x = prevX;
         this.y += this.vy;
         const canMoveY = !this.checkWallCollision();
-
+        
         // Apply whichever direction(s) work
         if (canMoveX && canMoveY) {
           // Both axes work independently, use both
@@ -125,15 +126,15 @@ class Enemy {
       // Apply friction when not aggroed
       this.vx *= 0.95;
       this.vy *= 0.95;
-
+      
       // Move with remaining velocity
       if (Math.abs(this.vx) > 0.01 || Math.abs(this.vy) > 0.01) {
         const prevX = this.x;
         const prevY = this.y;
-
+        
         this.x += this.vx;
         this.y += this.vy;
-
+        
         if (this.checkWallCollision()) {
           this.x = prevX;
           this.y = prevY;
@@ -151,48 +152,48 @@ class Enemy {
     const startRow = Math.floor((this.y + 10) / 50);
     const endCol = Math.floor(targetX / 50);
     const endRow = Math.floor(targetY / 50);
-
+    
     // Check if start or end is out of bounds
-    if (startRow < 0 || startCol < 0 || startRow >= gameWorld.length ||
-        startCol >= gameWorld[0]?.length || endRow < 0 || endCol < 0 ||
+    if (startRow < 0 || startCol < 0 || startRow >= gameWorld.length || 
+        startCol >= gameWorld[0]?.length || endRow < 0 || endCol < 0 || 
         endRow >= gameWorld.length || endCol >= gameWorld[0]?.length) {
       return [];
     }
-
+    
     // Check if there's a clear line of sight
     if (this.hasLineOfSight(targetX, targetY)) {
       return [{ x: targetX, y: targetY }];
     }
-
+    
     const openSet = [];
     const closedSet = new Set();
     const cameFrom = new Map();
     const gScore = new Map();
     const fScore = new Map();
-
+    
     const startKey = `${startRow},${startCol}`;
     const endKey = `${endRow},${endCol}`;
-
+    
     openSet.push({ row: startRow, col: startCol, key: startKey });
     gScore.set(startKey, 0);
     fScore.set(startKey, this.heuristic(startRow, startCol, endRow, endCol));
-
+    
     const maxIterations = 500; // Prevent infinite loops
     let iterations = 0;
-
+    
     while (openSet.length > 0 && iterations < maxIterations) {
       iterations++;
-
+      
       // Find node with lowest fScore
       openSet.sort((a, b) => fScore.get(a.key) - fScore.get(b.key));
       const current = openSet.shift();
-
+      
       if (current.key === endKey) {
         return this.reconstructPath(cameFrom, current);
       }
-
+      
       closedSet.add(current.key);
-
+      
       // Check all neighbors
       const neighbors = [
         { row: current.row - 1, col: current.col }, // up
@@ -204,71 +205,71 @@ class Enemy {
         { row: current.row + 1, col: current.col - 1 }, // down-left
         { row: current.row + 1, col: current.col + 1 }  // down-right
       ];
-
+      
       for (const neighbor of neighbors) {
         const nKey = `${neighbor.row},${neighbor.col}`;
-
+        
         if (closedSet.has(nKey)) continue;
         if (this.isTileWall(neighbor.row, neighbor.col)) continue;
-
+        
         // Check diagonal movement for corner cutting
         const isDiagonal = neighbor.row !== current.row && neighbor.col !== current.col;
         if (isDiagonal) {
           // Block diagonal if either adjacent cell is a wall
-          if (this.isTileWall(current.row, neighbor.col) ||
+          if (this.isTileWall(current.row, neighbor.col) || 
               this.isTileWall(neighbor.row, current.col)) {
             continue;
           }
         }
-
+        
         const moveCost = isDiagonal ? 1.414 : 1; // diagonal costs more
         const tentativeGScore = gScore.get(current.key) + moveCost;
-
+        
         if (!gScore.has(nKey) || tentativeGScore < gScore.get(nKey)) {
           cameFrom.set(nKey, current);
           gScore.set(nKey, tentativeGScore);
           fScore.set(nKey, tentativeGScore + this.heuristic(neighbor.row, neighbor.col, endRow, endCol));
-
+          
           if (!openSet.some(n => n.key === nKey)) {
             openSet.push({ ...neighbor, key: nKey });
           }
         }
       }
     }
-
+    
     // No path found, return empty array
     return [];
   }
-
+  
   heuristic(row1, col1, row2, col2) {
     // Euclidean distance
     return Math.sqrt((row2 - row1) ** 2 + (col2 - col1) ** 2);
   }
-
+  
   reconstructPath(cameFrom, current) {
     const path = [];
     let node = current;
-
+    
     while (cameFrom.has(node.key)) {
       // Convert grid position to world position (center of tile)
-      path.unshift({
-        x: node.col * 50 + 25,
-        y: node.row * 50 + 25
+      path.unshift({ 
+        x: node.col * 50 + 25, 
+        y: node.row * 50 + 25 
       });
       node = cameFrom.get(node.key);
     }
-
+    
     return path;
   }
-
+  
   isTileWall(row, col) {
     if (row < 0 || col < 0 || row >= gameWorld.length || col >= gameWorld[row]?.length) {
       return true;
     }
-
+    
     const cell = gameWorld[row][col];
     if (!cell) return false;
-
+    
     if ('layers' in cell) {
       for (let L = 0; L < 3; L++) {
         const t = cell.layers[L];
@@ -277,10 +278,10 @@ class Enemy {
     } else {
       if (tileWalls[cell.type] === 1) return true;
     }
-
+    
     return false;
   }
-
+  
   hasLineOfSight(targetX, targetY) {
     const startX = this.x + 10;
     const startY = this.y + 10;
@@ -288,18 +289,18 @@ class Enemy {
     const dy = targetY - startY;
     const dist = Math.sqrt(dx * dx + dy * dy);
     const steps = Math.ceil(dist / 10); // Check every 10 pixels
-
+    
     for (let i = 1; i <= steps; i++) {
       const checkX = startX + (dx * i / steps);
       const checkY = startY + (dy * i / steps);
       const col = Math.floor(checkX / 50);
       const row = Math.floor(checkY / 50);
-
+      
       if (this.isTileWall(row, col)) {
         return false;
       }
     }
-
+    
     return true;
   }
 
@@ -356,23 +357,23 @@ class Enemy {
 
 function drawEnemies() {
   let count = 0;
-
+  
   // Calculate viewport bounds for culling
   const viewLeft = -camX - 100;
   const viewRight = -camX + width + 100;
   const viewTop = -camY - 100;
   const viewBottom = -camY + height + 100;
-
+  
   for (let i = 0; i < enemies.length; i++) {
     const enemy = enemies[count];
-
+    
     // Always update logic
     enemy.update();
-
+    
     // Check if enemy is within viewport for rendering
     const inView = enemy.x >= viewLeft && enemy.x <= viewRight &&
                    enemy.y >= viewTop && enemy.y <= viewBottom;
-
+    
     if (inView) {
       // Visual indicator for aggro state
       if (enemy.aggro) {
@@ -380,7 +381,7 @@ function drawEnemies() {
       } else {
         fill(150, 0, 0);
       }
-
+      
       image(enemy.image, enemy.x, enemy.y, enemy.width, enemy.height);
       if(enemy.health < enemy.maxHealth){
         fill(255, 0, 0);
@@ -389,7 +390,7 @@ function drawEnemies() {
         rect(enemy.x, enemy.y - 10, enemy.width * (enemy.health / enemy.maxHealth), 5);
       }
     }
-
+    
     if (enemy.hitsPlayer()) {
       if (enemy.type == "zombie") {
         players[activePlayer].health -= 2;
