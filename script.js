@@ -701,7 +701,7 @@ function checkCollision(x, y, x2, y2, w, h, w2 = 50, h2 = 50) {
 }
 
 /* ========= Roof fade system (optimized with caching and range limiting) ========= */
-const ROOF_FADE_SPEED = 255;   // alpha change per frame (0..255) - instant fade
+const ROOF_FADE_SPEED = 42.5;   // alpha change per frame (0..255) - instant fade
 const ROOF_MAX_DISTANCE = 15;  // max tiles to flood fill from player - reduced range
 let roofAlpha = new Map();     // key "row,col" -> alpha
 let roofTarget = new Set();    // keys that should fade to 0 this frame
@@ -981,7 +981,7 @@ function updateParticles() {
 
     // Only draw particles within viewport (with padding)
     if (particles[i].x >= viewLeft && particles[i].x <= viewRight &&
-        particles[i].y >= viewTop && particles[i].y <= viewBottom) {
+      particles[i].y >= viewTop && particles[i].y <= viewBottom) {
       particles[i].draw();
     }
 
