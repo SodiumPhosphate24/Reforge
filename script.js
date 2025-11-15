@@ -133,7 +133,7 @@ function draw() {
     drawMenuScreen();
     return;
   }
-  
+
   // Draw transition overlay during transition
   if (gameState === "transitioning") {
     // Draw the game in background
@@ -142,7 +142,7 @@ function draw() {
     drawTransitionOverlay();
     return;
   }
-  
+
   // Normal gameplay
   drawGameplay();
 }
@@ -224,6 +224,12 @@ function drawGameplay() {
       handleEditorClick();
     }
   }
+
+  // Apply sepia/tan filter
+  drawingContext.globalCompositeOperation = 'multiply';
+  drawingContext.fillStyle = 'rgba(222, 184, 135, 0.15)'; // Tan color
+  drawingContext.fillRect(0, 0, width, height);
+  drawingContext.globalCompositeOperation = 'source-over';
 }
 
 /* ===================== LAYERED WORLD (3 layers: 0,1 behind; 2 above player) =====================
