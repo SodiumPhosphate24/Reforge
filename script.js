@@ -65,6 +65,7 @@ function preload() {
   IndicatorImg = loadImage("Indicator.png");
   Silkscreen = loadFont("Silkscreen-Regular.ttf");
   EnergyTank = loadImage("hud/EnergyTank.png");
+  ReforgeLogo = loadImage("REFORGE.png");
 
   // Load concrete tile variants
   tileVariants[3] = {
