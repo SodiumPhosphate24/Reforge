@@ -29,9 +29,9 @@ function drawMenuScreen() {
   // Calculate actual dimensions based on image aspect ratio
   let logoWidth = ReforgeLogo.width;
   let logoHeight = ReforgeLogo.height;
-  let scale = logoBaseSize / max(logoWidth, logoHeight);
-  let displayWidth = logoWidth * scale;
-  let displayHeight = logoHeight * scale;
+  let logoScale = logoBaseSize / max(logoWidth, logoHeight);
+  let displayWidth = logoWidth * logoScale;
+  let displayHeight = logoHeight * logoScale;
 
   // Check if mouse is hovering over the logo
   const isHoveringLogo = mouseX >= logoX - displayWidth / 2 && mouseX <= logoX + displayWidth / 2 &&
@@ -142,9 +142,9 @@ function drawTransitionOverlay() {
       let logoBaseSize = min(width * 0.6, height * 0.6);
       let logoWidth = ReforgeLogo.width;
       let logoHeight = ReforgeLogo.height;
-      let scale = logoBaseSize / max(logoWidth, logoHeight);
-      let displayWidth = logoWidth * scale;
-      let displayHeight = logoHeight * scale;
+      let logoScale = logoBaseSize / max(logoWidth, logoHeight);
+      let displayWidth = logoWidth * logoScale;
+      let displayHeight = logoHeight * logoScale;
 
       translate(width / 2, height / 2 + logoFloat);
       scale(titleTransitionScale);
