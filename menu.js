@@ -115,21 +115,28 @@ let transitionProgress = 0;
 let titleTransitionScale = 1;
 
 function updateTransition() {
-  // Smooth transition progress (0 to 1)
-  transitionProgress = min(1, transitionProgress + 0.02);
+  // Slower transition progress (0 to 1)
+  transitionProgress = min(1, transitionProgress + 0.008);
   
   // Fade out menu with easing
   const fadeOutEase = pow(transitionProgress, 2);
   menuFadeAlpha = max(0, 255 * (1 - fadeOutEase));
   
-  // Title grows and fades during transition
-  titleTransitionScale = 1 + transitionProgress * 2;
-  
-  // Black flash effect in the middle of transition
-  if (transitionProgress < 0.5) {
-    gameplayFadeAlpha = 255 * (transitionProgress * 2);
+  // Title grows and fades during first 60% of transition
+  if (transitionProgress < 0.6) {
+    titleTransitionScale = 1 + (transitionProgress / 0.6) * 2;
   } else {
-    gameplayFadeAlpha = 255 * (2 - transitionProgress * 2);
+    titleTransitionScale = 3;
+  }
+  
+  // Black screen appears after title fades (0.0-0.6)
+  // Then slowly fades to reveal game (0.6-1.0)
+  if (transitionProgress < 0.6) {
+    gameplayFadeAlpha = 255 * (transitionProgress / 0.6);
+  } else {
+    // Very slow fade from black to game
+    const fadeInProgress = (transitionProgress - 0.6) / 0.4;
+    gameplayFadeAlpha = 255 * (1 - fadeInProgress);
   }
   
   // Once transition is complete, switch to playing state
