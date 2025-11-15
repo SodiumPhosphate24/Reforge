@@ -196,6 +196,15 @@ function draw() {
   imageMode(CORNER);
   noTint();
   doRecoil();
+  
+  // Update and draw tutorial system
+  if (typeof updateTutorial === 'function') {
+    updateTutorial();
+  }
+  if (typeof drawTutorialPrompt === 'function') {
+    drawTutorialPrompt();
+  }
+  
   if (editorMode) {
     drawEditorUI();
     if (mouseIsPressed) {

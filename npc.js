@@ -6,6 +6,7 @@ class NPC {
     this.message = message;
     this.image = image;
     this.width = 35;
+    this.active = true; // NPCs are active by default
     
     // Calculate height based on image aspect ratio
     if (this.image) {
@@ -17,11 +18,14 @@ class NPC {
   }
 
   update() {
+    // Skip interaction if NPC is inactive (tutorial system)
+    if (this.active === false) return;
+    
     const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
     if (distToPlayer < 120 && keyPressedOnce(69)) {
       // Check if there's already a dialogue message active
       const hasActiveDialogue = messages.some(msg => msg.type === "dialogue");
-      if (!hasActiveDialogue) {
+      if (!hasActiveDialogue && this.message && this.message.length > 0) {
         messages.push(new Message("dialogue", this.message));
       }
     }

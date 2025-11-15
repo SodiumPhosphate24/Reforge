@@ -146,6 +146,21 @@ function keyPressed() {
     if (keyPressedOnce(52)) editorLayer = 3; // Key '4'
   }
 
+  // Toggle editor mode with TAB key
+  if (keyPressedOnce(TAB)) {
+    editorMode = !editorMode;
+    if (editorMode) {
+      frozen = true;
+    } else {
+      frozen = false;
+    }
+  }
+
+  // Start tutorial with T key (for testing)
+  if (keyPressedOnce(84) && typeof startTutorial === 'function') { // T key
+    startTutorial();
+  }
+
 }
 
 function mouseClicked() {
