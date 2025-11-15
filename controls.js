@@ -156,11 +156,6 @@ function keyPressed() {
     }
   }
 
-  // Start tutorial with T key (for testing)
-  if (keyPressedOnce(84) && typeof startTutorial === 'function') { // T key
-    startTutorial();
-  }
-
 }
 
 function mouseClicked() {

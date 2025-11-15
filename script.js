@@ -123,6 +123,11 @@ function setup() {
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
   NonPlayerCharacters.push(new NPC(13350, 12675, "PROMETHEUS-IV", ["PROMETHEUS-IV: HELLO WORLD", "PROMETHEUS-IV: I AM PROMETHEUS-IV"], BadGuy));
+  
+  // Auto-start tutorial
+  if (typeof startTutorial === 'function') {
+    startTutorial();
+  }
 }
 
 function draw() {
