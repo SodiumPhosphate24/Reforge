@@ -4,25 +4,42 @@ let gameState = "menu"; // "menu" or "playing"
 let menuFadeAlpha = 255;
 let gameplayFadeAlpha = 0;
 let transitionSpeed = 5;
+let menuAnimationTime = 0;
+let buttonHoverScale = 1;
+let titlePulsePhase = 0;
 
 function drawMenuScreen() {
   background(20, 20, 30);
   
-  // Title with glow effect
+  menuAnimationTime += 0.016; // Approximate 60fps
+  
+  // Title with animated glow and floating effect
   push();
-  drawingContext.shadowBlur = 30;
+  
+  // Floating motion using sin wave
+  const titleFloat = sin(menuAnimationTime * 2) * 10;
+  
+  // Pulsing glow effect
+  const glowIntensity = 20 + sin(menuAnimationTime * 3) * 10;
+  drawingContext.shadowBlur = glowIntensity;
   drawingContext.shadowColor = 'rgba(100, 255, 255, 0.8)';
+  
+  // Scale pulse
+  const titleScale = 1 + sin(menuAnimationTime * 2.5) * 0.03;
+  
+  translate(width / 2, height / 2 - 100 + titleFloat);
+  scale(titleScale);
   
   fill(100, 255, 255);
   textFont(Silkscreen);
   textSize(120);
   textAlign(CENTER, CENTER);
-  text("REFORGE", width / 2, height / 2 - 100);
+  text("REFORGE", 0, 0);
   
   drawingContext.shadowBlur = 0;
   pop();
   
-  // Play button
+  // Play button with smooth animations
   const buttonWidth = 300;
   const buttonHeight = 80;
   const buttonX = width / 2 - buttonWidth / 2;
@@ -32,31 +49,51 @@ function drawMenuScreen() {
   const isHovering = mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
                      mouseY >= buttonY && mouseY <= buttonY + buttonHeight;
   
-  // Button background
+  // Smooth hover scale transition
+  const targetScale = isHovering ? 1.1 : 1;
+  buttonHoverScale = lerp(buttonHoverScale, targetScale, 0.15);
+  
+  // Gentle breathing animation when not hovered
+  const breatheScale = isHovering ? 0 : sin(menuAnimationTime * 1.5) * 0.02;
+  const finalScale = buttonHoverScale + breatheScale;
+  
+  // Button background with animations
   push();
+  translate(width / 2, buttonY + buttonHeight / 2);
+  scale(finalScale);
+  
   if (isHovering) {
-    fill(100, 255, 255, 200);
-    drawingContext.shadowBlur = 20;
-    drawingContext.shadowColor = 'rgba(100, 255, 255, 0.6)';
+    // Pulsing glow on hover
+    const hoverGlow = 15 + sin(menuAnimationTime * 5) * 5;
+    drawingContext.shadowBlur = hoverGlow;
+    drawingContext.shadowColor = 'rgba(100, 255, 255, 0.8)';
+    fill(100, 255, 255, 220);
   } else {
     fill(100, 255, 255, 150);
   }
   
-  rectMode(CORNER);
-  rect(buttonX, buttonY, buttonWidth, buttonHeight, 10);
+  rectMode(CENTER);
+  rect(0, 0, buttonWidth, buttonHeight, 10);
   
   drawingContext.shadowBlur = 0;
   pop();
   
   // Button text
+  push();
+  translate(width / 2, buttonY + buttonHeight / 2);
+  scale(finalScale);
+  
   fill(20, 20, 30);
   textSize(40);
   textAlign(CENTER, CENTER);
-  text("PLAY", width / 2, buttonY + buttonHeight / 2);
+  text("PLAY", 0, 0);
+  pop();
   
-  // Subtitle
-  fill(150, 150, 150);
+  // Subtitle with fade pulse
+  const subtitleAlpha = 100 + sin(menuAnimationTime * 2) * 50;
+  fill(150, 150, 150, subtitleAlpha);
   textSize(20);
+  textAlign(CENTER, CENTER);
   text("Click to begin your journey", width / 2, height - 100);
   
   // Check for click on play button
@@ -74,24 +111,40 @@ function startGameTransition() {
   }
 }
 
+let transitionProgress = 0;
+let titleTransitionScale = 1;
+
 function updateTransition() {
-  // Fade out menu
-  menuFadeAlpha = max(0, menuFadeAlpha - transitionSpeed);
+  // Smooth transition progress (0 to 1)
+  transitionProgress = min(1, transitionProgress + 0.02);
   
-  // Fade in gameplay after menu is mostly gone
-  if (menuFadeAlpha < 100) {
-    gameplayFadeAlpha = min(255, gameplayFadeAlpha + transitionSpeed);
+  // Fade out menu with easing
+  const fadeOutEase = pow(transitionProgress, 2);
+  menuFadeAlpha = max(0, 255 * (1 - fadeOutEase));
+  
+  // Title grows and fades during transition
+  titleTransitionScale = 1 + transitionProgress * 2;
+  
+  // Black flash effect in the middle of transition
+  if (transitionProgress < 0.5) {
+    gameplayFadeAlpha = 255 * (transitionProgress * 2);
+  } else {
+    gameplayFadeAlpha = 255 * (2 - transitionProgress * 2);
   }
   
   // Once transition is complete, switch to playing state
-  if (menuFadeAlpha === 0 && gameplayFadeAlpha === 255) {
+  if (transitionProgress >= 1) {
     gameState = "playing";
+    transitionProgress = 0;
+    titleTransitionScale = 1;
   }
 }
 
 function drawTransitionOverlay() {
   if (gameState === "transitioning") {
-    // Draw menu overlay fading out
+    menuAnimationTime += 0.016;
+    
+    // Draw menu overlay fading out with scale effect
     if (menuFadeAlpha > 0) {
       push();
       fill(20, 20, 30, menuFadeAlpha);
@@ -99,22 +152,28 @@ function drawTransitionOverlay() {
       noStroke();
       rect(0, 0, width, height);
       
-      // Title fading out
-      drawingContext.shadowBlur = 30;
-      drawingContext.shadowColor = 'rgba(100, 255, 255, 0.8)';
-      fill(100, 255, 255, menuFadeAlpha);
+      // Title growing and fading out
+      const titleAlpha = menuFadeAlpha * (1 - transitionProgress * 0.5);
+      const titleFloat = sin(menuAnimationTime * 2) * 10 * (1 - transitionProgress);
+      
+      translate(width / 2, height / 2 - 100 + titleFloat);
+      scale(titleTransitionScale);
+      
+      drawingContext.shadowBlur = 30 * (1 - transitionProgress);
+      drawingContext.shadowColor = `rgba(100, 255, 255, ${0.8 * (1 - transitionProgress)})`;
+      fill(100, 255, 255, titleAlpha);
       textFont(Silkscreen);
       textSize(120);
       textAlign(CENTER, CENTER);
-      text("REFORGE", width / 2, height / 2 - 100);
+      text("REFORGE", 0, 0);
       drawingContext.shadowBlur = 0;
       pop();
     }
     
-    // Draw black overlay fading in then out for smooth transition
-    if (gameplayFadeAlpha < 255) {
+    // Draw black overlay with smooth fade
+    if (gameplayFadeAlpha > 0) {
       push();
-      fill(0, 0, 0, 255 - gameplayFadeAlpha);
+      fill(0, 0, 0, gameplayFadeAlpha);
       rectMode(CORNER);
       noStroke();
       rect(0, 0, width, height);
