@@ -158,16 +158,21 @@ function drawTransitionOverlay() {
       rectMode(CORNER);
       noStroke();
       rect(0, 0, width, height);
-      
+      pop();
+    }
+    
+    // Only show title before black screen appears (before 30% progress)
+    if (transitionProgress < 0.3) {
+      push();
       // Title growing and fading out
-      const titleAlpha = menuFadeAlpha * (1 - transitionProgress * 0.5);
-      const titleFloat = sin(menuAnimationTime * 2) * 10 * (1 - transitionProgress);
+      const titleAlpha = menuFadeAlpha * (1 - transitionProgress / 0.3);
+      const titleFloat = sin(menuAnimationTime * 2) * 10 * (1 - transitionProgress / 0.3);
       
       translate(width / 2, height / 2 - 100 + titleFloat);
       scale(titleTransitionScale);
       
-      drawingContext.shadowBlur = 30 * (1 - transitionProgress);
-      drawingContext.shadowColor = `rgba(100, 255, 255, ${0.8 * (1 - transitionProgress)})`;
+      drawingContext.shadowBlur = 30 * (1 - transitionProgress / 0.3);
+      drawingContext.shadowColor = `rgba(100, 255, 255, ${0.8 * (1 - transitionProgress / 0.3)})`;
       fill(100, 255, 255, titleAlpha);
       textFont(Silkscreen);
       textSize(120);
