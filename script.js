@@ -145,6 +145,12 @@ function draw() {
 
   // Normal gameplay
   drawGameplay();
+  
+  // Apply sepia/tan filter over everything
+  drawingContext.globalCompositeOperation = 'multiply';
+  drawingContext.fillStyle = 'rgba(222, 184, 135, 0.15)'; // Tan color
+  drawingContext.fillRect(0, 0, width, height);
+  drawingContext.globalCompositeOperation = 'source-over';
 }
 
 function drawGameplay() {
@@ -224,12 +230,6 @@ function drawGameplay() {
       handleEditorClick();
     }
   }
-
-  // Apply sepia/tan filter
-  drawingContext.globalCompositeOperation = 'multiply';
-  drawingContext.fillStyle = 'rgba(222, 184, 135, 0.15)'; // Tan color
-  drawingContext.fillRect(0, 0, width, height);
-  drawingContext.globalCompositeOperation = 'source-over';
 }
 
 /* ===================== LAYERED WORLD (3 layers: 0,1 behind; 2 above player) =====================
