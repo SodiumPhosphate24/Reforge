@@ -720,6 +720,91 @@ const RAYCAST_DISTANCE = 20;   // max distance to check visibility
 
 function tileKey(r, c) { return r + "," + c; }
 
+// Get roof tiles overlapping player's bounding box
+function getOverlappingRoofSeeds(x, y, w, h) {
+  const left = x + 600;
+  const top = y + 375;
+  const right = left + w;
+  const bottom = top + h;
+
+  const leftTile = Math.floor(left / 50);
+  const rightTile = Math.floor(right / 50);
+  const topTile = Math.floor(top / 50);
+  const bottomTile = Math.floor(bottom / 50);
+
+  const seeds = [];
+  for (let r = topTile; r <= bottomTile; r++) {
+    for (let c = leftTile; c <= rightTile; c++) {
+      if (isRoof(r, c)) {
+        seeds.push([r, c]);
+      }
+    }
+  }
+  return seeds;
+}
+
+// Check if a tile is a roof (tileWalls === 2)
+function isRoof(row, col) {
+  if (row < 0 || col < 0 || row >= gameWorld.length || !gameWorld[row] || col >= gameWorld[row].length) {
+    return false;
+  }
+  const cell = gameWorld[row][col];
+  if (!cell) return false;
+
+  if ('layers' in cell) {
+    // Check layers 1, 2, 3 for roof tiles
+    for (let L = 1; L <= 3; L++) {
+      const t = cell.layers[L];
+      if (t && tileWalls[t.type] === 2) return true;
+    }
+    return false;
+  } else {
+    // Legacy format
+    return tileWalls[cell.type] === 2;
+  }
+}
+
+// Flood fill roof tiles from seeds
+function floodFillRoof(roofSeeds) {
+  roofTarget.clear();
+  if (!roofSeeds.length) return;
+
+  const playerTileRow = Math.floor((pY + 375) / 50);
+  const playerTileCol = Math.floor((pX + 600) / 50);
+
+  const q = [];
+  const seen = new Set();
+  const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]]; // 4-connected
+
+  for (const s of roofSeeds) {
+    const k = tileKey(s[0], s[1]);
+    if (!seen.has(k)) { 
+      seen.add(k); 
+      q.push(s); 
+    }
+  }
+
+  while (q.length) {
+    const [r, c] = q.shift();
+    const k = tileKey(r, c);
+    roofTarget.add(k);
+
+    // Limit flood fill distance from player
+    const distFromPlayer = Math.abs(r - playerTileRow) + Math.abs(c - playerTileCol);
+    if (distFromPlayer >= ROOF_MAX_DISTANCE) continue;
+
+    for (const [dr, dc] of dirs) {
+      const nr = r + dr, nc = c + dc;
+      if (!isRoof(nr, nc)) continue;
+      const nk = tileKey(nr, nc);
+      if (!seen.has(nk)) { 
+        seen.add(nk); 
+        q.push([nr, nc]); 
+      }
+    }
+  }
+}
+
 // Check if there's a clear line of sight from player to a tile position
 function hasLineOfSight(fromRow, fromCol, toRow, toCol) {
   // Bresenham's line algorithm for raycasting
