@@ -1,4 +1,9 @@
 function controls() {
+  // Don't allow controls during menu or transition
+  if (gameState !== "playing") {
+    return;
+  }
+  
   if (players[activePlayer].frozen == false) {
     if (keyIsDown(65)) {
       pXVel -= players[activePlayer].speed;
@@ -149,6 +154,11 @@ function keyPressed() {
 }
 
 function mouseClicked() {
+  // Don't allow game interactions during menu or transition
+  if (gameState !== "playing") {
+    return;
+  }
+  
   if (!editorMode) {
     if (inventoryList[inventorySlot - 1] != null) {
       var currentItem = inventoryList[inventorySlot - 1];
