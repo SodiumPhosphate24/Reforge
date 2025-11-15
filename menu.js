@@ -1,6 +1,6 @@
 
 // Menu state management
-let gameState = "menu"; // "menu" or "playing"
+var gameState = "menu"; // "menu" or "playing"
 let menuFadeAlpha = 255;
 let gameplayFadeAlpha = 0;
 let transitionSpeed = 5;
@@ -122,20 +122,20 @@ function updateTransition() {
   const fadeOutEase = pow(transitionProgress, 2);
   menuFadeAlpha = max(0, 255 * (1 - fadeOutEase));
   
-  // Title grows and fades during first 60% of transition
-  if (transitionProgress < 0.6) {
-    titleTransitionScale = 1 + (transitionProgress / 0.6) * 2;
+  // Title grows and fades during first 30% of transition (faster)
+  if (transitionProgress < 0.3) {
+    titleTransitionScale = 1 + (transitionProgress / 0.3) * 2;
   } else {
     titleTransitionScale = 3;
   }
   
-  // Black screen appears after title fades (0.0-0.6)
-  // Then slowly fades to reveal game (0.6-1.0)
-  if (transitionProgress < 0.6) {
-    gameplayFadeAlpha = 255 * (transitionProgress / 0.6);
+  // Black screen appears after title fades (0.0-0.3)
+  // Then slowly fades to reveal game (0.3-1.0)
+  if (transitionProgress < 0.3) {
+    gameplayFadeAlpha = 255 * (transitionProgress / 0.3);
   } else {
     // Very slow fade from black to game
-    const fadeInProgress = (transitionProgress - 0.6) / 0.4;
+    const fadeInProgress = (transitionProgress - 0.3) / 0.7;
     gameplayFadeAlpha = 255 * (1 - fadeInProgress);
   }
   
