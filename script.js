@@ -127,6 +127,26 @@ function setup() {
 }
 
 function draw() {
+  // Show menu screen if not playing
+  if (gameState === "menu") {
+    drawMenuScreen();
+    return;
+  }
+  
+  // Draw transition overlay during transition
+  if (gameState === "transitioning") {
+    // Draw the game in background
+    drawGameplay();
+    // Draw transition overlay on top
+    drawTransitionOverlay();
+    return;
+  }
+  
+  // Normal gameplay
+  drawGameplay();
+}
+
+function drawGameplay() {
   prePX = pX;
   prePY = pY;
   background(50);
