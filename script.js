@@ -23,7 +23,7 @@ let maxTileTypes = 0; // will be set in setup()
 var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
 
 function preload() {
-  console.log("sepia sick");
+  console.log("Cheesey sick");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   BadGuy = loadImage("Characters/Enemy.png")
@@ -133,7 +133,7 @@ function draw() {
     drawMenuScreen();
     return;
   }
-
+  
   // Draw transition overlay during transition
   if (gameState === "transitioning") {
     // Draw the game in background
@@ -142,15 +142,9 @@ function draw() {
     drawTransitionOverlay();
     return;
   }
-
+  
   // Normal gameplay
   drawGameplay();
-
-  // Apply sepia/tan filter over everything
-  drawingContext.globalCompositeOperation = 'multiply';
-  drawingContext.fillStyle = 'rgba(222, 184, 135, 0.15)'; // Tan color
-  drawingContext.fillRect(0, 0, width, height);
-  drawingContext.globalCompositeOperation = 'source-over';
 }
 
 function drawGameplay() {
