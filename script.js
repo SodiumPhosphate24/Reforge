@@ -122,12 +122,14 @@ function setup() {
   indicatorCurrentY = pY + 375 - 50;
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
-  NonPlayerCharacters.push(new NPC(13350, 12675, "PROMETHEUS-IV", ["PROMETHEUS-IV: HELLO WORLD", "PROMETHEUS-IV: I AM PROMETHEUS-IV"], BadGuy));
   
-  // Auto-start tutorial
-  if (typeof startTutorial === 'function') {
-    startTutorial();
-  }
+  // Auto-start tutorial after a brief delay to ensure all systems are ready
+  setTimeout(() => {
+    if (typeof startTutorial === 'function') {
+      console.log("Starting tutorial...");
+      startTutorial();
+    }
+  }, 500);
 }
 
 function draw() {

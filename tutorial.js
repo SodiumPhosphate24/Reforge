@@ -94,8 +94,15 @@ function startTutorial() {
   NonPlayerCharacters.push(new NPC(prometheusX, prometheusY, "PROMETHEUS-IV (OFFLINE)", [], BadGuy));
   NonPlayerCharacters[0].active = false;
   
-  // Show wake-up message immediately (not distance-dependent)
-  messages.push(new Message("dialogue", tutorialMessages.wakeUp));
+  // Delay the wake-up message slightly to ensure Message class is ready
+  setTimeout(() => {
+    // Show wake-up message immediately (not distance-dependent)
+    if (typeof Message !== 'undefined') {
+      messages.push(new Message("dialogue", tutorialMessages.wakeUp));
+      console.log("Tutorial started - wake-up dialogue displayed");
+    }
+  }, 100);
+  
   tutorialPhase = 1;
 }
 

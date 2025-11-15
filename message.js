@@ -21,6 +21,7 @@ class Message {
       this.slideY = 100; // Slide up animation
       this.boxScale = 0; // Box scale animation
       this.closing = false; // New property to manage closing animation
+      console.log("Dialogue message created:", message);
     }
   }
 }
