@@ -12,15 +12,16 @@ var hasLearnedShooting = false;
 var hasLearnedHealing = false;
 
 // Tutorial phases:
-// 0: Wake up in cryochamber
-// 1: Find and activate PROMETHEUS-IV
-// 2: Learn about materials and crafting
-// 3: Craft first droid
-// 4: Learn about items from crates
-// 5: Encounter first enemy
-// 6: Learn shooting mechanics
-// 7: Learn healing mechanics
-// 8: Tutorial complete
+// 0: Initial setup
+// 1: Find and activate PROMETHEUS-IV (distance-dependent)
+// 2: PROMETHEUS-IV activated, waiting for crafting dialogue
+// 3: Learn about materials and crafting, wait for droid creation
+// 4: First droid crafted, waiting for crate dialogue
+// 5: Learn about items from crates, wait for crate opening
+// 6: Enemy spawned, waiting for shooting dialogue
+// 7: Learn shooting mechanics, monitor for damage
+// 8: Learn healing mechanics
+// 9: Tutorial complete
 
 var tutorialMessages = {
   wakeUp: ["BUSCHY: Where... where am I?", "BUSCHY: Some kind of cryochamber... I need to find out what happened here."],
@@ -93,11 +94,9 @@ function startTutorial() {
   NonPlayerCharacters.push(new NPC(prometheusX, prometheusY, "PROMETHEUS-IV (OFFLINE)", [], BadGuy));
   NonPlayerCharacters[0].active = false;
   
-  // Show wake-up message
-  setTimeout(() => {
-    messages.push(new Message("dialogue", tutorialMessages.wakeUp));
-    tutorialPhase = 1;
-  }, 2000);
+  // Show wake-up message immediately (not distance-dependent)
+  messages.push(new Message("dialogue", tutorialMessages.wakeUp));
+  tutorialPhase = 1;
 }
 
 function updateTutorial() {
@@ -106,7 +105,7 @@ function updateTutorial() {
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
   
-  // Phase 1: Find PROMETHEUS-IV
+  // Phase 1: Find PROMETHEUS-IV (distance-dependent interaction)
   if (tutorialPhase === 1) {
     const prometheusNPC = NonPlayerCharacters[0];
     if (prometheusNPC && !prometheusNPC.active) {
@@ -119,38 +118,39 @@ function updateTutorial() {
         messages.push(new Message("dialogue", tutorialMessages.prometheusActivation));
         tutorialPhase = 2;
         
-        // Give starter materials after activation
+        // Give starter materials and show crafting message after activation dialogue
         setTimeout(() => {
-          messages.push(new Message("dialogue", tutorialMessages.introduceCrafting));
           giveStarterMaterials();
-        }, 5000);
+          messages.push(new Message("dialogue", tutorialMessages.introduceCrafting));
+          tutorialPhase = 3; // Move to crafting phase
+        }, 8000); // Wait for activation dialogue to finish
       }
     }
   }
   
   // Phase 3: Wait for first droid to be crafted
-  if (tutorialPhase === 2 && !firstDroidCrafted) {
+  if (tutorialPhase === 3 && !firstDroidCrafted) {
     // Check if player crafted a droid (players.length > 1)
     if (players.length > 1) {
       firstDroidCrafted = true;
-      tutorialPhase = 3;
+      tutorialPhase = 4;
       messages.push(new Message("dialogue", tutorialMessages.firstDroidCrafted));
       
       // Spawn tutorial crate with items
       setTimeout(() => {
         spawnTutorialCrate();
         messages.push(new Message("dialogue", tutorialMessages.introduceCrates));
-        tutorialPhase = 4;
-      }, 6000);
+        tutorialPhase = 5;
+      }, 10000); // Wait for droid crafting dialogue to finish
     }
   }
   
   // Phase 5: Spawn first enemy after player opens crate
-  if (tutorialPhase === 4 && !firstEnemySpawned) {
+  if (tutorialPhase === 5 && !firstEnemySpawned) {
     // Check if crate was opened (simple check: if player has items)
-    if (inventoryList.some(item => item !== null)) {
+    if (inventoryList.some(item => item !== null && (item.type === "gun" || item.type === "consumable"))) {
       firstEnemySpawned = true;
-      tutorialPhase = 5;
+      tutorialPhase = 6;
       
       // Spawn tutorial enemy at a safe distance
       const enemyX = pX + 600 + 300;
@@ -165,25 +165,25 @@ function updateTutorial() {
       
       setTimeout(() => {
         messages.push(new Message("dialogue", tutorialMessages.teachShooting));
-        tutorialPhase = 6;
-      }, 3000);
+        tutorialPhase = 7;
+      }, 6000); // Wait for enemy warning dialogue
     }
   }
   
-  // Phase 6-7: Monitor for damage to teach healing
-  if (tutorialPhase === 6 && !hasLearnedHealing) {
-    if (players[activePlayer].health < players[activePlayer].maxHealth * 0.7) {
+  // Phase 7: Monitor for damage to teach healing
+  if (tutorialPhase === 7 && !hasLearnedHealing) {
+    if (players[activePlayer] && players[activePlayer].health < players[activePlayer].maxHealth * 0.7) {
       hasLearnedHealing = true;
-      tutorialPhase = 7;
+      tutorialPhase = 8;
       messages.push(new Message("dialogue", tutorialMessages.teachHealing));
       
       // Complete tutorial after healing lesson
       setTimeout(() => {
-        tutorialPhase = 8;
+        tutorialPhase = 9;
         tutorialComplete = true;
         tutorialActive = false;
         messages.push(new Message("dialogue", tutorialMessages.tutorialComplete));
-      }, 8000);
+      }, 10000);
     }
   }
 }
