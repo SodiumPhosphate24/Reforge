@@ -1,42 +1,72 @@
+
 // Menu state management
 var gameState = "menu"; // "menu" or "playing"
 let menuFadeAlpha = 255;
 let gameplayFadeAlpha = 0;
 let transitionSpeed = 5;
 let menuAnimationTime = 0;
-let buttonHoverScale = 1;
-let titlePulsePhase = 0;
+let logoHoverScale = 1;
+let logoIdleFloat = 0;
+let logoClickScale = 1;
 let ReforgeLogo;
 
 function drawMenuScreen() {
   background(20, 20, 30);
 
   menuAnimationTime += 0.016; // Approximate 60fps
+  
+  // Idle floating animation
+  logoIdleFloat = sin(menuAnimationTime * 2) * 8;
 
-  // Draw the REFORGE.png image as the only element
   push();
   imageMode(CENTER);
-  // Center the image and adjust its size if necessary.
-  // The size will depend on the actual image dimensions and desired display size.
-  // For now, let's assume we want it to be a significant portion of the screen.
-  // You might need to adjust these values based on the actual REFORGE.png.
-  let logoSize = min(width * 0.8, height * 0.8);
-  translate(width / 2, height / 2);
-  scale(logoSize / ReforgeLogo.width); // Scale to fit
-  image(ReforgeLogo, 0, 0);
-  pop();
-
-  // Check if mouse is hovering over the REFORGE logo and if it's clicked
+  
+  // Calculate logo dimensions and position
+  let logoBaseSize = min(width * 0.6, height * 0.6);
   let logoX = width / 2;
-  let logoY = height / 2;
-  let logoWidth = ReforgeLogo.width * (logoSize / ReforgeLogo.width);
-  let logoHeight = ReforgeLogo.height * (logoSize / ReforgeLogo.height);
+  let logoY = height / 2 + logoIdleFloat;
+  
+  // Calculate actual dimensions based on image aspect ratio
+  let logoWidth = ReforgeLogo.width;
+  let logoHeight = ReforgeLogo.height;
+  let scale = logoBaseSize / max(logoWidth, logoHeight);
+  let displayWidth = logoWidth * scale;
+  let displayHeight = logoHeight * scale;
 
-  const isHoveringLogo = mouseX >= logoX - logoWidth / 2 && mouseX <= logoX + logoWidth / 2 &&
-                         mouseY >= logoY - logoHeight / 2 && mouseY <= logoY + logoHeight / 2;
+  // Check if mouse is hovering over the logo
+  const isHoveringLogo = mouseX >= logoX - displayWidth / 2 && mouseX <= logoX + displayWidth / 2 &&
+                         mouseY >= logoY - displayHeight / 2 && mouseY <= logoY + displayHeight / 2;
+
+  // Smooth hover scale animation
+  if (isHoveringLogo) {
+    logoHoverScale = lerp(logoHoverScale, 1.1, 0.15);
+  } else {
+    logoHoverScale = lerp(logoHoverScale, 1, 0.15);
+  }
+  
+  // Smooth click animation
+  logoClickScale = lerp(logoClickScale, 1, 0.2);
+
+  // Apply transformations
+  translate(logoX, logoY);
+  scale(logoHoverScale * logoClickScale);
+  
+  // Add glow effect when hovering
+  if (isHoveringLogo) {
+    drawingContext.shadowBlur = 40;
+    drawingContext.shadowColor = 'rgba(100, 255, 255, 0.8)';
+  }
+  
+  image(ReforgeLogo, 0, 0, displayWidth, displayHeight);
+  
+  // Reset shadow
+  drawingContext.shadowBlur = 0;
+  
+  pop();
 
   // Check for click on REFORGE logo
   if (isHoveringLogo && mouseIsPressed && mouseButton === LEFT) {
+    logoClickScale = 0.9; // Shrink on click
     startGameTransition();
   }
 }
@@ -61,14 +91,14 @@ function updateTransition() {
   const fadeOutEase = pow(transitionProgress, 2);
   menuFadeAlpha = max(0, 255 * (1 - fadeOutEase));
 
-  // Title grows and fades during first 30% of transition (faster)
+  // Logo grows and fades during first 30% of transition (faster)
   if (transitionProgress < 0.3) {
     titleTransitionScale = 1 + (transitionProgress / 0.3) * 2;
   } else {
     titleTransitionScale = 3;
   }
 
-  // Black screen appears after title fades (0.0-0.3)
+  // Black screen appears after logo fades (0.0-0.3)
   // Then slowly fades to reveal game (0.3-1.0)
   if (transitionProgress < 0.3) {
     gameplayFadeAlpha = 255 * (transitionProgress / 0.3);
@@ -100,23 +130,32 @@ function drawTransitionOverlay() {
       pop();
     }
 
-    // Only show title before black screen appears (before 30% progress)
+    // Only show logo before black screen appears (before 30% progress)
     if (transitionProgress < 0.3) {
       push();
-      // Title growing and fading out
-      const titleAlpha = menuFadeAlpha * (1 - transitionProgress / 0.3);
-      const titleFloat = sin(menuAnimationTime * 2) * 10 * (1 - transitionProgress / 0.3);
+      imageMode(CENTER);
+      
+      // Logo growing and fading out
+      const logoAlpha = menuFadeAlpha * (1 - transitionProgress / 0.3);
+      const logoFloat = sin(menuAnimationTime * 2) * 10 * (1 - transitionProgress / 0.3);
+      
+      let logoBaseSize = min(width * 0.6, height * 0.6);
+      let logoWidth = ReforgeLogo.width;
+      let logoHeight = ReforgeLogo.height;
+      let scale = logoBaseSize / max(logoWidth, logoHeight);
+      let displayWidth = logoWidth * scale;
+      let displayHeight = logoHeight * scale;
 
-      translate(width / 2, height / 2 - 100 + titleFloat);
+      translate(width / 2, height / 2 + logoFloat);
       scale(titleTransitionScale);
-
+      
       drawingContext.shadowBlur = 30 * (1 - transitionProgress / 0.3);
       drawingContext.shadowColor = `rgba(100, 255, 255, ${0.8 * (1 - transitionProgress / 0.3)})`;
-      fill(100, 255, 255, titleAlpha);
-      textFont(Silkscreen);
-      textSize(120);
-      textAlign(CENTER, CENTER);
-      text("REFORGE", 0, 0);
+      
+      tint(255, logoAlpha);
+      image(ReforgeLogo, 0, 0, displayWidth, displayHeight);
+      noTint();
+      
       drawingContext.shadowBlur = 0;
       pop();
     }
