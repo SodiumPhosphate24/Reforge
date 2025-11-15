@@ -8,6 +8,7 @@ let menuAnimationTime = 0;
 let logoHoverScale = 1;
 let logoIdleFloat = 0;
 let logoClickScale = 1;
+let logoGlowAlpha = 0; // Fade-in glow
 let ReforgeLogo;
 
 function drawMenuScreen() {
@@ -40,8 +41,10 @@ function drawMenuScreen() {
   // Smooth hover scale animation
   if (isHoveringLogo) {
     logoHoverScale = lerp(logoHoverScale, 1.1, 0.15);
+    logoGlowAlpha = lerp(logoGlowAlpha, 0.4, 0.1); // Fade in to subtle opacity
   } else {
     logoHoverScale = lerp(logoHoverScale, 1, 0.15);
+    logoGlowAlpha = lerp(logoGlowAlpha, 0, 0.08); // Fade out
   }
   
   // Smooth click animation
@@ -51,10 +54,10 @@ function drawMenuScreen() {
   translate(logoX, logoY);
   scale(logoHoverScale * logoClickScale);
   
-  // Add glow effect when hovering
-  if (isHoveringLogo) {
-    drawingContext.shadowBlur = 40;
-    drawingContext.shadowColor = 'rgba(100, 255, 255, 0.8)';
+  // Add subtle white glow effect when hovering
+  if (logoGlowAlpha > 0.01) {
+    drawingContext.shadowBlur = 30;
+    drawingContext.shadowColor = `rgba(255, 255, 255, ${logoGlowAlpha})`;
   }
   
   image(ReforgeLogo, 0, 0, displayWidth, displayHeight);
@@ -150,7 +153,7 @@ function drawTransitionOverlay() {
       scale(titleTransitionScale);
       
       drawingContext.shadowBlur = 30 * (1 - transitionProgress / 0.3);
-      drawingContext.shadowColor = `rgba(100, 255, 255, ${0.8 * (1 - transitionProgress / 0.3)})`;
+      drawingContext.shadowColor = `rgba(255, 255, 255, ${0.4 * (1 - transitionProgress / 0.3)})`;
       
       tint(255, logoAlpha);
       image(ReforgeLogo, 0, 0, displayWidth, displayHeight);
