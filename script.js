@@ -123,13 +123,11 @@ function setup() {
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
   
-  // Auto-start tutorial after a brief delay to ensure all systems are ready
-  setTimeout(() => {
-    if (typeof startTutorial === 'function') {
-      console.log("Starting tutorial...");
-      startTutorial();
-    }
-  }, 500);
+  // Auto-start tutorial
+  if (typeof startTutorial === 'function') {
+    console.log("Starting tutorial...");
+    startTutorial();
+  }
 }
 
 function draw() {

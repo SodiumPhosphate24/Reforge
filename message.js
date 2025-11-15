@@ -28,6 +28,12 @@ class Message {
 
 function messageDisplay() {
   textAlign(CENTER, CENTER);
+  
+  // Debug: Log messages array state
+  if (messages.length > 0 && frameCount % 60 === 0) {
+    console.log("Messages in array:", messages.length, "Types:", messages.map(m => m.type));
+  }
+  
   for (let i = 0; i < messages.length; i++) {
     if (messages[i].type == "quest") {
       messages[i].phaseTimer++;
