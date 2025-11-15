@@ -701,8 +701,8 @@ function checkCollision(x, y, x2, y2, w, h, w2 = 50, h2 = 50) {
 }
 
 /* ========= Roof fade system (optimized with caching and range limiting) ========= */
-const ROOF_FADE_SPEED = 25;   // alpha change per frame (0..255)
-const ROOF_MAX_DISTANCE = 20;  // max tiles to flood fill from player
+const ROOF_FADE_SPEED = 255;   // alpha change per frame (0..255) - instant fade
+const ROOF_MAX_DISTANCE = 15;  // max tiles to flood fill from player - reduced range
 let roofAlpha = new Map();     // key "row,col" -> alpha
 let roofTarget = new Set();    // keys that should fade to 0 this frame
 let lastPlayerTile = { row: -1, col: -1 }; // cache player position
