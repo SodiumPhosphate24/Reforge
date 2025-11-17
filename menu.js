@@ -61,7 +61,7 @@ function drawMenuScreen() {
   
   // Draw menu options on right side
   const menuX = width - 250;
-  const menuStartY = 250;
+  const menuStartY = 350;
   const menuSpacing = 60;
   
   textFont(Silkscreen);
@@ -88,9 +88,9 @@ function drawMenuScreen() {
       menuOptionHoverAlpha[i] = lerp(menuOptionHoverAlpha[i], 0, 0.1);
     }
     
-    // Draw selection indicator
+    // Draw faint white selection background
     if (selectedMenuOption === i) {
-      fill(100, 255, 255, 100 + menuOptionHoverAlpha[i] * 0.6);
+      fill(255, 255, 255, 30 + menuOptionHoverAlpha[i] * 0.2);
       noStroke();
       rect(menuX - 20, optionY - 25, 220, 50, 5);
     }
@@ -100,13 +100,13 @@ function drawMenuScreen() {
     fill(255, 255, 255, 200 + menuOptionHoverAlpha[i] * 0.2);
     text(menuOptions[i], menuX, optionY);
     
-    // Draw subtle glow on hover
-    if (menuOptionHoverAlpha[i] > 10) {
+    // Draw arrow indicator on the right side for selected option
+    if (selectedMenuOption === i) {
       push();
-      drawingContext.shadowBlur = 20;
-      drawingContext.shadowColor = `rgba(100, 255, 255, ${menuOptionHoverAlpha[i] / 255 * 0.5})`;
-      text(menuOptions[i], menuX, optionY);
-      drawingContext.shadowBlur = 0;
+      fill(255, 255, 255, 150 + menuOptionHoverAlpha[i] * 0.4);
+      textSize(28);
+      textAlign(RIGHT, CENTER);
+      text(">", menuX + 210, optionY);
       pop();
     }
     
