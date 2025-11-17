@@ -5,11 +5,12 @@ let menuFadeAlpha = 255;
 let gameplayFadeAlpha = 0;
 let transitionSpeed = 5;
 let menuAnimationTime = 0;
-let logoHoverScale = 1;
-let logoIdleFloat = 0;
-let logoClickScale = 1;
-let logoGlowAlpha = 0; // Fade-in glow
 let ReforgeLogo;
+
+// Menu options
+let menuOptions = ["Play", "Continue", "Credits", "Settings"];
+let selectedMenuOption = 0;
+let menuOptionHoverAlpha = [0, 0, 0, 0];
 
 function drawMenuScreen() {
   background(20, 20, 30);
@@ -40,61 +41,85 @@ function drawMenuScreen() {
 
   menuAnimationTime += 0.016; // Approximate 60fps
   
-  // Idle floating animation
-  logoIdleFloat = sin(menuAnimationTime * 2) * 8;
-
+  // Draw REFORGE logo at top (non-interactive)
   push();
   imageMode(CENTER);
   
-  // Calculate logo dimensions and position
-  let logoBaseSize = min(width * 0.6, height * 0.6);
-  let logoX = width / 2;
-  let logoY = height / 2 + logoIdleFloat;
-  
-  // Calculate actual dimensions based on image aspect ratio
   let logoWidth = ReforgeLogo.width;
   let logoHeight = ReforgeLogo.height;
-  let logoScale = logoBaseSize / max(logoWidth, logoHeight);
+  let logoScale = (width * 0.4) / max(logoWidth, logoHeight);
   let displayWidth = logoWidth * logoScale;
   let displayHeight = logoHeight * logoScale;
-
-  // Check if mouse is hovering over the logo
-  const isHoveringLogo = mouseX >= logoX - displayWidth / 2 && mouseX <= logoX + displayWidth / 2 &&
-                         mouseY >= logoY - displayHeight / 2 && mouseY <= logoY + displayHeight / 2;
-
-  // Smooth hover scale animation
-  if (isHoveringLogo) {
-    logoHoverScale = lerp(logoHoverScale, 1.1, 0.15);
-    logoGlowAlpha = lerp(logoGlowAlpha, 0.4, 0.1); // Fade in to subtle opacity
-  } else {
-    logoHoverScale = lerp(logoHoverScale, 1, 0.15);
-    logoGlowAlpha = lerp(logoGlowAlpha, 0, 0.08); // Fade out
-  }
   
-  // Smooth click animation
-  logoClickScale = lerp(logoClickScale, 1, 0.2);
-
-  // Apply transformations
-  translate(logoX, logoY);
-  scale(logoHoverScale * logoClickScale);
-  
-  // Add subtle white glow effect when hovering
-  if (logoGlowAlpha > 0.01) {
-    drawingContext.shadowBlur = 30;
-    drawingContext.shadowColor = `rgba(255, 255, 255, ${logoGlowAlpha})`;
-  }
-  
-  image(ReforgeLogo, 0, 0, displayWidth, displayHeight);
-  
-  // Reset shadow
-  drawingContext.shadowBlur = 0;
-  
+  image(ReforgeLogo, width / 2, 80, displayWidth, displayHeight);
   pop();
+  
+  // Draw menu options on right side
+  const menuX = width - 250;
+  const menuStartY = 250;
+  const menuSpacing = 60;
+  
+  textFont(Silkscreen);
+  textAlign(LEFT, CENTER);
+  
+  for (let i = 0; i < menuOptions.length; i++) {
+    const optionY = menuStartY + i * menuSpacing;
+    const optionWidth = 200;
+    const optionHeight = 50;
+    
+    // Check if mouse is hovering
+    const isHovering = mouseX >= menuX && mouseX <= menuX + optionWidth &&
+                       mouseY >= optionY - optionHeight / 2 && mouseY <= optionY + optionHeight / 2;
+    
+    // Smooth hover animation
+    if (isHovering) {
+      menuOptionHoverAlpha[i] = lerp(menuOptionHoverAlpha[i], 255, 0.15);
+      selectedMenuOption = i;
+    } else {
+      menuOptionHoverAlpha[i] = lerp(menuOptionHoverAlpha[i], 0, 0.1);
+    }
+    
+    // Draw selection indicator
+    if (selectedMenuOption === i) {
+      fill(100, 255, 255, 100 + menuOptionHoverAlpha[i] * 0.6);
+      noStroke();
+      rect(menuX - 20, optionY - 25, 220, 50, 5);
+    }
+    
+    // Draw option text
+    textSize(28);
+    fill(255, 255, 255, 200 + menuOptionHoverAlpha[i] * 0.2);
+    text(menuOptions[i], menuX, optionY);
+    
+    // Draw subtle glow on hover
+    if (menuOptionHoverAlpha[i] > 10) {
+      push();
+      drawingContext.shadowBlur = 20;
+      drawingContext.shadowColor = `rgba(100, 255, 255, ${menuOptionHoverAlpha[i] / 255 * 0.5})`;
+      text(menuOptions[i], menuX, optionY);
+      drawingContext.shadowBlur = 0;
+      pop();
+    }
+    
+    // Check for click
+    if (isHovering && mouseIsPressed && mouseButton === LEFT) {
+      handleMenuClick(i);
+    }
+  }
+}
 
-  // Check for click on REFORGE logo
-  if (isHoveringLogo && mouseIsPressed && mouseButton === LEFT) {
-    logoClickScale = 0.9; // Shrink on click
+function handleMenuClick(optionIndex) {
+  if (optionIndex === 0) { // Play
     startGameTransition();
+  } else if (optionIndex === 1) { // Continue
+    // TODO: Implement continue functionality
+    startGameTransition();
+  } else if (optionIndex === 2) { // Credits
+    // TODO: Implement credits screen
+    console.log("Credits clicked");
+  } else if (optionIndex === 3) { // Settings
+    // TODO: Implement settings screen
+    console.log("Settings clicked");
   }
 }
 
@@ -147,43 +172,43 @@ function drawTransitionOverlay() {
   if (gameState === "transitioning") {
     menuAnimationTime += 0.016;
 
-    // Draw menu overlay fading out with scale effect
-    if (menuFadeAlpha > 0) {
+    // Keep titlescreen visible until black fade is complete
+    if (titleScreenImg && transitionProgress < 0.3) {
       push();
-      fill(20, 20, 30, menuFadeAlpha);
-      rectMode(CORNER);
-      noStroke();
-      rect(0, 0, width, height);
+      imageMode(CENTER);
+      
+      const imgAspect = titleScreenImg.width / titleScreenImg.height;
+      const canvasAspect = width / height;
+      
+      let drawWidth, drawHeight;
+      if (canvasAspect > imgAspect) {
+        drawWidth = width;
+        drawHeight = width / imgAspect;
+      } else {
+        drawHeight = height;
+        drawWidth = height * imgAspect;
+      }
+      
+      image(titleScreenImg, width / 2, height / 2, drawWidth, drawHeight);
       pop();
     }
 
-    // Only show logo before black screen appears (before 30% progress)
+    // Draw REFORGE title at top during transition (fade out with titlescreen)
     if (transitionProgress < 0.3) {
       push();
       imageMode(CENTER);
       
-      // Logo growing and fading out
-      const logoAlpha = menuFadeAlpha * (1 - transitionProgress / 0.3);
-      const logoFloat = sin(menuAnimationTime * 2) * 10 * (1 - transitionProgress / 0.3);
+      const logoAlpha = 255 * (1 - transitionProgress / 0.3);
       
-      let logoBaseSize = min(width * 0.6, height * 0.6);
       let logoWidth = ReforgeLogo.width;
       let logoHeight = ReforgeLogo.height;
-      let logoScale = logoBaseSize / max(logoWidth, logoHeight);
+      let logoScale = (width * 0.4) / max(logoWidth, logoHeight);
       let displayWidth = logoWidth * logoScale;
       let displayHeight = logoHeight * logoScale;
-
-      translate(width / 2, height / 2 + logoFloat);
-      scale(titleTransitionScale);
-      
-      drawingContext.shadowBlur = 30 * (1 - transitionProgress / 0.3);
-      drawingContext.shadowColor = `rgba(255, 255, 255, ${0.4 * (1 - transitionProgress / 0.3)})`;
       
       tint(255, logoAlpha);
-      image(ReforgeLogo, 0, 0, displayWidth, displayHeight);
+      image(ReforgeLogo, width / 2, 80, displayWidth, displayHeight);
       noTint();
-      
-      drawingContext.shadowBlur = 0;
       pop();
     }
 
