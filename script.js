@@ -23,7 +23,7 @@ let maxTileTypes = 0; // will be set in setup()
 var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
 
 function preload() {
-  console.log("Cheesey sick");
+  console.log("Updated version 17");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   BadGuy = loadImage("Characters/Enemy.png")
@@ -282,8 +282,8 @@ function setTile(row, col, layer, type, rotation = 0, flipH = false, flipV = fal
     const old = gameWorld[row][col];
     gameWorld[row][col] = { layers: [old, null, null, null, null] };
   }
-  gameWorld[row][col].layers[layer] = (type == null) ? null : { 
-    type: parseInt(type, 10), 
+  gameWorld[row][col].layers[layer] = (type == null) ? null : {
+    type: parseInt(type, 10),
     rotation: parseInt(rotation, 10) || 0,
     flipH: flipH || false,
     flipV: flipV || false
