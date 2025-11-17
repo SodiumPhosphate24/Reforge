@@ -75,13 +75,13 @@ function drawMenuScreen() {
     
     // Measure text width for this option
     textSize(28);
-    const textWidth = textWidth(menuOptions[i]);
+    const optionTextWidth = textWidth(menuOptions[i]);
     const arrowWidth = 30; // Space for arrow
-    const totalWidth = textWidth + arrowWidth + 10; // 10px padding
+    const totalWidth = optionTextWidth + arrowWidth + 10; // 10px padding
     const optionHeight = 50;
     
     // Check if mouse is hovering (adjust bounds for arrow on left)
-    const isHovering = mouseX >= menuX - arrowWidth && mouseX <= menuX + textWidth + 10 &&
+    const isHovering = mouseX >= menuX - arrowWidth && mouseX <= menuX + optionTextWidth + 10 &&
                        mouseY >= optionY - optionHeight / 2 && mouseY <= optionY + optionHeight / 2;
     
     // Update selection on hover
