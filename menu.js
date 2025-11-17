@@ -10,9 +10,34 @@ let logoIdleFloat = 0;
 let logoClickScale = 1;
 let logoGlowAlpha = 0; // Fade-in glow
 let ReforgeLogo;
+let titleScreenImg;
 
 function drawMenuScreen() {
   background(20, 20, 30);
+  
+  // Draw titlescreen background
+  if (titleScreenImg) {
+    push();
+    imageMode(CENTER);
+    
+    // Calculate scaling to cover the canvas while maintaining aspect ratio
+    const imgAspect = titleScreenImg.width / titleScreenImg.height;
+    const canvasAspect = width / height;
+    
+    let drawWidth, drawHeight;
+    if (canvasAspect > imgAspect) {
+      // Canvas is wider - fit to width
+      drawWidth = width;
+      drawHeight = width / imgAspect;
+    } else {
+      // Canvas is taller - fit to height
+      drawHeight = height;
+      drawWidth = height * imgAspect;
+    }
+    
+    image(titleScreenImg, width / 2, height / 2, drawWidth, drawHeight);
+    pop();
+  }
 
   menuAnimationTime += 0.016; // Approximate 60fps
   
