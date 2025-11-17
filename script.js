@@ -274,7 +274,7 @@ function getTile(row, col, layer = 0) {
   return (layer === 0) ? cell : null; // legacy cell is layer 0
 }
 
-function setTile(row, col, layer, type, rotation = 0) {
+function setTile(row, col, layer, type, rotation = 0, flipH = false, flipV = false) {
   if (!gameWorld[row]) gameWorld[row] = [];
   if (!gameWorld[row][col]) {
     gameWorld[row][col] = { layers: [null, null, null, null, null] };
@@ -282,7 +282,12 @@ function setTile(row, col, layer, type, rotation = 0) {
     const old = gameWorld[row][col];
     gameWorld[row][col] = { layers: [old, null, null, null, null] };
   }
-  gameWorld[row][col].layers[layer] = (type == null) ? null : { type: parseInt(type, 10), rotation: parseInt(rotation, 10) || 0 };
+  gameWorld[row][col].layers[layer] = (type == null) ? null : { 
+    type: parseInt(type, 10), 
+    rotation: parseInt(rotation, 10) || 0,
+    flipH: flipH || false,
+    flipV: flipV || false
+  };
 }
 
 function clearTile(row, col, layer) {
@@ -305,6 +310,11 @@ function worldToString(world) {
           if (!t) return "";
           let s = String(t.type);
           if (t.rotation && t.rotation !== 0) s += ":" + t.rotation;
+          // Add flip notation
+          if (t.flipH || t.flipV) {
+            if (!t.rotation) s += ":0"; // Add rotation 0 if not present
+            s += ":" + (t.flipH ? "H" : "") + (t.flipV ? "V" : "");
+          }
           // Only add crate inventory if this specific layer contains a crate (type 5)
           if (t.type === 5) {
             const crateKey = r + "," + c;
@@ -327,6 +337,11 @@ function worldToString(world) {
       } else {
         let s = String(cell.type);
         if (cell.rotation && cell.rotation !== 0) s += ":" + cell.rotation;
+        // Add flip notation
+        if (cell.flipH || cell.flipV) {
+          if (!cell.rotation) s += ":0"; // Add rotation 0 if not present
+          s += ":" + (cell.flipH ? "H" : "") + (cell.flipV ? "V" : "");
+        }
         // Check for crate inventory in legacy format (only for crates, type 5)
         const crateKey = r + "," + c;
         if (crateInventories.has(crateKey) && cell.type === 5) {
@@ -390,10 +405,15 @@ function stringToWorld(s) {
           }
 
           if (tileData.includes(":")) {
-            const [t, rot] = tileData.split(":");
-            layers[L] = { type: parseInt(t, 10), rotation: parseInt(rot, 10) || 0 };
+            const parts = tileData.split(":");
+            const t = parseInt(parts[0], 10);
+            const rot = parseInt(parts[1], 10) || 0;
+            const flipStr = parts[2] || "";
+            const flipH = flipStr.includes("H");
+            const flipV = flipStr.includes("V");
+            layers[L] = { type: t, rotation: rot, flipH: flipH, flipV: flipV };
           } else {
-            layers[L] = { type: parseInt(tileData, 10), rotation: 0 };
+            layers[L] = { type: parseInt(tileData, 10), rotation: 0, flipH: false, flipV: false };
           }
 
           // Store crate items info for later processing
@@ -430,10 +450,15 @@ function stringToWorld(s) {
 
         let legacyTile;
         if (tileData.includes(":")) {
-          const [t, rot] = tileData.split(":");
-          legacyTile = { type: parseInt(t, 10), rotation: parseInt(rot, 10) || 0 };
+          const parts = tileData.split(":");
+          const t = parseInt(parts[0], 10);
+          const rot = parseInt(parts[1], 10) || 0;
+          const flipStr = parts[2] || "";
+          const flipH = flipStr.includes("H");
+          const flipV = flipStr.includes("V");
+          legacyTile = { type: t, rotation: rot, flipH: flipH, flipV: flipV };
         } else {
-          legacyTile = { type: parseInt(tileData, 10), rotation: 0 };
+          legacyTile = { type: parseInt(tileData, 10), rotation: 0, flipH: false, flipV: false };
         }
 
         // Convert to multi-layer format
@@ -599,11 +624,13 @@ function drawWorldLayer(world, layerIndex) {
         }
       }
 
-      // Draw the tile (optimized - avoid push/pop when rotation is 0)
-      if (finalRotation > 0) {
+      // Draw the tile (apply rotation and flips)
+      const needsTransform = finalRotation > 0 || tileObj.flipH || tileObj.flipV;
+      if (needsTransform) {
         push();
         translate(j * 50 + 25, i * 50 + 25);
         rotate(radians(finalRotation));
+        scale(tileObj.flipH ? -1 : 1, tileObj.flipV ? -1 : 1);
         image(imgToDraw, -25, -25, 50, 50);
         pop();
       } else {

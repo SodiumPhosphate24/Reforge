@@ -8,6 +8,8 @@ function __getMaxTileTypes() {
   return 0;
 }
 var tileRotation = 0;        // 0, 90, 180, 270
+var tileFlipH = false;       // horizontal flip
+var tileFlipV = false;       // vertical flip
 var editorLayer = 0;         // 0 & 1 behind; 2 & 3 in front
 const EDIT_TILE_SIZE = 50;
 var cratePlacementPaused = false; // Pauses tile placement after crate is placed
@@ -107,11 +109,13 @@ function drawEditorUI() {
   textSize(18);
   textAlign(CENTER);
   text("EDITOR MODE - Press Shift+E to exit", width / 2, 25);
-  text("Left-click: place | Right-click: erase | Alt+Click: pick | R: rotate | 1/2/3/4/5: layer | Hold P: minimap", width / 2, 45);
+  text("Left-click: place | Right-click: erase | Alt+Click: pick | R: rotate | H: flip horizontal | V: flip vertical", width / 2, 45);
+  
+  const flipText = (tileFlipH ? "H" : "") + (tileFlipV ? "V" : "") || "none";
   text(
     "Layer: " + editorLayer +
-    " | Current tile: " + selectedTileType +
-    " | Rotation: " + tileRotation + "°  | Scroll / , . to change tile",
+    " | Tile: " + selectedTileType +
+    " | Rotation: " + tileRotation + "° | Flip: " + flipText + " | Scroll / , . to change tile",
     width / 2, 65
   );
 
@@ -318,6 +322,7 @@ function drawTilePreview() {
     push();
     translate(snapX + 25, snapY + 25);
     rotate(radians(tileRotation));
+    scale(tileFlipH ? -1 : 1, tileFlipV ? -1 : 1);
     image(tileImgs[selectedTileType], -25, -25, 50, 50);
     pop();
     noTint();
@@ -361,7 +366,9 @@ function handleEditorClick() {
       if (t) {
         selectedTileType = t.type;
         tileRotation = t.rotation || 0;
-        console.log("Picked tile", selectedTileType, "rot", tileRotation, "from layer", editorLayer);
+        tileFlipH = t.flipH || false;
+        tileFlipV = t.flipV || false;
+        console.log("Picked tile", selectedTileType, "rot", tileRotation, "flip H:", tileFlipH, "V:", tileFlipV, "from layer", editorLayer);
       }
     }
     return;
@@ -393,12 +400,12 @@ function handleEditorClick() {
   // Left click = paint current layer
   if (mouseButton === LEFT) {
     if (typeof setTile === 'function') {
-      setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation);
+      setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation, tileFlipH, tileFlipV);
     } else {
       // Fallback if helpers missing (legacy)
-      gameWorld[gridRow][gridCol] = { type: selectedTileType, rotation: tileRotation };
+      gameWorld[gridRow][gridCol] = { type: selectedTileType, rotation: tileRotation, flipH: tileFlipH, flipV: tileFlipV };
     }
-    console.log("Placed type", selectedTileType, "rot", tileRotation, "at", gridRow, gridCol, "layer", editorLayer);
+    console.log("Placed type", selectedTileType, "rot", tileRotation, "flip H:", tileFlipH, "V:", tileFlipV, "at", gridRow, gridCol, "layer", editorLayer);
 
     // Check if a crate (type 5) was placed
     if (selectedTileType === 5) {
@@ -480,6 +487,18 @@ function handleEditorKeyPress() {
   if (keyCode == 82) { // R
     tileRotation = (tileRotation + 90) % 360;
     console.log("Rotated tile to:", tileRotation + "°");
+  }
+
+  // H to flip horizontal
+  if (keyCode == 72) { // H
+    tileFlipH = !tileFlipH;
+    console.log("Horizontal flip:", tileFlipH);
+  }
+
+  // V to flip vertical
+  if (keyCode == 86) { // V
+    tileFlipV = !tileFlipV;
+    console.log("Vertical flip:", tileFlipV);
   }
 }
 
