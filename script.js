@@ -12,8 +12,8 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow",];
-var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0, 2, 2, 2, 2, 1, 2, 2, 2, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost"];
+var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 1, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile variants storage
 var tileVariants = {};
@@ -51,6 +51,11 @@ function preload() {
   tileImgs[13] = null;
   tileImgs[14] = loadImage("Tiles/BarnDoor.png");
   tileImgs[15] = loadImage("Tiles/BarnWindow.png");
+  tileImgs[16] = loadImage("Tiles/Fence.png");
+  tileImgs[17] = loadImage("Tiles/FenceCorner.png");
+  tileImgs[18] = loadImage("Tiles/FenceDown.png");
+  tileImgs[19] = loadImage("Tiles/FenceEdge.png");
+  tileImgs[20] = loadImage("Tiles/FencePost.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonBattery.png");
