@@ -1,6 +1,6 @@
 
 // Menu state management
-var gameState = "menu"; // "menu" or "playing"
+var gameState = "menu"; // "menu", "playing", "credits", or "settings"
 let menuFadeAlpha = 255;
 let gameplayFadeAlpha = 0;
 let transitionSpeed = 5;
@@ -144,11 +144,9 @@ function handleMenuClick(optionIndex) {
     // TODO: Implement continue functionality
     startGameTransition();
   } else if (optionIndex === 2) { // Credits
-    // TODO: Implement credits screen
-    console.log("Credits clicked");
+    gameState = "credits";
   } else if (optionIndex === 3) { // Settings
-    // TODO: Implement settings screen
-    console.log("Settings clicked");
+    gameState = "settings";
   }
 }
 
@@ -194,6 +192,62 @@ function updateTransition() {
     gameState = "playing";
     transitionProgress = 0;
     titleTransitionScale = 1;
+  }
+}
+
+function drawCreditsScreen() {
+  background(20, 20, 30);
+  
+  // Title
+  push();
+  fill(100, 255, 255);
+  textFont(Silkscreen);
+  textSize(48);
+  textAlign(CENTER, CENTER);
+  text("CREDITS", width / 2, 200);
+  
+  // Placeholder text
+  textSize(24);
+  fill(255, 255, 255, 200);
+  text("Coming Soon", width / 2, height / 2);
+  
+  // Back instruction
+  textSize(18);
+  fill(100, 255, 255, 180);
+  text("Press ESC to return to menu", width / 2, height - 100);
+  pop();
+  
+  // Handle ESC to return to menu
+  if (keyPressedOnce(ESCAPE)) {
+    gameState = "menu";
+  }
+}
+
+function drawSettingsScreen() {
+  background(20, 20, 30);
+  
+  // Title
+  push();
+  fill(100, 255, 255);
+  textFont(Silkscreen);
+  textSize(48);
+  textAlign(CENTER, CENTER);
+  text("SETTINGS", width / 2, 200);
+  
+  // Placeholder text
+  textSize(24);
+  fill(255, 255, 255, 200);
+  text("Coming Soon", width / 2, height / 2);
+  
+  // Back instruction
+  textSize(18);
+  fill(100, 255, 255, 180);
+  text("Press ESC to return to menu", width / 2, height - 100);
+  pop();
+  
+  // Handle ESC to return to menu
+  if (keyPressedOnce(ESCAPE)) {
+    gameState = "menu";
   }
 }
 

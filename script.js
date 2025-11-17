@@ -151,6 +151,18 @@ function draw() {
     return;
   }
 
+  // Show credits screen
+  if (gameState === "credits") {
+    drawCreditsScreen();
+    return;
+  }
+
+  // Show settings screen
+  if (gameState === "settings") {
+    drawSettingsScreen();
+    return;
+  }
+
   // Draw transition overlay during transition
   if (gameState === "transitioning") {
     // Draw the game in background
