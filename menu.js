@@ -59,7 +59,7 @@ function drawMenuScreen() {
   // Sin wave float animation
   const floatOffset = sin(frameCount / 30) * 8;
   
-  image(ReforgeLogo, width / 2, 150 + floatOffset, displayWidth, displayHeight);
+  image(ReforgeLogo, width / 2, 180 + floatOffset, displayWidth, displayHeight);
   pop();
   
   // Draw menu options on right side
@@ -79,15 +79,6 @@ function drawMenuScreen() {
     const arrowWidth = 30; // Space for arrow
     const totalWidth = optionTextWidth + arrowWidth + 10; // 10px padding
     const optionHeight = 50;
-    
-    // Check if mouse is hovering (adjust bounds for arrow on left)
-    const isHovering = mouseX >= menuX - arrowWidth && mouseX <= menuX + optionTextWidth + 10 &&
-                       mouseY >= optionY - optionHeight / 2 && mouseY <= optionY + optionHeight / 2;
-    
-    // Update selection on hover
-    if (isHovering) {
-      selectedMenuOption = i;
-    }
     
     // Smooth hover animation - animate selected option
     if (selectedMenuOption === i) {
@@ -117,11 +108,6 @@ function drawMenuScreen() {
     textSize(28);
     fill(255, 255, 255, 200 + menuOptionHoverAlpha[i] * 0.2);
     text(menuOptions[i], menuX, optionY);
-    
-    // Check for click
-    if (isHovering && mouseIsPressed && mouseButton === LEFT) {
-      handleMenuClick(i);
-    }
   }
 }
 
@@ -253,7 +239,7 @@ function drawTransitionOverlay() {
       const floatOffset = sin(frameCount / 30) * 8;
       
       tint(255, logoAlpha);
-      image(ReforgeLogo, width / 2, 150 + floatOffset, displayWidth, displayHeight);
+      image(ReforgeLogo, width / 2, 180 + floatOffset, displayWidth, displayHeight);
       noTint();
       pop();
     }
