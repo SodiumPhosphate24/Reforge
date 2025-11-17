@@ -19,6 +19,7 @@ let menuOptionTargetSlide = [0, 0, 0, 0]; // 0 for off-screen right, 1 for on-sc
 let menuOptionXOffset = 500; // Starting X offset for animation
 let menuAnimationDelay = 10; // Frames delay between each option
 let menuAnimationTimer = 0; // Timer for staggered animation
+let pendingStateChange = null; // Store next state to transition to after animation
 
 function drawMenuScreen() {
   // Handle keyboard navigation
@@ -79,17 +80,35 @@ function drawMenuScreen() {
   textFont(Silkscreen);
   textAlign(LEFT, CENTER);
 
+  // Check if exit animation is complete
+  if (pendingStateChange && gameState === "menu") {
+    let allOptionsOut = true;
+    for (let i = 0; i < menuOptions.length; i++) {
+      if (menuOptionSlideProgress[i] > 0.01) {
+        allOptionsOut = false;
+        break;
+      }
+    }
+    
+    // Once all options are off-screen, change state
+    if (allOptionsOut) {
+      gameState = pendingStateChange;
+      pendingStateChange = null;
+      menuAnimationTimer = 0;
+    }
+  }
+
   for (let i = 0; i < menuOptions.length; i++) {
     const optionY = menuStartY + i * menuSpacing;
 
     // Update slide progress towards target with staggered delay
-    if (gameState === "menu") {
+    if (gameState === "menu" && !pendingStateChange) {
       // Entrance: top to bottom (0, 1, 2, 3)
       const delayFrames = i * menuAnimationDelay;
       if (menuAnimationTimer >= delayFrames) {
         menuOptionTargetSlide[i] = 1; // Target on-screen
       }
-    } else if (gameState === "credits" || gameState === "settings") {
+    } else if (pendingStateChange) {
       // Exit: top to bottom (0, 1, 2, 3)
       const delayFrames = i * menuAnimationDelay;
       if (menuAnimationTimer >= delayFrames) {
@@ -173,19 +192,13 @@ function handleMenuClick(optionIndex) {
     // TODO: Implement continue functionality
     startGameTransition();
   } else if (optionIndex === 2) { // Credits
-    gameState = "credits";
-    // Reset animation progress and timer when entering credits
+    // Start exit animation, will change state once complete
+    pendingStateChange = "credits";
     menuAnimationTimer = 0;
-    for (let i = 0; i < menuOptions.length; i++) {
-      menuOptionTargetSlide[i] = 0; // Slide out
-    }
   } else if (optionIndex === 3) { // Settings
-    gameState = "settings";
-    // Reset animation progress and timer when entering settings
+    // Start exit animation, will change state once complete
+    pendingStateChange = "settings";
     menuAnimationTimer = 0;
-    for (let i = 0; i < menuOptions.length; i++) {
-      menuOptionTargetSlide[i] = 0; // Slide out
-    }
   }
 }
 
