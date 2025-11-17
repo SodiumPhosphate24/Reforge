@@ -46,7 +46,7 @@ function drawMenuScreen() {
 
   menuAnimationTime += 0.016; // Approximate 60fps
   
-  // Draw REFORGE logo at top (non-interactive)
+  // Draw REFORGE logo with floating animation
   push();
   imageMode(CENTER);
   
@@ -56,7 +56,10 @@ function drawMenuScreen() {
   let displayWidth = logoWidth * logoScale;
   let displayHeight = logoHeight * logoScale;
   
-  image(ReforgeLogo, width / 2, 80, displayWidth, displayHeight);
+  // Sin wave float animation
+  const floatOffset = sin(frameCount / 30) * 8;
+  
+  image(ReforgeLogo, width / 2, 150 + floatOffset, displayWidth, displayHeight);
   pop();
   
   // Draw menu options on right side
@@ -69,11 +72,16 @@ function drawMenuScreen() {
   
   for (let i = 0; i < menuOptions.length; i++) {
     const optionY = menuStartY + i * menuSpacing;
-    const optionWidth = 200;
+    
+    // Measure text width for this option
+    textSize(28);
+    const textWidth = textWidth(menuOptions[i]);
+    const arrowWidth = 30; // Space for arrow
+    const totalWidth = textWidth + arrowWidth + 10; // 10px padding
     const optionHeight = 50;
     
-    // Check if mouse is hovering
-    const isHovering = mouseX >= menuX && mouseX <= menuX + optionWidth &&
+    // Check if mouse is hovering (adjust bounds for arrow on left)
+    const isHovering = mouseX >= menuX - arrowWidth && mouseX <= menuX + textWidth + 10 &&
                        mouseY >= optionY - optionHeight / 2 && mouseY <= optionY + optionHeight / 2;
     
     // Update selection on hover
@@ -88,27 +96,27 @@ function drawMenuScreen() {
       menuOptionHoverAlpha[i] = lerp(menuOptionHoverAlpha[i], 0, 0.1);
     }
     
-    // Draw faint white selection background
+    // Draw faint white selection background (fit to text width)
     if (selectedMenuOption === i) {
       fill(255, 255, 255, 30 + menuOptionHoverAlpha[i] * 0.2);
       noStroke();
-      rect(menuX - 20, optionY - 25, 220, 50, 5);
+      rect(menuX - arrowWidth - 10, optionY - 25, totalWidth + 20, 50, 5);
+    }
+    
+    // Draw arrow indicator on the left side for selected option
+    if (selectedMenuOption === i) {
+      push();
+      fill(255, 255, 255, 150 + menuOptionHoverAlpha[i] * 0.4);
+      textSize(28);
+      textAlign(LEFT, CENTER);
+      text(">", menuX - arrowWidth, optionY);
+      pop();
     }
     
     // Draw option text
     textSize(28);
     fill(255, 255, 255, 200 + menuOptionHoverAlpha[i] * 0.2);
     text(menuOptions[i], menuX, optionY);
-    
-    // Draw arrow indicator on the right side for selected option
-    if (selectedMenuOption === i) {
-      push();
-      fill(255, 255, 255, 150 + menuOptionHoverAlpha[i] * 0.4);
-      textSize(28);
-      textAlign(RIGHT, CENTER);
-      text(">", menuX + 210, optionY);
-      pop();
-    }
     
     // Check for click
     if (isHovering && mouseIsPressed && mouseButton === LEFT) {
@@ -241,8 +249,11 @@ function drawTransitionOverlay() {
       let displayWidth = logoWidth * logoScale;
       let displayHeight = logoHeight * logoScale;
       
+      // Sin wave float animation
+      const floatOffset = sin(frameCount / 30) * 8;
+      
       tint(255, logoAlpha);
-      image(ReforgeLogo, width / 2, 80, displayWidth, displayHeight);
+      image(ReforgeLogo, width / 2, 150 + floatOffset, displayWidth, displayHeight);
       noTint();
       pop();
     }
