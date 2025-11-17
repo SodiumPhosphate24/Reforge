@@ -1,11 +1,11 @@
-let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage;
+  let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage;
 var itemConstructors = [];
 var pX = 12500; var pY = 12500; var playerDamage = 1;
 var prePX = 0, prePY = 0;
 var camX = -12500; var camY = -12500;
 var pSpeed = 1.3;
 var pXVel = 0; var pYVel = 0;
-var pWidth = 35; var pHeight = 25;
+var pWidth = 35; var pHeight = 21.4;
 var gameWorld = [];
 var worldString = "";
 var lastScroll = 0;
