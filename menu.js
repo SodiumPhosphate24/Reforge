@@ -92,7 +92,12 @@ function drawMenuScreen() {
     
     // Once all options are off-screen, change state
     if (allOptionsOut) {
-      gameState = pendingStateChange;
+      // Handle Play and Continue by starting game transition
+      if (pendingStateChange === "play" || pendingStateChange === "continue") {
+        startGameTransition();
+      } else {
+        gameState = pendingStateChange;
+      }
       pendingStateChange = null;
       menuAnimationTimer = 0;
     }
@@ -187,10 +192,22 @@ function handleMenuKeyboard() {
 
 function handleMenuClick(optionIndex) {
   if (optionIndex === 0) { // Play
-    startGameTransition();
+    // Start exit animation, will change state once complete
+    pendingStateChange = "play";
+    menuAnimationTimer = 0;
+    // Set all targets to slide off-screen
+    for (let i = 0; i < menuOptions.length; i++) {
+      menuOptionTargetSlide[i] = 0;
+    }
   } else if (optionIndex === 1) { // Continue
     // TODO: Implement continue functionality
-    startGameTransition();
+    // Start exit animation, will change state once complete
+    pendingStateChange = "continue";
+    menuAnimationTimer = 0;
+    // Set all targets to slide off-screen
+    for (let i = 0; i < menuOptions.length; i++) {
+      menuOptionTargetSlide[i] = 0;
+    }
   } else if (optionIndex === 2) { // Credits
     // Start exit animation, will change state once complete
     pendingStateChange = "credits";
