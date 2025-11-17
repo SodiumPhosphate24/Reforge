@@ -1,4 +1,4 @@
-  let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage;
+let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage;
 var itemConstructors = [];
 var pX = 12500; var pY = 12500; var playerDamage = 1;
 var prePX = 0, prePY = 0;
@@ -12,8 +12,8 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "barnDoor", "barnWindow", "window", "crack", "wood", "whiteConcrete"];
-var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0, 2, 2, 2, 2, 2, 2, 1, 2, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow",];
+var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0, 2, 2, 2, 2, 1, 2, 2, 2, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile variants storage
 var tileVariants = {};
@@ -48,6 +48,9 @@ function preload() {
   tileImgs[10] = loadImage("Tiles/Window.png");
   tileImgs[11] = loadImage("Tiles/Crack.png");
   tileImgs[12] = loadImage("Tiles/Wood.png");
+  tileImgs[13] = null;
+  tileImgs[14] = loadImage("Tiles/BarnDoor.png");
+  tileImgs[15] = loadImage("Tiles/BarnWindow.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonBattery.png");
@@ -84,6 +87,14 @@ function preload() {
       'corner': loadImage("Tiles/DarkConcreteCorner.png")
     }
   };
+  tileVariants[13] = {
+    variants: {
+      'full': loadImage("Tiles/WhiteConcrete.png"),
+      'center': loadImage("Tiles/WhiteConcreteCenter.png"),
+      'edge': loadImage("Tiles/WhiteConcreteEdge.png"),
+      'corner': loadImage("Tiles/WhiteConcreteCorner.png")
+    }
+  }
 }
 
 function setup() {
@@ -133,7 +144,7 @@ function draw() {
     drawMenuScreen();
     return;
   }
-  
+
   // Draw transition overlay during transition
   if (gameState === "transitioning") {
     // Draw the game in background
@@ -142,7 +153,7 @@ function draw() {
     drawTransitionOverlay();
     return;
   }
-  
+
   // Normal gameplay
   drawGameplay();
 }
@@ -424,7 +435,7 @@ function stringToWorld(s) {
         } else {
           legacyTile = { type: parseInt(tileData, 10), rotation: 0 };
         }
-        
+
         // Convert to multi-layer format
         outRow.push({ layers: [legacyTile, null, null, null, null] });
 
@@ -741,7 +752,7 @@ function checkCollision(x, y, x2, y2, w, h, w2 = 50, h2 = 50) {
 
 /* ========= Roof fade system (optimized with caching and range limiting) ========= */
 const ROOF_FADE_SPEED = 42.5;   // alpha change per frame (0..255) - instant fade
-const ROOF_MAX_DISTANCE = 15;  // max tiles to flood fill from player - reduced range
+const ROOF_MAX_DISTANCE = 25;  // max tiles to flood fill from player - reduced range
 let roofAlpha = new Map();     // key "row,col" -> alpha
 let roofTarget = new Set();    // keys that should fade to 0 this frame
 let lastPlayerTile = { row: -1, col: -1 }; // cache player position
