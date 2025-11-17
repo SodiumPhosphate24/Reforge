@@ -10,7 +10,6 @@ let logoIdleFloat = 0;
 let logoClickScale = 1;
 let logoGlowAlpha = 0; // Fade-in glow
 let ReforgeLogo;
-let titleScreenImg;
 
 function drawMenuScreen() {
   background(20, 20, 30);
