@@ -17,6 +17,8 @@ let menuKeyDelay = 150; // Delay between key presses in ms
 let menuOptionSlideProgress = [0, 0, 0, 0];
 let menuOptionTargetSlide = [0, 0, 0, 0]; // 0 for off-screen right, 1 for on-screen
 let menuOptionXOffset = 500; // Starting X offset for animation
+let menuAnimationDelay = 10; // Frames delay between each option
+let menuAnimationTimer = 0; // Timer for staggered animation
 
 function drawMenuScreen() {
   // Handle keyboard navigation
@@ -49,6 +51,9 @@ function drawMenuScreen() {
   }
 
   menuAnimationTime += 0.016; // Approximate 60fps
+  
+  // Increment animation timer for staggered menu options
+  menuAnimationTimer++;
 
   // Draw REFORGE logo with floating animation
   push();
@@ -77,12 +82,21 @@ function drawMenuScreen() {
   for (let i = 0; i < menuOptions.length; i++) {
     const optionY = menuStartY + i * menuSpacing;
 
-    // Update slide progress towards target
+    // Update slide progress towards target with staggered delay
     if (gameState === "menu") {
-      menuOptionTargetSlide[i] = 1; // Target on-screen
-    } else {
-      menuOptionTargetSlide[i] = 0; // Target off-screen right
+      // Entrance: top to bottom (0, 1, 2, 3)
+      const delayFrames = i * menuAnimationDelay;
+      if (menuAnimationTimer >= delayFrames) {
+        menuOptionTargetSlide[i] = 1; // Target on-screen
+      }
+    } else if (gameState === "credits" || gameState === "settings") {
+      // Exit: top to bottom (0, 1, 2, 3)
+      const delayFrames = i * menuAnimationDelay;
+      if (menuAnimationTimer >= delayFrames) {
+        menuOptionTargetSlide[i] = 0; // Target off-screen right
+      }
     }
+    
     menuOptionSlideProgress[i] = lerp(menuOptionSlideProgress[i], menuOptionTargetSlide[i], 0.15);
 
     // Calculate current X position with slide animation
@@ -160,16 +174,16 @@ function handleMenuClick(optionIndex) {
     startGameTransition();
   } else if (optionIndex === 2) { // Credits
     gameState = "credits";
-    // Reset animation progress when entering credits
+    // Reset animation progress and timer when entering credits
+    menuAnimationTimer = 0;
     for (let i = 0; i < menuOptions.length; i++) {
-      menuOptionSlideProgress[i] = 0;
       menuOptionTargetSlide[i] = 0; // Slide out
     }
   } else if (optionIndex === 3) { // Settings
     gameState = "settings";
-    // Reset animation progress when entering settings
+    // Reset animation progress and timer when entering settings
+    menuAnimationTimer = 0;
     for (let i = 0; i < menuOptions.length; i++) {
-      menuOptionSlideProgress[i] = 0;
       menuOptionTargetSlide[i] = 0; // Slide out
     }
   }
@@ -246,6 +260,7 @@ function drawCreditsScreen() {
   if (keyPressedOnce(ESCAPE)) {
     gameState = "menu";
     // Reset menu animation for re-entry
+    menuAnimationTimer = 0;
     for (let i = 0; i < menuOptions.length; i++) {
       menuOptionSlideProgress[i] = 0;
       menuOptionTargetSlide[i] = 0;
@@ -279,6 +294,7 @@ function drawSettingsScreen() {
   if (keyPressedOnce(ESCAPE)) {
     gameState = "menu";
     // Reset menu animation for re-entry
+    menuAnimationTimer = 0;
     for (let i = 0; i < menuOptions.length; i++) {
       menuOptionSlideProgress[i] = 0;
       menuOptionTargetSlide[i] = 0;
