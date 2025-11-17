@@ -11,8 +11,13 @@ let ReforgeLogo;
 let menuOptions = ["Play", "Continue", "Credits", "Settings"];
 let selectedMenuOption = 0;
 let menuOptionHoverAlpha = [0, 0, 0, 0];
+let lastMenuKeyPress = 0;
+let menuKeyDelay = 150; // Delay between key presses in ms
 
 function drawMenuScreen() {
+  // Handle keyboard navigation
+  handleMenuKeyboard();
+  
   background(20, 20, 30);
   
   // Draw titlescreen background
@@ -71,10 +76,14 @@ function drawMenuScreen() {
     const isHovering = mouseX >= menuX && mouseX <= menuX + optionWidth &&
                        mouseY >= optionY - optionHeight / 2 && mouseY <= optionY + optionHeight / 2;
     
-    // Smooth hover animation
+    // Update selection on hover
     if (isHovering) {
-      menuOptionHoverAlpha[i] = lerp(menuOptionHoverAlpha[i], 255, 0.15);
       selectedMenuOption = i;
+    }
+    
+    // Smooth hover animation - animate selected option
+    if (selectedMenuOption === i) {
+      menuOptionHoverAlpha[i] = lerp(menuOptionHoverAlpha[i], 255, 0.15);
     } else {
       menuOptionHoverAlpha[i] = lerp(menuOptionHoverAlpha[i], 0, 0.1);
     }
@@ -105,6 +114,32 @@ function drawMenuScreen() {
     if (isHovering && mouseIsPressed && mouseButton === LEFT) {
       handleMenuClick(i);
     }
+  }
+}
+
+function handleMenuKeyboard() {
+  const currentTime = millis();
+  
+  // Prevent key repeat spam
+  if (currentTime - lastMenuKeyPress < menuKeyDelay) {
+    return;
+  }
+  
+  // Navigate with arrow keys
+  if (keyIsDown(UP_ARROW)) {
+    selectedMenuOption = (selectedMenuOption - 1 + menuOptions.length) % menuOptions.length;
+    lastMenuKeyPress = currentTime;
+  }
+  
+  if (keyIsDown(DOWN_ARROW)) {
+    selectedMenuOption = (selectedMenuOption + 1) % menuOptions.length;
+    lastMenuKeyPress = currentTime;
+  }
+  
+  // Select with Enter
+  if (keyIsDown(ENTER)) {
+    handleMenuClick(selectedMenuOption);
+    lastMenuKeyPress = currentTime;
   }
 }
 
