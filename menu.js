@@ -195,10 +195,18 @@ function handleMenuClick(optionIndex) {
     // Start exit animation, will change state once complete
     pendingStateChange = "credits";
     menuAnimationTimer = 0;
+    // Set all targets to slide off-screen
+    for (let i = 0; i < menuOptions.length; i++) {
+      menuOptionTargetSlide[i] = 0;
+    }
   } else if (optionIndex === 3) { // Settings
     // Start exit animation, will change state once complete
     pendingStateChange = "settings";
     menuAnimationTimer = 0;
+    // Set all targets to slide off-screen
+    for (let i = 0; i < menuOptions.length; i++) {
+      menuOptionTargetSlide[i] = 0;
+    }
   }
 }
 
