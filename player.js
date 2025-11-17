@@ -8,6 +8,10 @@ var indicatorCurrentY = 0;
 var isTransitioning = false; // Track if switching between players
 var transitionFrames = 0; // Count frames since transition started
 
+// Player flip state
+var playerFlipScale = 1; // Current flip scale (-1 for left, 1 for right)
+var targetFlipScale = 1; // Target flip scale
+
 class Player {
   constructor(x, y, w, h, speed, health, damage, picture) {
     this.x = x;
@@ -61,7 +65,22 @@ function switchPlayer(newPlayer) {
 
   // Camera will smoothly pan to new player via controlCamera()
 }
+// Update player flip based on velocity
+function updatePlayerFlip() {
+  // Only flip if player is moving horizontally
+  if (Math.abs(pXVel) > 0.1) {
+    // Set target flip based on velocity direction
+    targetFlipScale = pXVel > 0 ? 1 : -1;
+  }
+  
+  // Smoothly lerp current flip to target
+  playerFlipScale = lerp(playerFlipScale, targetFlipScale, 0.2);
+}
+
 function drawPlayers() {
+  // Update flip direction
+  updatePlayerFlip();
+  
   // Draw other players at their world positions with same visual buffer
   for (let i = 0; i < players.length; i++) {
     players[i].isDead();
@@ -79,9 +98,14 @@ function drawPlayers() {
   fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
   ellipse(pX + 600 + pWidth / 2, pY + 375 + pHeight, pWidth, pHeight * 0.6);
 
-  // Draw active player at centered position with 35px visual buffer above hitbox
-  // The image is drawn 35px higher than the hitbox position
-  image(PlayerImage, pX + 600, pY + 375 - 35, pWidth, pHeight + 35);
+  // Draw active player with flip
+  push();
+  translate(pX + 600 + pWidth / 2, pY + 375 - 35 + (pHeight + 35) / 2);
+  scale(playerFlipScale, 1);
+  imageMode(CENTER);
+  image(PlayerImage, 0, 0, pWidth, pHeight + 35);
+  imageMode(CORNER);
+  pop();
 
   // Draw indicator above active player
   drawIndicator();
