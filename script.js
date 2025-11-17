@@ -161,10 +161,16 @@ function drawGameplay() {
   stepRoofFades();
   // -------------------------------
 
-  // LAYERS 0, 1, and 2 behind player
+  // LAYERS 0, 1 behind everything
   drawWorldLayer(gameWorld, 0);
   drawWorldLayer(gameWorld, 1);
+
+  // Draw items (dropped items)
+  updateDroppedItems();
+
+  // LAYERS 2, 3 over items but under player
   drawWorldLayer(gameWorld, 2);
+  drawWorldLayer(gameWorld, 3);
 
   fill(255);
   drawNPCs();
@@ -177,13 +183,12 @@ function drawGameplay() {
   mainHand();
   drawEnemies();
   drawBullets();
-  updateDroppedItems();
   updateParticles(); // Draw particles
   controls();
   resolveCollisions();
 
-  // LAYER 3 on top of player
-  drawWorldLayer(gameWorld, 3);
+  // LAYER 4 on top of player
+  drawWorldLayer(gameWorld, 4);
 
   pop();
 
@@ -246,17 +251,25 @@ Crate inventory encoding:
 function getTile(row, col, layer = 0) {
   const cell = gameWorld[row]?.[col];
   if (!cell) return null;
-  if ('layers' in cell) return cell.layers[layer] || null;
+  if ('layers' in cell) {
+    // Ensure the layers array has 5 elements
+    if (cell.layers.length < 5) {
+      while (cell.layers.length < 5) {
+        cell.layers.push(null);
+      }
+    }
+    return cell.layers[layer] || null;
+  }
   return (layer === 0) ? cell : null; // legacy cell is layer 0
 }
 
 function setTile(row, col, layer, type, rotation = 0) {
   if (!gameWorld[row]) gameWorld[row] = [];
   if (!gameWorld[row][col]) {
-    gameWorld[row][col] = { layers: [null, null, null, null] };
+    gameWorld[row][col] = { layers: [null, null, null, null, null] };
   } else if (!('layers' in gameWorld[row][col])) {
     const old = gameWorld[row][col];
-    gameWorld[row][col] = { layers: [old, null, null, null] };
+    gameWorld[row][col] = { layers: [old, null, null, null, null] };
   }
   gameWorld[row][col].layers[layer] = (type == null) ? null : { type: parseInt(type, 10), rotation: parseInt(rotation, 10) || 0 };
 }
@@ -348,11 +361,11 @@ function stringToWorld(s) {
       if (cellStr.includes(",")) {
         // Multi-layer format
         const layerStrs = cellStr.split(",");
-        const layers = [null, null, null, null];
+        const layers = [null, null, null, null, null];
         let crateItemsForCell = null;
         let crateLayerIndex = -1;
 
-        for (let L = 0; L < Math.min(4, layerStrs.length); L++) {
+        for (let L = 0; L < Math.min(5, layerStrs.length); L++) {
           const tstr = layerStrs[L].trim();
           if (tstr === "") { layers[L] = null; continue; }
 
@@ -395,7 +408,7 @@ function stringToWorld(s) {
 
         outRow.push({ layers });
       } else {
-        // Legacy single-layer format
+        // Legacy single-layer format - convert to new format with 5 layers
         let tileData = cellStr;
         let crateItemsStr = null;
         if (cellStr.includes("@")) {
@@ -404,12 +417,16 @@ function stringToWorld(s) {
           crateItemsStr = parts[1];
         }
 
+        let legacyTile;
         if (tileData.includes(":")) {
           const [t, rot] = tileData.split(":");
-          outRow.push({ type: parseInt(t, 10), rotation: parseInt(rot, 10) || 0 });
+          legacyTile = { type: parseInt(t, 10), rotation: parseInt(rot, 10) || 0 };
         } else {
-          outRow.push({ type: parseInt(tileData, 10), rotation: 0 });
+          legacyTile = { type: parseInt(tileData, 10), rotation: 0 };
         }
+        
+        // Convert to multi-layer format
+        outRow.push({ layers: [legacyTile, null, null, null, null] });
 
         // Parse crate items if present
         if (crateItemsStr && parseInt(tileData.split(":")[0], 10) === 5) {
@@ -549,9 +566,9 @@ function drawWorldLayer(world, layerIndex) {
       let tileType = tileObj.type;
       let rotation = tileObj.rotation || 0;
 
-      // Roof tinting on layers 1, 2, and 3 when tile is a roof type
+      // Roof tinting on layers 1, 2, 3, and 4 when tile is a roof type
       let __useTint = false;
-      if ((layerIndex === 1 || layerIndex === 2 || layerIndex === 3) && tileWalls[tileType] === 2) {
+      if ((layerIndex === 1 || layerIndex === 2 || layerIndex === 3 || layerIndex === 4) && tileWalls[tileType] === 2) {
         const __k = tileKey(i, j);
         const __alpha = roofAlpha.has(__k) ? roofAlpha.get(__k) : 255;
         if (__alpha <= 0) continue; // fully transparent; skip draw
@@ -694,7 +711,7 @@ function checkTileCollisions(x, y, w, h) {
       const cell = gameWorld[row][col];
 
       if (cell && 'layers' in cell) {
-        for (let L = 0; L < 4; L++) {
+        for (let L = 0; L < 5; L++) {
           const t = cell.layers[L];
           if (!t) continue;
           if (tileWalls[t.type] == 1) {
@@ -737,8 +754,10 @@ function isRoof(row, col) {
   const cell = gameWorld[row][col];
   if (!cell) return false;
 
-  // Treat roof as tiles placed on layers 1, 2, or 3
+  // Treat roof as tiles placed on layers 1, 2, 3, or 4
   if ('layers' in cell) {
+    const L4 = cell.layers?.[4];
+    if (L4 && tileWalls[L4.type] === 2) return true;
     const L3 = cell.layers?.[3];
     if (L3 && tileWalls[L3.type] === 2) return true;
     const L2 = cell.layers?.[2];

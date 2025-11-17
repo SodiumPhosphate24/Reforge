@@ -107,7 +107,7 @@ function drawEditorUI() {
   textSize(18);
   textAlign(CENTER);
   text("EDITOR MODE - Press Shift+E to exit", width / 2, 25);
-  text("Left-click: place | Right-click: erase | Alt+Click: pick | R: rotate | 1/2/3/4: layer | Hold P: minimap", width / 2, 45);
+  text("Left-click: place | Right-click: erase | Alt+Click: pick | R: rotate | 1/2/3/4/5: layer | Hold P: minimap", width / 2, 45);
   text(
     "Layer: " + editorLayer +
     " | Current tile: " + selectedTileType +
