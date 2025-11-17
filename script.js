@@ -12,8 +12,8 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood"];
-var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0, 2, 2, 2, 2, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "barnDoor", "barnWindow", "window", "crack", "wood", "whiteConcrete"];
+var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0, 2, 2, 2, 2, 2, 2, 1, 2, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile variants storage
 var tileVariants = {};
