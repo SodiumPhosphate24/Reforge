@@ -272,11 +272,11 @@ function drawCreditsScreen() {
   // Handle ESC to return to menu
   if (keyPressedOnce(ESCAPE)) {
     gameState = "menu";
-    // Reset menu animation for re-entry
+    // Reset menu animation for re-entry - start off-screen right
     menuAnimationTimer = 0;
     for (let i = 0; i < menuOptions.length; i++) {
-      menuOptionSlideProgress[i] = 0;
-      menuOptionTargetSlide[i] = 0;
+      menuOptionSlideProgress[i] = 0; // Start off-screen
+      menuOptionTargetSlide[i] = 0; // Will be set to 1 by animation logic
     }
   }
 }
@@ -306,11 +306,11 @@ function drawSettingsScreen() {
   // Handle ESC to return to menu
   if (keyPressedOnce(ESCAPE)) {
     gameState = "menu";
-    // Reset menu animation for re-entry
+    // Reset menu animation for re-entry - start off-screen right
     menuAnimationTimer = 0;
     for (let i = 0; i < menuOptions.length; i++) {
-      menuOptionSlideProgress[i] = 0;
-      menuOptionTargetSlide[i] = 0;
+      menuOptionSlideProgress[i] = 0; // Start off-screen
+      menuOptionTargetSlide[i] = 0; // Will be set to 1 by animation logic
     }
   }
 }
