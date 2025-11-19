@@ -133,7 +133,7 @@ function setup() {
   players.push(new Player(0, 100, 100, 100, .5, 350, playerDamage, PlayerImage));
   players.push(new Player(500, 100, 25, 25, 2, healthPoints, playerDamage, PlayerImage));
 
-  NonPlayerCharacters.push 
+  NonPlayerCharacters.push (new NPC(12500, 12500, 100, 100, 1, 100, 1, PlayerImage, "Buschy"));
 
   inventoryList = players[activePlayer].inventory;
 
