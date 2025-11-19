@@ -103,6 +103,9 @@ function toggleEditorMode() {
 }
 
 function drawEditorUI() {
+  // Handle slider dragging first (before drawing)
+  handleSliderDrag();
+
   // Border
   stroke(255, 255, 0);
   strokeWeight(8);
@@ -513,8 +516,8 @@ function handleEditorClick() {
   if (!(editorMode && gameWorld && gameWorld.length > 0)) return;
   if (cratePlacementPaused) return; // Don't allow clicks when paused
 
-  // Check if clicking on sliders first
-  if (handleSliderDrag()) return;
+  // Check if interacting with sliders - if so, don't place tiles
+  if (draggingSlider !== null) return;
 
   var worldX = mouseX - camX;
   var worldY = mouseY - camY;
