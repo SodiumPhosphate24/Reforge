@@ -23,7 +23,7 @@ let maxTileTypes = 0; // will be set in setup()
 var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
 
 function preload() {
-  console.log("Updated version 18");
+  console.log("Updated version Prometheus Tint");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   BadGuy = loadImage("Characters/Enemy.png")
@@ -133,7 +133,7 @@ function setup() {
   players.push(new Player(0, 100, 100, 100, .5, 350, playerDamage, PlayerImage));
   players.push(new Player(500, 100, 25, 25, 2, healthPoints, playerDamage, PlayerImage));
 
-  NonPlayerCharacters.push (new NPC(13350, 12750, "Prometheus IV", ["Prometheus IV: I am the god of fire and the forge.", "Prometheus IV: I have given you the gift of fire.", "Prometheus IV: But at what cost?"], BadGuy));
+  NonPlayerCharacters.push(new NPC(13350, 12750, "Prometheus IV", ["Prometheus IV: I am the god of fire and the forge.", "Prometheus IV: I have given you the gift of fire.", "Prometheus IV: But at what cost?"], BadGuy));
 
   inventoryList = players[activePlayer].inventory;
 
@@ -450,7 +450,7 @@ function stringToWorld(s) {
             const flipStr = parts[2] || "";
             const flipH = flipStr.includes("H");
             const flipV = flipStr.includes("V");
-            
+
             // Parse tint if present
             let tintR = 255, tintG = 255, tintB = 255;
             const tintStr = parts[3] || "";
@@ -462,7 +462,7 @@ function stringToWorld(s) {
                 tintB = parseInt(tintValues[2], 10) || 255;
               }
             }
-            
+
             layers[L] = { type: t, rotation: rot, flipH: flipH, flipV: flipV, tintR: tintR, tintG: tintG, tintB: tintB };
           } else {
             layers[L] = { type: parseInt(tileData, 10), rotation: 0, flipH: false, flipV: false, tintR: 255, tintG: 255, tintB: 255 };
@@ -508,7 +508,7 @@ function stringToWorld(s) {
           const flipStr = parts[2] || "";
           const flipH = flipStr.includes("H");
           const flipV = flipStr.includes("V");
-          
+
           // Parse tint if present
           let tintR = 255, tintG = 255, tintB = 255;
           const tintStr = parts[3] || "";
@@ -520,7 +520,7 @@ function stringToWorld(s) {
               tintB = parseInt(tintValues[2], 10) || 255;
             }
           }
-          
+
           legacyTile = { type: t, rotation: rot, flipH: flipH, flipV: flipV, tintR: tintR, tintG: tintG, tintB: tintB };
         } else {
           legacyTile = { type: parseInt(tileData, 10), rotation: 0, flipH: false, flipV: false, tintR: 255, tintG: 255, tintB: 255 };
@@ -672,7 +672,7 @@ function drawWorldLayer(world, layerIndex) {
       let tileR = tileObj.tintR !== undefined ? tileObj.tintR : 255;
       let tileG = tileObj.tintG !== undefined ? tileObj.tintG : 255;
       let tileB = tileObj.tintB !== undefined ? tileObj.tintB : 255;
-      
+
       if ((layerIndex === 1 || layerIndex === 2 || layerIndex === 3 || layerIndex === 4) && tileWalls[tileType] === 2) {
         const __k = tileKey(i, j);
         const __alpha = roofAlpha.has(__k) ? roofAlpha.get(__k) : 255;
