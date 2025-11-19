@@ -482,16 +482,28 @@ function drawTilePreview() {
   push();
   translate(camX, camY);
 
-  // Semi-transparent preview of selected tile in current layer with tint
+  // Semi-transparent preview of selected tile in current layer
   if (tileImgs && tileImgs[selectedTileType]) {
-    tint(tileTintR, tileTintG, tileTintB, 150);
     push();
+    // Draw the tile image
     translate(snapX + 25, snapY + 25);
     rotate(radians(tileRotation));
     scale(tileFlipH ? -1 : 1, tileFlipV ? -1 : 1);
+    tint(255, 150); // Semi-transparent
     image(tileImgs[selectedTileType], -25, -25, 50, 50);
-    pop();
     noTint();
+    pop();
+    
+    // Draw tint overlay if not white
+    if (tileTintR !== 255 || tileTintG !== 255 || tileTintB !== 255) {
+      push();
+      noStroke();
+      blendMode(MULTIPLY);
+      fill(tileTintR, tileTintG, tileTintB, 120);
+      rect(snapX, snapY, 50, 50);
+      blendMode(BLEND);
+      pop();
+    }
   }
 
   // Grid cell outline

@@ -666,22 +666,17 @@ function drawWorldLayer(world, layerIndex) {
       let tileType = tileObj.type;
       let rotation = tileObj.rotation || 0;
 
-      // Roof tinting on layers 1, 2, 3, and 4 when tile is a roof type
-      let __useTint = false;
+      // Get tile tint values
       let tileR = tileObj.tintR !== undefined ? tileObj.tintR : 255;
       let tileG = tileObj.tintG !== undefined ? tileObj.tintG : 255;
       let tileB = tileObj.tintB !== undefined ? tileObj.tintB : 255;
 
+      // Check for roof fade alpha
+      let roofFadeAlpha = 255;
       if ((layerIndex === 1 || layerIndex === 2 || layerIndex === 3 || layerIndex === 4) && tileWalls[tileType] === 2) {
         const __k = tileKey(i, j);
-        const __alpha = roofAlpha.has(__k) ? roofAlpha.get(__k) : 255;
-        if (__alpha <= 0) continue; // fully transparent; skip draw
-        tint(tileR, tileG, tileB, __alpha);
-        __useTint = true;
-      } else if (tileR !== 255 || tileG !== 255 || tileB !== 255) {
-        // Apply custom tint if not default white
-        tint(tileR, tileG, tileB);
-        __useTint = true;
+        roofFadeAlpha = roofAlpha.has(__k) ? roofAlpha.get(__k) : 255;
+        if (roofFadeAlpha <= 0) continue; // fully transparent; skip draw
       }
 
       // Determine which image to draw (check for auto-tiling variants)
@@ -710,6 +705,33 @@ function drawWorldLayer(world, layerIndex) {
         image(imgToDraw, j * 50, i * 50, 50, 50);
       }
 
+      // Apply tint overlay using a translucent rectangle (more efficient than tint())
+      const hasTint = (tileR !== 255 || tileG !== 255 || tileB !== 255);
+      const hasRoofFade = roofFadeAlpha < 255;
+      
+      if (hasTint || hasRoofFade) {
+        push();
+        noStroke();
+        
+        if (hasTint && hasRoofFade) {
+          // Combine tint color with roof fade alpha
+          // Use blendMode MULTIPLY for tinting effect
+          blendMode(MULTIPLY);
+          fill(tileR, tileG, tileB, roofFadeAlpha);
+        } else if (hasTint) {
+          // Just apply tint color
+          blendMode(MULTIPLY);
+          fill(tileR, tileG, tileB, 200); // Slightly transparent for tinting effect
+        } else {
+          // Just apply roof fade
+          fill(255, 255, 255, roofFadeAlpha);
+        }
+        
+        rect(j * 50, i * 50, 50, 50);
+        blendMode(BLEND);
+        pop();
+      }
+
       // Draw crate inventory only when needed
       if (layerIndex === 2 && tileType === 5) {
         const crateKey = i + "," + j;
@@ -731,8 +753,6 @@ function drawWorldLayer(world, layerIndex) {
           }
         }
       }
-
-      if (__useTint) noTint();
     }
   }
 }
