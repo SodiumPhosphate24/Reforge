@@ -133,6 +133,8 @@ function setup() {
   players.push(new Player(0, 100, 100, 100, .5, 350, playerDamage, PlayerImage));
   players.push(new Player(500, 100, 25, 25, 2, healthPoints, playerDamage, PlayerImage));
 
+  NonPlayerCharacters.push 
+
   inventoryList = players[activePlayer].inventory;
 
   // Initialize indicator position
