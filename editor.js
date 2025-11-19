@@ -498,10 +498,11 @@ function drawTilePreview() {
     if (tileTintR !== 255 || tileTintG !== 255 || tileTintB !== 255) {
       push();
       noStroke();
-      blendMode(MULTIPLY);
-      fill(tileTintR, tileTintG, tileTintB, 120);
+      // Calculate alpha based on tint strength for accurate preview
+      const tintStrength = 255 - Math.min(tileTintR, tileTintG, tileTintB);
+      const alpha = map(tintStrength, 0, 255, 0, 150);
+      fill(tileTintR, tileTintG, tileTintB, alpha);
       rect(snapX, snapY, 50, 50);
-      blendMode(BLEND);
       pop();
     }
   }

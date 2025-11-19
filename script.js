@@ -715,20 +715,21 @@ function drawWorldLayer(world, layerIndex) {
         
         if (hasTint && hasRoofFade) {
           // Combine tint color with roof fade alpha
-          // Use blendMode MULTIPLY for tinting effect
-          blendMode(MULTIPLY);
-          fill(tileR, tileG, tileB, roofFadeAlpha);
+          // Calculate tint strength based on how far from white
+          const tintStrength = 255 - Math.min(tileR, tileG, tileB);
+          const alpha = map(tintStrength, 0, 255, 0, 150);
+          fill(tileR, tileG, tileB, Math.min(alpha, roofFadeAlpha));
         } else if (hasTint) {
-          // Just apply tint color
-          blendMode(MULTIPLY);
-          fill(tileR, tileG, tileB, 200); // Slightly transparent for tinting effect
+          // Just apply tint color with opacity based on color intensity
+          const tintStrength = 255 - Math.min(tileR, tileG, tileB);
+          const alpha = map(tintStrength, 0, 255, 0, 150);
+          fill(tileR, tileG, tileB, alpha);
         } else {
           // Just apply roof fade
-          fill(255, 255, 255, roofFadeAlpha);
+          fill(255, 255, 255, 255 - roofFadeAlpha);
         }
         
         rect(j * 50, i * 50, 50, 50);
-        blendMode(BLEND);
         pop();
       }
 
