@@ -23,7 +23,7 @@ let maxTileTypes = 0; // will be set in setup()
 var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
 
 function preload() {
-  console.log("Updated version Prometheus Tint");
+  console.log("Updated version Prometheus");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   BadGuy = loadImage("Characters/Enemy.png")
@@ -293,7 +293,7 @@ function getTile(row, col, layer = 0) {
   return (layer === 0) ? cell : null; // legacy cell is layer 0
 }
 
-function setTile(row, col, layer, type, rotation = 0, flipH = false, flipV = false, tintR = 255, tintG = 255, tintB = 255) {
+function setTile(row, col, layer, type, rotation = 0, flipH = false, flipV = false) {
   if (!gameWorld[row]) gameWorld[row] = [];
   if (!gameWorld[row][col]) {
     gameWorld[row][col] = { layers: [null, null, null, null, null] };
@@ -305,10 +305,7 @@ function setTile(row, col, layer, type, rotation = 0, flipH = false, flipV = fal
     type: parseInt(type, 10),
     rotation: parseInt(rotation, 10) || 0,
     flipH: flipH || false,
-    flipV: flipV || false,
-    tintR: parseInt(tintR, 10) || 255,
-    tintG: parseInt(tintG, 10) || 255,
-    tintB: parseInt(tintB, 10) || 255
+    flipV: flipV || false
   };
 }
 
@@ -337,14 +334,6 @@ function worldToString(world) {
             if (!t.rotation) s += ":0"; // Add rotation 0 if not present
             s += ":" + (t.flipH ? "H" : "") + (t.flipV ? "V" : "");
           }
-          // Add tint notation (only if not default white)
-          if (t.tintR !== undefined && t.tintG !== undefined && t.tintB !== undefined) {
-            if (t.tintR !== 255 || t.tintG !== 255 || t.tintB !== 255) {
-              if (!t.rotation && !t.flipH && !t.flipV) s += ":0::"; // Add rotation and flip placeholders
-              else if (!t.flipH && !t.flipV) s += "::"; // Add flip placeholder
-              s += "T" + Math.round(t.tintR) + "." + Math.round(t.tintG) + "." + Math.round(t.tintB);
-            }
-          }
           // Only add crate inventory if this specific layer contains a crate (type 5)
           if (t.type === 5) {
             const crateKey = r + "," + c;
@@ -371,14 +360,6 @@ function worldToString(world) {
         if (cell.flipH || cell.flipV) {
           if (!cell.rotation) s += ":0"; // Add rotation 0 if not present
           s += ":" + (cell.flipH ? "H" : "") + (cell.flipV ? "V" : "");
-        }
-        // Add tint notation (only if not default white)
-        if (cell.tintR !== undefined && cell.tintG !== undefined && cell.tintB !== undefined) {
-          if (cell.tintR !== 255 || cell.tintG !== 255 || cell.tintB !== 255) {
-            if (!cell.rotation && !cell.flipH && !cell.flipV) s += ":0::"; // Add rotation and flip placeholders
-            else if (!cell.flipH && !cell.flipV) s += "::"; // Add flip placeholder
-            s += "T" + Math.round(cell.tintR) + "." + Math.round(cell.tintG) + "." + Math.round(cell.tintB);
-          }
         }
         // Check for crate inventory in legacy format (only for crates, type 5)
         const crateKey = r + "," + c;
@@ -450,21 +431,9 @@ function stringToWorld(s) {
             const flipH = flipStr.includes("H");
             const flipV = flipStr.includes("V");
 
-            // Parse tint if present
-            let tintR = 255, tintG = 255, tintB = 255;
-            const tintStr = parts[3] || "";
-            if (tintStr.startsWith("T")) {
-              const tintValues = tintStr.substring(1).split(".");
-              if (tintValues.length === 3) {
-                tintR = parseInt(tintValues[0], 10) || 255;
-                tintG = parseInt(tintValues[1], 10) || 255;
-                tintB = parseInt(tintValues[2], 10) || 255;
-              }
-            }
-
-            layers[L] = { type: t, rotation: rot, flipH: flipH, flipV: flipV, tintR: tintR, tintG: tintG, tintB: tintB };
+            layers[L] = { type: t, rotation: rot, flipH: flipH, flipV: flipV };
           } else {
-            layers[L] = { type: parseInt(tileData, 10), rotation: 0, flipH: false, flipV: false, tintR: 255, tintG: 255, tintB: 255 };
+            layers[L] = { type: parseInt(tileData, 10), rotation: 0, flipH: false, flipV: false };
           }
 
           // Store crate items info for later processing
@@ -508,21 +477,9 @@ function stringToWorld(s) {
           const flipH = flipStr.includes("H");
           const flipV = flipStr.includes("V");
 
-          // Parse tint if present
-          let tintR = 255, tintG = 255, tintB = 255;
-          const tintStr = parts[3] || "";
-          if (tintStr.startsWith("T")) {
-            const tintValues = tintStr.substring(1).split(".");
-            if (tintValues.length === 3) {
-              tintR = parseInt(tintValues[0], 10) || 255;
-              tintG = parseInt(tintValues[1], 10) || 255;
-              tintB = parseInt(tintValues[2], 10) || 255;
-            }
-          }
-
-          legacyTile = { type: t, rotation: rot, flipH: flipH, flipV: flipV, tintR: tintR, tintG: tintG, tintB: tintB };
+          legacyTile = { type: t, rotation: rot, flipH: flipH, flipV: flipV };
         } else {
-          legacyTile = { type: parseInt(tileData, 10), rotation: 0, flipH: false, flipV: false, tintR: 255, tintG: 255, tintB: 255 };
+          legacyTile = { type: parseInt(tileData, 10), rotation: 0, flipH: false, flipV: false };
         }
 
         // Convert to multi-layer format
@@ -666,11 +623,6 @@ function drawWorldLayer(world, layerIndex) {
       let tileType = tileObj.type;
       let rotation = tileObj.rotation || 0;
 
-      // Get tile tint values
-      let tileR = tileObj.tintR !== undefined ? tileObj.tintR : 255;
-      let tileG = tileObj.tintG !== undefined ? tileObj.tintG : 255;
-      let tileB = tileObj.tintB !== undefined ? tileObj.tintB : 255;
-
       // Check for roof fade alpha
       let roofFadeAlpha = 255;
       if ((layerIndex === 1 || layerIndex === 2 || layerIndex === 3 || layerIndex === 4) && tileWalls[tileType] === 2) {
@@ -705,35 +657,11 @@ function drawWorldLayer(world, layerIndex) {
         image(imgToDraw, j * 50, i * 50, 50, 50);
       }
 
-      // Apply tint overlay using a translucent rectangle (more efficient than tint())
-      const hasTint = (tileR !== 255 || tileG !== 255 || tileB !== 255);
-      const hasRoofFade = roofFadeAlpha < 255;
-      
-      if (hasTint || hasRoofFade) {
+      // Apply roof fade if needed
+      if (roofFadeAlpha < 255) {
         push();
         noStroke();
-        
-        if (hasTint && hasRoofFade) {
-          // Combine tint color with roof fade alpha
-          const invertR = 255 - tileR;
-          const invertG = 255 - tileG;
-          const invertB = 255 - tileB;
-          const tintStrength = Math.max(invertR, invertG, invertB);
-          const alpha = map(tintStrength, 0, 255, 0, 150);
-          fill(tileR, tileG, tileB, Math.min(alpha, roofFadeAlpha));
-        } else if (hasTint) {
-          // Apply tint color with calculated alpha based on color intensity
-          const invertR = 255 - tileR;
-          const invertG = 255 - tileG;
-          const invertB = 255 - tileB;
-          const tintStrength = Math.max(invertR, invertG, invertB);
-          const alpha = map(tintStrength, 0, 255, 0, 150);
-          fill(tileR, tileG, tileB, alpha);
-        } else {
-          // Just apply roof fade
-          fill(255, 255, 255, 255 - roofFadeAlpha);
-        }
-        
+        fill(255, 255, 255, 255 - roofFadeAlpha);
         rect(j * 50, i * 50, 50, 50);
         pop();
       }

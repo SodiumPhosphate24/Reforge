@@ -19,13 +19,6 @@ var selectedItemIndex = 0;   // Currently selected item from itemConstructors
 var selectedCrateItems = []; // Array to store selected item constructors for this crate
 var crateInventories = new Map(); // Map to store items for each crate: key = "row,col", value = array of item constructors
 
-// Tile tinting
-var tileTintR = 255;
-var tileTintG = 255;
-var tileTintB = 255;
-var tintEnabled = false; // Whether tinting is enabled
-var draggingSlider = null; // Which slider is being dragged (null, 'r', 'g', or 'b')
-
 // Minimap caching variables
 var minimapCache = null;     // Cached screenshot of the minimap
 var lastMinimapPress = false; // Track if M was pressed last frame
@@ -104,9 +97,6 @@ function toggleEditorMode() {
 }
 
 function drawEditorUI() {
-  // Handle slider dragging first (before drawing)
-  handleSliderDrag();
-
   // Border
   stroke(255, 255, 0);
   strokeWeight(8);
@@ -128,9 +118,6 @@ function drawEditorUI() {
     " | Rotation: " + tileRotation + "° | Flip: " + flipText + " | Scroll / , . to change tile",
     width / 2, 65
   );
-
-  // Draw RGB sliders
-  drawRGBSliders();
 
   // Draw pause overlay if crate placement is paused
   if (cratePlacementPaused) {
@@ -307,159 +294,6 @@ function drawMinimapPlayerIndicator() {
   ellipse(playerMinimapX + tileSize / 2, playerMinimapY + tileSize / 2, tileSize * 2, tileSize * 2);
 }
 
-function drawRGBSliders() {
-  const sliderX = 20;
-  const sliderY = 100;
-  const sliderWidth = 200;
-  const sliderHeight = 20;
-  const spacing = 35;
-
-  push();
-  textAlign(LEFT, CENTER);
-  textSize(14);
-
-  // Red slider
-  fill(255, 255, 255);
-  text("R:", sliderX, sliderY);
-  drawSlider(sliderX + 25, sliderY - 10, sliderWidth, sliderHeight, tileTintR, 255, 0, 0, 'r');
-
-  // Green slider
-  fill(255, 255, 255);
-  text("G:", sliderX, sliderY + spacing);
-  drawSlider(sliderX + 25, sliderY + spacing - 10, sliderWidth, sliderHeight, tileTintG, 0, 255, 0, 'g');
-
-  // Blue slider
-  fill(255, 255, 255);
-  text("B:", sliderX, sliderY + spacing * 2);
-  drawSlider(sliderX + 25, sliderY + spacing * 2 - 10, sliderWidth, sliderHeight, tileTintB, 0, 0, 255, 'b');
-
-  // Toggle tint button
-  const buttonX = sliderX + 25;
-  const buttonY = sliderY + spacing * 3 - 10;
-  const buttonWidth = 80;
-  const buttonHeight = 25;
-  
-  // Check if mouse is over button
-  const overButton = mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
-                     mouseY >= buttonY && mouseY <= buttonY + buttonHeight;
-  
-  // Button color based on tint state
-  fill(tintEnabled ? (overButton ? 100 : 80) : (overButton ? 200 : 150));
-  stroke(tintEnabled ? color(tileTintR, tileTintG, tileTintB) : 255);
-  strokeWeight(2);
-  rect(buttonX, buttonY, buttonWidth, buttonHeight, 5);
-  
-  fill(tintEnabled ? color(tileTintR, tileTintG, tileTintB) : 0);
-  noStroke();
-  textAlign(CENTER, CENTER);
-  text(tintEnabled ? "Tint ON" : "Tint OFF", buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
-
-  // Tint preview box
-  const previewX = sliderX + sliderWidth + 50;
-  const previewY = sliderY - 10;
-  const previewSize = 80;
-  
-  fill(tileTintR, tileTintG, tileTintB);
-  stroke(255);
-  strokeWeight(2);
-  rect(previewX, previewY, previewSize, previewSize);
-  
-  fill(255);
-  noStroke();
-  textAlign(CENTER);
-  textSize(12);
-  text("Tint Preview", previewX + previewSize / 2, previewY + previewSize + 15);
-
-  pop();
-}
-
-function drawSlider(x, y, w, h, value, r, g, b, id) {
-  // Background track
-  fill(50);
-  stroke(200);
-  strokeWeight(1);
-  rect(x, y, w, h, 3);
-
-  // Colored fill
-  fill(r, g, b, 150);
-  noStroke();
-  rect(x, y, (value / 255) * w, h, 3);
-
-  // Handle
-  const handleX = x + (value / 255) * w;
-  fill(255);
-  stroke(0);
-  strokeWeight(2);
-  ellipse(handleX, y + h / 2, 15, 15);
-
-  // Value text
-  fill(255);
-  noStroke();
-  textAlign(RIGHT, CENTER);
-  textSize(12);
-  text(Math.round(value), x + w + 30, y + h / 2);
-}
-
-function handleSliderDrag() {
-  if (!editorMode) return;
-
-  const sliderX = 20 + 25;
-  const sliderY = 100 - 10;
-  const sliderWidth = 200;
-  const sliderHeight = 20;
-  const spacing = 35;
-
-  // Check if dragging or starting to drag
-  if (mouseIsPressed) {
-    // Check toggle button
-    const buttonX = 20 + 25;
-    const buttonY = sliderY + spacing * 3;
-    const buttonWidth = 80;
-    const buttonHeight = 25;
-    
-    if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
-        mouseY >= buttonY && mouseY <= buttonY + buttonHeight) {
-      if (draggingSlider === null) {
-        tintEnabled = !tintEnabled;
-        draggingSlider = 'toggle'; // Prevent multiple toggles
-      }
-      return true;
-    }
-
-    // Check which slider is being dragged
-    if (draggingSlider === null) {
-      // Red slider
-      if (mouseX >= sliderX && mouseX <= sliderX + sliderWidth &&
-          mouseY >= sliderY && mouseY <= sliderY + sliderHeight) {
-        draggingSlider = 'r';
-      }
-      // Green slider
-      else if (mouseX >= sliderX && mouseX <= sliderX + sliderWidth &&
-               mouseY >= sliderY + spacing && mouseY <= sliderY + spacing + sliderHeight) {
-        draggingSlider = 'g';
-      }
-      // Blue slider
-      else if (mouseX >= sliderX && mouseX <= sliderX + sliderWidth &&
-               mouseY >= sliderY + spacing * 2 && mouseY <= sliderY + spacing * 2 + sliderHeight) {
-        draggingSlider = 'b';
-      }
-    }
-
-    // Update slider value if dragging
-    if (draggingSlider === 'r' || draggingSlider === 'g' || draggingSlider === 'b') {
-      const value = constrain(((mouseX - sliderX) / sliderWidth) * 255, 0, 255);
-      if (draggingSlider === 'r') tileTintR = value;
-      else if (draggingSlider === 'g') tileTintG = value;
-      else if (draggingSlider === 'b') tileTintB = value;
-      return true; // Consuming the mouse event
-    }
-  } else {
-    draggingSlider = null;
-  }
-
-  return false;
-}
-
 function drawTilePreview() {
   if (!(gameWorld && gameWorld.length > 0)) return;
   if (cratePlacementPaused) return; // Don't show preview when paused
@@ -493,18 +327,6 @@ function drawTilePreview() {
     image(tileImgs[selectedTileType], -25, -25, 50, 50);
     noTint();
     pop();
-    
-    // Draw tint overlay if tinting is enabled
-    if (tintEnabled) {
-      push();
-      noStroke();
-      // Calculate alpha based on tint strength for accurate preview
-      const tintStrength = 255 - Math.min(tileTintR, tileTintG, tileTintB);
-      const alpha = map(tintStrength, 0, 255, 0, 150);
-      fill(tileTintR, tileTintG, tileTintB, alpha);
-      rect(snapX, snapY, 50, 50);
-      pop();
-    }
   }
 
   // Grid cell outline
@@ -550,14 +372,6 @@ function handleEditorClick() {
         tileRotation = t.rotation || 0;
         tileFlipH = t.flipH || false;
         tileFlipV = t.flipV || false;
-        // Pick tint if available
-        if (t.tintR !== undefined) {
-          tileTintR = t.tintR;
-          tileTintG = t.tintG;
-          tileTintB = t.tintB;
-          // Enable tinting if the picked tile has a non-default tint
-          tintEnabled = (t.tintR !== 255 || t.tintG !== 255 || t.tintB !== 255);
-        }
         console.log("Picked tile", selectedTileType, "rot", tileRotation, "flip H:", tileFlipH, "V:", tileFlipV, "from layer", editorLayer);
       }
     }
@@ -576,28 +390,20 @@ function handleEditorClick() {
     return;
   }
 
-  // Left click = paint current layer with tint
+  // Left click = paint current layer
   if (mouseButton === LEFT) {
-    // Only apply tint if tinting is enabled
-    const finalTintR = tintEnabled ? tileTintR : 255;
-    const finalTintG = tintEnabled ? tileTintG : 255;
-    const finalTintB = tintEnabled ? tileTintB : 255;
-    
     if (typeof setTile === 'function') {
-      setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation, tileFlipH, tileFlipV, finalTintR, finalTintG, finalTintB);
+      setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation, tileFlipH, tileFlipV);
     } else {
       // Fallback if helpers missing (legacy)
       gameWorld[gridRow][gridCol] = { 
         type: selectedTileType, 
         rotation: tileRotation, 
         flipH: tileFlipH, 
-        flipV: tileFlipV,
-        tintR: finalTintR,
-        tintG: finalTintG,
-        tintB: finalTintB
+        flipV: tileFlipV
       };
     }
-    console.log("Placed type", selectedTileType, "rot", tileRotation, "flip H:", tileFlipH, "V:", tileFlipV, "tint RGB:", finalTintR, finalTintG, finalTintB, "at", gridRow, gridCol, "layer", editorLayer);
+    console.log("Placed type", selectedTileType, "rot", tileRotation, "flip H:", tileFlipH, "V:", tileFlipV, "at", gridRow, gridCol, "layer", editorLayer);
 
     // Check if a crate (type 5) was placed
     if (selectedTileType === 5) {
