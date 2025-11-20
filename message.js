@@ -1,3 +1,40 @@
+
+// Helper function to wrap text into multiple lines
+function wrapText(text, maxChars) {
+  if (!text || text.length <= maxChars) {
+    return [text];
+  }
+  
+  var words = text.split(' ');
+  var lines = [];
+  var currentLine = '';
+  
+  for (var i = 0; i < words.length; i++) {
+    var testLine = currentLine + (currentLine ? ' ' : '') + words[i];
+    
+    if (testLine.length <= maxChars) {
+      currentLine = testLine;
+    } else {
+      // If a single word is too long, force break it
+      if (currentLine === '') {
+        lines.push(words[i].substring(0, maxChars));
+        words[i] = words[i].substring(maxChars);
+        i--; // Re-process the remainder
+      } else {
+        lines.push(currentLine);
+        currentLine = words[i];
+      }
+    }
+  }
+  
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+  
+  return lines.length > 0 ? lines : [text];
+}
+
+
 class Message {
   constructor(type, message, triggerID) {
     this.message = message;
@@ -111,6 +148,10 @@ function messageDisplay() {
       
       var displayMessage = messages[i].message[messages[i].index].split(": ")[1];
       var person = messages[i].message[messages[i].index].split(": ")[0];
+      
+      // Wrap text if too long (max width ~900px, approximately 65 characters at size 20)
+      var maxCharsPerLine = 65;
+      var wrappedLines = wrapText(displayMessage, maxCharsPerLine);
 
       // Animate alpha (fade in)
       if (!messages[i].closing && messages[i].alpha < 255) {
@@ -167,7 +208,12 @@ function messageDisplay() {
       text(person, messages[i].x, messages[i].y - 75);
 
       fill(255, 255, 255, messages[i].alpha);
-      text(displayMessage, messages[i].x, messages[i].y);
+      // Draw each wrapped line with proper spacing
+      var lineHeight = 25;
+      var startY = messages[i].y - ((wrappedLines.length - 1) * lineHeight) / 2;
+      for (var lineIdx = 0; lineIdx < wrappedLines.length; lineIdx++) {
+        text(wrappedLines[lineIdx], messages[i].x, startY + (lineIdx * lineHeight));
+      }
 
       // "Press Z" indicator at bottom right with pulsing animation
       const pulseAlpha = 100 + sin(frameCount / 15) * 50;
