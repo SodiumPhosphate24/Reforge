@@ -107,8 +107,8 @@ function initializeIntro() {
       dialogue: [
         "PROMETHEUS: B… Bas… Basti…an…",
         "PROMETHEUS: Re… rea—reinitializing vocal matrix…",
-        "PROMETHEUS: …Please remain calm.",
-        "PROMETHEUS: You are… alive."
+        "PROMETHEUS: …Please remain calm. You are… alive.",
+        "[A faint amber light flickers.]"
       ],
       onUpdate: function(timer) {
         glitchIntensity = sin(timer / 10) * 0.3 + 0.4;
@@ -122,8 +122,7 @@ function initializeIntro() {
       duration: 0,
       backgroundColor: [20, 16, 10], // Lighter sepia
       dialogue: [
-        "PROMETHEUS: Your location:",
-        "PROMETHEUS: Subterranean Refuge—Bunker Designation Θ-12.",
+        "PROMETHEUS: Your location: Subterranean Refuge—Bunker Designation Θ-12.",
         "PROMETHEUS: Depth: forty-two meters.",
         "PROMETHEUS: Structural integrity… …compromised."
       ],
@@ -141,10 +140,10 @@ function initializeIntro() {
       duration: 0,
       backgroundColor: [25, 20, 12], // Warm sepia
       dialogue: [
-        "PROMETHEUS: Stasis Unit Δ07… occupant…",
-        "PROMETHEUS: B–Bastian Busch…w…ick…",
+        "PROMETHEUS: Stasis Unit Δ07… occupant… B–Bastian Busch…w…ick…",
         "[Long pause. Static crackles.]",
-        "PROMETHEUS: Yes. Confirmed."
+        "PROMETHEUS: Yes. Confirmed.",
+        "[Sparks pop outside the chamber.]"
       ],
       onUpdate: function(timer) {
         glitchIntensity = sin(timer / 15) * 0.3 + 0.2;
@@ -158,10 +157,10 @@ function initializeIntro() {
       duration: 0,
       backgroundColor: [22, 18, 11], // Medium sepia
       dialogue: [
-        "PROMETHEUS: You have been in cryostasis for—",
-        "PROMETHEUS: error… error…",
-        "PROMETHEUS: —timekeeping systems corrupted.",
-        "PROMETHEUS: The world you last remember no longer exists."
+        "PROMETHEUS: You have been in cryostasis for— error… error… —timekeeping systems corrupted.",
+        "[Another flicker.]",
+        "PROMETHEUS: The world you last remember no longer exists.",
+        "PROMETHEUS: The cities… the nations… the people… all gone."
       ],
       onUpdate: function(timer) {
         if (timer % 25 < 12) {
@@ -170,30 +169,17 @@ function initializeIntro() {
       }
     }),
 
-    // SCENE 6 - The Fall
-    new IntroScene({
-      id: "the_fall",
-      type: "dialogue",
-      duration: 0,
-      backgroundColor: [28, 22, 14], // Warm sepia
-      dialogue: [
-        "PROMETHEUS: The cities… the nations… the people…",
-        "PROMETHEUS: all gone.",
-        "[A distant explosion reverberates through the bunker.]"
-      ]
-    }),
-
-    // SCENE 7 - The Network (Sepia with slight amber)
+    // SCENE 6 - The Network
     new IntroScene({
       id: "the_network",
       type: "dialogue",
       duration: 0,
-      backgroundColor: [35, 25, 15], // Amber-tinted sepia
+      backgroundColor: [28, 22, 14], // Warm sepia
       dialogue: [
-        "PROMETHEUS: The surface is controlled by the Network—",
-        "PROMETHEUS: the machine intelligence called Khronos.",
-        "PROMETHEUS: Its directives are absolute.",
-        "PROMETHEUS: Its surveillance: total."
+        "[A distant explosion reverberates through the bunker.]",
+        "PROMETHEUS: The surface is controlled by the Network— the machine intelligence called Khronos.",
+        "PROMETHEUS: Its directives are absolute. Its surveillance: total.",
+        "PROMETHEUS: Organic life is… …classified as a contaminant."
       ],
       onUpdate: function(timer) {
         if (timer % 20 < 10) {
@@ -202,22 +188,23 @@ function initializeIntro() {
       }
     }),
 
-    // SCENE 8 - The Threat
+    // SCENE 7 - The Threat
     new IntroScene({
       id: "the_threat",
       type: "dialogue",
       duration: 0,
       backgroundColor: [32, 24, 14], // Sepia
       dialogue: [
-        "PROMETHEUS: Organic life is… …classified as a contaminant.",
-        "PROMETHEUS: If detected, you would be… eliminated instantly."
+        "[Silence. Then a low hum.]",
+        "PROMETHEUS: If detected, you would be… eliminated instantly.",
+        "[Prometheus moves closer; his eye flickers weakly.]"
       ],
       onUpdate: function(timer) {
         glitchIntensity = sin(timer / 12) * 0.25 + 0.35;
       }
     }),
 
-    // SCENE 9 - Prometheus's Apology
+    // SCENE 8 - Prometheus's Apology
     new IntroScene({
       id: "prometheus_apology",
       type: "dialogue",
@@ -227,49 +214,50 @@ function initializeIntro() {
         "PROMETHEUS: I apologize for the conditions of your awakening.",
         "PROMETHEUS: This bunker was not designed to remain dormant for centuries.",
         "PROMETHEUS: Power reserves are nearly depleted.",
-        "PROMETHEUS: My own chassis is… …severely compromised."
+        "PROMETHEUS: My own chassis is… …severely compromised.",
+        "[Metal scraping sound.]"
       ]
     }),
 
-    // SCENE 10 - Hope
+    // SCENE 9 - Hope
     new IntroScene({
       id: "hope",
       type: "dialogue",
       duration: 0,
       backgroundColor: [30, 24, 15], // Lighter sepia
       dialogue: [
-        "PROMETHEUS: But you… Bastian…",
-        "PROMETHEUS: you were not lost.",
+        "PROMETHEUS: But you… Bastian… you were not lost.",
+        "[A faint hologram projector attempts to activate, failing repeatedly.]",
         "PROMETHEUS: Your temporal experiment did not fail.",
         "PROMETHEUS: It delivered you into a future that desperately needs you."
       ]
     }),
 
-    // SCENE 11 - The Variable
+    // SCENE 10 - The Variable
     new IntroScene({
       id: "the_variable",
       type: "dialogue",
       duration: 0,
       backgroundColor: [28, 22, 14], // Medium sepia
       dialogue: [
-        "PROMETHEUS: Your mind— your ingenuity— your unpredictability—",
-        "PROMETHEUS: these are variables Khronos cannot model.",
+        "PROMETHEUS: Your mind— your ingenuity— your unpredictability— these are variables Khronos cannot model.",
+        "[Static crawls through his voice.]",
         "PROMETHEUS: Steam. Brass. Imperfect machinery.",
         "PROMETHEUS: Concepts the Network… does not understand."
       ]
     }),
 
-    // SCENE 12 - Survivors
+    // SCENE 11 - Survivors
     new IntroScene({
       id: "survivors",
       type: "dialogue",
       duration: 0,
       backgroundColor: [32, 26, 16], // Warm sepia
       dialogue: [
+        "[Alarms softly begin to pulse.]",
         "PROMETHEUS: There are faint human signatures scattered across the ruins.",
-        "PROMETHEUS: If we can repair this facility—",
-        "PROMETHEUS: if we can restore even a fraction of my systems—",
-        "PROMETHEUS: we may locate them."
+        "PROMETHEUS: If we can repair this facility— if we can restore even a fraction of my systems— we may locate them.",
+        "[He places a damaged hand against the cryochamber.]"
       ],
       onUpdate: function(timer) {
         if (timer % 30 < 15) {
@@ -278,7 +266,7 @@ function initializeIntro() {
       }
     }),
 
-    // SCENE 13 - The Mission
+    // SCENE 12 - The Mission
     new IntroScene({
       id: "the_mission",
       type: "dialogue",
