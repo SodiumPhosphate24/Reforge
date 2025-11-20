@@ -104,26 +104,12 @@ function initializeIntro() {
       duration: 0, // Wait for input
       dialogue: [
         "PROMETHEUS: B…a…stian… B…sch…w…ick—",
-        "PROMETHEUS: Recalibrating temporal file… stand by…"
+        "PROMETHEUS: Recalibrating temporal file… stand by…",
+        "PROMETHEUS: You are inside cryochamber unit seven.",
+        "PROMETHEUS: Stasis duration: three hundred and four years."
       ],
       onUpdate: function(timer) {
         glitchIntensity = sin(timer / 10) * 0.2 + 0.3;
-      }
-    }),
-
-    // SCENE 1 - Cryochamber Breaking
-    new IntroScene({
-      id: "cryo_break",
-      type: "gameplay",
-      duration: 0,
-      dialogue: ["[ Tap / press to break the cryo glass ]"],
-      onUpdate: function(timer) {
-        // Waiting for player input to break glass
-        if (mouseIsPressed || keyIsDown(32)) { // Space or click
-          cameraShakeX = random(-5, 5);
-          cameraShakeY = random(-5, 5);
-          introState.scenes[3].completed = true;
-        }
       }
     }),
 
@@ -344,11 +330,11 @@ function drawTitleScene(scene) {
 }
 
 function drawCryoFlicker(scene) {
-  // Flickering orange lights effect
+  // Flickering amber/brown lights effect
   push();
   for (let i = 0; i < 5; i++) {
     const flickerAlpha = random(50, 150) * glitchIntensity;
-    fill(255, 140, 0, flickerAlpha);
+    fill(180, 120, 60, flickerAlpha); // Faded brown/amber
     noStroke();
     rect(random(width), random(height), random(20, 100), random(5, 20));
   }
@@ -369,12 +355,11 @@ function drawDialogueScene(scene) {
     const isPrometheus = currentLine.startsWith("PROMETHEUS:");
     
     if (isSystemMessage) {
-      fill(100, 255, 255, 200);
+      fill(180, 140, 90, 200); // Faded brown/amber
       textSize(18);
       text(currentLine, width / 2, height - 100);
     } else if (isPrometheus) {
-      // Draw Prometheus dialogue with glitch effect
-      fill(100, 255, 255, 255);
+      // Draw Prometheus dialogue with brown tones
       textSize(20);
       
       // Split into speaker and text
@@ -382,18 +367,18 @@ function drawDialogueScene(scene) {
       const speaker = parts[0];
       const message = parts[1] || "";
       
-      fill(100, 255, 255, 200);
+      fill(180, 140, 90, 200); // Faded brown/amber for speaker
       textSize(16);
       text(speaker, width / 2, height / 2 - 100);
       
-      fill(255, 255, 255, 255);
+      fill(220, 200, 160, 255); // Lighter brown for message
       textSize(18);
       text(message, width / 2, height / 2 - 60);
     }
     
-    // "Press Z" indicator
+    // "Press Z" indicator in faded brown
     const pulseAlpha = 100 + sin(frameCount / 15) * 50;
-    fill(150, 150, 150, pulseAlpha);
+    fill(160, 120, 80, pulseAlpha);
     textSize(14);
     text("Press Z to continue", width / 2, height - 50);
   }
@@ -405,18 +390,18 @@ function drawGlitchEffect() {
   push();
   blendMode(ADD);
   
-  // Random horizontal lines
+  // Random horizontal lines in faded brown
   for (let i = 0; i < glitchIntensity * 10; i++) {
     const y = random(height);
     const h = random(2, 5);
-    fill(255, 0, 0, glitchIntensity * 50);
+    fill(139, 90, 43, glitchIntensity * 50); // Faded brown color
     rect(0, y, width, h);
   }
   
-  // RGB split effect
+  // Brown tint effect
   if (random() < glitchIntensity) {
     const offset = glitchIntensity * 10;
-    tint(255, 0, 0, 100);
+    tint(160, 120, 80, 100); // Faded brown tint
     translate(offset, 0);
   }
   

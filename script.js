@@ -257,15 +257,6 @@ function draw() {
     return;
   }
 
-  // Draw transition overlay during transition
-  if (gameState === "transitioning") {
-    // Draw the game in background
-    drawGameplay();
-    // Draw transition overlay on top
-    drawTransitionOverlay();
-    return;
-  }
-
   // Show intro cutscene
   if (gameState === "intro") {
     updateIntro();
