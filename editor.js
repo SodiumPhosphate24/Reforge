@@ -355,9 +355,6 @@ function handleEditorClick() {
   if (!(editorMode && gameWorld && gameWorld.length > 0)) return;
   if (cratePlacementPaused) return; // Don't allow clicks when paused
 
-  // Check if interacting with sliders - if so, don't place tiles
-  if (draggingSlider !== null) return;
-
   var worldX = mouseX - camX;
   var worldY = mouseY - camY;
 
