@@ -10,6 +10,7 @@ var triggerList = {
 function handleTriggers(trigger){
   console.log("handling " + trigger);
   if (trigger == "Prometheus"){
+    console.log("Current talkToPrometheus state: ", triggerList.Promethus.talkToPrometheus);
     if (triggerList.Promethus.talkToPrometheus == false){
       triggerList.Promethus.talkToPrometheus = true;
       console.log("Talked to Prometheus");

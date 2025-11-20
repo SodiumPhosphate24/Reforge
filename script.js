@@ -226,7 +226,7 @@ function setup() {
   players.push(new Player(0, 100, 100, 100, .5, 350, playerDamage, PlayerImage));
   players.push(new Player(500, 100, 25, 25, 2, healthPoints, playerDamage, PlayerImage));
 
-  NonPlayerCharacters.push(new NPC(13350, 12750, "Prometheus IV", ["Prometheus IV: I am the god of fire and the forge.", "Prometheus IV: I have given you the gift of fire.", "Prometheus IV: But at what cost?"], BadGuy, "Promethus"));
+  NonPlayerCharacters.push(new NPC(13350, 12750, "Prometheus IV", ["Prometheus IV: I am the god of fire and the forge.", "Prometheus IV: I have given you the gift of fire.", "Prometheus IV: But at what cost?"], BadGuy, "Prometheus"));
 
   inventoryList = players[activePlayer].inventory;
 
