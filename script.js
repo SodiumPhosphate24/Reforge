@@ -31,7 +31,7 @@ var tileColors = [
   [[255, 255, 255]], // 10 - window
   [[255, 255, 255]], // 11 - crack
   [[255, 255, 255], [180, 140, 100], [140, 100, 70]], // 12 - wood (white, oak, dark oak)
-  [[255, 255, 255]], // 13 - whiteConcrete
+  [[255, 255, 255], [255, 0, 0]], // 13 - whiteConcrete
   [[255, 255, 255]], // 14 - barnDoor
   [[255, 255, 255]], // 15 - barnWindow
   [[255, 255, 255]], // 16 - fence
@@ -136,61 +136,61 @@ function preload() {
 function generateTintedTileCache() {
   console.log("Generating tinted tile cache...");
   tintedTileCache = [];
-  
+
   for (let tileIndex = 0; tileIndex < tileImgs.length; tileIndex++) {
     tintedTileCache[tileIndex] = [];
     const baseImg = tileImgs[tileIndex];
-    
+
     // Skip if no image for this tile
     if (!baseImg) {
       tintedTileCache[tileIndex] = [null];
       continue;
     }
-    
+
     const colors = tileColors[tileIndex] || [[255, 255, 255]];
-    
+
     for (let colorIndex = 0; colorIndex < colors.length; colorIndex++) {
       const [r, g, b] = colors[colorIndex];
-      
+
       // Create a graphics buffer to render the tinted tile
       const tintedImg = createGraphics(50, 50);
       tintedImg.tint(r, g, b);
       tintedImg.image(baseImg, 0, 0, 50, 50);
       tintedImg.noTint();
-      
+
       // Store the tinted image
       tintedTileCache[tileIndex][colorIndex] = tintedImg;
     }
   }
-  
+
   // Also generate tinted variants for auto-tiling tiles
   for (let tileType in tileVariants) {
     const config = tileVariants[tileType];
     const colors = tileColors[tileType] || [[255, 255, 255]];
-    
+
     // Store tinted variants
     config.tintedVariants = [];
-    
+
     for (let colorIndex = 0; colorIndex < colors.length; colorIndex++) {
       const [r, g, b] = colors[colorIndex];
       const tintedVariantSet = {};
-      
+
       for (let variantName in config.variants) {
         const baseImg = config.variants[variantName];
         if (!baseImg) continue;
-        
+
         const tintedImg = createGraphics(50, 50);
         tintedImg.tint(r, g, b);
         tintedImg.image(baseImg, 0, 0, 50, 50);
         tintedImg.noTint();
-        
+
         tintedVariantSet[variantName] = tintedImg;
       }
-      
+
       config.tintedVariants[colorIndex] = tintedVariantSet;
     }
   }
-  
+
   console.log("Tinted tile cache generated successfully!");
 }
 
