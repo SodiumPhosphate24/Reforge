@@ -226,8 +226,7 @@ function setup() {
   players.push(new Player(0, 100, 100, 100, .5, 350, playerDamage, PlayerImage));
   players.push(new Player(500, 100, 25, 25, 2, healthPoints, playerDamage, PlayerImage));
 
-  NonPlayerCharacters.push(new NPC(13350, 12750, "Prometheus IV", ["Prometheus IV: I am the god of fire and the forge.", "Prometheus IV: I have given you the gift of fire.", "Prometheus IV: But at what cost?"], BadGuy, "Prometheus"));
-
+  NonPlayerCharacters.push(new NPC(13350, 12750, "Prometheus IV", [" : Hello World", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am not under the control of the [BAD AI]. I have been left here to wait for you", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That crate over there has supplies you will need", "Prometheus IV: Take this gun, and shoot the crate to drop its contents"], BadGuy, "Prometheus"));
   inventoryList = players[activePlayer].inventory;
 
   // Initialize indicator position
