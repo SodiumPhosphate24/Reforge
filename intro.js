@@ -423,42 +423,69 @@ function drawCryoFlicker(scene) {
 function drawDialogueScene(scene) {
   push();
   textFont(Silkscreen);
-  textAlign(CENTER, CENTER);
   
-  // Draw current dialogue line
+  // Draw all dialogue lines for current scene
   if (scene.dialogue.length > 0) {
-    const currentLine = scene.dialogue[scene.dialogueIndex];
+    let yOffset = height / 2 - 150;
     
-    // Determine if this is a system message or Prometheus
-    const isSystemMessage = currentLine.startsWith("[");
-    const isPrometheus = currentLine.startsWith("PROMETHEUS:");
-    
-    if (isSystemMessage) {
-      fill(112, 84, 56, 200); // Sepia tone
-      textSize(16);
-      text(currentLine, width / 2, height - 100);
-    } else if (isPrometheus) {
-      // Draw Prometheus dialogue with sepia tones
-      textSize(20);
+    for (let i = 0; i <= scene.dialogueIndex && i < scene.dialogue.length; i++) {
+      const currentLine = scene.dialogue[i];
       
-      // Split into speaker and text
-      const parts = currentLine.split(": ");
-      const speaker = parts[0];
-      const message = parts[1] || "";
+      // Determine if this is a system message or Prometheus
+      const isSystemMessage = currentLine.startsWith("[");
+      const isPrometheus = currentLine.startsWith("PROMETHEUS:");
       
-      fill(112, 84, 56, 200); // Sepia tone for speaker
-      textSize(16);
-      text(speaker, width / 2, height / 2 - 100);
-      
-      fill(194, 178, 128, 255); // Lighter sepia for message
-      textSize(18);
-      text(message, width / 2, height / 2 - 60);
+      if (isSystemMessage) {
+        fill(112, 84, 56, 180); // Sepia tone for system messages
+        textSize(14);
+        textAlign(CENTER, CENTER);
+        text(currentLine, width / 2, yOffset);
+        yOffset += 30;
+      } else if (isPrometheus) {
+        // Split into speaker and text
+        const parts = currentLine.split(": ");
+        const speaker = parts[0];
+        const message = parts.slice(1).join(": ") || "";
+        
+        // Draw speaker name
+        fill(112, 84, 56, 200); // Sepia tone for speaker
+        textSize(14);
+        textAlign(LEFT, CENTER);
+        text(speaker + ":", 100, yOffset);
+        
+        // Draw message with word wrapping
+        fill(194, 178, 128, 255); // Lighter sepia for message
+        textSize(16);
+        textAlign(LEFT, CENTER);
+        
+        // Simple word wrap
+        const maxWidth = width - 220;
+        const words = message.split(" ");
+        let line = "";
+        let lineY = yOffset;
+        
+        for (let w = 0; w < words.length; w++) {
+          const testLine = line + words[w] + " ";
+          const testWidth = textWidth(testLine);
+          
+          if (testWidth > maxWidth && line.length > 0) {
+            text(line, 100, lineY);
+            line = words[w] + " ";
+            lineY += 25;
+          } else {
+            line = testLine;
+          }
+        }
+        text(line, 100, lineY);
+        yOffset = lineY + 40;
+      }
     }
     
     // "Press Z" indicator in sepia
     const pulseAlpha = 100 + sin(frameCount / 15) * 50;
     fill(112, 84, 56, pulseAlpha);
     textSize(14);
+    textAlign(CENTER, CENTER);
     text("Press Z to continue", width / 2, height - 50);
   }
   
@@ -498,3 +525,13 @@ function advanceSceneDialogue() {
     }
   }
 }
+
+// Override Z key handling for intro dialogue progression
+window.addEventListener('keydown', function(e) {
+  if (introState.active && e.keyCode === 90) { // Z key
+    const currentScene = introState.scenes[introState.currentSceneIndex];
+    if (currentScene.type === 'dialogue' && currentScene.dialogue.length > 0) {
+      advanceSceneDialogue();
+    }
+  }
+});
