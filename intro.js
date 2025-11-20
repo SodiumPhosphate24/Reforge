@@ -426,64 +426,69 @@ function drawDialogueScene(scene) {
     rect(0, 0, width, height);
   }
   
-  // Draw all dialogue lines for current scene
-  if (scene.dialogue.length > 0) {
-    let yOffset = height / 2 - 150;
+  // Draw ONLY the current dialogue line (one per slide)
+  if (scene.dialogue.length > 0 && scene.dialogueIndex < scene.dialogue.length) {
+    const currentLine = scene.dialogue[scene.dialogueIndex];
     
-    for (let i = 0; i <= scene.dialogueIndex && i < scene.dialogue.length; i++) {
-      const currentLine = scene.dialogue[i];
+    // Determine if this is a system message or Prometheus
+    const isSystemMessage = currentLine.startsWith("[");
+    const isPrometheus = currentLine.startsWith("PROMETHEUS:");
+    
+    if (isSystemMessage) {
+      // System messages centered vertically and horizontally
+      fill(112, 84, 56, 200); // Sepia tone for system messages
+      textSize(18);
+      textAlign(CENTER, CENTER);
+      text(currentLine, width / 2, height / 2);
+    } else if (isPrometheus) {
+      // Split into speaker and text
+      const parts = currentLine.split(": ");
+      const speaker = parts[0];
+      const message = parts.slice(1).join(": ") || "";
       
-      // Determine if this is a system message or Prometheus
-      const isSystemMessage = currentLine.startsWith("[");
-      const isPrometheus = currentLine.startsWith("PROMETHEUS:");
+      // Draw speaker name at top
+      fill(112, 84, 56, 220); // Sepia tone for speaker
+      textSize(16);
+      textAlign(CENTER, CENTER);
+      text(speaker, width / 2, height / 2 - 100);
       
-      if (isSystemMessage) {
-        fill(112, 84, 56, 180); // Sepia tone for system messages
-        textSize(14);
-        textAlign(CENTER, CENTER);
-        text(currentLine, width / 2, yOffset);
-        yOffset += 30;
-      } else if (isPrometheus) {
-        // Split into speaker and text
-        const parts = currentLine.split(": ");
-        const speaker = parts[0];
-        const message = parts.slice(1).join(": ") || "";
+      // Draw message with word wrapping, centered
+      fill(194, 178, 128, 255); // Lighter sepia for message
+      textSize(20);
+      textAlign(CENTER, CENTER);
+      
+      // Word wrap for centered text
+      const maxWidth = width - 200;
+      const words = message.split(" ");
+      let lines = [];
+      let line = "";
+      
+      for (let w = 0; w < words.length; w++) {
+        const testLine = line + words[w] + " ";
+        const testWidth = textWidth(testLine);
         
-        // Draw speaker name
-        fill(112, 84, 56, 200); // Sepia tone for speaker
-        textSize(14);
-        textAlign(LEFT, CENTER);
-        text(speaker + ":", 100, yOffset);
-        
-        // Draw message with word wrapping
-        fill(194, 178, 128, 255); // Lighter sepia for message
-        textSize(16);
-        textAlign(LEFT, CENTER);
-        
-        // Simple word wrap
-        const maxWidth = width - 220;
-        const words = message.split(" ");
-        let line = "";
-        let lineY = yOffset;
-        
-        for (let w = 0; w < words.length; w++) {
-          const testLine = line + words[w] + " ";
-          const testWidth = textWidth(testLine);
-          
-          if (testWidth > maxWidth && line.length > 0) {
-            text(line, 100, lineY);
-            line = words[w] + " ";
-            lineY += 25;
-          } else {
-            line = testLine;
-          }
+        if (testWidth > maxWidth && line.length > 0) {
+          lines.push(line.trim());
+          line = words[w] + " ";
+        } else {
+          line = testLine;
         }
-        text(line, 100, lineY);
-        yOffset = lineY + 40;
+      }
+      if (line.length > 0) {
+        lines.push(line.trim());
+      }
+      
+      // Draw centered lines
+      const lineHeight = 30;
+      const totalHeight = lines.length * lineHeight;
+      let startY = height / 2 - totalHeight / 2;
+      
+      for (let i = 0; i < lines.length; i++) {
+        text(lines[i], width / 2, startY + i * lineHeight);
       }
     }
     
-    // "Press Z" indicator in sepia
+    // "Press Z" indicator in sepia at bottom
     const pulseAlpha = 100 + sin(frameCount / 15) * 50;
     fill(112, 84, 56, pulseAlpha);
     textSize(14);
@@ -520,7 +525,7 @@ function drawGlitchEffect() {
 // Helper to advance dialogue within a scene
 function advanceSceneDialogue() {
   const currentScene = introState.scenes[introState.currentSceneIndex];
-  if (currentScene.dialogue.length > 0) {
+  if (currentScene.type === 'dialogue' && currentScene.dialogue.length > 0) {
     currentScene.dialogueIndex++;
     if (currentScene.dialogueIndex >= currentScene.dialogue.length) {
       currentScene.completed = true;
@@ -534,6 +539,7 @@ window.addEventListener('keydown', function(e) {
     const currentScene = introState.scenes[introState.currentSceneIndex];
     if (currentScene.type === 'dialogue' && currentScene.dialogue.length > 0) {
       advanceSceneDialogue();
+      e.preventDefault(); // Prevent default key behavior
     }
   }
 });
