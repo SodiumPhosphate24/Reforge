@@ -8,5 +8,11 @@ var triggerList = {
 };
 
 function handleTriggers(trigger){
-  console.log("Handling " + trigger);
+  if (trigger == "Prometheus"){
+    if (triggerList.Promethus.talkToPrometheus == false){
+      triggerList.Promethus.talkToPrometheus = true;
+      droppedItems.push(new DroppedItem(new Item("gun", "glock", 1), 13350, 12750));
+      triggerList.Promethus.dropppedStarterGun = true;
+    }
+  }
 }
