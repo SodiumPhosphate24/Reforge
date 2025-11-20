@@ -10,6 +10,7 @@ function __getMaxTileTypes() {
 var tileRotation = 0;        // 0, 90, 180, 270
 var tileFlipH = false;       // horizontal flip
 var tileFlipV = false;       // vertical flip
+var tileColorIndex = 0;      // color variant index
 var editorLayer = 0;         // 0 & 1 behind; 2 & 3 in front
 const EDIT_TILE_SIZE = 50;
 var cratePlacementPaused = false; // Pauses tile placement after crate is placed
@@ -112,10 +113,13 @@ function drawEditorUI() {
   text("Left-click: place | Right-click: erase | Alt+Click: pick | R: rotate | H: flip horizontal | V: flip vertical", width / 2, 45);
   
   const flipText = (tileFlipH ? "H" : "") + (tileFlipV ? "V" : "") || "none";
+  const maxColors = (tileColors[selectedTileType] || [[255, 255, 255]]).length;
   text(
     "Layer: " + editorLayer +
     " | Tile: " + selectedTileType +
-    " | Rotation: " + tileRotation + "° | Flip: " + flipText + " | Scroll / , . to change tile",
+    " | Rotation: " + tileRotation + "° | Flip: " + flipText +
+    " | Color: " + tileColorIndex + "/" + (maxColors - 1) +
+    " | [ ] to change color",
     width / 2, 65
   );
 
@@ -317,14 +321,14 @@ function drawTilePreview() {
   translate(camX, camY);
 
   // Semi-transparent preview of selected tile in current layer
-  if (tileImgs && tileImgs[selectedTileType]) {
+  if (tintedTileCache && tintedTileCache[selectedTileType] && tintedTileCache[selectedTileType][tileColorIndex]) {
     push();
-    // Draw the tile image
+    // Draw the cached tinted tile image
     translate(snapX + 25, snapY + 25);
     rotate(radians(tileRotation));
     scale(tileFlipH ? -1 : 1, tileFlipV ? -1 : 1);
     tint(255, 150); // Semi-transparent
-    image(tileImgs[selectedTileType], -25, -25, 50, 50);
+    image(tintedTileCache[selectedTileType][tileColorIndex], -25, -25, 50, 50);
     noTint();
     pop();
   }
@@ -372,7 +376,8 @@ function handleEditorClick() {
         tileRotation = t.rotation || 0;
         tileFlipH = t.flipH || false;
         tileFlipV = t.flipV || false;
-        console.log("Picked tile", selectedTileType, "rot", tileRotation, "flip H:", tileFlipH, "V:", tileFlipV, "from layer", editorLayer);
+        tileColorIndex = t.colorIndex || 0;
+        console.log("Picked tile", selectedTileType, "rot", tileRotation, "flip H:", tileFlipH, "V:", tileFlipV, "color", tileColorIndex, "from layer", editorLayer);
       }
     }
     return;
@@ -393,17 +398,18 @@ function handleEditorClick() {
   // Left click = paint current layer
   if (mouseButton === LEFT) {
     if (typeof setTile === 'function') {
-      setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation, tileFlipH, tileFlipV);
+      setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation, tileFlipH, tileFlipV, tileColorIndex);
     } else {
       // Fallback if helpers missing (legacy)
       gameWorld[gridRow][gridCol] = { 
         type: selectedTileType, 
         rotation: tileRotation, 
         flipH: tileFlipH, 
-        flipV: tileFlipV
+        flipV: tileFlipV,
+        colorIndex: tileColorIndex
       };
     }
-    console.log("Placed type", selectedTileType, "rot", tileRotation, "flip H:", tileFlipH, "V:", tileFlipV, "at", gridRow, gridCol, "layer", editorLayer);
+    console.log("Placed type", selectedTileType, "rot", tileRotation, "flip H:", tileFlipH, "V:", tileFlipV, "color", tileColorIndex, "at", gridRow, gridCol, "layer", editorLayer);
 
     // Check if a crate (type 5) was placed
     if (selectedTileType === 5) {
@@ -497,6 +503,20 @@ function handleEditorKeyPress() {
   if (keyCode == 86) { // V
     tileFlipV = !tileFlipV;
     console.log("Vertical flip:", tileFlipV);
+  }
+
+  // [ to previous color
+  if (keyCode == 219) { // [
+    const maxColors = (tileColors[selectedTileType] || [[255, 255, 255]]).length;
+    tileColorIndex = (tileColorIndex - 1 + maxColors) % maxColors;
+    console.log("Color index:", tileColorIndex);
+  }
+
+  // ] to next color
+  if (keyCode == 221) { // ]
+    const maxColors = (tileColors[selectedTileType] || [[255, 255, 255]]).length;
+    tileColorIndex = (tileColorIndex + 1) % maxColors;
+    console.log("Color index:", tileColorIndex);
   }
 }
 

@@ -15,6 +15,35 @@ var recoil = 10;
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost"];
 var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0, 2, 2, 2, 2, 1, 2, 2, 2, 1, 1, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
+// Tile color variants - each tile can have multiple color tints
+// Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
+var tileColors = [
+  [[255, 255, 255]], // 0 - grass (default white = no tint)
+  [[255, 255, 255]], // 1 - asphalt
+  [[255, 255, 255]], // 2 - lined asphalt
+  [[255, 255, 255]], // 3 - Concrete
+  [[255, 255, 255], [200, 150, 150], [150, 150, 200]], // 4 - Brick (white, reddish, blueish)
+  [[255, 255, 255]], // 5 - Crate
+  [[255, 255, 255]], // 6 - Workbench
+  [[255, 255, 255]], // 7 - dirt
+  [[255, 255, 255]], // 8 - darkConcrete
+  [[255, 255, 255]], // 9 - door
+  [[255, 255, 255]], // 10 - window
+  [[255, 255, 255]], // 11 - crack
+  [[255, 255, 255], [180, 140, 100], [140, 100, 70]], // 12 - wood (white, oak, dark oak)
+  [[255, 255, 255]], // 13 - whiteConcrete
+  [[255, 255, 255]], // 14 - barnDoor
+  [[255, 255, 255]], // 15 - barnWindow
+  [[255, 255, 255]], // 16 - fence
+  [[255, 255, 255]], // 17 - fenceCorner
+  [[255, 255, 255]], // 18 - fenceDown
+  [[255, 255, 255]], // 19 - fenceEdge
+  [[255, 255, 255]]  // 20 - fencePost
+];
+
+// Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image
+var tintedTileCache = [];
+
 // Tile variants storage
 var tileVariants = {};
 var enemies = [], bullets = [], messages = [], droppedItems = [], NonPlayerCharacters = [];
@@ -103,10 +132,75 @@ function preload() {
   }
 }
 
+// Generate cached tinted versions of all tiles
+function generateTintedTileCache() {
+  console.log("Generating tinted tile cache...");
+  tintedTileCache = [];
+  
+  for (let tileIndex = 0; tileIndex < tileImgs.length; tileIndex++) {
+    tintedTileCache[tileIndex] = [];
+    const baseImg = tileImgs[tileIndex];
+    
+    // Skip if no image for this tile
+    if (!baseImg) {
+      tintedTileCache[tileIndex] = [null];
+      continue;
+    }
+    
+    const colors = tileColors[tileIndex] || [[255, 255, 255]];
+    
+    for (let colorIndex = 0; colorIndex < colors.length; colorIndex++) {
+      const [r, g, b] = colors[colorIndex];
+      
+      // Create a graphics buffer to render the tinted tile
+      const tintedImg = createGraphics(50, 50);
+      tintedImg.tint(r, g, b);
+      tintedImg.image(baseImg, 0, 0, 50, 50);
+      tintedImg.noTint();
+      
+      // Store the tinted image
+      tintedTileCache[tileIndex][colorIndex] = tintedImg;
+    }
+  }
+  
+  // Also generate tinted variants for auto-tiling tiles
+  for (let tileType in tileVariants) {
+    const config = tileVariants[tileType];
+    const colors = tileColors[tileType] || [[255, 255, 255]];
+    
+    // Store tinted variants
+    config.tintedVariants = [];
+    
+    for (let colorIndex = 0; colorIndex < colors.length; colorIndex++) {
+      const [r, g, b] = colors[colorIndex];
+      const tintedVariantSet = {};
+      
+      for (let variantName in config.variants) {
+        const baseImg = config.variants[variantName];
+        if (!baseImg) continue;
+        
+        const tintedImg = createGraphics(50, 50);
+        tintedImg.tint(r, g, b);
+        tintedImg.image(baseImg, 0, 0, 50, 50);
+        tintedImg.noTint();
+        
+        tintedVariantSet[variantName] = tintedImg;
+      }
+      
+      config.tintedVariants[colorIndex] = tintedVariantSet;
+    }
+  }
+  
+  console.log("Tinted tile cache generated successfully!");
+}
+
 function setup() {
   createCanvas(1200, 750);
   maxTileTypes = tileImgs.length;
   PlayerImage = Buschy;
+
+  // Generate tinted tile cache after images are loaded
+  generateTintedTileCache();
 
   // Initialize itemConstructors BEFORE parsing world so crate inventories can be loaded
   itemConstructors = [
@@ -293,7 +387,7 @@ function getTile(row, col, layer = 0) {
   return (layer === 0) ? cell : null; // legacy cell is layer 0
 }
 
-function setTile(row, col, layer, type, rotation = 0, flipH = false, flipV = false) {
+function setTile(row, col, layer, type, rotation = 0, flipH = false, flipV = false, colorIndex = 0) {
   if (!gameWorld[row]) gameWorld[row] = [];
   if (!gameWorld[row][col]) {
     gameWorld[row][col] = { layers: [null, null, null, null, null] };
@@ -305,7 +399,8 @@ function setTile(row, col, layer, type, rotation = 0, flipH = false, flipV = fal
     type: parseInt(type, 10),
     rotation: parseInt(rotation, 10) || 0,
     flipH: flipH || false,
-    flipV: flipV || false
+    flipV: flipV || false,
+    colorIndex: parseInt(colorIndex, 10) || 0
   };
 }
 
@@ -333,6 +428,12 @@ function worldToString(world) {
           if (t.flipH || t.flipV) {
             if (!t.rotation) s += ":0"; // Add rotation 0 if not present
             s += ":" + (t.flipH ? "H" : "") + (t.flipV ? "V" : "");
+          }
+          // Add color index notation
+          if (t.colorIndex && t.colorIndex !== 0) {
+            if (!t.rotation && !t.flipH && !t.flipV) s += ":0"; // Add rotation if not present
+            if (!t.flipH && !t.flipV) s += ":"; // Add flip separator if not present
+            s += ":C" + t.colorIndex;
           }
           // Only add crate inventory if this specific layer contains a crate (type 5)
           if (t.type === 5) {
@@ -430,10 +531,12 @@ function stringToWorld(s) {
             const flipStr = parts[2] || "";
             const flipH = flipStr.includes("H");
             const flipV = flipStr.includes("V");
+            const colorStr = parts[3] || "";
+            const colorIndex = colorStr.startsWith("C") ? parseInt(colorStr.substring(1), 10) : 0;
 
-            layers[L] = { type: t, rotation: rot, flipH: flipH, flipV: flipV };
+            layers[L] = { type: t, rotation: rot, flipH: flipH, flipV: flipV, colorIndex: colorIndex || 0 };
           } else {
-            layers[L] = { type: parseInt(tileData, 10), rotation: 0, flipH: false, flipV: false };
+            layers[L] = { type: parseInt(tileData, 10), rotation: 0, flipH: false, flipV: false, colorIndex: 0 };
           }
 
           // Store crate items info for later processing
@@ -476,10 +579,12 @@ function stringToWorld(s) {
           const flipStr = parts[2] || "";
           const flipH = flipStr.includes("H");
           const flipV = flipStr.includes("V");
+          const colorStr = parts[3] || "";
+          const colorIndex = colorStr.startsWith("C") ? parseInt(colorStr.substring(1), 10) : 0;
 
-          legacyTile = { type: t, rotation: rot, flipH: flipH, flipV: flipV };
+          legacyTile = { type: t, rotation: rot, flipH: flipH, flipV: flipV, colorIndex: colorIndex || 0 };
         } else {
-          legacyTile = { type: parseInt(tileData, 10), rotation: 0, flipH: false, flipV: false };
+          legacyTile = { type: parseInt(tileData, 10), rotation: 0, flipH: false, flipV: false, colorIndex: 0 };
         }
 
         // Convert to multi-layer format
@@ -583,7 +688,7 @@ function getTileVariant(row, col, layer, tileType) {
     else if (w) rotation = 270; // neighbor west = border east
   }
 
-  return { variant, rotation, img: config.variants[variant] };
+  return { variant, rotation, baseImg: config.variants[variant] };
 }
 
 // --- Layered drawing: draw ONE layer index (0,1 behind; 2 above player) ---
@@ -622,6 +727,7 @@ function drawWorldLayer(world, layerIndex) {
 
       let tileType = tileObj.type;
       let rotation = tileObj.rotation || 0;
+      let colorIndex = tileObj.colorIndex || 0;
 
       // Check for roof fade alpha
       let roofFadeAlpha = 255;
@@ -631,16 +737,27 @@ function drawWorldLayer(world, layerIndex) {
         if (roofFadeAlpha <= 0) continue; // fully transparent; skip draw
       }
 
-      // Determine which image to draw (check for auto-tiling variants)
-      let imgToDraw = tileImgs[tileType];
+      // Determine which image to draw (use cached tinted version)
+      let imgToDraw = null;
       let finalRotation = rotation;
 
       // Check if this tile type has variants registered
       if (tileVariants[tileType]) {
         const variantInfo = getTileVariant(i, j, layerIndex, tileType);
-        if (variantInfo.img) {
-          imgToDraw = variantInfo.img;
-          finalRotation = variantInfo.rotation;
+        // Use tinted variant from cache
+        const config = tileVariants[tileType];
+        if (config.tintedVariants && config.tintedVariants[colorIndex]) {
+          imgToDraw = config.tintedVariants[colorIndex][variantInfo.variant];
+        } else {
+          imgToDraw = variantInfo.baseImg;
+        }
+        finalRotation = variantInfo.rotation;
+      } else {
+        // Use cached tinted tile
+        if (tintedTileCache[tileType] && tintedTileCache[tileType][colorIndex]) {
+          imgToDraw = tintedTileCache[tileType][colorIndex];
+        } else {
+          imgToDraw = tileImgs[tileType];
         }
       }
 
