@@ -1,11 +1,12 @@
 class NPC {
-  constructor(x, y, name, message, image = null) {
+  constructor(x, y, name, message, image = null, triggerID) {
     this.x = x;
     this.y = y;
     this.name = name;
     this.message = message;
     this.image = image;
     this.width = 35;
+    this.id = triggerID;
     
     // Calculate height based on image aspect ratio
     if (this.image) {
@@ -22,7 +23,7 @@ class NPC {
       // Check if there's already a dialogue message active
       const hasActiveDialogue = messages.some(msg => msg.type === "dialogue");
       if (!hasActiveDialogue) {
-        messages.push(new Message("dialogue", this.message));
+        messages.push(new Message("dialogue", this.message, this.id));
       }
     }
   }

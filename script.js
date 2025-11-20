@@ -30,7 +30,7 @@ var tileColors = [
   [[255, 255, 255]], // 9 - door
   [[255, 255, 255]], // 10 - window
   [[255, 255, 255]], // 11 - crack
-  [[255, 255, 255], [180, 140, 100], [140, 100, 70], [200, 1, 1]], // 12 - wood (white, oak, dark oak, barn)
+  [[255, 255, 255], [180, 140, 100], [140, 100, 70], [180, 1, 1]], // 12 - wood (white, oak, dark oak, barn)
   [[255, 255, 255], [254, 1, 1]], // 13 - whiteConcrete
   [[255, 255, 255]], // 14 - barnDoor
   [[255, 255, 255]], // 15 - barnWindow
@@ -226,7 +226,7 @@ function setup() {
   players.push(new Player(0, 100, 100, 100, .5, 350, playerDamage, PlayerImage));
   players.push(new Player(500, 100, 25, 25, 2, healthPoints, playerDamage, PlayerImage));
 
-  NonPlayerCharacters.push(new NPC(13350, 12750, "Prometheus IV", ["Prometheus IV: I am the god of fire and the forge.", "Prometheus IV: I have given you the gift of fire.", "Prometheus IV: But at what cost?"], BadGuy));
+  NonPlayerCharacters.push(new NPC(13350, 12750, "Prometheus IV", ["Prometheus IV: I am the god of fire and the forge.", "Prometheus IV: I have given you the gift of fire.", "Prometheus IV: But at what cost?"], BadGuy, "Promethus"));
 
   inventoryList = players[activePlayer].inventory;
 

@@ -1,6 +1,7 @@
 class Message {
-  constructor(type, message) {
+  constructor(type, message, triggerID) {
     this.message = message;
+    this.id = triggerID;
     if (type == "quest") {
       this.x = 600;
       this.y = -100; // Start above screen
@@ -182,6 +183,7 @@ function messageDisplay() {
         if (messages[i].index >= messages[i].message.length) {
           // Trigger closing animation
           messages[i].closing = true;
+          handleTriggers(messages[i].id);
         } else {
           // Reset animations for next message
           messages[i].slideY = 30;
