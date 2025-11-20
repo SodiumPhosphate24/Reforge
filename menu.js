@@ -229,10 +229,10 @@ function handleMenuClick(optionIndex) {
 
 function startGameTransition() {
   gameState = "transitioning";
-  // Start the tutorial when transition begins
-  if (typeof startTutorial === 'function') {
-    console.log("Starting tutorial from menu...");
-    startTutorial();
+  // Start the intro cutscene when transition begins
+  if (typeof initializeIntro === 'function') {
+    console.log("Starting intro sequence from menu...");
+    // Intro will be activated after transition
   }
 }
 
@@ -264,11 +264,14 @@ function updateTransition() {
     gameplayFadeAlpha = 255 * (1 - fadeInProgress);
   }
 
-  // Once transition is complete, switch to playing state
+  // Once transition is complete, start intro
   if (transitionProgress >= 1) {
-    gameState = "playing";
+    gameState = "intro";
     transitionProgress = 0;
     titleTransitionScale = 1;
+    if (typeof initializeIntro === 'function') {
+      initializeIntro();
+    }
   }
 }
 

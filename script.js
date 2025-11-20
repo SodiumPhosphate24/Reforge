@@ -266,6 +266,13 @@ function draw() {
     return;
   }
 
+  // Show intro cutscene
+  if (gameState === "intro") {
+    updateIntro();
+    drawIntro();
+    return;
+  }
+
   // Normal gameplay
   drawGameplay();
 }
