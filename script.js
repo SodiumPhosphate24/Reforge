@@ -42,6 +42,35 @@ var tileColors = [
 ];
 
 // Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image
+
+// Fade transition from intro to gameplay
+var fadeToGameProgress = 0;
+
+function updateFadeToGame() {
+  fadeToGameProgress += 0.01; // Slow fade speed
+  
+  if (fadeToGameProgress >= 1.0) {
+    gameState = "playing";
+    if (typeof startTutorial === 'function') {
+      startTutorial();
+    }
+  }
+}
+
+function drawFadeToGame() {
+  // Draw the game underneath
+  drawGameplay();
+  
+  // Overlay with fading black (eyes opening)
+  push();
+  const fadeAlpha = map(fadeToGameProgress, 0, 1, 255, 0);
+  fill(0, 0, 0, fadeAlpha);
+  noStroke();
+  rect(0, 0, width, height);
+  pop();
+}
+
+
 var tintedTileCache = [];
 
 // Tile variants storage
@@ -268,6 +297,13 @@ function draw() {
   if (gameState === "intro") {
     updateIntro();
     drawIntro();
+    return;
+  }
+
+  // Fade from intro to gameplay (eyes opening)
+  if (gameState === "fade_to_game") {
+    updateFadeToGame();
+    drawFadeToGame();
     return;
   }
 

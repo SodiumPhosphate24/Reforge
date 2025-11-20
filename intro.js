@@ -276,7 +276,29 @@ function initializeIntro() {
         "PROMETHEUS: Bastian… you are not here by accident.",
         "PROMETHEUS: The future was lost long before your arrival.",
         "PROMETHEUS: But together… we may yet reforge it."
-      ],
+      ]
+    }),
+
+    // SCENE 13 - Fade to Game (Eyelids Opening)
+    new IntroScene({
+      id: "fade_to_game",
+      type: "transition",
+      duration: 120, // 2 seconds fade
+      backgroundColor: [35, 28, 18],
+      onEnter: function() {
+        console.log("Starting fade to gameplay...");
+      },
+      onUpdate: function(timer) {
+        // Fade to black as if eyes closing, then opening into the game
+        const scene = introState.scenes[introState.currentSceneIndex];
+        if (timer < 60) {
+          // First half: fade to black (eyes closing)
+          scene.fadeAlpha = map(timer, 0, 60, 0, 255);
+        } else {
+          // Second half: stay black (brief moment)
+          scene.fadeAlpha = 255;
+        }
+      },
       onExit: function() {
         // Transition to main game
         console.log("Intro sequence complete - transitioning to gameplay");
@@ -303,12 +325,10 @@ function updateIntro() {
     introState.currentSceneIndex++;
 
     if (introState.currentSceneIndex >= introState.scenes.length) {
-      // Intro complete - start game
+      // Intro complete - fade into game
       introState.active = false;
-      gameState = "playing";
-      if (typeof startTutorial === 'function') {
-        startTutorial();
-      }
+      gameState = "fade_to_game";
+      fadeToGameProgress = 0;
     } else {
       introState.scenes[introState.currentSceneIndex].enter();
     }
@@ -352,7 +372,15 @@ function drawIntro() {
       drawTitleScene(currentScene);
       break;
     case "transition":
-      // Transition scenes just show background with effects
+      // Transition scenes show background with effects
+      if (currentScene.fadeAlpha !== undefined) {
+        // Draw fade overlay for eye-closing effect
+        push();
+        fill(0, 0, 0, currentScene.fadeAlpha);
+        noStroke();
+        rect(0, 0, width, height);
+        pop();
+      }
       break;
     case "dialogue":
       drawDialogueScene(currentScene);
