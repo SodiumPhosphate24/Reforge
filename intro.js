@@ -359,23 +359,18 @@ function drawIntro() {
   }
 
   // Draw scene-specific content
-  switch(currentScene.id) {
-    case "title_fade":
+  switch(currentScene.type) {
+    case "text":
       drawTitleScene(currentScene);
       break;
-    case "cryo_flicker":
-      drawCryoFlicker(currentScene);
+    case "transition":
+      // Transition scenes just show background with effects
       break;
-    case "cryo_prometheus":
-    case "cryo_break":
-    case "bunker_entrance":
-    case "bunker_lights":
-    case "valve_intro":
-    case "exposition_start":
-    case "exposition_truth":
-    case "exposition_genocide":
-    case "mission_table":
+    case "dialogue":
       drawDialogueScene(currentScene);
+      break;
+    case "gameplay":
+      // Future gameplay integration
       break;
   }
 
@@ -423,6 +418,13 @@ function drawCryoFlicker(scene) {
 function drawDialogueScene(scene) {
   push();
   textFont(Silkscreen);
+  
+  // Add subtle ambient flicker to make scenes feel alive
+  if (random() < 0.05) {
+    fill(112, 66, 20, random(10, 30)); // Sepia flicker
+    noStroke();
+    rect(0, 0, width, height);
+  }
   
   // Draw all dialogue lines for current scene
   if (scene.dialogue.length > 0) {
