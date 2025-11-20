@@ -257,6 +257,13 @@ function draw() {
     return;
   }
 
+  // Show transition fade
+  if (gameState === "transition") {
+    updateTransition();
+    drawTransitionOverlay();
+    return;
+  }
+
   // Show intro cutscene
   if (gameState === "intro") {
     updateIntro();

@@ -228,19 +228,31 @@ function handleMenuClick(optionIndex) {
 }
 
 function startGameTransition() {
-  gameState = "intro";
-  // Start the intro cutscene immediately
-  if (typeof initializeIntro === 'function') {
-    console.log("Starting intro sequence from menu...");
-    initializeIntro();
-  }
+  gameState = "transition";
+  transitionProgress = 0;
 }
 
 let transitionProgress = 0;
 let titleTransitionScale = 1;
 
 function updateTransition() {
-  // This function is no longer used since intro starts immediately
+  if (gameState !== "transition") return;
+  
+  transitionProgress += 0.05; // Fade speed
+  
+  // When fully black (halfway through transition), start intro
+  if (transitionProgress >= 0.5 && transitionProgress < 0.55) {
+    if (typeof initializeIntro === 'function') {
+      console.log("Starting intro sequence from menu...");
+      initializeIntro();
+    }
+  }
+  
+  // Switch to intro state once fade completes
+  if (transitionProgress >= 1.0) {
+    gameState = "intro";
+    transitionProgress = 0;
+  }
 }
 
 function drawCreditsScreen() {
@@ -312,5 +324,22 @@ function drawSettingsScreen() {
 }
 
 function drawTransitionOverlay() {
-  // Transition overlay no longer needed since intro starts immediately
+  if (gameState !== "transition") return;
+  
+  // Calculate fade alpha (fade out then stay black)
+  let fadeAlpha = 0;
+  if (transitionProgress < 0.5) {
+    // Fade to black
+    fadeAlpha = map(transitionProgress, 0, 0.5, 0, 255);
+  } else {
+    // Stay black
+    fadeAlpha = 255;
+  }
+  
+  // Draw black overlay
+  push();
+  fill(0, 0, 0, fadeAlpha);
+  noStroke();
+  rect(0, 0, width, height);
+  pop();
 }
