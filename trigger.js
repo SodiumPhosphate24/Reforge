@@ -2,7 +2,7 @@ var triggerState = 0;
 var triggerList = {
   Prometheus : {
     talkToPrometheus: false,
-    dropppedStarterGun: false,
+    fixedBunker: false,
     openedFirstCrate: false,
   }, 
   Crafting : {
@@ -14,6 +14,17 @@ function handleTriggers(trigger){
   if (trigger == "Prometheus"){
     if (triggerList.Prometheus.talkToPrometheus == false){
       triggerList.Prometheus.talkToPrometheus = true;
+      NonPlayerCharacters[0].message = [
+        "Prometheus IV: Ba-Bastiann... Welcome Back",
+        "Prometheus IV: I am Prometheus IV",
+        "Prometheus IV: I am the final robot unyeilding to Khronos' will.",
+        "Prometheus IV: You are one of the last human engineers alive",
+        "Prometheus IV: That cr...ate over there",
+        "Prometheus IV: Take this, and break the crate to drop its contents"
+      ];
+    }
+    if (triggerList.Prometheus.fixedBunker == false){
+      triggerList.Prometheus.fixedBunker = true;
       droppedItems.push(new DroppedItem(new Item("gun", "glock", 1), 13300, 12800));
       triggerList.Prometheus.dropppedStarterGun = true;
       NonPlayerCharacters[0].message = [
@@ -25,11 +36,13 @@ function handleTriggers(trigger){
         "Prometheus IV: Send them into the ruins. They must scavenge… explore… …survive.",
         "Prometheus IV: The surface is… unforgiving. But together… we may yet reclaim it."
       ];
+      return;
     }
   }
   if (trigger == "Crafting"){
     if(triggerList.Crafting.craftedFirstRobot == false){
       triggerList.Crafting.craftedFirstRobot = true;
+      return;
     }
   }
 }
