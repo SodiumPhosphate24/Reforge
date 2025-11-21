@@ -21,13 +21,6 @@ let menuAnimationDelay = 10; // Frames delay between each option
 let menuAnimationTimer = 0; // Timer for staggered animation
 let pendingStateChange = null; // Store next state to transition to after animation
 
-// Sprite animation variables
-let spriteFrame = 0;
-let spriteAnimTimer = 0;
-let spriteFrameDelay = 8; // Delay between sprite frames (higher for slower animation)
-let playerFlipScale = 1; // Scale for flipping sprite (1 for normal, -1 for flipped)
-let targetFlipScale = 1; // Target scale for flipping sprite
-
 function drawMenuScreen() {
   // Handle keyboard navigation
   handleMenuKeyboard();
@@ -351,15 +344,9 @@ function drawTransitionOverlay() {
   pop();
 }
 
-// Helper function to initialize sprite animation when starting from menu
+// Helper function to transition to intro when starting from menu
 function startGameFromMenu() {
   console.log("Starting game from menu");
   pendingStateChange = "intro";
   animateMenuOut();
-
-  // Initialize sprite animation variables
-  spriteFrame = 0;
-  spriteAnimTimer = 0;
-  playerFlipScale = 1;
-  targetFlipScale = 1;
 }

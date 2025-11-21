@@ -12,11 +12,6 @@ var transitionFrames = 0; // Count frames since transition started
 var playerFlipScale = 1; // Current flip scale (-1 for left, 1 for right)
 var targetFlipScale = 1; // Target flip scale
 
-// Sprite animation state
-var spriteFrame = 0; // Current sprite frame (0 = idle, 1 = run1, 2 = run2)
-var spriteAnimTimer = 0; // Timer for sprite animation
-var spriteAnimSpeed = 10; // Frames between sprite changes (lower = faster)
-
 class Player {
   constructor(x, y, w, h, speed, health, damage, picture) {
     this.x = x;
@@ -82,44 +77,9 @@ function updatePlayerFlip() {
   playerFlipScale = lerp(playerFlipScale, targetFlipScale, 0.2);
 }
 
-// Update sprite animation based on movement
-function updateSpriteAnimation() {
-  const isMoving = Math.abs(pXVel) > 0.1 || Math.abs(pYVel) > 0.1;
-  
-  if (isMoving) {
-    // Increment animation timer
-    spriteAnimTimer++;
-    
-    // Change sprite frame when timer exceeds speed threshold
-    if (spriteAnimTimer >= spriteAnimSpeed) {
-      spriteAnimTimer = 0;
-      spriteFrame = spriteFrame === 1 ? 2 : 1; // Alternate between frames 1 and 2
-    }
-  } else {
-    // Not moving - use idle sprite
-    spriteFrame = 0;
-    spriteAnimTimer = 0;
-  }
-}
-
-// Get the current sprite image for active player
-function getCurrentPlayerSprite() {
-  // Only animate Buschy (player 0)
-  if (activePlayer === 0) {
-    if (spriteFrame === 0) return Buschy;
-    if (spriteFrame === 1) return BuschyRun;
-    if (spriteFrame === 2) return BuschyRun2;
-  }
-  return players[activePlayer].picture;
-}
-
 function drawPlayers() {
-  // Update flip direction and sprite animation
+  // Update flip direction
   updatePlayerFlip();
-  updateSpriteAnimation();
-  
-  // Get current animated sprite
-  const currentSprite = getCurrentPlayerSprite();
   
   // Draw other players at their world positions with same visual buffer
   for (let i = 0; i < players.length; i++) {
@@ -138,32 +98,12 @@ function drawPlayers() {
   fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
   ellipse(pX + 600 + pWidth / 2, pY + 375 + pHeight, pWidth, pHeight * 0.6);
 
-  // Draw active player with flip and animation
+  // Draw active player with flip
   push();
   translate(pX + 600 + pWidth / 2, pY + 375 - 35 + (pHeight + 35) / 2);
   scale(playerFlipScale, 1);
   imageMode(CENTER);
-  
-  // Calculate sprite dimensions to maintain aspect ratio
-  let spriteWidth = pWidth;
-  let spriteHeight = pHeight + 35;
-  
-  // Get the actual image dimensions to calculate aspect ratio
-  if (currentSprite && currentSprite.width && currentSprite.height) {
-    const spriteAspect = currentSprite.width / currentSprite.height;
-    const targetAspect = spriteWidth / spriteHeight;
-    
-    // Adjust dimensions to match sprite's aspect ratio while fitting in target size
-    if (spriteAspect > targetAspect) {
-      // Sprite is wider - fit to width
-      spriteHeight = spriteWidth / spriteAspect;
-    } else {
-      // Sprite is taller - fit to height
-      spriteWidth = spriteHeight * spriteAspect;
-    }
-  }
-  
-  image(currentSprite, 0, 0, spriteWidth, spriteHeight);
+  image(PlayerImage, 0, 0, pWidth, pHeight + 35);
   imageMode(CORNER);
   pop();
 
