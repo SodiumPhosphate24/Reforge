@@ -47,7 +47,7 @@ var tileColors = [
 var fadeToGameProgress = 0;
 
 function updateFadeToGame() {
-  fadeToGameProgress += 0.01; // Slow fade speed
+  fadeToGameProgress += 0.005; // Slower fade speed (was 0.01)
   
   if (fadeToGameProgress >= 1.0) {
     gameState = "playing";
@@ -122,26 +122,26 @@ function drawFadeToGame() {
   pop();
   
   // Draw "EXIT THE CRYOCHAMBER" text with glitch effect
-  if (fadeToGameProgress < 0.8) {
+  if (fadeToGameProgress < 0.9) {
     push();
     textFont(Silkscreen);
     textAlign(CENTER, CENTER);
     
     // Calculate text alpha - fade in then fade out with glitches
     let textAlpha;
-    if (fadeToGameProgress < 0.3) {
-      // Fade in
-      textAlpha = map(fadeToGameProgress, 0, 0.3, 0, 255);
-    } else if (fadeToGameProgress < 0.6) {
-      // Stay visible with glitches
+    if (fadeToGameProgress < 0.15) {
+      // Fade in earlier
+      textAlpha = map(fadeToGameProgress, 0, 0.15, 0, 255);
+    } else if (fadeToGameProgress < 0.7) {
+      // Stay visible with glitches longer
       textAlpha = 255;
     } else {
       // Fade out with heavy glitching
-      textAlpha = map(fadeToGameProgress, 0.6, 0.8, 255, 0);
+      textAlpha = map(fadeToGameProgress, 0.7, 0.9, 255, 0);
     }
     
     // Add random glitch interference
-    const glitchChance = fadeToGameProgress > 0.5 ? 0.4 : 0.2;
+    const glitchChance = fadeToGameProgress > 0.6 ? 0.4 : 0.2;
     if (random() < glitchChance) {
       textAlpha *= random(0.3, 1.0);
     }
