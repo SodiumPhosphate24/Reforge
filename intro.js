@@ -509,14 +509,14 @@ function drawDialogueScene(scene) {
     const isPrometheus = currentLine.startsWith("PROMETHEUS:");
     
     if (isSystemMessage) {
-      // System messages at bottom with border
+      // System messages at bottom with subtle border
       textSize(18);
       textAlign(CENTER, BOTTOM);
       
-      // Draw light border (outline)
-      strokeWeight(4);
-      stroke(240, 230, 210, 180); // Very light border
-      fill(112, 84, 56, 200); // Sepia tone for system messages
+      // Draw subtle dark outline for depth
+      strokeWeight(2);
+      stroke(40, 30, 20, 200); // Dark sepia outline
+      fill(200, 180, 140, 240); // Warm sepia text
       text(currentLine, width / 2, height - 100);
     } else if (isPrometheus) {
       // Split into speaker and text
@@ -555,19 +555,19 @@ function drawDialogueScene(scene) {
       const bottomPadding = 80;
       let startY = height - bottomPadding - totalTextHeight;
       
-      // Draw speaker name with border
+      // Draw speaker name with subtle border
       textAlign(CENTER, TOP);
       textSize(16);
-      strokeWeight(3);
-      stroke(240, 230, 210, 180); // Very light border
-      fill(112, 84, 56, 220); // Sepia tone for speaker
+      strokeWeight(2);
+      stroke(60, 45, 30, 220); // Dark warm outline
+      fill(180, 140, 90, 255); // Medium amber for speaker name
       text(speaker, width / 2, startY);
       
-      // Draw message lines with border
+      // Draw message lines with refined border
       textSize(20);
-      strokeWeight(4);
-      stroke(240, 230, 210, 180); // Very light border
-      fill(255, 245, 220, 255); // Very light text color for high contrast
+      strokeWeight(2.5);
+      stroke(50, 40, 25, 240); // Darker outline for contrast
+      fill(230, 210, 170, 255); // Warm cream color that pops against sepia
       
       startY += speakerHeight;
       for (let i = 0; i < lines.length; i++) {
@@ -575,11 +575,11 @@ function drawDialogueScene(scene) {
       }
     }
     
-    // "Press Z" indicator in sepia at very bottom
-    const pulseAlpha = 100 + sin(frameCount / 15) * 50;
-    strokeWeight(2);
-    stroke(240, 230, 210, pulseAlpha * 0.6);
-    fill(112, 84, 56, pulseAlpha);
+    // "Press Z" indicator with subtle styling
+    const pulseAlpha = 120 + sin(frameCount / 15) * 60;
+    strokeWeight(1.5);
+    stroke(50, 40, 25, pulseAlpha * 0.8);
+    fill(180, 150, 110, pulseAlpha);
     textSize(14);
     textAlign(CENTER, BOTTOM);
     text("Press Z to continue", width / 2, height - 20);
