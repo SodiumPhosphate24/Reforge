@@ -43,7 +43,7 @@ var tileColors = [
   [[255, 255, 255]], // 22 - Grave 2
   [[255, 255, 255]], // 23 - Grave 3
   [[255, 255, 255]], // 24 - Rail
-  [[255, 255, 255], [210, 180, 140], [194, 166, 128], [180, 154, 120], [166, 142, 110], [152, 130, 100]]  // 25 - Stone Brick (default, tan, light sepia, medium sepia, dark sepia, darkest sepia)
+  [[255, 255, 255], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]]  // 25 - Stone Brick (default white, light sepia, medium-light sepia, medium sepia, darker sepia)
 ];
 
 // Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image
