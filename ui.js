@@ -357,6 +357,8 @@ let nearestPickupItem = null; // Store for screen-fixed rendering
 let pickupPromptAlpha = 0; // Fade animation
 let pickupPromptScale = 0; // Scale animation
 let pickupPromptGrowScale = 0.5; // Growing scale animation
+let nearestCrate = null; // Store nearest crate
+let cratePromptAlpha = 0; // Fade for crate prompt
 
 function updateDroppedItems() {
   let count = 0;
@@ -365,6 +367,11 @@ function updateDroppedItems() {
 
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
+  
+  // Check for nearby crate
+  if (typeof checkNearCrate === 'function') {
+    nearestCrate = checkNearCrate();
+  }
   
   // Calculate viewport bounds for culling
   const viewLeft = -camX - 100;
@@ -398,18 +405,27 @@ function updateDroppedItems() {
 }
 
 function drawPickupPromptIfNeeded() {
-  // Fade in/out and scale based on whether item is near
-  if (nearestPickupItem) {
+  // Prioritize crate over items
+  if (nearestCrate) {
+    cratePromptAlpha = lerp(cratePromptAlpha, 255, 0.2);
+    pickupPromptAlpha = lerp(pickupPromptAlpha, 0, 0.15);
+    pickupPromptScale = lerp(pickupPromptScale, 0, 0.15);
+    pickupPromptGrowScale = lerp(pickupPromptGrowScale, 0, 0.15);
+  } else if (nearestPickupItem) {
     pickupPromptAlpha = lerp(pickupPromptAlpha, 255, 0.2);
     pickupPromptScale = lerp(pickupPromptScale, 1, 0.2);
     pickupPromptGrowScale = lerp(pickupPromptGrowScale, 1, 0.15);
+    cratePromptAlpha = lerp(cratePromptAlpha, 0, 0.15);
   } else {
     pickupPromptAlpha = lerp(pickupPromptAlpha, 0, 0.15);
     pickupPromptScale = lerp(pickupPromptScale, 0, 0.15);
     pickupPromptGrowScale = lerp(pickupPromptGrowScale, 0, 0.15);
+    cratePromptAlpha = lerp(cratePromptAlpha, 0, 0.15);
   }
 
-  if (pickupPromptAlpha > 5) {
+  if (cratePromptAlpha > 5) {
+    drawCratePrompt();
+  } else if (pickupPromptAlpha > 5) {
     drawPickupPrompt(nearestPickupItem);
   }
 }
@@ -437,6 +453,28 @@ function drawPickupPrompt(item) {
 
   // Text
   fill(100, 255, 255, pickupPromptAlpha);
+  text(promptText, 600, 47);
+
+  pop();
+}
+
+function drawCratePrompt() {
+  push();
+  
+  fill(255, 200, 100, cratePromptAlpha * 0.78);
+  textSize(20);
+  textFont(Silkscreen);
+  textAlign(CENTER, CENTER);
+
+  const promptText = "Press E to Open Crate";
+
+  // Background for text
+  const promptWidth = textWidth(promptText);
+  fill(0, 0, 0, cratePromptAlpha * 0.6);
+  rect(600 - promptWidth / 2 - 10, 30, promptWidth + 20, 35, 5);
+
+  // Text
+  fill(255, 200, 100, cratePromptAlpha);
   text(promptText, 600, 47);
 
   pop();

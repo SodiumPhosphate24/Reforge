@@ -505,6 +505,14 @@ function drawGameplay() {
     drawCraftingMenu();
   }
 
+  // Handle crate menu
+  if (typeof handleCrateInput === 'function') {
+    handleCrateInput();
+  }
+  if (typeof drawCrateMenu === 'function') {
+    drawCrateMenu();
+  }
+
   // Draw fog centered on camera, constrained to screen
   tint(255, 200);
   const fogSize = width + 100;

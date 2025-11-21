@@ -51,6 +51,16 @@ function keyPressed() {
   }
 
   if (keyCode == 69) {
+    // Check if near a crate first
+    if (typeof checkNearCrate === 'function') {
+      const nearCrate = checkNearCrate();
+      if (nearCrate) {
+        toggleCrateMenu(nearCrate.row, nearCrate.col);
+        return;
+      }
+    }
+
+    // Then check for dropped items
     for (let i = droppedItems.length - 1; i >= 0; i--) {
       if (droppedItems[i].checkPickup()) {
         if (droppedItems[i].item.stackable) {
