@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus;
+let Buschy, InventoryImg, EnergyTank, FrameImg, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus;
 var itemConstructors = [];
 var pX = 12500; var pY = 12500; var playerDamage = 1;
 var prePX = 0, prePY = 0;
@@ -98,6 +98,93 @@ function drawFadeToGame() {
   // Draw pickup prompt after camera pop (screen-fixed)
   drawPickupPromptIfNeeded();
 
+// Apocalyptic fog system
+let fogParticles = [];
+let fogTime = 0;
+
+function initializeFogParticles() {
+  fogParticles = [];
+  // Create initial fog particles
+  for (let i = 0; i < 80; i++) {
+    fogParticles.push({
+      x: random(width),
+      y: random(height),
+      size: random(40, 120),
+      speed: random(0.2, 0.8),
+      alpha: random(30, 80),
+      offset: random(TWO_PI)
+    });
+  }
+}
+
+function updateFogParticles() {
+  fogTime += 0.01;
+  
+  for (let p of fogParticles) {
+    // Slow horizontal drift
+    p.x += p.speed;
+    
+    // Vertical wave motion
+    p.y += sin(fogTime + p.offset) * 0.3;
+    
+    // Wrap around screen
+    if (p.x > width + p.size) {
+      p.x = -p.size;
+      p.y = random(height);
+    }
+    
+    // Subtle size pulsing
+    p.currentSize = p.size + sin(fogTime * 2 + p.offset) * 5;
+  }
+}
+
+function drawApocalypticFog() {
+  // Update fog particles
+  updateFogParticles();
+  
+  push();
+  
+  // Draw atmospheric haze layers
+  // Bottom layer - darker amber/brown
+  fill(60, 40, 20, 40);
+  noStroke();
+  rect(0, height * 0.6, width, height * 0.4);
+  
+  // Middle layer - lighter sepia
+  fill(80, 60, 30, 30);
+  rect(0, height * 0.3, width, height * 0.7);
+  
+  // Top layer - subtle orange tint
+  fill(100, 70, 40, 20);
+  rect(0, 0, width, height);
+  
+  // Draw fog particles (ash/smoke)
+  for (let p of fogParticles) {
+    // Larger, softer particles with sepia tone
+    fill(120, 100, 70, p.alpha * 0.4);
+    ellipse(p.x, p.y, p.currentSize, p.currentSize);
+    
+    // Inner glow
+    fill(140, 110, 80, p.alpha * 0.2);
+    ellipse(p.x, p.y, p.currentSize * 0.6, p.currentSize * 0.6);
+  }
+  
+  // Vignette effect - darker edges
+  drawingContext.save();
+  let gradient = drawingContext.createRadialGradient(
+    width / 2, height / 2, 0,
+    width / 2, height / 2, width * 0.7
+  );
+  gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+  gradient.addColorStop(1, 'rgba(40, 30, 20, 0.5)');
+  drawingContext.fillStyle = gradient;
+  drawingContext.fillRect(0, 0, width, height);
+  drawingContext.restore();
+  
+  pop();
+}
+
+
   // Draw NPC prompt after camera pop (screen-fixed)
   drawNPCPromptIfNeeded();
 
@@ -105,18 +192,8 @@ function drawFadeToGame() {
   drawUI();
   messageDisplay();
 
-  // Draw fog centered on camera, constrained to screen
-  tint(255, 200);
-  const fogSize = width + 100;
-  imageMode(CENTER);
-  let fogX = pX + camX + 600;
-  let fogY = pY + camY + 375;
-  fogX = constrain(fogX, width / 2, width / 2);
-  fogY = constrain(fogY, height / 2, height / 2);
-
-  image(Fog, fogX, fogY, fogSize, fogSize);
-  imageMode(CORNER);
-  noTint();
+  // Draw custom fog filter
+  drawApocalypticFog();
 
   // Overlay with fading black (eyes opening)
   push();
@@ -252,7 +329,6 @@ function preload() {
   projImgs[1] = loadImage("Items/Projectiles/Rock.png");
   InventoryImg = loadImage("hud/Inventory.png");
   FrameImg = loadImage("hud/Frame.png");
-  Fog = loadImage("hud/Fog.png");
   IndicatorImg = loadImage("Indicator.png");
   Silkscreen = loadFont("Silkscreen-Regular.ttf");
   EnergyTank = loadImage("hud/EnergyTank.png");
@@ -394,6 +470,9 @@ function setup() {
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
 
+  // Initialize fog particles
+  initializeFogParticles();
+
   // Tutorial will be started from menu screen
 }
 
@@ -503,19 +582,8 @@ function drawGameplay() {
     drawCraftingMenu();
   }
 
-  // Draw fog centered on camera, constrained to screen
-  tint(255, 200);
-  const fogSize = width + 100;
-  imageMode(CENTER);
-  // Center fog on camera position
-  let fogX = pX + camX + 600;
-  let fogY = pY + camY + 375;
-  fogX = constrain(fogX, width / 2, width / 2);
-  fogY = constrain(fogY, height / 2, height / 2);
-
-  image(Fog, fogX, fogY, fogSize, fogSize);
-  imageMode(CORNER);
-  noTint();
+  // Draw custom fog filter
+  drawApocalypticFog();
   doRecoil();
   if (editorMode) {
     drawEditorUI();
