@@ -13,7 +13,15 @@ function handleTriggers(trigger){
       triggerList.Prometheus.talkToPrometheus = true;
       droppedItems.push(new DroppedItem(new Item("gun", "glock", 1), 13300, 12800));
       triggerList.Prometheus.dropppedStarterGun = true;
-      NonPlayerCharacters[0].message = ["Prometheus IV: These supplies should be enough to create your first robot", "Prometheus IV: You can craft robots and other items at the workbench", "Prometheus IV: You will need to send your robots to explore the world and find more supplies"];
+      NonPlayerCharacters[0].message = [
+        "Prometheus IV: Good. You adapt quickly.",
+        "Prometheus IV: Those components… should be sufficient to construct your first autonomous unit.",
+        "Prometheus IV: The workbench— there— it still functions. B–Barely.",
+        "Prometheus IV: You can forge new machines… allies… from salvaged materials.",
+        "Prometheus IV: Unlike Khronos's drones… yours will be… …free-willed. Unpredictable.",
+        "Prometheus IV: Send them into the ruins. They must scavenge… explore… …survive.",
+        "Prometheus IV: The surface is… unforgiving. But together… we may yet reclaim it."
+      ];
     }
   }
 }

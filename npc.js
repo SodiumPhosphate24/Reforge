@@ -7,7 +7,7 @@ class NPC {
     this.image = image;
     this.width = 35;
     this.id = triggerID;
-    
+
     // Calculate height based on image aspect ratio
     if (this.image) {
       const aspectRatio = this.image.height / this.image.width;
@@ -41,13 +41,13 @@ function drawNPCs() {
 
   for (let i = 0; i < NonPlayerCharacters.length; i++) {
     NonPlayerCharacters[i].update();
-    
+
     // Draw NPC image if available, otherwise draw yellow rectangle
     if (NonPlayerCharacters[i].image) {
-      image(NonPlayerCharacters[i].image, 
-            NonPlayerCharacters[i].x, 
-            NonPlayerCharacters[i].y, 
-            NonPlayerCharacters[i].width, 
+      image(NonPlayerCharacters[i].image,
+            NonPlayerCharacters[i].x,
+            NonPlayerCharacters[i].y,
+            NonPlayerCharacters[i].width,
             NonPlayerCharacters[i].height);
     } else {
       fill(255, 255, 0);
