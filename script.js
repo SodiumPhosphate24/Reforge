@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, EnergyTank, FrameImg, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus;
+let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus;
 var itemConstructors = [];
 var pX = 12500; var pY = 12500; var playerDamage = 1;
 var prePX = 0, prePY = 0;
@@ -105,8 +105,18 @@ function drawFadeToGame() {
   drawUI();
   messageDisplay();
 
-  // Draw custom fog filter
-  drawApocalypticFog();
+  // Draw fog centered on camera, constrained to screen
+  tint(255, 200);
+  const fogSize = width + 100;
+  imageMode(CENTER);
+  let fogX = pX + camX + 600;
+  let fogY = pY + camY + 375;
+  fogX = constrain(fogX, width / 2, width / 2);
+  fogY = constrain(fogY, height / 2, height / 2);
+
+  image(Fog, fogX, fogY, fogSize, fogSize);
+  imageMode(CORNER);
+  noTint();
 
   // Overlay with fading black (eyes opening)
   push();
@@ -242,6 +252,7 @@ function preload() {
   projImgs[1] = loadImage("Items/Projectiles/Rock.png");
   InventoryImg = loadImage("hud/Inventory.png");
   FrameImg = loadImage("hud/Frame.png");
+  Fog = loadImage("hud/Fog.png");
   IndicatorImg = loadImage("Indicator.png");
   Silkscreen = loadFont("Silkscreen-Regular.ttf");
   EnergyTank = loadImage("hud/EnergyTank.png");
@@ -374,7 +385,7 @@ function setup() {
   players.push(new Player(0, 100, 100, 100, .5, 350, playerDamage, PlayerImage));
   players.push(new Player(500, 100, 25, 25, 2, healthPoints, playerDamage, PlayerImage));
 
-  NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", [" : Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 4));
+  NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", [" : Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
   inventoryList = players[activePlayer].inventory;
 
   // Initialize indicator position
@@ -382,9 +393,6 @@ function setup() {
   indicatorCurrentY = pY + 375 - 50;
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
-
-  // Initialize fog particles
-  initializeFogParticles();
 
   // Tutorial will be started from menu screen
 }
@@ -495,8 +503,19 @@ function drawGameplay() {
     drawCraftingMenu();
   }
 
-  // Draw custom fog filter
-  drawApocalypticFog();
+  // Draw fog centered on camera, constrained to screen
+  tint(255, 200);
+  const fogSize = width + 100;
+  imageMode(CENTER);
+  // Center fog on camera position
+  let fogX = pX + camX + 600;
+  let fogY = pY + camY + 375;
+  fogX = constrain(fogX, width / 2, width / 2);
+  fogY = constrain(fogY, height / 2, height / 2);
+
+  image(Fog, fogX, fogY, fogSize, fogSize);
+  imageMode(CORNER);
+  noTint();
   doRecoil();
   if (editorMode) {
     drawEditorUI();
@@ -1080,92 +1099,6 @@ let roofAlpha = new Map();     // key "row,col" -> alpha
 let roofTarget = new Set();    // keys that should fade to 0 this frame
 let lastPlayerTile = { row: -1, col: -1 }; // cache player position
 let cachedRoofTarget = new Set(); // cached flood fill results
-
-/* ========= Apocalyptic fog system ========= */
-let fogParticles = [];
-let fogTime = 0;
-
-function initializeFogParticles() {
-  fogParticles = [];
-  // Create initial fog particles
-  for (let i = 0; i < 80; i++) {
-    fogParticles.push({
-      x: random(width),
-      y: random(height),
-      size: random(40, 120),
-      speed: random(0.2, 0.8),
-      alpha: random(30, 80),
-      offset: random(TWO_PI)
-    });
-  }
-}
-
-function updateFogParticles() {
-  fogTime += 0.01;
-  
-  for (let p of fogParticles) {
-    // Slow horizontal drift
-    p.x += p.speed;
-    
-    // Vertical wave motion
-    p.y += sin(fogTime + p.offset) * 0.3;
-    
-    // Wrap around screen
-    if (p.x > width + p.size) {
-      p.x = -p.size;
-      p.y = random(height);
-    }
-    
-    // Subtle size pulsing
-    p.currentSize = p.size + sin(fogTime * 2 + p.offset) * 5;
-  }
-}
-
-function drawApocalypticFog() {
-  // Update fog particles
-  updateFogParticles();
-  
-  push();
-  
-  // Draw atmospheric haze layers
-  // Bottom layer - darker amber/brown
-  fill(60, 40, 20, 40);
-  noStroke();
-  rect(0, height * 0.6, width, height * 0.4);
-  
-  // Middle layer - lighter sepia
-  fill(80, 60, 30, 30);
-  rect(0, height * 0.3, width, height * 0.7);
-  
-  // Top layer - subtle orange tint
-  fill(100, 70, 40, 20);
-  rect(0, 0, width, height);
-  
-  // Draw fog particles (ash/smoke)
-  for (let p of fogParticles) {
-    // Larger, softer particles with sepia tone
-    fill(120, 100, 70, p.alpha * 0.4);
-    ellipse(p.x, p.y, p.currentSize, p.currentSize);
-    
-    // Inner glow
-    fill(140, 110, 80, p.alpha * 0.2);
-    ellipse(p.x, p.y, p.currentSize * 0.6, p.currentSize * 0.6);
-  }
-  
-  // Vignette effect - darker edges
-  drawingContext.save();
-  let gradient = drawingContext.createRadialGradient(
-    width / 2, height / 2, 0,
-    width / 2, height / 2, width * 0.7
-  );
-  gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
-  gradient.addColorStop(1, 'rgba(40, 30, 20, 0.5)');
-  drawingContext.fillStyle = gradient;
-  drawingContext.fillRect(0, 0, width, height);
-  drawingContext.restore();
-  
-  pop();
-}
 
 function tileKey(r, c) { return r + "," + c; }
 
