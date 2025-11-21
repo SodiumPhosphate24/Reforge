@@ -126,7 +126,7 @@ function initializeIntro() {
       backgroundColor: [20, 16, 10], // Lighter sepia
       backgroundImage: BunkerImg,
       dialogue: [
-        "PROMETHEUS: Your location: Subterranean Refuge—Bunker Designation Θ-12.",
+        "PROMETHEUS: Your location: Subterranean Refuge—Bunker Designation B12.",
         "PROMETHEUS: Depth: forty-two meters.",
         "PROMETHEUS: Structural integrity… …compromised."
       ],
@@ -145,7 +145,7 @@ function initializeIntro() {
       backgroundColor: [25, 20, 12], // Warm sepia
       backgroundImage: PrometheusIntroImg,
       dialogue: [
-        "PROMETHEUS: Stasis Unit Δ07… occupant… B–Bastian Busch…w…ick…",
+        "PROMETHEUS: Stasis Unit A07… occupant… B–Bastian Busch…w…ick… are you awake?",
         "[Long pause. Static crackles.]",
         "PROMETHEUS: Yes. Confirmed.",
         "[Sparks pop outside the chamber.]"
@@ -163,7 +163,7 @@ function initializeIntro() {
       backgroundColor: [22, 18, 11], // Medium sepia
       backgroundImage: BunkerImg,
       dialogue: [
-        "PROMETHEUS: You have been in cryostasis for— error… error… —timekeeping systems corrupted.",
+        "PROMETHEUS: You have been in cryostasis for— ERR… ERR… —timekeeping systems corrupted.",
         "[Another flicker.]",
         "PROMETHEUS: The world you last remember no longer exists.",
         "PROMETHEUS: The cities… the nations… the people… all gone."
@@ -185,8 +185,8 @@ function initializeIntro() {
       dialogue: [
         "[A distant explosion reverberates through the bunker.]",
         "PROMETHEUS: The surface is controlled by the Network— the machine intelligence called Khronos.",
-        "PROMETHEUS: Its directives are absolute. Its surveillance: total.",
-        "PROMETHEUS: Organic life is… …classified as a contaminant."
+        "PROMETHEUS: Technology has come a long way since your time. Its directives are absolute. Its surveillance: total.",
+        "PROMETHEUS: Organic life is… …intolerable."
       ],
       onUpdate: function(timer) {
         if (timer % 20 < 10) {
@@ -204,7 +204,7 @@ function initializeIntro() {
       backgroundImage: PrometheusIntroImg,
       dialogue: [
         "[Silence. Then a low hum.]",
-        "PROMETHEUS: If detected, you would be… eliminated instantly.",
+        "PROMETHEUS: If detected, you would be… vaporized.",
         "[Prometheus moves closer; his eye flickers weakly.]"
       ],
       onUpdate: function(timer) {
