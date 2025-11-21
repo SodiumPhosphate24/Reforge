@@ -1,5 +1,5 @@
 // Menu state management
-var gameState = "menu"; // "menu", "playing", "credits", or "settings"
+let gameState = "menu"; // "menu", "playing", "credits", or "settings"
 let menuFadeAlpha = 255;
 let gameplayFadeAlpha = 0;
 let transitionSpeed = 5;

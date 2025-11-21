@@ -1571,9 +1571,9 @@ class Particle {
 }
 
 // --- Placeholder for game state variables ---
-let gameState = "fade_to_game"; // Default state to trigger intro fade
+// gameState is declared in menu.js
 let editorMode = false;
-let inventorySlot = 1; // Example: current selected inventory slot
+// inventorySlot is declared in ui.js
 
 // --- Placeholder for ReforgeLogo ---
 let ReforgeLogo;
