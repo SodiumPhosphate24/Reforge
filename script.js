@@ -1572,7 +1572,7 @@ class Particle {
 
 // --- Placeholder for game state variables ---
 // gameState is declared in menu.js
-let editorMode = false;
+// editorMode is declared in editor.js
 // inventorySlot is declared in ui.js
 
 // --- Placeholder for ReforgeLogo ---
