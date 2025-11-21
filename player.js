@@ -15,7 +15,7 @@ var targetFlipScale = 1; // Target flip scale
 // Sprite animation state
 var spriteFrame = 0; // Current sprite frame (0 = idle, 1 = run1, 2 = run2)
 var spriteAnimTimer = 0; // Timer for sprite animation
-var spriteAnimSpeed = 8; // Frames between sprite changes (lower = faster)
+var spriteAnimSpeed = 4; // Frames between sprite changes (lower = faster)
 
 class Player {
   constructor(x, y, w, h, speed, health, damage, picture) {
