@@ -89,6 +89,7 @@ function initializeIntro() {
       type: "transition",
       duration: 90,
       backgroundColor: [10, 8, 5], // Very dark sepia
+      backgroundImage: CryochamberImg,
       onUpdate: function(timer) {
         // Random flicker effect
         if (random() < 0.3) {
@@ -123,6 +124,7 @@ function initializeIntro() {
       type: "dialogue",
       duration: 0,
       backgroundColor: [20, 16, 10], // Lighter sepia
+      backgroundImage: BunkerImg,
       dialogue: [
         "PROMETHEUS: Your location: Subterranean Refuge—Bunker Designation Θ-12.",
         "PROMETHEUS: Depth: forty-two meters.",
@@ -141,6 +143,7 @@ function initializeIntro() {
       type: "dialogue",
       duration: 0,
       backgroundColor: [25, 20, 12], // Warm sepia
+      backgroundImage: PrometheusIntroImg,
       dialogue: [
         "PROMETHEUS: Stasis Unit Δ07… occupant… B–Bastian Busch…w…ick…",
         "[Long pause. Static crackles.]",
@@ -158,6 +161,7 @@ function initializeIntro() {
       type: "dialogue",
       duration: 0,
       backgroundColor: [22, 18, 11], // Medium sepia
+      backgroundImage: BunkerImg,
       dialogue: [
         "PROMETHEUS: You have been in cryostasis for— error… error… —timekeeping systems corrupted.",
         "[Another flicker.]",
@@ -177,6 +181,7 @@ function initializeIntro() {
       type: "dialogue",
       duration: 0,
       backgroundColor: [28, 22, 14], // Warm sepia
+      backgroundImage: PrometheusIntroImg,
       dialogue: [
         "[A distant explosion reverberates through the bunker.]",
         "PROMETHEUS: The surface is controlled by the Network— the machine intelligence called Khronos.",
@@ -213,6 +218,7 @@ function initializeIntro() {
       type: "dialogue",
       duration: 0,
       backgroundColor: [25, 20, 12], // Warm sepia
+      backgroundImage: PrometheusIntroImg,
       dialogue: [
         "PROMETHEUS: I apologize for the conditions of your awakening.",
         "PROMETHEUS: This bunker was not designed to remain dormant for centuries.",
@@ -228,6 +234,7 @@ function initializeIntro() {
       type: "dialogue",
       duration: 0,
       backgroundColor: [30, 24, 15], // Lighter sepia
+      backgroundImage: CryochamberImg,
       dialogue: [
         "PROMETHEUS: But you… Bastian… you were not lost.",
         "[A faint hologram projector attempts to activate, failing repeatedly.]",
@@ -242,6 +249,7 @@ function initializeIntro() {
       type: "dialogue",
       duration: 0,
       backgroundColor: [28, 22, 14], // Medium sepia
+      backgroundImage: PrometheusIntroImg,
       dialogue: [
         "PROMETHEUS: Your mind— your ingenuity— your unpredictability— these are variables Khronos cannot model.",
         "[Static crawls through his voice.]",
@@ -256,6 +264,7 @@ function initializeIntro() {
       type: "dialogue",
       duration: 0,
       backgroundColor: [32, 26, 16], // Warm sepia
+      backgroundImage: BunkerImg,
       dialogue: [
         "[Alarms softly begin to pulse.]",
         "PROMETHEUS: There are faint human signatures scattered across the ruins.",
@@ -275,6 +284,7 @@ function initializeIntro() {
       type: "dialogue",
       duration: 0,
       backgroundColor: [35, 28, 18], // Bright sepia
+      backgroundImage: PrometheusIntroImg,
       dialogue: [
         "PROMETHEUS: Bastian… you are not here by accident.",
         "PROMETHEUS: The future was lost long before your arrival.",
@@ -288,6 +298,7 @@ function initializeIntro() {
       type: "transition",
       duration: 120, // 2 seconds fade
       backgroundColor: [35, 28, 18],
+      backgroundImage: CryochamberImg,
       onEnter: function() {
         console.log("Starting fade to gameplay...");
       },
@@ -479,29 +490,23 @@ function drawDialogueScene(scene) {
     const isPrometheus = currentLine.startsWith("PROMETHEUS:");
     
     if (isSystemMessage) {
-      // System messages centered vertically and horizontally
-      fill(112, 84, 56, 200); // Sepia tone for system messages
+      // System messages at bottom with border
       textSize(18);
-      textAlign(CENTER, CENTER);
-      text(currentLine, width / 2, height / 2);
+      textAlign(CENTER, BOTTOM);
+      
+      // Draw light border (outline)
+      strokeWeight(4);
+      stroke(240, 230, 210, 180); // Very light border
+      fill(112, 84, 56, 200); // Sepia tone for system messages
+      text(currentLine, width / 2, height - 100);
     } else if (isPrometheus) {
       // Split into speaker and text
       const parts = currentLine.split(": ");
       const speaker = parts[0];
       const message = parts.slice(1).join(": ") || "";
       
-      // Draw speaker name at top
-      fill(112, 84, 56, 220); // Sepia tone for speaker
-      textSize(16);
-      textAlign(CENTER, CENTER);
-      text(speaker, width / 2, height / 2 - 100);
-      
-      // Draw message with word wrapping, centered
-      fill(194, 178, 128, 255); // Lighter sepia for message
+      // Word wrap for text
       textSize(20);
-      textAlign(CENTER, CENTER);
-      
-      // Word wrap for centered text
       const maxWidth = width - 200;
       const words = message.split(" ");
       let lines = [];
@@ -522,22 +527,43 @@ function drawDialogueScene(scene) {
         lines.push(line.trim());
       }
       
-      // Draw centered lines
+      // Calculate total text height
       const lineHeight = 30;
-      const totalHeight = lines.length * lineHeight;
-      let startY = height / 2 - totalHeight / 2;
+      const speakerHeight = 25;
+      const totalTextHeight = speakerHeight + (lines.length * lineHeight);
       
+      // Position at bottom with padding
+      const bottomPadding = 80;
+      let startY = height - bottomPadding - totalTextHeight;
+      
+      // Draw speaker name with border
+      textAlign(CENTER, TOP);
+      textSize(16);
+      strokeWeight(3);
+      stroke(240, 230, 210, 180); // Very light border
+      fill(112, 84, 56, 220); // Sepia tone for speaker
+      text(speaker, width / 2, startY);
+      
+      // Draw message lines with border
+      textSize(20);
+      strokeWeight(4);
+      stroke(240, 230, 210, 180); // Very light border
+      fill(255, 245, 220, 255); // Very light text color for high contrast
+      
+      startY += speakerHeight;
       for (let i = 0; i < lines.length; i++) {
         text(lines[i], width / 2, startY + i * lineHeight);
       }
     }
     
-    // "Press Z" indicator in sepia at bottom
+    // "Press Z" indicator in sepia at very bottom
     const pulseAlpha = 100 + sin(frameCount / 15) * 50;
+    strokeWeight(2);
+    stroke(240, 230, 210, pulseAlpha * 0.6);
     fill(112, 84, 56, pulseAlpha);
     textSize(14);
-    textAlign(CENTER, CENTER);
-    text("Press Z to continue", width / 2, height - 50);
+    textAlign(CENTER, BOTTOM);
+    text("Press Z to continue", width / 2, height - 20);
   }
   
   pop();
