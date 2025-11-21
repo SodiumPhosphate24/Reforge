@@ -12,8 +12,8 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost"];
-var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0, 2, 2, 2, 2, 1, 2, 2, 2, 1, 1, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick"];
+var tileWalls = [0, 0, 0, 2, 1, 1, 1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
@@ -38,7 +38,12 @@ var tileColors = [
   [[255, 255, 255]], // 17 - fenceCorner
   [[255, 255, 255]], // 18 - fenceDown
   [[255, 255, 255]], // 19 - fenceEdge
-  [[255, 255, 255]]  // 20 - fencePost
+  [[255, 255, 255]],  // 20 - fencePost
+  [[255, 255, 255]], // 21 - Grave 1
+  [[255, 255, 255]], // 22 - Grave 2
+  [[255, 255, 255]], // 23 - Grave 3
+  [[255, 255, 255]], // 24 - Rail
+  [[255, 255, 255], [210, 180, 140], [194, 166, 128], [180, 154, 120], [166, 142, 110], [152, 130, 100]]  // 25 - Stone Brick (default, tan, light sepia, medium sepia, dark sepia, darkest sepia)
 ];
 
 // Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image
@@ -48,7 +53,7 @@ var fadeToGameProgress = 0;
 
 function updateFadeToGame() {
   fadeToGameProgress += 0.005; // Slower fade speed (was 0.01)
-  
+
   if (fadeToGameProgress >= 1.0) {
     gameState = "playing";
     if (typeof startTutorial === 'function') {
@@ -60,46 +65,46 @@ function updateFadeToGame() {
 function drawFadeToGame() {
   // Clear background
   background(50);
-  
+
   // Draw the game underneath the fade
   push();
   // Position camera for gameplay view
   controlCamera();
   translate(camX, camY);
-  
+
   // Draw all game layers
   drawWorldLayer(gameWorld, 0);
   drawWorldLayer(gameWorld, 1);
-  
+
   // Draw items (dropped items)
   updateDroppedItems();
-  
+
   drawWorldLayer(gameWorld, 2);
   drawWorldLayer(gameWorld, 3);
-  
+
   fill(255);
   drawNPCs();
   drawPlayers();
-  
+
   drawGunDebugRect();
   drawEnemies();
   drawBullets();
   updateParticles();
-  
+
   drawWorldLayer(gameWorld, 4);
-  
+
   pop();
-  
+
   // Draw pickup prompt after camera pop (screen-fixed)
   drawPickupPromptIfNeeded();
-  
+
   // Draw NPC prompt after camera pop (screen-fixed)
   drawNPCPromptIfNeeded();
-  
+
   // Draw UI elements
   drawUI();
   messageDisplay();
-  
+
   // Draw fog centered on camera, constrained to screen
   tint(255, 200);
   const fogSize = width + 100;
@@ -108,11 +113,11 @@ function drawFadeToGame() {
   let fogY = pY + camY + 375;
   fogX = constrain(fogX, width / 2, width / 2);
   fogY = constrain(fogY, height / 2, height / 2);
-  
+
   image(Fog, fogX, fogY, fogSize, fogSize);
   imageMode(CORNER);
   noTint();
-  
+
   // Overlay with fading black (eyes opening)
   push();
   const fadeAlpha = map(fadeToGameProgress, 0, 1, 255, 0);
@@ -120,13 +125,13 @@ function drawFadeToGame() {
   noStroke();
   rect(0, 0, width, height);
   pop();
-  
+
   // Draw "EXIT THE CRYOCHAMBER" text with glitch effect
   if (fadeToGameProgress < 0.9) {
     push();
     textFont(Silkscreen);
     textAlign(CENTER, CENTER);
-    
+
     // Calculate text alpha - fade in then fade out with glitches
     let textAlpha;
     if (fadeToGameProgress < 0.15) {
@@ -139,13 +144,13 @@ function drawFadeToGame() {
       // Fade out with heavy glitching
       textAlpha = map(fadeToGameProgress, 0.7, 0.9, 255, 0);
     }
-    
+
     // Add random glitch interference
     const glitchChance = fadeToGameProgress > 0.6 ? 0.4 : 0.2;
     if (random() < glitchChance) {
       textAlpha *= random(0.3, 1.0);
     }
-    
+
     // Draw glitchy static lines around text
     if (random() < 0.5) {
       strokeWeight(2);
@@ -155,23 +160,23 @@ function drawFadeToGame() {
         line(width / 2 - 200 + random(-20, 20), y, width / 2 + 200 + random(-20, 20), y);
       }
     }
-    
+
     // Draw text with sepia glow and glitch offset
     textSize(42);
     const glitchOffsetX = random() < 0.3 ? random(-8, 8) : 0;
     const glitchOffsetY = random() < 0.3 ? random(-5, 5) : 0;
-    
+
     // Outer glow
     strokeWeight(6);
     stroke(112, 66, 20, textAlpha * 0.4);
     fill(255, 200, 80, textAlpha);
     text("EXIT THE CRYOCHAMBER", width / 2 + glitchOffsetX, height / 2 + glitchOffsetY);
-    
+
     // Inner sharp text
     noStroke();
     fill(255, 220, 100, textAlpha);
     text("EXIT THE CRYOCHAMBER", width / 2 + glitchOffsetX, height / 2 + glitchOffsetY);
-    
+
     // Random RGB split effect for extra glitch
     if (random() < 0.25) {
       fill(255, 100, 100, textAlpha * 0.5);
@@ -179,7 +184,7 @@ function drawFadeToGame() {
       fill(100, 255, 255, textAlpha * 0.5);
       text("EXIT THE CRYOCHAMBER", width / 2 + glitchOffsetX + 3, height / 2 + glitchOffsetY);
     }
-    
+
     pop();
   }
 }
@@ -229,6 +234,11 @@ function preload() {
   tileImgs[18] = loadImage("Tiles/FenceDown.png");
   tileImgs[19] = loadImage("Tiles/FenceEdge.png");
   tileImgs[20] = loadImage("Tiles/FencePost.png");
+  tileImgs[21] = loadImage("Tiles/Grave1.png");
+  tileImgs[22] = loadImage("Tiles/Grave2.png");
+  tileImgs[23] = loadImage("Tiles/Grave3.png");
+  tileImgs[24] = loadImage("Tiles/Rail.png");
+  tileImgs[25] = loadImage("Tiles/StoneBrick.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonBattery.png");
@@ -248,7 +258,7 @@ function preload() {
   EnergyTank = loadImage("hud/EnergyTank.png");
   ReforgeLogo = loadImage("REFORGE.png");
   titleScreenImg = loadImage("hud/titleScreen.png");
-  
+
   // Intro sequence images
   BunkerImg = loadImage("Buschwick Industries.png");
   PrometheusIntroImg = loadImage("PrometheusIntro.png");
@@ -375,7 +385,7 @@ function setup() {
   players.push(new Player(0, 100, 100, 100, .5, 350, playerDamage, PlayerImage));
   players.push(new Player(500, 100, 25, 25, 2, healthPoints, playerDamage, PlayerImage));
 
-  NonPlayerCharacters.push(new NPC(13350, 12750, "Prometheus IV", [" : Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus"));
+  NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", [" : Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
   inventoryList = players[activePlayer].inventory;
 
   // Initialize indicator position
@@ -921,6 +931,11 @@ function drawWorldLayer(world, layerIndex) {
         }
       }
 
+      // Apply roof fade tint if needed
+      if (roofFadeAlpha < 255) {
+        tint(255, roofFadeAlpha);
+      }
+
       // Draw the tile (apply rotation and flips)
       const needsTransform = finalRotation > 0 || tileObj.flipH || tileObj.flipV;
       if (needsTransform) {
@@ -934,13 +949,9 @@ function drawWorldLayer(world, layerIndex) {
         image(imgToDraw, j * 50, i * 50, 50, 50);
       }
 
-      // Apply roof fade if needed
+      // Reset tint after drawing
       if (roofFadeAlpha < 255) {
-        push();
-        noStroke();
-        fill(255, 255, 255, 255 - roofFadeAlpha);
-        rect(j * 50, i * 50, 50, 50);
-        pop();
+        noTint();
       }
 
       // Draw crate inventory only when needed
