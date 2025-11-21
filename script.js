@@ -1,6 +1,9 @@
 let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus;
 var itemConstructors = [];
 var pX = 12500; var pY = 12500; var playerDamage = 1;
+// healthPoints is declared in ui.js
+// gameState is declared in menu.js
+// editorMode is declared in editor.js
 var prePX = 0, prePY = 0;
 var camX = -12500; var camY = -12500;
 var pSpeed = 1.3;
@@ -196,7 +199,7 @@ var tileVariants = {};
 var enemies = [], bullets = [], messages = [], droppedItems = [], NonPlayerCharacters = [];
 var inventoryList;
 let maxTileTypes = 0; // will be set in setup()
-var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
+// crateInventories is declared in editor.js
 
 function preload() {
   console.log("Updated version Prometheus");
@@ -1515,21 +1518,9 @@ function handleEditorClick() {
 }
 
 // --- Placeholder for Player class ---
-class Player {
-  constructor(x, y, w, h, speed, health, damage, image) {
-    this.x = x;
-    this.y = y;
-    this.width = w;
-    this.height = h;
-    this.speed = speed;
-    this.health = health;
-    this.damage = damage;
-    this.image = image;
-    this.inventory = []; // Example inventory
-  }
-}
-var players = []; // Ensure players array is initialized
-var activePlayer = 0; // Ensure activePlayer is initialized
+// Player class is declared in player.js
+// players array is declared in player.js
+// activePlayer is declared in player.js
 
 // --- Placeholder for NPC class ---
 class NPC {
@@ -1574,6 +1565,7 @@ class Particle {
 // gameState is declared in menu.js
 // editorMode is declared in editor.js
 // inventorySlot is declared in ui.js
+// healthPoints is declared in ui.js
 
 // --- Placeholder for ReforgeLogo ---
 let ReforgeLogo;
