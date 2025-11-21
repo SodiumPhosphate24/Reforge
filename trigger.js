@@ -7,6 +7,9 @@ var triggerList = {
   }, 
   Crafting : {
     craftedFirstRobot: false,
+  }, 
+  Objective : {
+    fixedBunker: false,
   }
 };
 
