@@ -338,7 +338,7 @@ function updateIntro() {
   currentScene.update();
 
   // Check for scene advancement
-  if (currentScene.completed || (currentScene.duration === 0 && keyPressedOnce(90))) { // Z key
+  if (currentScene.completed) {
     currentScene.exit();
     introState.currentSceneIndex++;
 
@@ -634,8 +634,12 @@ function advanceSceneDialogue() {
   if (currentScene.type === 'dialogue' && currentScene.dialogue.length > 0) {
     currentScene.dialogueIndex++;
     if (currentScene.dialogueIndex >= currentScene.dialogue.length) {
+      // Mark scene as complete when all dialogue lines are shown
       currentScene.completed = true;
     }
+  } else {
+    // For non-dialogue scenes, just mark as complete
+    currentScene.completed = true;
   }
 }
 
