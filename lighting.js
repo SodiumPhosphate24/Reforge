@@ -2,7 +2,6 @@
 // Raycasting-based lighting system
 let lightingCanvas;
 let rayCount = 120; // Number of rays to cast (more = smoother but slower)
-let maxLightDistance = 400; // Maximum distance light can reach
 let darknessAlpha = 180; // How dark shadowed areas are (0-255)
 
 function setupLighting() {
@@ -21,6 +20,18 @@ function drawLighting() {
   // Calculate player center in screen space
   const playerScreenX = pX + camX + 600 + pWidth / 2;
   const playerScreenY = pY + camY + 375 + pHeight / 2;
+
+  // Calculate max light distance to reach edge of screen from player
+  const distToLeft = playerScreenX;
+  const distToRight = width - playerScreenX;
+  const distToTop = playerScreenY;
+  const distToBottom = height - playerScreenY;
+  const maxLightDistance = Math.max(
+    Math.sqrt(distToLeft * distToLeft + distToTop * distToTop),
+    Math.sqrt(distToRight * distToRight + distToTop * distToTop),
+    Math.sqrt(distToLeft * distToLeft + distToBottom * distToBottom),
+    Math.sqrt(distToRight * distToRight + distToBottom * distToBottom)
+  ) + 100; // Add padding
 
   // Draw lit area using raycasting
   lightingCanvas.erase();
@@ -51,6 +62,8 @@ function castLightRay(startX, startY, angle, maxDistance) {
   // Step along the ray
   const step = 5; // Pixels per step
   let distance = 0;
+  let lastValidX = startX + dx * maxDistance;
+  let lastValidY = startY + dy * maxDistance;
   
   while (distance < maxDistance) {
     distance += step;
@@ -59,14 +72,19 @@ function castLightRay(startX, startY, angle, maxDistance) {
     
     // Check if this point hits a wall
     if (checkLightRayCollision(checkX, checkY)) {
-      return { x: checkX, y: checkY };
+      // Return the position AFTER the wall (where shadow starts)
+      // Continue one more step past the collision point
+      return { 
+        x: checkX + dx * step, 
+        y: checkY + dy * step 
+      };
     }
   }
   
   // No collision, return max distance point
   return {
-    x: startX + dx * maxDistance,
-    y: startY + dy * maxDistance
+    x: lastValidX,
+    y: lastValidY
   };
 }
 
@@ -77,7 +95,7 @@ function checkLightRayCollision(worldX, worldY) {
   
   // Check bounds
   if (row < 0 || col < 0 || row >= gameWorld.length || col >= gameWorld[row].length) {
-    return true; // Out of bounds counts as collision
+    return false; // Don't block at edges, let light reach edge of scene
   }
   
   const cell = gameWorld[row][col];
@@ -89,7 +107,7 @@ function checkLightRayCollision(worldX, worldY) {
       const tile = cell.layers[L];
       if (!tile) continue;
       
-      // Only block light on solid walls (type 1), not roofs (type 2)
+      // Only block light on solid walls (type 1), not roofs (type 2) or walkable (type 0)
       if (tileWalls[tile.type] === 1) {
         return true;
       }
