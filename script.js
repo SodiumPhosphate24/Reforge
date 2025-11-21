@@ -1,4 +1,4 @@
-let Buschy, BuschyRun, BuschyRun2, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus;
+let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus;
 var itemConstructors = [];
 var pX = 12500; var pY = 12500; var playerDamage = 1;
 var prePX = 0, prePY = 0;
@@ -198,8 +198,6 @@ function preload() {
   console.log("Updated version Prometheus");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
-  BuschyRun = loadImage("Characters/BuschyRun.png");
-  BuschyRun2 = loadImage("Characters/BuschyRun2.png");
   Prometheus = loadImage("Characters/Prometheus.png");
   BadGuy = loadImage("Characters/Enemy.png")
   BulletImgs[0] = loadImage("Items/Bullets/CommonBullet.png");
