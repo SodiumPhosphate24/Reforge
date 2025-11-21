@@ -59,7 +59,7 @@ function updateFadeToGame() {
 
 function drawFadeToGame() {
   // Clear background
-  background(0);
+  background(50);
   
   // Draw the game underneath the fade
   push();
@@ -70,15 +70,48 @@ function drawFadeToGame() {
   // Draw all game layers
   drawWorldLayer(gameWorld, 0);
   drawWorldLayer(gameWorld, 1);
+  
+  // Draw items (dropped items)
+  updateDroppedItems();
+  
   drawWorldLayer(gameWorld, 2);
   drawWorldLayer(gameWorld, 3);
-  drawWorldLayer(gameWorld, 4);
   
-  // Draw player
   fill(255);
+  drawNPCs();
   drawPlayers();
   
+  drawGunDebugRect();
+  drawEnemies();
+  drawBullets();
+  updateParticles();
+  
+  drawWorldLayer(gameWorld, 4);
+  
   pop();
+  
+  // Draw pickup prompt after camera pop (screen-fixed)
+  drawPickupPromptIfNeeded();
+  
+  // Draw NPC prompt after camera pop (screen-fixed)
+  drawNPCPromptIfNeeded();
+  
+  // Draw UI elements
+  drawUI();
+  messageDisplay();
+  
+  // Draw fog centered on camera, constrained to screen
+  tint(255, 200);
+  const fogSize = width + 100;
+  imageMode(CENTER);
+  let fogX = pX + camX + 600;
+  let fogY = pY + camY + 375;
+  fogX = constrain(fogX, width / 2, width / 2);
+  fogY = constrain(fogY, height / 2, height / 2);
+  
+  image(Fog, fogX, fogY, fogSize, fogSize);
+  imageMode(CORNER);
+  noTint();
   
   // Overlay with fading black (eyes opening)
   push();
