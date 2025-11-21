@@ -1,4 +1,5 @@
 var triggerState = 0;
+var wayPointList = [[100, 100], [24900, 24900]];
 var triggerList = {
   Prometheus : {
     talkToPrometheus: false,
@@ -7,6 +8,9 @@ var triggerList = {
   }, 
   Crafting : {
     craftedFirstRobot: false,
+  }, 
+  Objective : {
+    fixedBunker: false,
   }
 };
 
@@ -25,6 +29,8 @@ function handleTriggers(trigger){
         "Prometheus IV: Send them into the ruins. They must scavenge… explore… …survive.",
         "Prometheus IV: The surface is… unforgiving. But together… we may yet reclaim it."
       ];
+      triggerState++;
+      return;
     }
   }
   if (trigger == "Crafting"){
@@ -32,4 +38,9 @@ function handleTriggers(trigger){
       triggerList.Crafting.craftedFirstRobot = true;
     }
   }
+}
+
+function wayPoints(){
+  var currentWayPoint = wayPointList[triggerState];
+  var rotation = atan2(currentWayPoint[1] - pY, currentWayPoint[0] - pX);
 }
