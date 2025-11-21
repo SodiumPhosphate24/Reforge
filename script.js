@@ -98,93 +98,6 @@ function drawFadeToGame() {
   // Draw pickup prompt after camera pop (screen-fixed)
   drawPickupPromptIfNeeded();
 
-// Apocalyptic fog system
-let fogParticles = [];
-let fogTime = 0;
-
-function initializeFogParticles() {
-  fogParticles = [];
-  // Create initial fog particles
-  for (let i = 0; i < 80; i++) {
-    fogParticles.push({
-      x: random(width),
-      y: random(height),
-      size: random(40, 120),
-      speed: random(0.2, 0.8),
-      alpha: random(30, 80),
-      offset: random(TWO_PI)
-    });
-  }
-}
-
-function updateFogParticles() {
-  fogTime += 0.01;
-  
-  for (let p of fogParticles) {
-    // Slow horizontal drift
-    p.x += p.speed;
-    
-    // Vertical wave motion
-    p.y += sin(fogTime + p.offset) * 0.3;
-    
-    // Wrap around screen
-    if (p.x > width + p.size) {
-      p.x = -p.size;
-      p.y = random(height);
-    }
-    
-    // Subtle size pulsing
-    p.currentSize = p.size + sin(fogTime * 2 + p.offset) * 5;
-  }
-}
-
-function drawApocalypticFog() {
-  // Update fog particles
-  updateFogParticles();
-  
-  push();
-  
-  // Draw atmospheric haze layers
-  // Bottom layer - darker amber/brown
-  fill(60, 40, 20, 40);
-  noStroke();
-  rect(0, height * 0.6, width, height * 0.4);
-  
-  // Middle layer - lighter sepia
-  fill(80, 60, 30, 30);
-  rect(0, height * 0.3, width, height * 0.7);
-  
-  // Top layer - subtle orange tint
-  fill(100, 70, 40, 20);
-  rect(0, 0, width, height);
-  
-  // Draw fog particles (ash/smoke)
-  for (let p of fogParticles) {
-    // Larger, softer particles with sepia tone
-    fill(120, 100, 70, p.alpha * 0.4);
-    ellipse(p.x, p.y, p.currentSize, p.currentSize);
-    
-    // Inner glow
-    fill(140, 110, 80, p.alpha * 0.2);
-    ellipse(p.x, p.y, p.currentSize * 0.6, p.currentSize * 0.6);
-  }
-  
-  // Vignette effect - darker edges
-  drawingContext.save();
-  let gradient = drawingContext.createRadialGradient(
-    width / 2, height / 2, 0,
-    width / 2, height / 2, width * 0.7
-  );
-  gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
-  gradient.addColorStop(1, 'rgba(40, 30, 20, 0.5)');
-  drawingContext.fillStyle = gradient;
-  drawingContext.fillRect(0, 0, width, height);
-  drawingContext.restore();
-  
-  pop();
-}
-
-
   // Draw NPC prompt after camera pop (screen-fixed)
   drawNPCPromptIfNeeded();
 
@@ -1167,6 +1080,92 @@ let roofAlpha = new Map();     // key "row,col" -> alpha
 let roofTarget = new Set();    // keys that should fade to 0 this frame
 let lastPlayerTile = { row: -1, col: -1 }; // cache player position
 let cachedRoofTarget = new Set(); // cached flood fill results
+
+/* ========= Apocalyptic fog system ========= */
+let fogParticles = [];
+let fogTime = 0;
+
+function initializeFogParticles() {
+  fogParticles = [];
+  // Create initial fog particles
+  for (let i = 0; i < 80; i++) {
+    fogParticles.push({
+      x: random(width),
+      y: random(height),
+      size: random(40, 120),
+      speed: random(0.2, 0.8),
+      alpha: random(30, 80),
+      offset: random(TWO_PI)
+    });
+  }
+}
+
+function updateFogParticles() {
+  fogTime += 0.01;
+  
+  for (let p of fogParticles) {
+    // Slow horizontal drift
+    p.x += p.speed;
+    
+    // Vertical wave motion
+    p.y += sin(fogTime + p.offset) * 0.3;
+    
+    // Wrap around screen
+    if (p.x > width + p.size) {
+      p.x = -p.size;
+      p.y = random(height);
+    }
+    
+    // Subtle size pulsing
+    p.currentSize = p.size + sin(fogTime * 2 + p.offset) * 5;
+  }
+}
+
+function drawApocalypticFog() {
+  // Update fog particles
+  updateFogParticles();
+  
+  push();
+  
+  // Draw atmospheric haze layers
+  // Bottom layer - darker amber/brown
+  fill(60, 40, 20, 40);
+  noStroke();
+  rect(0, height * 0.6, width, height * 0.4);
+  
+  // Middle layer - lighter sepia
+  fill(80, 60, 30, 30);
+  rect(0, height * 0.3, width, height * 0.7);
+  
+  // Top layer - subtle orange tint
+  fill(100, 70, 40, 20);
+  rect(0, 0, width, height);
+  
+  // Draw fog particles (ash/smoke)
+  for (let p of fogParticles) {
+    // Larger, softer particles with sepia tone
+    fill(120, 100, 70, p.alpha * 0.4);
+    ellipse(p.x, p.y, p.currentSize, p.currentSize);
+    
+    // Inner glow
+    fill(140, 110, 80, p.alpha * 0.2);
+    ellipse(p.x, p.y, p.currentSize * 0.6, p.currentSize * 0.6);
+  }
+  
+  // Vignette effect - darker edges
+  drawingContext.save();
+  let gradient = drawingContext.createRadialGradient(
+    width / 2, height / 2, 0,
+    width / 2, height / 2, width * 0.7
+  );
+  gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+  gradient.addColorStop(1, 'rgba(40, 30, 20, 0.5)');
+  drawingContext.fillStyle = gradient;
+  drawingContext.fillRect(0, 0, width, height);
+  drawingContext.restore();
+  
+  pop();
+}
 
 function tileKey(r, c) { return r + "," + c; }
 
