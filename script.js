@@ -506,6 +506,10 @@ function drawGameplay() {
   image(Fog, fogX, fogY, fogSize, fogSize);
   imageMode(CORNER);
   noTint();
+  
+  // Draw raycasting-based lighting
+  drawLighting();
+  
   doRecoil();
   if (editorMode) {
     drawEditorUI();
