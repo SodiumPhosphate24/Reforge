@@ -13,7 +13,7 @@ var selectedTab = 0;
 var craftingRecipes = [
   // ROBOTS
   {
-    name: "Buschy",
+    name: "Busch-I",
     category: "Robots",
     type: "player",
     unlocked : true,
@@ -23,7 +23,7 @@ var craftingRecipes = [
       { itemName: "common battery", amount: 1 },
       { itemName: "cheese", amount: 1}
     ],
-    output: { type: "player", name: "buschy", amount: 1 }
+    output: { type: "player", name: "busch-I", amount: 1 }
   },
   {
     name: "Fast Buschy",
@@ -225,6 +225,8 @@ function craftItem(recipe) {
     let p = recipe.playerConstructor;
     players.push(new Player(pX + 150, pY, p.width, p.height, p.speed, p.health, p.damage, PlayerImage));
   }
+
+  handleTriggers("Crafting");
 }
 
   

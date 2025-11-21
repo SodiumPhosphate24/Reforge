@@ -4,6 +4,9 @@ var triggerList = {
     talkToPrometheus: false,
     dropppedStarterGun: false,
     openedFirstCrate: false,
+  }, 
+  Crafting : {
+    craftedFirstRobot: false,
   }
 };
 
@@ -22,6 +25,11 @@ function handleTriggers(trigger){
         "Prometheus IV: Send them into the ruins. They must scavenge… explore… …survive.",
         "Prometheus IV: The surface is… unforgiving. But together… we may yet reclaim it."
       ];
+    }
+  }
+  if (trigger == "Crafting"){
+    if(triggerList.Crafting.craftedFirstRobot == false){
+      triggerList.Crafting.craftedFirstRobot = true;
     }
   }
 }
