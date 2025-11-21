@@ -301,6 +301,10 @@ function initializeIntro() {
       backgroundImage: CryochamberImg,
       onEnter: function() {
         console.log("Starting fade to gameplay...");
+        // Ensure game world is loaded before fade completes
+        if (gameWorld.length === 0 && worldString.length > 0) {
+          gameWorld = stringToWorld(worldString[0]);
+        }
       },
       onUpdate: function(timer) {
         // Fade to black as if eyes closing, then opening into the game
@@ -445,16 +449,31 @@ function drawIntro() {
 
 function drawTitleScene(scene) {
   push();
-  fill(180, 160, 130, scene.textAlpha); // Tan color
   textFont(Silkscreen);
   textAlign(CENTER, CENTER);
   
+  // Draw glow effect for title
   textSize(64);
+  for (let i = 0; i < 3; i++) {
+    strokeWeight(8 - i * 2);
+    stroke(255, 180, 50, scene.textAlpha * 0.2); // Golden glow
+    fill(255, 200, 80, scene.textAlpha); // Bright golden color
+    text("REFORGE", width / 2, height / 2 - 40);
+  }
+  
+  // Final crisp text layer
+  noStroke();
+  fill(255, 220, 100, scene.textAlpha); // Bright amber/gold
   text("REFORGE", width / 2, height / 2 - 40);
   
+  // Subtitle with subtle glow
   textSize(20);
-  fill(150, 140, 120, scene.textAlpha * 0.8);
+  strokeWeight(3);
+  stroke(200, 160, 100, scene.textAlpha * 0.3);
+  fill(220, 190, 140, scene.textAlpha * 0.9);
   text("A world broken must be forged again.", width / 2, height / 2 + 40);
+  
+  noStroke();
   pop();
 }
 
@@ -573,18 +592,35 @@ function drawGlitchEffect() {
   push();
   blendMode(ADD);
   
-  // Random horizontal lines in sepia tones
-  for (let i = 0; i < glitchIntensity * 10; i++) {
+  // Random horizontal lines in sepia tones (increased quantity)
+  for (let i = 0; i < glitchIntensity * 25; i++) {
     const y = random(height);
-    const h = random(2, 5);
-    fill(112, 66, 20, glitchIntensity * 50); // Sepia brown color
+    const h = random(1, 8);
+    fill(112, 66, 20, glitchIntensity * 80); // Sepia brown color, more opaque
     rect(0, y, width, h);
   }
   
-  // Sepia tint effect
+  // Vertical scanlines for static effect
+  for (let i = 0; i < glitchIntensity * 15; i++) {
+    const x = random(width);
+    const w = random(1, 4);
+    fill(150, 100, 50, glitchIntensity * 60);
+    rect(x, 0, w, height);
+  }
+  
+  // Random noise blocks
+  for (let i = 0; i < glitchIntensity * 8; i++) {
+    const x = random(width);
+    const y = random(height);
+    const size = random(10, 40);
+    fill(random(80, 140), random(50, 100), random(10, 40), glitchIntensity * 100);
+    rect(x, y, size, size);
+  }
+  
+  // Sepia tint effect with horizontal offset
   if (random() < glitchIntensity) {
-    const offset = glitchIntensity * 10;
-    tint(112, 66, 20, 100); // Sepia tint
+    const offset = glitchIntensity * 15;
+    tint(112, 66, 20, 120); // Sepia tint, more visible
     translate(offset, 0);
   }
   

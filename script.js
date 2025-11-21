@@ -58,8 +58,27 @@ function updateFadeToGame() {
 }
 
 function drawFadeToGame() {
-  // Draw the game underneath
-  drawGameplay();
+  // Clear background
+  background(0);
+  
+  // Draw the game underneath the fade
+  push();
+  // Position camera for gameplay view
+  controlCamera();
+  translate(camX, camY);
+  
+  // Draw all game layers
+  drawWorldLayer(gameWorld, 0);
+  drawWorldLayer(gameWorld, 1);
+  drawWorldLayer(gameWorld, 2);
+  drawWorldLayer(gameWorld, 3);
+  drawWorldLayer(gameWorld, 4);
+  
+  // Draw player
+  fill(255);
+  drawPlayers();
+  
+  pop();
   
   // Overlay with fading black (eyes opening)
   push();
