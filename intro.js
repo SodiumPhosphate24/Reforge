@@ -362,6 +362,12 @@ function updateIntro() {
   if (introState.skipEnabled && keyPressedOnce(ESCAPE)) {
     introState.active = false;
     gameState = "playing";
+    
+    // Initialize sprite animation variables when skipping
+    spriteFrame = 0;
+    spriteAnimTimer = 0;
+    playerFlipScale = 1;
+    targetFlipScale = 1;
   }
 }
 

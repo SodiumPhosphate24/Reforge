@@ -15,7 +15,7 @@ var targetFlipScale = 1; // Target flip scale
 // Sprite animation state
 var spriteFrame = 0; // Current sprite frame (0 = idle, 1 = run1, 2 = run2)
 var spriteAnimTimer = 0; // Timer for sprite animation
-var spriteAnimSpeed = 4; // Frames between sprite changes (lower = faster)
+var spriteAnimSpeed = 10; // Frames between sprite changes (lower = faster)
 
 class Player {
   constructor(x, y, w, h, speed, health, damage, picture) {
@@ -143,7 +143,27 @@ function drawPlayers() {
   translate(pX + 600 + pWidth / 2, pY + 375 - 35 + (pHeight + 35) / 2);
   scale(playerFlipScale, 1);
   imageMode(CENTER);
-  image(currentSprite, 0, 0, pWidth, pHeight + 35);
+  
+  // Calculate sprite dimensions to maintain aspect ratio
+  let spriteWidth = pWidth;
+  let spriteHeight = pHeight + 35;
+  
+  // Get the actual image dimensions to calculate aspect ratio
+  if (currentSprite && currentSprite.width && currentSprite.height) {
+    const spriteAspect = currentSprite.width / currentSprite.height;
+    const targetAspect = spriteWidth / spriteHeight;
+    
+    // Adjust dimensions to match sprite's aspect ratio while fitting in target size
+    if (spriteAspect > targetAspect) {
+      // Sprite is wider - fit to width
+      spriteHeight = spriteWidth / spriteAspect;
+    } else {
+      // Sprite is taller - fit to height
+      spriteWidth = spriteHeight * spriteAspect;
+    }
+  }
+  
+  image(currentSprite, 0, 0, spriteWidth, spriteHeight);
   imageMode(CORNER);
   pop();
 

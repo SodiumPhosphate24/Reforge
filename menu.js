@@ -21,6 +21,13 @@ let menuAnimationDelay = 10; // Frames delay between each option
 let menuAnimationTimer = 0; // Timer for staggered animation
 let pendingStateChange = null; // Store next state to transition to after animation
 
+// Sprite animation variables
+let spriteFrame = 0;
+let spriteAnimTimer = 0;
+let spriteFrameDelay = 8; // Delay between sprite frames (higher for slower animation)
+let playerFlipScale = 1; // Scale for flipping sprite (1 for normal, -1 for flipped)
+let targetFlipScale = 1; // Target scale for flipping sprite
+
 function drawMenuScreen() {
   // Handle keyboard navigation
   handleMenuKeyboard();
@@ -52,7 +59,7 @@ function drawMenuScreen() {
   }
 
   menuAnimationTime += 0.016; // Approximate 60fps
-  
+
   // Increment animation timer for staggered menu options
   menuAnimationTimer++;
 
@@ -89,7 +96,7 @@ function drawMenuScreen() {
         break;
       }
     }
-    
+
     // Once all options are off-screen, change state
     if (allOptionsOut) {
       // Handle Play and Continue by starting game transition
@@ -120,7 +127,7 @@ function drawMenuScreen() {
         menuOptionTargetSlide[i] = 0; // Target off-screen right
       }
     }
-    
+
     menuOptionSlideProgress[i] = lerp(menuOptionSlideProgress[i], menuOptionTargetSlide[i], 0.15);
 
     // Calculate current X position with slide animation
@@ -237,9 +244,9 @@ let titleTransitionScale = 1;
 
 function updateTransition() {
   if (gameState !== "transition") return;
-  
+
   transitionProgress += 0.05; // Fade speed
-  
+
   // When fully black (halfway through transition), start intro
   if (transitionProgress >= 0.5 && transitionProgress < 0.55) {
     if (typeof initializeIntro === 'function') {
@@ -247,7 +254,7 @@ function updateTransition() {
       initializeIntro();
     }
   }
-  
+
   // Switch to intro state once fade completes
   if (transitionProgress >= 1.0) {
     gameState = "intro";
@@ -325,7 +332,7 @@ function drawSettingsScreen() {
 
 function drawTransitionOverlay() {
   if (gameState !== "transition") return;
-  
+
   // Calculate fade alpha (fade out then stay black)
   let fadeAlpha = 0;
   if (transitionProgress < 0.5) {
@@ -335,11 +342,24 @@ function drawTransitionOverlay() {
     // Stay black
     fadeAlpha = 255;
   }
-  
+
   // Draw black overlay
   push();
   fill(0, 0, 0, fadeAlpha);
   noStroke();
   rect(0, 0, width, height);
   pop();
+}
+
+// Helper function to initialize sprite animation when starting from menu
+function startGameFromMenu() {
+  console.log("Starting game from menu");
+  pendingStateChange = "intro";
+  animateMenuOut();
+
+  // Initialize sprite animation variables
+  spriteFrame = 0;
+  spriteAnimTimer = 0;
+  playerFlipScale = 1;
+  targetFlipScale = 1;
 }
