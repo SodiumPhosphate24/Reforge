@@ -67,6 +67,7 @@ function initializeIntro() {
       type: "text",
       duration: 180, // 3 seconds at 60fps
       backgroundColor: [15, 12, 8], // Dark sepia
+      backgroundImage: BunkerImg,
       onEnter: function() {
         console.log("Starting intro sequence...");
       },
@@ -104,6 +105,7 @@ function initializeIntro() {
       type: "dialogue",
       duration: 0,
       backgroundColor: [15, 12, 8], // Dark sepia
+      backgroundImage: CryochamberImg,
       dialogue: [
         "PROMETHEUS: B… Bas… Basti…an…",
         "PROMETHEUS: Re… rea—reinitializing vocal matrix…",
@@ -194,6 +196,7 @@ function initializeIntro() {
       type: "dialogue",
       duration: 0,
       backgroundColor: [32, 24, 14], // Sepia
+      backgroundImage: PrometheusIntroImg,
       dialogue: [
         "[Silence. Then a low hum.]",
         "PROMETHEUS: If detected, you would be… eliminated instantly.",
@@ -360,6 +363,31 @@ function drawIntro() {
 
   // Draw background
   background(currentScene.backgroundColor[0], currentScene.backgroundColor[1], currentScene.backgroundColor[2]);
+  
+  // Draw background image if available (3:2 aspect ratio, cover screen)
+  if (currentScene.backgroundImage) {
+    push();
+    imageMode(CENTER);
+    
+    // Calculate scaling to cover screen while maintaining 3:2 aspect ratio
+    const imgAspect = 3 / 2; // 3:2 ratio
+    const screenAspect = width / height;
+    
+    let drawWidth, drawHeight;
+    if (screenAspect > imgAspect) {
+      // Screen is wider than image - scale to width
+      drawWidth = width;
+      drawHeight = width / imgAspect;
+    } else {
+      // Screen is taller than image - scale to height
+      drawHeight = height;
+      drawWidth = height * imgAspect;
+    }
+    
+    image(currentScene.backgroundImage, width / 2, height / 2, drawWidth, drawHeight);
+    imageMode(CORNER);
+    pop();
+  }
 
   // Apply glitch effect
   if (glitchIntensity > 0.05) {
