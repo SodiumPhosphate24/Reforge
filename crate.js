@@ -7,6 +7,7 @@ var crateMenuAlpha = 0;
 var crateMenuScale = 0.8;
 var crateScrollOffset = 0;
 var selectedCrateSlot = -1; // -1 = none, >= 0 = crate slot index
+var crateJustOpened = false; // Prevent immediate close on open frame
 
 // Check if player is near a crate
 function checkNearCrate() {
@@ -52,6 +53,7 @@ function toggleCrateMenu(row, col) {
     currentCrateRow = -1;
     currentCrateCol = -1;
     selectedCrateSlot = -1;
+    crateJustOpened = false;
   } else {
     crateMenuOpen = true;
     currentCrateRow = row;
@@ -60,12 +62,19 @@ function toggleCrateMenu(row, col) {
     crateMenuScale = 0.8;
     crateScrollOffset = 0;
     selectedCrateSlot = -1;
+    crateJustOpened = true; // Set flag to prevent immediate close
   }
 }
 
 // Handle crate menu input
 function handleCrateInput() {
   if (!crateMenuOpen) return;
+  
+  // Reset the flag after first frame
+  if (crateJustOpened) {
+    crateJustOpened = false;
+    return; // Don't process input on the frame it was opened
+  }
   
   // Close with ESC
   if (keyCode === 27) { // ESC
