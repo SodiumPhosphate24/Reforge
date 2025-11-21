@@ -1010,10 +1010,12 @@ function resolveCollisions() {
   const xCaused = !collIfRevertX;
   const yCaused = !collIfRevertY;
 
-  // If neither alone resolves it (corner squeeze), revert both
+  // If neither alone resolves it (corner collision), revert both and stop
   if (!xCaused && !yCaused) {
     pX = prePX;
     pY = prePY;
+    pXVel = 0;
+    pYVel = 0;
     return;
   }
 
@@ -1022,25 +1024,40 @@ function resolveCollisions() {
   if (yCaused) pY = prePY;
 
   // Pixel-walk toward intended direction until just before collision
-  const maxSteps = 1000;
+  // Reduced max steps and added safety check
+  const maxSteps = 100;
 
-  if (xCaused) {
+  if (xCaused && !yCaused) {
     const stepX = Math.sign(dx) || 0;
     let steps = 0;
-    while (stepX !== 0 && !checkTileCollisions(pX + stepX, pY, w, h) && steps < maxSteps) {
+    while (stepX !== 0 && steps < maxSteps) {
+      // Check if next step would collide
+      if (checkTileCollisions(pX + stepX, pY, w, h)) {
+        break;
+      }
       pX += stepX;
       steps++;
     }
     pXVel = 0;
   }
 
-  if (yCaused) {
+  if (yCaused && !xCaused) {
     const stepY = Math.sign(dy) || 0;
     let steps = 0;
-    while (stepY !== 0 && !checkTileCollisions(pX, pY + stepY, w, h) && steps < maxSteps) {
+    while (stepY !== 0 && steps < maxSteps) {
+      // Check if next step would collide
+      if (checkTileCollisions(pX, pY + stepY, w, h)) {
+        break;
+      }
       pY += stepY;
       steps++;
     }
+    pYVel = 0;
+  }
+
+  // If both axes caused collision, we already reverted both above
+  if (xCaused && yCaused) {
+    pXVel = 0;
     pYVel = 0;
   }
 }
