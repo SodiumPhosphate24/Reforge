@@ -1530,7 +1530,6 @@ class Player {
 }
 var players = []; // Ensure players array is initialized
 var activePlayer = 0; // Ensure activePlayer is initialized
-let healthPoints = 100; // Ensure healthPoints is initialized
 
 // --- Placeholder for NPC class ---
 class NPC {
