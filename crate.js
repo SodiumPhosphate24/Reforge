@@ -8,6 +8,7 @@ var crateMenuScale = 0.8;
 var crateScrollOffset = 0;
 var selectedCrateSlot = -1; // -1 = none, >= 0 = crate slot index
 var crateJustOpened = false; // Prevent immediate close on open frame
+var eKeyWasDown = false; // Track if E key was pressed when opening
 
 // Check if player is near a crate
 function checkNearCrate() {
@@ -63,12 +64,21 @@ function toggleCrateMenu(row, col) {
     crateScrollOffset = 0;
     selectedCrateSlot = -1;
     crateJustOpened = true; // Set flag to prevent immediate close
+    eKeyWasDown = keyIsDown(69); // Remember E key state when opening
   }
 }
 
 // Handle crate menu input
 function handleCrateInput() {
   if (!crateMenuOpen) return;
+  
+  // Track E key state - only allow closing when E is pressed fresh (not held from opening)
+  const eKeyCurrentlyDown = keyIsDown(69);
+  
+  if (eKeyWasDown && !eKeyCurrentlyDown) {
+    // E key was released, now we can accept a new press
+    eKeyWasDown = false;
+  }
   
   // Reset the flag after first frame
   if (crateJustOpened) {
@@ -82,14 +92,16 @@ function handleCrateInput() {
     currentCrateRow = -1;
     currentCrateCol = -1;
     selectedCrateSlot = -1;
+    eKeyWasDown = false;
   }
   
-  // Close with E
-  if (keyCode === 69) { // E
+  // Close with E - only if E wasn't held from opening
+  if (keyCode === 69 && !eKeyWasDown) { // E
     crateMenuOpen = false;
     currentCrateRow = -1;
     currentCrateCol = -1;
     selectedCrateSlot = -1;
+    eKeyWasDown = false;
   }
 }
 
