@@ -1,11 +1,13 @@
 class NPC {
-  constructor(x, y, name, message, image = null, triggerID) {
+  constructor(x, y, name, message, image = null, triggerID, scale = 1) {
     this.x = x;
     this.y = y;
     this.name = name;
     this.message = message;
     this.image = image;
-    this.width = 35;
+    this.scale = scale;
+    this.baseWidth = 35;
+    this.width = this.baseWidth * this.scale;
     this.id = triggerID;
 
     // Calculate height based on image aspect ratio
@@ -13,7 +15,7 @@ class NPC {
       const aspectRatio = this.image.height / this.image.width;
       this.height = this.width * aspectRatio;
     } else {
-      this.height = 25; // Default square for NPCs without images
+      this.height = 25 * this.scale; // Default square for NPCs without images
     }
   }
 
