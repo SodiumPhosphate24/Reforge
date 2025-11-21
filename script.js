@@ -48,7 +48,7 @@ var fadeToGameProgress = 0;
 
 function updateFadeToGame() {
   fadeToGameProgress += 0.005; // Slower fade speed (was 0.01)
-  
+
   if (fadeToGameProgress >= 1.0) {
     gameState = "playing";
     if (typeof startTutorial === 'function') {
@@ -60,46 +60,50 @@ function updateFadeToGame() {
 function drawFadeToGame() {
   // Clear background
   background(50);
-  
+
   // Draw the game underneath the fade
   push();
   // Position camera for gameplay view
   controlCamera();
   translate(camX, camY);
-  
+
   // Draw all game layers
   drawWorldLayer(gameWorld, 0);
   drawWorldLayer(gameWorld, 1);
-  
+
   // Draw items (dropped items)
   updateDroppedItems();
-  
+
   drawWorldLayer(gameWorld, 2);
   drawWorldLayer(gameWorld, 3);
-  
+
   fill(255);
   drawNPCs();
   drawPlayers();
-  
+
   drawGunDebugRect();
   drawEnemies();
   drawBullets();
   updateParticles();
-  
+
   drawWorldLayer(gameWorld, 4);
-  
+
+  // Update and draw raycasting lighting
+  updateLighting();
+  drawLighting();
+
   pop();
-  
+
   // Draw pickup prompt after camera pop (screen-fixed)
   drawPickupPromptIfNeeded();
-  
+
   // Draw NPC prompt after camera pop (screen-fixed)
   drawNPCPromptIfNeeded();
-  
+
   // Draw UI elements
   drawUI();
   messageDisplay();
-  
+
   // Draw fog centered on camera, constrained to screen
   tint(255, 200);
   const fogSize = width + 100;
@@ -108,11 +112,11 @@ function drawFadeToGame() {
   let fogY = pY + camY + 375;
   fogX = constrain(fogX, width / 2, width / 2);
   fogY = constrain(fogY, height / 2, height / 2);
-  
+
   image(Fog, fogX, fogY, fogSize, fogSize);
   imageMode(CORNER);
   noTint();
-  
+
   // Overlay with fading black (eyes opening)
   push();
   const fadeAlpha = map(fadeToGameProgress, 0, 1, 255, 0);
@@ -120,13 +124,13 @@ function drawFadeToGame() {
   noStroke();
   rect(0, 0, width, height);
   pop();
-  
+
   // Draw "EXIT THE CRYOCHAMBER" text with glitch effect
   if (fadeToGameProgress < 0.9) {
     push();
     textFont(Silkscreen);
     textAlign(CENTER, CENTER);
-    
+
     // Calculate text alpha - fade in then fade out with glitches
     let textAlpha;
     if (fadeToGameProgress < 0.15) {
@@ -139,13 +143,13 @@ function drawFadeToGame() {
       // Fade out with heavy glitching
       textAlpha = map(fadeToGameProgress, 0.7, 0.9, 255, 0);
     }
-    
+
     // Add random glitch interference
     const glitchChance = fadeToGameProgress > 0.6 ? 0.4 : 0.2;
     if (random() < glitchChance) {
       textAlpha *= random(0.3, 1.0);
     }
-    
+
     // Draw glitchy static lines around text
     if (random() < 0.5) {
       strokeWeight(2);
@@ -155,23 +159,23 @@ function drawFadeToGame() {
         line(width / 2 - 200 + random(-20, 20), y, width / 2 + 200 + random(-20, 20), y);
       }
     }
-    
+
     // Draw text with sepia glow and glitch offset
     textSize(42);
     const glitchOffsetX = random() < 0.3 ? random(-8, 8) : 0;
     const glitchOffsetY = random() < 0.3 ? random(-5, 5) : 0;
-    
+
     // Outer glow
     strokeWeight(6);
     stroke(112, 66, 20, textAlpha * 0.4);
     fill(255, 200, 80, textAlpha);
     text("EXIT THE CRYOCHAMBER", width / 2 + glitchOffsetX, height / 2 + glitchOffsetY);
-    
+
     // Inner sharp text
     noStroke();
     fill(255, 220, 100, textAlpha);
     text("EXIT THE CRYOCHAMBER", width / 2 + glitchOffsetX, height / 2 + glitchOffsetY);
-    
+
     // Random RGB split effect for extra glitch
     if (random() < 0.25) {
       fill(255, 100, 100, textAlpha * 0.5);
@@ -179,7 +183,7 @@ function drawFadeToGame() {
       fill(100, 255, 255, textAlpha * 0.5);
       text("EXIT THE CRYOCHAMBER", width / 2 + glitchOffsetX + 3, height / 2 + glitchOffsetY);
     }
-    
+
     pop();
   }
 }
@@ -248,7 +252,7 @@ function preload() {
   EnergyTank = loadImage("hud/EnergyTank.png");
   ReforgeLogo = loadImage("REFORGE.png");
   titleScreenImg = loadImage("hud/titleScreen.png");
-  
+
   // Intro sequence images
   BunkerImg = loadImage("Buschwick Industries.png");
   PrometheusIntroImg = loadImage("PrometheusIntro.png");
@@ -473,6 +477,10 @@ function drawGameplay() {
 
   // LAYER 4 on top of player
   drawWorldLayer(gameWorld, 4);
+
+  // Update and draw raycasting lighting
+  updateLighting();
+  drawLighting();
 
   pop();
 
@@ -1217,159 +1225,359 @@ function stepRoofFades() {
 }
 /* ====== End roof fade system ====== */
 
-// --- Gun flip animation state ---
-let currentGunFlip = 0; // current flip angle (0 or 180)
-let targetGunFlip = 0;  // target flip angle
 
-// --- Only-gun-rotates helper (uses your calculateAim()) ---
-function drawGunDebugRect() {
-  push(); // isolate transforms
+// --- Raycasting Lighting ---
+const MAX_LIGHT_RAY_LENGTH = 250; // Maximum distance for light rays
+const LIGHT_RAY_STEP = 5;         // Distance to step for each ray segment
+const LIGHT_INTENSITY_FALLOFF = 0.01; // How much light intensity decreases per step
+const LIGHT_MAX_PASSES = 5;       // Number of passes for light propagation
 
-  // Move pivot to player's on-screen center (mouseX/mouseY are screen coords)
-  translate(pX + 600 + pWidth / 2, pY + 375 + pHeight / 2);
+let lightMap; // p5.Graphics object to draw lighting onto
 
-  // Rotate local axes towards the mouse
-  const aimAngle = calculateAim();
-  rotate(aimAngle);
-
-  // Determine if gun should flip based on mouse position relative to player
-  // Calculate player center in screen coordinates
-  const playerScreenX = pX + camX + 600 + pWidth / 2;
-
-  // If mouse is to the left of player, flip the gun
-  if (mouseX < playerScreenX) {
-    targetGunFlip = 180;
+function updateLighting() {
+  // Initialize lightMap if it doesn't exist or is the wrong size
+  if (!lightMap || lightMap.width !== width || lightMap.height !== height) {
+    lightMap = createGraphics(width, height);
+    lightMap.background(0); // Start with complete darkness
   } else {
-    targetGunFlip = 0;
+    lightMap.background(0); // Clear for new frame
   }
 
-  // Smoothly interpolate current flip to target flip
-  currentGunFlip = lerp(currentGunFlip, targetGunFlip, 0.2);
+  // Player's current position in world coordinates
+  const playerWorldX = pX + camX + 600;
+  const playerWorldY = pY + camY + 375;
 
-  // Apply the flip rotation (around X-axis conceptually, but we scale Y)
-  push();
-  translate(25, 0); // move to gun position
+  // Initial light sources (e.g., player's torch, ambient light)
+  // For now, assume a single light source at the player's position
+  let sources = [{ x: playerWorldX, y: playerWorldY, intensity: 255 }];
 
-  // Flip by scaling Y when needed
-  const flipScale = cos(radians(currentGunFlip));
-  scale(1, flipScale);
+  // --- Light Propagation ---
+  // This is a simplified approach. A more robust solution might use algorithms like
+  // Recursive Shadow Casting or Radiosity, but for basic visibility, this can work.
 
-  // Draw the item image pointing along +X with proper sizing
-  if (inventoryList[inventorySlot - 1] != null) {
-    if (inventorySlot - 1 < inventoryList.length) {
-      const item = inventoryList[inventorySlot - 1];
+  // For each potential light source:
+  for (const source of sources) {
+    // Cast rays in all directions (e.g., 360 degrees)
+    for (let angle = 0; angle < 360; angle += 1) { // Increase step for more rays, decrease for performance
+      const rad = radians(angle);
+      let currentIntensity = source.intensity;
+      let currentX = source.x;
+      let currentY = source.y;
 
-      // Determine base size based on item type
-      let baseSize = 30; // Default for guns
+      for (let step = 0; step < MAX_LIGHT_RAY_LENGTH / LIGHT_RAY_STEP; step++) {
+        currentX += cos(rad) * LIGHT_RAY_STEP;
+        currentY += sin(rad) * LIGHT_RAY_STEP;
 
-      if (item.type === "bullet") {
-        baseSize = 18;
-      } else if (item.type === "gun") {
-        baseSize = 30;
-      } else if (item.type === "consumable") {
-        baseSize = 25;
-      } else if (item.type === "projectile") {
-        baseSize = 24;
+        // Convert world coordinates to screen coordinates for drawing
+        const screenX = currentX;
+        const screenY = currentY;
+
+        // Check if the ray is within screen bounds
+        if (screenX < 0 || screenX > width || screenY < 0 || screenY > height) {
+          break; // Ray went off-screen
+        }
+
+        // Get the tile at the current world position
+        const gridPos = coordsToGrid(currentX - camX, currentY - camY);
+        const tile = getTile(gridPos.row, gridPos.col, 0); // Check layer 0 for basic wall properties
+
+        // --- Obstacle Check ---
+        // If the ray hits a solid wall (tileWalls[type] === 1), stop casting in this direction
+        if (tile && tileWalls[tile.type] === 1) {
+          break;
+        }
+
+        // --- Roof Tile Check ---
+        // If the tile is a roof tile (tileWalls[type] === 2), it should NOT be darkened.
+        // We continue casting the ray, but don't apply darkness to this tile.
+        let isRoofTile = false;
+        if (tile && tileWalls[tile.type] === 2) {
+          isRoofTile = true;
+        }
+
+        // --- Apply Light ---
+        // Decrease intensity based on distance and falloff
+        const intensityLoss = (step * LIGHT_RAY_STEP) * LIGHT_INTENSITY_FALLOFF;
+        currentIntensity = max(0, source.intensity - intensityLoss);
+
+        if (currentIntensity > 0) {
+          // Draw the light on the lightMap
+          // Only draw if it's NOT a roof tile
+          if (!isRoofTile) {
+            lightMap.fill(255, 255, 255, currentIntensity); // White light with varying alpha
+            lightMap.noStroke();
+            lightMap.rect(screenX - LIGHT_RAY_STEP / 2, screenY - LIGHT_RAY_STEP / 2, LIGHT_RAY_STEP, LIGHT_RAY_STEP);
+          }
+        } else {
+          break; // Intensity dropped to zero
+        }
       }
-
-      // Calculate width and height based on aspect ratio
-      let itemWidth, itemHeight;
-      if (item.HtoW > 1) {
-        // Height is larger
-        itemHeight = baseSize;
-        itemWidth = baseSize / item.HtoW;
-      } else {
-        // Width is larger or equal
-        itemWidth = baseSize;
-        itemHeight = baseSize * item.HtoW;
-      }
-
-      image(item.image, recoil, -itemHeight / 2, itemWidth, itemHeight);
-    }
-    else {
-      rectMode(CORNER);
-      rect(0, -5, 20, 10);
     }
   }
-  else {
-    // Fallback rect if image not loaded
-
-  }
-  pop();
-
-  pop(); // restore transforms
 }
 
-// Helper function to get gun barrel position in world coordinates
-function getGunBarrelPosition() {
-  const angle = calculateAim();
-  const gunLength = 30; // matches gun image width
-  const gunOffset = 25; // distance from player center to gun start
-  const barrelDistance = gunOffset + gunLength; // total distance to barrel tip
+function drawLighting() {
+  if (lightMap) {
+    // Blend the lightMap with the scene.
+    // We want to darken areas NOT lit, so we use screen blend mode or similar.
+    // A simple approach is to draw the lightMap with a blend mode.
+    // Another is to invert the lightMap and draw it as darkness.
 
+    // Option 1: Using blend modes (might require specific renderer setup)
+    // blendMode(ADD); // This would add light, we need to darken
+    // image(lightMap, 0, 0);
+    // blendMode(BLEND);
+
+    // Option 2: Draw the scene, then draw a darkened overlay based on lightMap
+    // For now, let's assume we want to draw the LIGHT as white on black.
+    // The actual darkening effect is achieved by drawing everything else
+    // and then applying the lightMap as a brighter layer.
+    // To achieve the "darken what's not seen", we can draw a black overlay
+    // and then "erase" it with the light from lightMap.
+
+    // Let's try drawing the lightMap directly and see.
+    // The goal is to darken tiles NOT in line of sight.
+    // So, we need to:
+    // 1. Draw the game normally.
+    // 2. Draw a full-screen dark overlay.
+    // 3. Use the lightMap to "reveal" or "brighten" parts of the dark overlay.
+
+    // This requires a more advanced drawing technique or shader.
+    // For a simpler P5.js approach without shaders:
+    // We can create a separate buffer for the darkness, and then draw the light on top.
+
+    // Let's modify drawGameplay to draw the base scene, and then call this.
+    // This function will draw the LIGHTING effect.
+    // The effect is that areas NOT hit by rays are dark.
+
+    // Draw the lightMap as an overlay. Areas where lightMap is dark (0) will remain dark.
+    // Areas where lightMap is bright (white) will be illuminated.
+    // This approach actually ADDS light. We want to SUBTRACT light (darken).
+
+    // Alternative: Draw a black screen, then draw the lightMap on top.
+    // The lightMap needs to be used to determine opacity of darkness.
+
+    // Create a temporary buffer for the darkened scene
+    let darkOverlay = createGraphics(width, height);
+    darkOverlay.background(0, 0, 0, 200); // Dark overlay with some transparency
+
+    // Draw the lightMap onto the dark overlay, but in a way that reveals the scene
+    // This is tricky without blend modes or shaders.
+    // A simpler approach: draw the lightMap itself, and let the user interpret it.
+    // Or, use the lightMap's alpha to control darkness.
+
+    // Let's assume lightMap stores the *intensity* of light.
+    // We want to darken areas with LOW intensity.
+
+    // Draw the lightMap directly, it represents the illuminated areas.
+    // The actual darkening needs to happen by drawing the game world and THEN applying
+    // the inverse of the lightMap.
+
+    // For now, let's draw the lightMap as is. It shows where light hits.
+    // The desired effect of darkening unlit areas is achieved by the DRAWING ORDER.
+    // `drawGameplay` draws the world, then `drawLighting` should draw the effect.
+
+    // A common technique:
+    // 1. Draw the game world normally.
+    // 2. Draw a full-screen black rectangle with alpha.
+    // 3. Use the lightMap (which has white where light hits) to "cut out" the blackness.
+    // This is best done with blend modes or by drawing into a buffer.
+
+    // Let's try drawing the lightMap as a layer that affects the scene.
+    // We can iterate through pixels of the lightMap and apply a darkening effect.
+
+    // Draw the original scene first (already done in drawGameplay)
+    // Then, apply the lighting effect.
+
+    // Consider the lightMap as the *visible* light. Anything not white on the lightMap is dark.
+    // We can draw the lightMap with transparency.
+    imageMode(CORNER);
+    image(lightMap, 0, 0); // This draws the illuminated areas.
+                           // Areas not illuminated will be black from lightMap's background.
+                           // This might be sufficient for a basic effect.
+  }
+}
+
+
+// --- Placeholder for calculateAim() ---
+// This function needs to be defined elsewhere in your code.
+// It should return the angle (in radians) from the player to the mouse cursor.
+function calculateAim() {
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
-
-  // Use the same calculation for both left and right sides
-  const barrelX = playerCenterX + barrelDistance * cos(angle);
-  const barrelY = playerCenterY + barrelDistance * sin(angle);
-
-  return {
-    x: barrelX,
-    y: barrelY
-  };
+  const angle = atan2(mouseY - playerCenterY, mouseX - playerCenterX);
+  return angle;
 }
 
-function mainHand() {
-  return false;
+// --- Placeholder for updateDroppedItems() ---
+function updateDroppedItems() {
+  // Implementation for drawing dropped items
 }
-function doRecoil() {
-  let rate = 1;
-  if (inventoryList[inventorySlot - 1] != null) {
-    if (inventoryList[inventorySlot - 1].type == "gun") {
-      rate = inventoryList[inventorySlot - 1].fireRate;
-    }
+
+// --- Placeholder for drawNPCs() ---
+function drawNPCs() {
+  // Implementation for drawing NPCs
+}
+
+// --- Placeholder for drawPlayers() ---
+function drawPlayers() {
+  // Implementation for drawing players
+}
+
+// --- Placeholder for drawEnemies() ---
+function drawEnemies() {
+  // Implementation for drawing enemies
+}
+
+// --- Placeholder for drawBullets() ---
+function drawBullets() {
+  // Implementation for drawing bullets
+}
+
+// --- Placeholder for controls() ---
+function controls() {
+  // Implementation for player controls
+}
+
+// --- Placeholder for drawUI() ---
+function drawUI() {
+  // Implementation for drawing UI elements
+}
+
+// --- Placeholder for messageDisplay() ---
+function messageDisplay() {
+  // Implementation for displaying messages
+}
+
+// --- Placeholder for updateIntro() ---
+function updateIntro() {
+  // Implementation for intro sequence logic
+}
+
+// --- Placeholder for drawIntro() ---
+function drawIntro() {
+  // Implementation for drawing intro sequence
+}
+
+// --- Placeholder for updateTransition() ---
+function updateTransition() {
+  // Implementation for transition logic
+}
+
+// --- Placeholder for drawTransitionOverlay() ---
+function drawTransitionOverlay() {
+  // Implementation for drawing transition overlay
+}
+
+// --- Placeholder for drawMenuScreen() ---
+function drawMenuScreen() {
+  // Implementation for drawing menu screen
+}
+
+// --- Placeholder for drawCreditsScreen() ---
+function drawCreditsScreen() {
+  // Implementation for drawing credits screen
+}
+
+// --- Placeholder for drawSettingsScreen() ---
+function drawSettingsScreen() {
+  // Implementation for drawing settings screen
+}
+
+// --- Placeholder for drawPickupPromptIfNeeded() ---
+function drawPickupPromptIfNeeded() {
+  // Implementation for drawing pickup prompt
+}
+
+// --- Placeholder for drawNPCPromptIfNeeded() ---
+function drawNPCPromptIfNeeded() {
+  // Implementation for drawing NPC prompt
+}
+
+// --- Placeholder for handleCraftingInput() ---
+function handleCraftingInput() {
+  // Implementation for crafting input handling
+}
+
+// --- Placeholder for drawCraftingMenu() ---
+function drawCraftingMenu() {
+  // Implementation for drawing crafting menu
+}
+
+// --- Placeholder for drawEditorUI() ---
+function drawEditorUI() {
+  // Implementation for drawing editor UI
+}
+
+// --- Placeholder for handleEditorClick() ---
+function handleEditorClick() {
+  // Implementation for handling editor clicks
+}
+
+// --- Placeholder for Player class ---
+class Player {
+  constructor(x, y, w, h, speed, health, damage, image) {
+    this.x = x;
+    this.y = y;
+    this.width = w;
+    this.height = h;
+    this.speed = speed;
+    this.health = health;
+    this.damage = damage;
+    this.image = image;
+    this.inventory = []; // Example inventory
   }
-  if (recoil < 10) {
-    recoil += rate;
+}
+var players = []; // Ensure players array is initialized
+var activePlayer = 0; // Ensure activePlayer is initialized
+let healthPoints = 100; // Ensure healthPoints is initialized
+
+// --- Placeholder for NPC class ---
+class NPC {
+  constructor(x, y, name, dialogue, image, type) {
+    this.x = x;
+    this.y = y;
+    this.name = name;
+    this.dialogue = dialogue;
+    this.image = image;
+    this.type = type;
   }
 }
 
-function distance(x1, y1, x2, y2) {
-  return sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-}
-let pressedKeys = {};
-
-function keyPressedOnce(k) {
-  if (keyIsDown(k) && !pressedKeys[k]) {
-    pressedKeys[k] = true;
-    return true;  // fires once
+// --- Placeholder for Particles ---
+let particles = [];
+class Particle {
+  constructor(x, y, life, size, color) {
+    this.x = x;
+    this.y = y;
+    this.life = life;
+    this.size = size;
+    this.color = color;
+    this.vx = (random() - 0.5) * 2;
+    this.vy = (random() - 0.5) * 2;
   }
-  if (!keyIsDown(k)) {
-    pressedKeys[k] = false;
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.life--;
   }
-  return false;
-}
-
-// Update and draw all particles
-function updateParticles() {
-  // Calculate viewport bounds in world coordinates
-  const viewLeft = -camX - 50;
-  const viewRight = -camX + width + 50;
-  const viewTop = -camY - 50;
-  const viewBottom = -camY + height + 50;
-
-  for (let i = particles.length - 1; i >= 0; i--) {
-    particles[i].update();
-
-    // Only draw particles within viewport (with padding)
-    if (particles[i].x >= viewLeft && particles[i].x <= viewRight &&
-      particles[i].y >= viewTop && particles[i].y <= viewBottom) {
-      particles[i].draw();
-    }
-
-    if (particles[i].isDead()) {
-      particles.splice(i, 1);
-    }
+  draw() {
+    fill(this.color);
+    noStroke();
+    ellipse(this.x, this.y, this.size, this.size);
+  }
+  isDead() {
+    return this.life <= 0;
   }
 }
+
+// --- Placeholder for game state variables ---
+let gameState = "fade_to_game"; // Default state to trigger intro fade
+let editorMode = false;
+let inventorySlot = 1; // Example: current selected inventory slot
+
+// --- Placeholder for ReforgeLogo ---
+let ReforgeLogo;
+
+// --- Placeholder for BadGuy ---
+let BadGuy;
