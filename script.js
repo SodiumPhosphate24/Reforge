@@ -12,8 +12,8 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall"];
-var tileWalls = [0, 0, 0, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "PipeL", "PipeT", "PipeCross"];
+var tileWalls = [0, 0, 0, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 0, 0, 0]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
@@ -44,7 +44,11 @@ var tileColors = [
   [[255, 255, 255]], // 23 - Grave 3
   [[255, 255, 255]], // 24 - Rail
   [[255, 255, 255], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]],  // 25 - Stone Brick (default white, light sepia, medium-light sepia, medium sepia, darker sepia)
-  [[255, 255, 255], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]]
+  [[255, 255, 255], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]], // 26 - Stone Brick Wall
+  [[255, 255, 255]], // 27 - Pipe
+  [[255, 255, 255]], // 28 - PipeL
+  [[255, 255, 255]], // 29 - PipeT
+  [[255, 255, 255]]  // 30 - PipeCross
 ];
 
 // Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image
@@ -241,6 +245,10 @@ function preload() {
   tileImgs[24] = loadImage("Tiles/Rail.png");
   tileImgs[25] = loadImage("Tiles/StoneBrick.png");
   tileImgs[26] = loadImage("Tiles/StoneBrick.png");
+  tileImgs[27] = loadImage("Tiles/Pipe.png");
+  tileImgs[28] = loadImage("Tiles/PipeL.png");
+  tileImgs[29] = loadImage("Tiles/PipeT.png");
+  tileImgs[30] = loadImage("Tiles/PipeCross.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonBattery.png");
@@ -799,6 +807,68 @@ function isSameTileType(row, col, layer, tileType) {
   return tile.type === tileType;
 }
 
+// Check if a tile is any pipe type (for pipe auto-connection)
+function isPipeTile(row, col, layer) {
+  const tile = getTile(row, col, layer);
+  if (!tile) return false;
+  // Pipe types are 27 (Pipe), 28 (PipeL), 29 (PipeT), 30 (PipeCross)
+  return tile.type >= 27 && tile.type <= 30;
+}
+
+// Get the appropriate pipe shape and rotation based on connections
+// Pipe (27) = straight vertical, PipeL (28) = L from bottom to right, 
+// PipeT (29) = T from bottom with right branch, PipeCross (30) = cross
+function getPipeConnection(row, col, layer) {
+  // Check all cardinal neighbors for pipe connections
+  const n = isPipeTile(row - 1, col, layer);     // north
+  const s = isPipeTile(row + 1, col, layer);     // south
+  const e = isPipeTile(row, col + 1, layer);     // east
+  const w = isPipeTile(row, col - 1, layer);     // west
+
+  // Count connections
+  const connections = [n, s, e, w].filter(Boolean).length;
+
+  let pipeType = 27; // Default to straight pipe
+  let rotation = 0;
+
+  if (connections === 0 || connections === 1) {
+    // Dead end or isolated - use straight pipe
+    pipeType = 27;
+    if (n || s) rotation = 0;      // vertical
+    else if (e || w) rotation = 90; // horizontal
+  } else if (connections === 2) {
+    // Two connections - could be straight or L
+    if ((n && s) || (e && w)) {
+      // Opposite sides - straight pipe
+      pipeType = 27;
+      if (n && s) rotation = 0;   // vertical
+      else rotation = 90;          // horizontal
+    } else {
+      // Adjacent sides - L pipe
+      pipeType = 28;
+      // PipeL base is bottom-to-right, rotate to match connections
+      if (s && e) rotation = 0;   // bottom-right (default)
+      else if (s && w) rotation = 90;  // bottom-left
+      else if (n && w) rotation = 180; // top-left
+      else if (n && e) rotation = 270; // top-right
+    }
+  } else if (connections === 3) {
+    // Three connections - T pipe
+    pipeType = 29;
+    // PipeT base is bottom-top with right branch, rotate to match missing direction
+    if (!n) rotation = 180; // no north = T pointing down
+    else if (!s) rotation = 0;   // no south = T pointing up
+    else if (!e) rotation = 90;  // no east = T pointing left
+    else if (!w) rotation = 270; // no west = T pointing right
+  } else if (connections === 4) {
+    // Four connections - cross pipe
+    pipeType = 30;
+    rotation = 0; // Cross is symmetrical
+  }
+
+  return { pipeType, rotation };
+}
+
 // Get the appropriate tile variant and rotation based on neighbors
 // Assumes edge piece has border on bottom, corner piece has borders on bottom-left
 function getTileVariant(row, col, layer, tileType) {
@@ -913,8 +983,21 @@ function drawWorldLayer(world, layerIndex) {
       let imgToDraw = null;
       let finalRotation = rotation;
 
+      // Check if this is a pipe tile (auto-connect pipes)
+      if (tileType >= 27 && tileType <= 30) {
+        const pipeInfo = getPipeConnection(i, j, layerIndex);
+        const actualPipeType = pipeInfo.pipeType;
+        finalRotation = pipeInfo.rotation;
+        
+        // Use the correct pipe image based on auto-connection
+        if (tintedTileCache[actualPipeType] && tintedTileCache[actualPipeType][colorIndex]) {
+          imgToDraw = tintedTileCache[actualPipeType][colorIndex];
+        } else {
+          imgToDraw = tileImgs[actualPipeType];
+        }
+      }
       // Check if this tile type has variants registered
-      if (tileVariants[tileType]) {
+      else if (tileVariants[tileType]) {
         const variantInfo = getTileVariant(i, j, layerIndex, tileType);
         // Use tinted variant from cache
         const config = tileVariants[tileType];
