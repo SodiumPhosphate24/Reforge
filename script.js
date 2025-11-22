@@ -852,12 +852,12 @@ function getPipeVariant(row, col, layer, tileType) {
   } else if (connections === 3) {
     // Three connections - T pipe
     variant = 'T';
-    // PipeT base is bottom-top with right branch
-    // Rotate to match which side has the branch (the side WITHOUT a neighbor gets the branch)
-    if (!n) rotation = 0;   // no north = branch points up (keep pipes on S, E, W)
-    else if (!e) rotation = 90;  // no east = branch points right (keep pipes on N, S, W)
-    else if (!s) rotation = 180; // no south = branch points down (keep pipes on N, E, W)
-    else if (!w) rotation = 270; // no west = branch points left (keep pipes on N, S, E)
+    // PipeT base has connections on TOP, BOTTOM, and RIGHT (no left)
+    // Rotate to align these three connections with the neighbors
+    if (n && s && e) rotation = 0;   // neighbors top-bottom-right = no rotation needed
+    else if (n && s && w) rotation = 180; // neighbors top-bottom-left = flip 180°
+    else if (e && w && s) rotation = 270; // neighbors left-right-bottom = rotate 270° (right branch becomes bottom)
+    else if (e && w && n) rotation = 90;  // neighbors left-right-top = rotate 90° (right branch becomes top)
   } else if (connections === 4) {
     // Four connections - cross pipe
     variant = 'cross';
