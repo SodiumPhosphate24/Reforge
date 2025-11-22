@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus;
+let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, WaypointImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus;
 var itemConstructors = [];
 var pX = 12500; var pY = 12500; var playerDamage = 1;
 var prePX = 0, prePY = 0;
@@ -258,6 +258,7 @@ function preload() {
   FrameImg = loadImage("hud/Frame.png");
   Fog = loadImage("hud/Fog.png");
   IndicatorImg = loadImage("Indicator.png");
+  WaypointImg = loadImage("Waypoint.png");
   Silkscreen = loadFont("Silkscreen-Regular.ttf");
   EnergyTank = loadImage("hud/EnergyTank.png");
   ReforgeLogo = loadImage("REFORGE.png");
@@ -408,6 +409,9 @@ function setup() {
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
 
+  // Initialize waypoints with player starting position
+  initializeWaypoints();
+
   // Tutorial will be started from menu screen
 }
 
@@ -505,6 +509,9 @@ function drawGameplay() {
 
   // Draw NPC prompt after camera pop (screen-fixed)
   drawNPCPromptIfNeeded();
+
+  // Draw waypoint indicator (screen-fixed)
+  drawWaypointIndicator();
 
   drawUI();
   messageDisplay();
