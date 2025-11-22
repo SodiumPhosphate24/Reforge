@@ -853,11 +853,20 @@ function getPipeVariant(row, col, layer, tileType) {
     // Three connections - T pipe
     variant = 'T';
     // PipeT base has connections on TOP, BOTTOM, and RIGHT (no left)
-    // Rotate to align these three connections with the neighbors (add 180° to flip vertically)
-    if (n && s && e) rotation = 180;   // neighbors top-bottom-right = flip 180°
-    else if (n && s && w) rotation = 0; // neighbors top-bottom-left = no rotation
-    else if (e && w && s) rotation = 90; // neighbors left-right-bottom = rotate 90°
-    else if (e && w && n) rotation = 270;  // neighbors left-right-top = rotate 270°
+    // Need both rotation AND horizontal flip to properly orient all cases
+    if (n && s && e) {
+      rotation = 0;   // neighbors top-bottom-right = matches base orientation
+      flipH = false;
+    } else if (n && s && w) {
+      rotation = 0;   // neighbors top-bottom-left = flip horizontally
+      flipH = true;
+    } else if (e && w && s) {
+      rotation = 90;  // neighbors left-right-bottom = rotate 90°
+      flipH = false;
+    } else if (e && w && n) {
+      rotation = 90;  // neighbors left-right-top = rotate 90° and flip
+      flipH = true;
+    }
   } else if (connections === 4) {
     // Four connections - cross pipe
     variant = 'cross';
@@ -865,7 +874,7 @@ function getPipeVariant(row, col, layer, tileType) {
   }
 
   const config = tileVariants[27];
-  return { variant, rotation, baseImg: config.variants[variant] };
+  return { variant, rotation, flipH, baseImg: config.variants[variant] };
 }
 
 // Get the appropriate tile variant and rotation based on neighbors
@@ -993,6 +1002,10 @@ function drawWorldLayer(world, layerIndex) {
             imgToDraw = pipeInfo.baseImg;
           }
           finalRotation = pipeInfo.rotation;
+          // Apply horizontal flip from pipe variant
+          if (pipeInfo.flipH) {
+            tileObj.flipH = true;
+          }
         }
       }
       // Check if this tile type has variants registered
