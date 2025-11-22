@@ -827,6 +827,7 @@ function getPipeVariant(row, col, layer, tileType) {
 
   let variant = 'straight';
   let rotation = 0;
+  let flipH = false;
 
   if (connections === 0 || connections === 1) {
     // Dead end or isolated - use straight pipe
@@ -1002,9 +1003,9 @@ function drawWorldLayer(world, layerIndex) {
             imgToDraw = pipeInfo.baseImg;
           }
           finalRotation = pipeInfo.rotation;
-          // Apply horizontal flip from pipe variant
-          if (pipeInfo.flipH) {
-            tileObj.flipH = true;
+          // Override flipH from pipe variant calculation
+          if (pipeInfo.flipH !== undefined) {
+            tileObj.flipH = pipeInfo.flipH;
           }
         }
       }
