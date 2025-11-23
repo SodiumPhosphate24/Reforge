@@ -12,8 +12,8 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe"];
-var tileWalls = [0, 0, 0, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen"];
+var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
@@ -45,7 +45,8 @@ var tileColors = [
   [[255, 255, 255]], // 24 - Rail
   [[255, 255, 255], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]],  // 25 - Stone Brick (default white, light sepia, medium-light sepia, medium sepia, darker sepia)
   [[255, 255, 255], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]], // 26 - Stone Brick Wall
-  [[255, 255, 255]] // 27 - Pipe
+  [[255, 255, 255]], // 27 - Pipe
+  [[255, 255, 255]] // 28 - CopperTileGreen
 ];
 
 // Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image
@@ -243,6 +244,7 @@ function preload() {
   tileImgs[25] = loadImage("Tiles/StoneBrick.png");
   tileImgs[26] = loadImage("Tiles/StoneBrick.png");
   tileImgs[27] = null; // Pipe uses variants, loaded below
+  tileImgs[28] = loadImage("Tiles/CopperTile.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonBattery.png");
