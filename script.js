@@ -18,7 +18,7 @@ var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
 var tileColors = [
-  [[255, 255, 255]], // 0 - grass (default white = no tint)
+  [[240, 210, 170]], // 0 - grass (default white = no tint)
   [[255, 255, 255]], // 1 - asphalt
   [[255, 255, 255]], // 2 - lined asphalt
   [[255, 255, 255]], // 3 - Concrete
@@ -46,7 +46,7 @@ var tileColors = [
   [[255, 255, 255], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]],  // 25 - Stone Brick (default white, light sepia, medium-light sepia, medium sepia, darker sepia)
   [[255, 255, 255], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]], // 26 - Stone Brick Wall
   [[255, 255, 255]], // 27 - Pipe
-  [[255, 255, 255]] // 28 - CopperTileGreen
+  [[255, 255, 255], [240, 210, 170]] // 28 - CopperTileGreen
 ];
 
 // Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image
