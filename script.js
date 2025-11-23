@@ -46,7 +46,7 @@ var tileColors = [
   [[255, 255, 255], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]],  // 25 - Stone Brick (default white, light sepia, medium-light sepia, medium sepia, darker sepia)
   [[255, 255, 255], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]], // 26 - Stone Brick Wall
   [[255, 255, 255]], // 27 - Pipe
-  [[255, 255, 255], [240, 210, 170]] // 28 - CopperTileGreen
+  [[240, 210, 170]] // 28 - CopperTileGreen
 ];
 
 // Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image
