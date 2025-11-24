@@ -504,12 +504,43 @@ function drawGameplay() {
   mainHand();
   drawEnemies();
   drawBullets();
+  
+  // Spawn particles from sources
+  if (typeof particleSources !== 'undefined') {
+    for (const ps of particleSources) {
+      // Spawn particles based on spawn rate
+      for (let i = 0; i < ps.spawnRate; i++) {
+        if (random() < 0.3) { // 30% chance per particle slot
+          const angle = random(ps.arcStart, ps.arcEnd);
+          const particleSize = ps.size + random(-ps.sizeVariance, ps.sizeVariance);
+          
+          // Create particle using existing particle system
+          const px = ps.x;
+          const py = ps.y;
+          
+          // Manual particle creation with custom direction
+          const p = new Particle(px, py, ps.color, ps.duration, ps.speed);
+          p.angle = radians(angle);
+          p.vx = cos(p.angle) * ps.speed;
+          p.vy = sin(p.angle) * ps.speed;
+          p.size = Math.max(1, particleSize);
+          particles.push(p);
+        }
+      }
+    }
+  }
+  
   updateParticles(); // Draw particles
   controls();
   resolveCollisions();
 
   // LAYER 4 on top of player
   drawWorldLayer(gameWorld, 4);
+
+  // Draw particle sources in editor mode
+  if (typeof drawParticleSources === 'function') {
+    drawParticleSources();
+  }
 
   pop();
 
@@ -680,6 +711,16 @@ function worldToString(world) {
     }
     out += "|";
   }
+  
+  // Add particle sources at the end with & separator
+  if (typeof particleSources !== 'undefined' && particleSources.length > 0) {
+    out += "&";
+    const psData = particleSources.map(ps => {
+      return `${ps.x},${ps.y},${ps.arcStart},${ps.arcEnd},${ps.color[0]},${ps.color[1]},${ps.color[2]},${ps.size},${ps.sizeVariance},${ps.speed},${ps.spawnRate},${ps.duration}`;
+    });
+    out += psData.join(";");
+  }
+  
   return out;
 }
 
@@ -690,7 +731,41 @@ function stringToWorld(s) {
   }
 
   crateInventories.clear(); // Clear before parsing
-  const rows = s.split("|");
+  
+  // Check for particle sources (after & separator)
+  let worldData = s;
+  if (s.includes("&")) {
+    const parts = s.split("&");
+    worldData = parts[0];
+    const psData = parts[1];
+    
+    // Parse particle sources
+    if (typeof particleSources !== 'undefined') {
+      particleSources.length = 0; // Clear existing
+      const sources = psData.split(";");
+      for (const sourceStr of sources) {
+        if (!sourceStr.trim()) continue;
+        const vals = sourceStr.split(",").map(v => parseFloat(v));
+        if (vals.length === 12) {
+          particleSources.push({
+            x: vals[0],
+            y: vals[1],
+            arcStart: vals[2],
+            arcEnd: vals[3],
+            color: [vals[4], vals[5], vals[6]],
+            size: vals[7],
+            sizeVariance: vals[8],
+            speed: vals[9],
+            spawnRate: vals[10],
+            duration: vals[11]
+          });
+        }
+      }
+      console.log("Loaded", particleSources.length, "particle sources");
+    }
+  }
+  
+  const rows = worldData.split("|");
   const world = [];
 
   for (let i = 0; i < rows.length; i++) {

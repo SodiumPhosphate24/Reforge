@@ -55,6 +55,23 @@ var selectedItemIndex = 0;   // Currently selected item from itemConstructors
 var selectedCrateItems = []; // Array to store selected item constructors for this crate
 var crateInventories = new Map(); // Map to store items for each crate: key = "row,col", value = array of item constructors
 
+// Particle source system
+var particleSources = []; // Array of particle source objects
+var placingParticleSource = false; // Flag for particle source placement mode
+var editingParticleSourceIndex = -1; // Index of particle source being edited (-1 if none)
+var particleSourceConfig = {
+  x: 0,
+  y: 0,
+  arcStart: 0,      // Start angle in degrees
+  arcEnd: 360,      // End angle in degrees
+  color: [255, 100, 50], // RGB color
+  size: 5,          // Base particle size
+  sizeVariance: 2,  // Random size variance (+/-)
+  speed: 2,         // Particle speed
+  spawnRate: 5,     // Particles per frame
+  duration: 60      // Particle lifetime in frames
+};
+
 // Minimap caching variables
 var minimapCache = null;     // Cached screenshot of the minimap
 var lastMinimapPress = false; // Track if M was pressed last frame
@@ -154,9 +171,28 @@ function drawEditorUI() {
     " | Tile: " + selectedTileType +
     " | Rotation: " + tileRotation + "° | Flip: " + flipText +
     " | Color: " + tileColorIndex + "/" + (maxColors - 1) +
-    " | [ ] to change color",
+    " | [ ] to change color | P for Particles",
     width / 2, 65
   );
+
+  // Show particle source mode indicator
+  if (placingParticleSource) {
+    fill(255, 255, 0);
+    textSize(16);
+    text("PARTICLE SOURCE MODE - Click to place | ESC to cancel", width / 2, 90);
+    text(`Arc: ${particleSourceConfig.arcStart}° - ${particleSourceConfig.arcEnd}° | Size: ${particleSourceConfig.size}±${particleSourceConfig.sizeVariance}`, width / 2, 110);
+    text(`Color: RGB(${particleSourceConfig.color[0]}, ${particleSourceConfig.color[1]}, ${particleSourceConfig.color[2]}) | Speed: ${particleSourceConfig.speed} | Rate: ${particleSourceConfig.spawnRate}`, width / 2, 130);
+    text("Use +/- for arc, 1-8 for adjustments", width / 2, 150);
+  }
+
+  // Show particle source count
+  if (particleSources.length > 0) {
+    fill(255, 255, 0);
+    textSize(14);
+    textAlign(LEFT);
+    text(`Particle Sources: ${particleSources.length}`, 10, height - 10);
+    textAlign(CENTER);
+  }
 
   // Draw pause overlay if crate placement is paused
   if (cratePlacementPaused) {
@@ -372,6 +408,32 @@ function drawTilePreview() {
   if (!(gameWorld && gameWorld.length > 0)) return;
   if (cratePlacementPaused) return; // Don't show preview when paused
 
+  push();
+  translate(camX, camY);
+
+  // Draw particle source preview if in placement mode
+  if (placingParticleSource) {
+    var worldX = mouseX - camX;
+    var worldY = mouseY - camY;
+    
+    // Draw preview circle
+    noFill();
+    stroke(255, 255, 0, 200);
+    strokeWeight(2);
+    ellipse(worldX, worldY, 20, 20);
+    
+    // Draw arc indicator
+    stroke(particleSourceConfig.color[0], particleSourceConfig.color[1], particleSourceConfig.color[2], 150);
+    strokeWeight(3);
+    const arcRadius = 40;
+    arc(worldX, worldY, arcRadius, arcRadius, 
+        radians(particleSourceConfig.arcStart), 
+        radians(particleSourceConfig.arcEnd));
+    
+    pop();
+    return;
+  }
+
   // World coords from mouse
   var worldX = mouseX - camX;
   var worldY = mouseY - camY;
@@ -386,9 +448,6 @@ function drawTilePreview() {
 
   var snapX = gridCol * EDIT_TILE_SIZE;
   var snapY = gridRow * EDIT_TILE_SIZE;
-
-  push();
-  translate(camX, camY);
 
   // Semi-transparent preview of selected tile in current layer
   if (tintedTileCache && tintedTileCache[selectedTileType] && tintedTileCache[selectedTileType][tileColorIndex]) {
@@ -421,12 +480,76 @@ function drawTilePreview() {
   pop();
 }
 
+// Draw all particle sources (called after camera translation)
+function drawParticleSources() {
+  if (!editorMode) return;
+  
+  for (let i = 0; i < particleSources.length; i++) {
+    const ps = particleSources[i];
+    
+    // Draw source marker
+    fill(ps.color[0], ps.color[1], ps.color[2], 100);
+    stroke(255, 255, 0);
+    strokeWeight(2);
+    ellipse(ps.x, ps.y, 15, 15);
+    
+    // Draw arc indicator
+    noFill();
+    stroke(ps.color[0], ps.color[1], ps.color[2], 100);
+    strokeWeight(2);
+    arc(ps.x, ps.y, 30, 30, radians(ps.arcStart), radians(ps.arcEnd));
+    
+    // Draw index number
+    noStroke();
+    fill(255, 255, 0);
+    textSize(10);
+    textAlign(CENTER, CENTER);
+    text(i, ps.x, ps.y);
+  }
+}
+
 function handleEditorClick() {
   if (!(editorMode && gameWorld && gameWorld.length > 0)) return;
   if (cratePlacementPaused) return; // Don't allow clicks when paused
 
   var worldX = mouseX - camX;
   var worldY = mouseY - camY;
+
+  // Handle particle source placement
+  if (placingParticleSource && mouseButton === LEFT) {
+    particleSources.push({
+      x: worldX,
+      y: worldY,
+      arcStart: particleSourceConfig.arcStart,
+      arcEnd: particleSourceConfig.arcEnd,
+      color: [...particleSourceConfig.color],
+      size: particleSourceConfig.size,
+      sizeVariance: particleSourceConfig.sizeVariance,
+      speed: particleSourceConfig.speed,
+      spawnRate: particleSourceConfig.spawnRate,
+      duration: particleSourceConfig.duration
+    });
+    console.log("Placed particle source at", worldX, worldY);
+    placingParticleSource = false;
+    return;
+  }
+  
+  // Right click to delete particle source
+  if (placingParticleSource && mouseButton === RIGHT) {
+    // Find and delete nearby particle source
+    for (let i = particleSources.length - 1; i >= 0; i--) {
+      const ps = particleSources[i];
+      const d = dist(worldX, worldY, ps.x, ps.y);
+      if (d < 25) {
+        particleSources.splice(i, 1);
+        console.log("Deleted particle source", i);
+        return;
+      }
+    }
+    return;
+  }
+  
+  if (placingParticleSource) return;
 
   var gridCol = Math.floor(worldX / EDIT_TILE_SIZE);
   var gridRow = Math.floor(worldY / EDIT_TILE_SIZE);
@@ -584,6 +707,87 @@ function handleEditorKeyPress() {
     const maxColors = (tileColors[selectedTileType] || [[255, 255, 255]]).length;
     tileColorIndex = (tileColorIndex + 1) % maxColors;
     console.log("Color index:", tileColorIndex);
+  }
+
+  // P to toggle particle source placement mode
+  if (keyCode == 80) { // P
+    placingParticleSource = !placingParticleSource;
+    console.log("Particle source mode:", placingParticleSource);
+  }
+
+  // Ctrl+C to copy world string to clipboard
+  if (keyCode == 67 && keyIsDown(CONTROL)) { // C with Ctrl
+    const worldStr = worldToString(gameWorld);
+    navigator.clipboard.writeText(worldStr).then(() => {
+      console.log("World string copied to clipboard (including", particleSources.length, "particle sources)");
+    }).catch(err => {
+      console.error("Failed to copy:", err);
+    });
+  }
+
+  // Particle source configuration keys (when in particle mode)
+  if (placingParticleSource) {
+    // ESC to cancel
+    if (keyCode == 27) {
+      placingParticleSource = false;
+      console.log("Cancelled particle source placement");
+    }
+    
+    // +/= to increase arc end
+    if (keyCode == 187 || keyCode == 107) {
+      particleSourceConfig.arcEnd = (particleSourceConfig.arcEnd + 15) % 360;
+      console.log("Arc end:", particleSourceConfig.arcEnd);
+    }
+    
+    // - to decrease arc end
+    if (keyCode == 189 || keyCode == 109) {
+      particleSourceConfig.arcEnd = (particleSourceConfig.arcEnd - 15 + 360) % 360;
+      console.log("Arc end:", particleSourceConfig.arcEnd);
+    }
+    
+    // 1 to adjust arc start
+    if (keyCode == 49) {
+      particleSourceConfig.arcStart = (particleSourceConfig.arcStart + 15) % 360;
+      console.log("Arc start:", particleSourceConfig.arcStart);
+    }
+    
+    // 2 to adjust size
+    if (keyCode == 50) {
+      particleSourceConfig.size = constrain(particleSourceConfig.size + 1, 1, 20);
+      console.log("Size:", particleSourceConfig.size);
+    }
+    
+    // 3 to adjust size variance
+    if (keyCode == 51) {
+      particleSourceConfig.sizeVariance = constrain(particleSourceConfig.sizeVariance + 1, 0, 10);
+      console.log("Size variance:", particleSourceConfig.sizeVariance);
+    }
+    
+    // 4 to adjust speed
+    if (keyCode == 52) {
+      particleSourceConfig.speed = constrain(particleSourceConfig.speed + 0.5, 0.5, 10);
+      console.log("Speed:", particleSourceConfig.speed);
+    }
+    
+    // 5 to adjust spawn rate
+    if (keyCode == 53) {
+      particleSourceConfig.spawnRate = constrain(particleSourceConfig.spawnRate + 1, 1, 20);
+      console.log("Spawn rate:", particleSourceConfig.spawnRate);
+    }
+    
+    // 6-8 to adjust RGB color
+    if (keyCode == 54) {
+      particleSourceConfig.color[0] = (particleSourceConfig.color[0] + 25) % 256;
+      console.log("Color R:", particleSourceConfig.color[0]);
+    }
+    if (keyCode == 55) {
+      particleSourceConfig.color[1] = (particleSourceConfig.color[1] + 25) % 256;
+      console.log("Color G:", particleSourceConfig.color[1]);
+    }
+    if (keyCode == 56) {
+      particleSourceConfig.color[2] = (particleSourceConfig.color[2] + 25) % 256;
+      console.log("Color B:", particleSourceConfig.color[2]);
+    }
   }
 }
 
