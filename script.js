@@ -743,7 +743,7 @@ function worldToString(world) {
   if (typeof particleSources !== 'undefined' && particleSources.length > 0) {
     out += "&";
     const psData = particleSources.map(ps => {
-      return `${ps.x},${ps.y},${ps.arcStart},${ps.arcEnd},${ps.color[0]},${ps.color[1]},${ps.color[2]},${ps.size},${ps.sizeVariance},${ps.speed},${ps.spawnRate},${ps.duration}`;
+      return `${ps.x},${ps.y},${ps.layer || 0},${ps.arcStart},${ps.arcEnd},${ps.color[0]},${ps.color[1]},${ps.color[2]},${ps.size},${ps.sizeVariance},${ps.speed},${ps.spawnRate},${ps.duration}`;
     });
     out += psData.join(";");
   }
@@ -773,10 +773,27 @@ function stringToWorld(s) {
       for (const sourceStr of sources) {
         if (!sourceStr.trim()) continue;
         const vals = sourceStr.split(",").map(v => parseFloat(v));
-        if (vals.length === 12) {
+        if (vals.length === 13) {
+          // New format with layer
           particleSources.push({
             x: vals[0],
             y: vals[1],
+            layer: vals[2],
+            arcStart: vals[3],
+            arcEnd: vals[4],
+            color: [vals[5], vals[6], vals[7]],
+            size: vals[8],
+            sizeVariance: vals[9],
+            speed: vals[10],
+            spawnRate: vals[11],
+            duration: vals[12]
+          });
+        } else if (vals.length === 12) {
+          // Old format without layer (default to layer 0)
+          particleSources.push({
+            x: vals[0],
+            y: vals[1],
+            layer: 0,
             arcStart: vals[2],
             arcEnd: vals[3],
             color: [vals[4], vals[5], vals[6]],
