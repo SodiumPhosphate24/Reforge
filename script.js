@@ -85,12 +85,15 @@ function drawFadeToGame() {
 
   // Draw items (dropped items)
   updateDroppedItems();
+  
+  // Draw NPCs before roofs so they appear underneath
+  fill(255);
+  drawNPCs();
 
   drawWorldLayer(gameWorld, 2);
   drawWorldLayer(gameWorld, 3);
 
   fill(255);
-  drawNPCs();
   drawPlayers();
 
   drawGunDebugRect();
@@ -482,13 +485,16 @@ function drawGameplay() {
 
   // Draw items (dropped items)
   updateDroppedItems();
+  
+  // Draw NPCs before roofs so they appear underneath
+  fill(255);
+  drawNPCs();
 
   // LAYERS 2, 3 over items but under player
   drawWorldLayer(gameWorld, 2);
   drawWorldLayer(gameWorld, 3);
 
   fill(255);
-  drawNPCs();
   drawPlayers();
   
   // Draw waypoint arrow
