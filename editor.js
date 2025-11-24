@@ -62,6 +62,7 @@ var editingParticleSourceIndex = -1; // Index of particle source being edited (-
 var particleSourceConfig = {
   x: 0,
   y: 0,
+  layer: 0, // Added layer property
   arcStart: 0,      // Start angle in degrees
   arcEnd: 360,      // End angle in degrees
   color: [255, 100, 50], // RGB color
@@ -180,9 +181,9 @@ function drawEditorUI() {
     fill(255, 255, 0);
     textSize(16);
     text("PARTICLE SOURCE MODE - Click to place | ESC to cancel", width / 2, 90);
-    text(`Arc: ${particleSourceConfig.arcStart}° - ${particleSourceConfig.arcEnd}° | Size: ${particleSourceConfig.size}±${particleSourceConfig.sizeVariance}`, width / 2, 110);
+    text(`Layer: ${particleSourceConfig.layer} | Arc: ${particleSourceConfig.arcStart}° - ${particleSourceConfig.arcEnd}° | Size: ${particleSourceConfig.size}±${particleSourceConfig.sizeVariance}`, width / 2, 110);
     text(`Color: RGB(${particleSourceConfig.color[0]}, ${particleSourceConfig.color[1]}, ${particleSourceConfig.color[2]}) | Speed: ${particleSourceConfig.speed} | Rate: ${particleSourceConfig.spawnRate}`, width / 2, 130);
-    text("+/- arc end | 1/2 arc start | 3-9 increase (Shift+3-9 decrease)", width / 2, 150);
+    text("Layer +/- | 1/2 arc start | 3-9 configure particle (Shift+3-9 decrease/increase)", width / 2, 150);
   }
 
   // Show particle source count
@@ -336,7 +337,7 @@ function renderMinimapToCache() {
         const variantColor = tileColors[tileType][colorIndex];
         // Check if this is a white tint (which means no tint should be applied)
         const isWhiteTint = variantColor[0] === 255 && variantColor[1] === 255 && variantColor[2] === 255;
-        
+
         if (isWhiteTint) {
           // Use base color when tint is white
           minimapCache.fill(baseColor[0], baseColor[1], baseColor[2]);
@@ -415,21 +416,21 @@ function drawTilePreview() {
   if (placingParticleSource) {
     var worldX = mouseX - camX;
     var worldY = mouseY - camY;
-    
+
     // Draw preview circle
     noFill();
     stroke(255, 255, 0, 200);
     strokeWeight(2);
     ellipse(worldX, worldY, 20, 20);
-    
+
     // Draw arc indicator
     stroke(particleSourceConfig.color[0], particleSourceConfig.color[1], particleSourceConfig.color[2], 150);
     strokeWeight(3);
     const arcRadius = 40;
-    arc(worldX, worldY, arcRadius, arcRadius, 
-        radians(particleSourceConfig.arcStart), 
+    arc(worldX, worldY, arcRadius, arcRadius,
+        radians(particleSourceConfig.arcStart),
         radians(particleSourceConfig.arcEnd));
-    
+
     pop();
     return;
   }
@@ -483,22 +484,22 @@ function drawTilePreview() {
 // Draw all particle sources (called after camera translation)
 function drawParticleSources() {
   if (!editorMode) return;
-  
+
   for (let i = 0; i < particleSources.length; i++) {
     const ps = particleSources[i];
-    
+
     // Draw source marker
     fill(ps.color[0], ps.color[1], ps.color[2], 100);
     stroke(255, 255, 0);
     strokeWeight(2);
     ellipse(ps.x, ps.y, 15, 15);
-    
+
     // Draw arc indicator
     noFill();
     stroke(ps.color[0], ps.color[1], ps.color[2], 100);
     strokeWeight(2);
     arc(ps.x, ps.y, 30, 30, radians(ps.arcStart), radians(ps.arcEnd));
-    
+
     // Draw index number
     noStroke();
     fill(255, 255, 0);
@@ -515,8 +516,13 @@ function handleEditorClick() {
   var worldX = mouseX - camX;
   var worldY = mouseY - camY;
 
-  // Handle particle source placement - but DON'T place here anymore
+  // Handle particle source placement
   if (placingParticleSource) {
+    // Assign current editor layer to particle source if not already set
+    if (particleSourceConfig.layer === undefined) {
+      particleSourceConfig.layer = editorLayer;
+    }
+
     if (mouseButton === RIGHT) {
       // Find and delete nearby particle source
       for (let i = particleSources.length - 1; i >= 0; i--) {
@@ -528,6 +534,22 @@ function handleEditorClick() {
           break;
         }
       }
+    } else if (mouseButton === LEFT) {
+      // Place particle source
+      particleSources.push({
+        x: worldX,
+        y: worldY,
+        layer: editorLayer, // Assign the current editor layer
+        arcStart: particleSourceConfig.arcStart,
+        arcEnd: particleSourceConfig.arcEnd,
+        color: [...particleSourceConfig.color],
+        size: particleSourceConfig.size,
+        sizeVariance: particleSourceConfig.sizeVariance,
+        speed: particleSourceConfig.speed,
+        spawnRate: particleSourceConfig.spawnRate,
+        duration: particleSourceConfig.duration
+      });
+      console.log("Placed particle source at", worldX, worldY, "on layer", editorLayer);
     }
     // Always return when in particle mode to prevent tile placement
     return;
@@ -562,7 +584,11 @@ function handleEditorClick() {
       console.log("Erased at row", gridRow, "col", gridCol, "layer", editorLayer);
     } else {
       // Fallback if helpers missing (legacy)
-      gameWorld[gridRow][gridCol] = undefined;
+      if (gameWorld[gridRow] && gameWorld[gridRow][gridCol] && gameWorld[gridRow][gridCol].layers) {
+        delete gameWorld[gridRow][gridCol].layers[editorLayer];
+      } else {
+        gameWorld[gridRow][gridCol] = undefined; // Completely remove if no layers property
+      }
     }
     return;
   }
@@ -573,7 +599,10 @@ function handleEditorClick() {
       setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation, tileFlipH, tileFlipV, tileColorIndex);
     } else {
       // Fallback if helpers missing (legacy)
-      gameWorld[gridRow][gridCol] = {
+      if (!gameWorld[gridRow][gridCol]) {
+        gameWorld[gridRow][gridCol] = { layers: {} };
+      }
+      gameWorld[gridRow][gridCol].layers[editorLayer] = {
         type: selectedTileType,
         rotation: tileRotation,
         flipH: tileFlipH,
@@ -642,10 +671,11 @@ function handleEditorKeyPress() {
     return; // Don't allow other keys when paused
   }
 
-  // Layer selection: 1 / 2 / 3
+  // Layer selection: 1 / 2 / 3 / 4
   if (key === '1') { editorLayer = 0; console.log("Layer -> 0"); }
   if (key === '2') { editorLayer = 1; console.log("Layer -> 1"); }
   if (key === '3') { editorLayer = 2; console.log("Layer -> 2"); }
+  if (key === '4') { editorLayer = 3; console.log("Layer -> 3"); } // Added layer 4
 
   // Tile switching with comma and period keys
   if (keyCode == 188) { // ,
@@ -700,12 +730,17 @@ function handleEditorKeyPress() {
 
   // Ctrl+C to copy world string to clipboard
   if (keyCode == 67 && keyIsDown(CONTROL)) { // C with Ctrl
-    const worldStr = worldToString(gameWorld);
-    navigator.clipboard.writeText(worldStr).then(() => {
-      console.log("World string copied to clipboard (including", particleSources.length, "particle sources)");
-    }).catch(err => {
-      console.error("Failed to copy:", err);
-    });
+    // Need to define or import worldToString if it's not globally available
+    if (typeof worldToString !== 'undefined') {
+      const worldStr = worldToString(gameWorld);
+      navigator.clipboard.writeText(worldStr).then(() => {
+        console.log("World string copied to clipboard (including", particleSources.length, "particle sources)");
+      }).catch(err => {
+        console.error("Failed to copy:", err);
+      });
+    } else {
+      console.error("worldToString function is not defined.");
+    }
   }
 
   // Particle source configuration keys (when in particle mode)
@@ -715,71 +750,82 @@ function handleEditorKeyPress() {
       placingParticleSource = false;
       console.log("Cancelled particle source placement");
     }
-    
-    // +/= to increase arc end
-    if (keyCode == 187 || keyCode == 107) {
+
+    // Layer +/-
+    if (keyCode === 187 || keyCode === 107) { // +
+        particleSourceConfig.layer = (particleSourceConfig.layer + 1) % 4; // Cycle through layers 0-3
+        console.log("Particle source layer set to:", particleSourceConfig.layer);
+    }
+    if (keyCode === 189 || keyCode === 109) { // -
+        particleSourceConfig.layer = (particleSourceConfig.layer - 1 + 4) % 4; // Cycle through layers 0-3
+        console.log("Particle source layer set to:", particleSourceConfig.layer);
+    }
+
+
+    // Arc end +/-
+    if (keyCode == 61 || keyCode == 107) { // +/=
       particleSourceConfig.arcEnd = (particleSourceConfig.arcEnd + 15) % 360;
       console.log("Arc end:", particleSourceConfig.arcEnd);
     }
-    
+
     // - to decrease arc end
-    if (keyCode == 189 || keyCode == 109) {
+    if (keyCode == 173 || keyCode == 109) { // -
       particleSourceConfig.arcEnd = (particleSourceConfig.arcEnd - 15 + 360) % 360;
       console.log("Arc end:", particleSourceConfig.arcEnd);
     }
-    
+
     // 1 to increase arc start
-    if (keyCode == 49) {
+    if (keyCode == 49) { // 1
       particleSourceConfig.arcStart = (particleSourceConfig.arcStart + 15) % 360;
       console.log("Arc start:", particleSourceConfig.arcStart);
     }
-    
+
     // 2 to decrease arc start
-    if (keyCode == 50) {
+    if (keyCode == 50) { // 2
       particleSourceConfig.arcStart = (particleSourceConfig.arcStart - 15 + 360) % 360;
       console.log("Arc start:", particleSourceConfig.arcStart);
     }
-    
+
     // 3 to adjust size
-    if (keyCode == 51) {
+    if (keyCode == 51) { // 3
       const delta = keyIsDown(SHIFT) ? -1 : 1;
       particleSourceConfig.size = constrain(particleSourceConfig.size + delta, 1, 20);
       console.log("Size:", particleSourceConfig.size);
     }
-    
+
     // 4 to adjust size variance
-    if (keyCode == 52) {
+    if (keyCode == 52) { // 4
       const delta = keyIsDown(SHIFT) ? -1 : 1;
       particleSourceConfig.sizeVariance = constrain(particleSourceConfig.sizeVariance + delta, 0, 10);
       console.log("Size variance:", particleSourceConfig.sizeVariance);
     }
-    
+
     // 5 to adjust speed
-    if (keyCode == 53) {
+    if (keyCode == 53) { // 5
       const delta = keyIsDown(SHIFT) ? -0.5 : 0.5;
       particleSourceConfig.speed = constrain(particleSourceConfig.speed + delta, 0.5, 10);
       console.log("Speed:", particleSourceConfig.speed);
     }
-    
+
     // 6 to adjust spawn rate
-    if (keyCode == 54) {
+    if (keyCode == 54) { // 6
       const delta = keyIsDown(SHIFT) ? -1 : 1;
       particleSourceConfig.spawnRate = constrain(particleSourceConfig.spawnRate + delta, 1, 20);
       console.log("Spawn rate:", particleSourceConfig.spawnRate);
     }
-    
+
     // 7-9 to adjust RGB color
-    if (keyCode == 55) {
+    if (keyCode == 55) { // 7
       const delta = keyIsDown(SHIFT) ? -5 : 5;
       particleSourceConfig.color[0] = (particleSourceConfig.color[0] + delta + 256) % 256;
       console.log("Color R:", particleSourceConfig.color[0]);
     }
-    if (keyCode == 56) {
+    if (keyCode == 56) { // 8
       const delta = keyIsDown(SHIFT) ? -5 : 5;
       particleSourceConfig.color[1] = (particleSourceConfig.color[1] + delta + 256) % 256;
       console.log("Color G:", particleSourceConfig.color[1]);
     }
-    if (keyCode == 57) {
+    if (keyCode == 57) { // 9
       const delta = keyIsDown(SHIFT) ? -5 : 5;
       particleSourceConfig.color[2] = (particleSourceConfig.color[2] + delta + 256) % 256;
       console.log("Color B:", particleSourceConfig.color[2]);
@@ -818,15 +864,16 @@ function handleEditorMouseWheel(event) {
 function handleEditorMouseReleased() {
   if (!editorMode) return false;
   if (cratePlacementPaused) return false;
-  
+
   // Handle particle source placement on mouse release
   if (placingParticleSource && mouseButton === LEFT) {
     var worldX = mouseX - camX;
     var worldY = mouseY - camY;
-    
+
     particleSources.push({
       x: worldX,
       y: worldY,
+      layer: editorLayer, // Assign the current editor layer
       arcStart: particleSourceConfig.arcStart,
       arcEnd: particleSourceConfig.arcEnd,
       color: [...particleSourceConfig.color],
@@ -836,10 +883,10 @@ function handleEditorMouseReleased() {
       spawnRate: particleSourceConfig.spawnRate,
       duration: particleSourceConfig.duration
     });
-    console.log("Placed particle source at", worldX, worldY);
+    console.log("Placed particle source at", worldX, worldY, "on layer", editorLayer);
     return true;
   }
-  
+
   return false;
 }
 // ============== END EDITOR (3-LAYER SUPPORT) ==============

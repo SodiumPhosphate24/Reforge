@@ -3,9 +3,10 @@
 let particles = [];
 
 class Particle {
-  constructor(x, y, color, duration, speed) {
+  constructor(x, y, color, duration, speed, layer = 0) {
     this.x = x;
     this.y = y;
+    this.layer = layer; // Which layer to render on (0-4)
     this.color = color; // [R, G, B]
     this.duration = duration; // frames
     this.maxDuration = duration;
@@ -51,23 +52,13 @@ class Particle {
 }
 
 // Main particle burst function
-function particle(x, y, color, duration, speed) {
+function particle(x, y, color, duration, speed, layer = 0) {
   // Create 10-15 particles per burst
   const particleCount = Math.floor(random(10, 15));
   
   for (let i = 0; i < particleCount; i++) {
-    particles.push(new Particle(x, y, color, duration, speed));
+    particles.push(new Particle(x, y, color, duration, speed, layer));
   }
 }
 
-// Update and draw all particles
-function updateParticles() {
-  for (let i = particles.length - 1; i >= 0; i--) {
-    particles[i].update();
-    particles[i].draw();
-    
-    if (particles[i].isDead()) {
-      particles.splice(i, 1);
-    }
-  }
-}
+

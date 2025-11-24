@@ -496,22 +496,7 @@ function drawGameplay() {
   fill(255);
   drawNPCs();
 
-  // LAYERS 2, 3 over items but under player
-  drawWorldLayer(gameWorld, 2);
-  drawWorldLayer(gameWorld, 3);
-
-  fill(255);
-  drawPlayers();
-
-  // --- Only the gun rotates (isolated) ---
-  drawGunDebugRect(); // uses calculateAim()
-  // ---------------------------------------
-
-  mainHand();
-  drawEnemies();
-  drawBullets();
-  
-  // Spawn particles from sources
+  // Spawn particles from sources (before drawing any layers)
   if (typeof particleSources !== 'undefined') {
     for (const ps of particleSources) {
       // Spawn particles based on spawn rate
@@ -525,7 +510,7 @@ function drawGameplay() {
           const py = ps.y;
           
           // Manual particle creation with custom direction
-          const p = new Particle(px, py, ps.color, ps.duration, ps.speed);
+          const p = new Particle(px, py, ps.color, ps.duration, ps.speed, ps.layer || 0);
           p.angle = radians(angle);
           p.vx = cos(p.angle) * ps.speed;
           p.vy = sin(p.angle) * ps.speed;
@@ -535,13 +520,49 @@ function drawGameplay() {
       }
     }
   }
+
+  // Update particle positions (but don't draw yet)
+  for (let i = particles.length - 1; i >= 0; i--) {
+    particles[i].update();
+    if (particles[i].isDead()) {
+      particles.splice(i, 1);
+    }
+  }
+
+  // Draw particles on layer 0
+  drawParticlesOnLayer(0);
+
+  // LAYER 2 over layer 0
+  drawWorldLayer(gameWorld, 2);
+
+  // Draw particles on layer 2
+  drawParticlesOnLayer(2);
+
+  // LAYER 3 over layer 2
+  drawWorldLayer(gameWorld, 3);
+
+  // Draw particles on layer 3
+  drawParticlesOnLayer(3);
+
+  fill(255);
+  drawPlayers();
+
+  // --- Only the gun rotates (isolated) ---
+  drawGunDebugRect(); // uses calculateAim()
+  // ---------------------------------------
+
+  mainHand();
+  drawEnemies();
+  drawBullets();
   
-  updateParticles(); // Draw particles
   controls();
   resolveCollisions();
 
   // LAYER 4 on top of player
   drawWorldLayer(gameWorld, 4);
+
+  // Draw particles on layer 4
+  drawParticlesOnLayer(4);
 
   // Draw particle sources in editor mode
   if (typeof drawParticleSources === 'function') {
@@ -1658,25 +1679,24 @@ function keyPressedOnce(k) {
   return false;
 }
 
-// Update and draw all particles
-function updateParticles() {
+// Draw particles for a specific layer
+function drawParticlesOnLayer(layer) {
   // Calculate viewport bounds in world coordinates
   const viewLeft = -camX - 50;
   const viewRight = -camX + width + 50;
   const viewTop = -camY - 50;
   const viewBottom = -camY + height + 50;
 
-  for (let i = particles.length - 1; i >= 0; i--) {
-    particles[i].update();
+  for (let i = 0; i < particles.length; i++) {
+    const p = particles[i];
+    
+    // Only draw particles on this layer
+    if (p.layer !== layer) continue;
 
     // Only draw particles within viewport (with padding)
-    if (particles[i].x >= viewLeft && particles[i].x <= viewRight &&
-      particles[i].y >= viewTop && particles[i].y <= viewBottom) {
-      particles[i].draw();
-    }
-
-    if (particles[i].isDead()) {
-      particles.splice(i, 1);
+    if (p.x >= viewLeft && p.x <= viewRight &&
+      p.y >= viewTop && p.y <= viewBottom) {
+      p.draw();
     }
   }
 }
