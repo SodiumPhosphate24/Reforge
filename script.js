@@ -135,64 +135,38 @@ function drawFadeToGame() {
   rect(0, 0, width, height);
   pop();
 
-  // Draw "EXIT THE CRYOCHAMBER" text with glitch effect
+  // Draw "EXIT THE CRYOCHAMBER" text with simple fade in/out
   if (fadeToGameProgress < 0.9) {
     push();
     textFont(Silkscreen);
     textAlign(CENTER, CENTER);
 
-    // Calculate text alpha - fade in then fade out with glitches
+    // Calculate text alpha - simple fade in then fade out
     let textAlpha;
     if (fadeToGameProgress < 0.15) {
-      // Fade in earlier
+      // Fade in
       textAlpha = map(fadeToGameProgress, 0, 0.15, 0, 255);
     } else if (fadeToGameProgress < 0.7) {
-      // Stay visible with glitches longer
+      // Stay visible
       textAlpha = 255;
     } else {
-      // Fade out with heavy glitching
+      // Fade out
       textAlpha = map(fadeToGameProgress, 0.7, 0.9, 255, 0);
     }
 
-    // Add random glitch interference
-    const glitchChance = fadeToGameProgress > 0.6 ? 0.4 : 0.2;
-    if (random() < glitchChance) {
-      textAlpha *= random(0.3, 1.0);
-    }
-
-    // Draw glitchy static lines around text
-    if (random() < 0.5) {
-      strokeWeight(2);
-      stroke(112, 66, 20, textAlpha * 0.6);
-      for (let i = 0; i < 8; i++) {
-        const y = height / 2 - 50 + random(-30, 30);
-        line(width / 2 - 200 + random(-20, 20), y, width / 2 + 200 + random(-20, 20), y);
-      }
-    }
-
-    // Draw text with sepia glow and glitch offset
+    // Draw text with sepia glow
     textSize(42);
-    const glitchOffsetX = random() < 0.3 ? random(-8, 8) : 0;
-    const glitchOffsetY = random() < 0.3 ? random(-5, 5) : 0;
 
     // Outer glow
     strokeWeight(6);
     stroke(112, 66, 20, textAlpha * 0.4);
     fill(255, 200, 80, textAlpha);
-    text("EXIT THE CRYOCHAMBER", width / 2 + glitchOffsetX, height / 2 + glitchOffsetY);
+    text("EXIT THE CRYOCHAMBER", width / 2, height / 2);
 
     // Inner sharp text
     noStroke();
     fill(255, 220, 100, textAlpha);
-    text("EXIT THE CRYOCHAMBER", width / 2 + glitchOffsetX, height / 2 + glitchOffsetY);
-
-    // Random RGB split effect for extra glitch
-    if (random() < 0.25) {
-      fill(255, 100, 100, textAlpha * 0.5);
-      text("EXIT THE CRYOCHAMBER", width / 2 + glitchOffsetX - 3, height / 2 + glitchOffsetY);
-      fill(100, 255, 255, textAlpha * 0.5);
-      text("EXIT THE CRYOCHAMBER", width / 2 + glitchOffsetX + 3, height / 2 + glitchOffsetY);
-    }
+    text("EXIT THE CRYOCHAMBER", width / 2, height / 2);
 
     pop();
   }

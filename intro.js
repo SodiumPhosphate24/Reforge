@@ -320,8 +320,23 @@ function initializeIntro() {
           stepRoofFades();
         }
         
+        // Initialize waypoint system
+        if (typeof currentWaypointIndex !== 'undefined') {
+          currentWaypointIndex = 0;
+        }
+        
+        // Initialize particles array
+        if (typeof particles !== 'undefined') {
+          particles.length = 0;
+        }
+        
+        // Initialize camera position
+        camX = -pX;
+        camY = -pY;
+        
         console.log("Player position initialized:", pX, pY);
         console.log("Roof fade system initialized");
+        console.log("All game systems initialized");
       },
       onUpdate: function(timer) {
         // Fade to black as if eyes closing, then opening into the game
@@ -338,6 +353,10 @@ function initializeIntro() {
         const __roofSeeds = getOverlappingRoofSeeds(pX, pY, pWidth, pHeight);
         floodFillRoof(__roofSeeds);
         stepRoofFades();
+        
+        // Update camera smoothly
+        camX -= (camX + pX) * 0.1;
+        camY -= (camY + pY) * 0.1;
       },
       onExit: function() {
         // Transition to main game
