@@ -515,23 +515,9 @@ function handleEditorClick() {
   var worldX = mouseX - camX;
   var worldY = mouseY - camY;
 
-  // Handle particle source placement - consume ALL clicks in particle mode
+  // Handle particle source placement - but DON'T place here anymore
   if (placingParticleSource) {
-    if (mouseButton === LEFT) {
-      particleSources.push({
-        x: worldX,
-        y: worldY,
-        arcStart: particleSourceConfig.arcStart,
-        arcEnd: particleSourceConfig.arcEnd,
-        color: [...particleSourceConfig.color],
-        size: particleSourceConfig.size,
-        sizeVariance: particleSourceConfig.sizeVariance,
-        speed: particleSourceConfig.speed,
-        spawnRate: particleSourceConfig.spawnRate,
-        duration: particleSourceConfig.duration
-      });
-      console.log("Placed particle source at", worldX, worldY);
-    } else if (mouseButton === RIGHT) {
+    if (mouseButton === RIGHT) {
       // Find and delete nearby particle source
       for (let i = particleSources.length - 1; i >= 0; i--) {
         const ps = particleSources[i];
@@ -827,5 +813,33 @@ function handleEditorMouseWheel(event) {
   }
   console.log("Mouse wheel changed to tile type:", selectedTileType);
   return true; // consume wheel in editor mode
+}
+
+function handleEditorMouseReleased() {
+  if (!editorMode) return false;
+  if (cratePlacementPaused) return false;
+  
+  // Handle particle source placement on mouse release
+  if (placingParticleSource && mouseButton === LEFT) {
+    var worldX = mouseX - camX;
+    var worldY = mouseY - camY;
+    
+    particleSources.push({
+      x: worldX,
+      y: worldY,
+      arcStart: particleSourceConfig.arcStart,
+      arcEnd: particleSourceConfig.arcEnd,
+      color: [...particleSourceConfig.color],
+      size: particleSourceConfig.size,
+      sizeVariance: particleSourceConfig.sizeVariance,
+      speed: particleSourceConfig.speed,
+      spawnRate: particleSourceConfig.spawnRate,
+      duration: particleSourceConfig.duration
+    });
+    console.log("Placed particle source at", worldX, worldY);
+    return true;
+  }
+  
+  return false;
 }
 // ============== END EDITOR (3-LAYER SUPPORT) ==============

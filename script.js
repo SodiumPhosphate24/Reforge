@@ -465,6 +465,12 @@ function draw() {
   drawGameplay();
 }
 
+function mouseReleased() {
+  if (typeof handleEditorMouseReleased === 'function') {
+    handleEditorMouseReleased();
+  }
+}
+
 function drawGameplay() {
   prePX = pX;
   prePY = pY;
