@@ -77,11 +77,8 @@ function updatePlayerFlip() {
   playerFlipScale = lerp(playerFlipScale, targetFlipScale, 0.2);
 }
 
-function drawPlayers() {
-  // Update flip direction
-  updatePlayerFlip();
-  
-  // Draw other players at their world positions with same visual buffer
+// Draw only non-active players (called before roofs)
+function drawNonActivePlayers() {
   for (let i = 0; i < players.length; i++) {
     players[i].isDead();
     if (i !== activePlayer) {
@@ -93,6 +90,11 @@ function drawPlayers() {
       image(players[i].picture, players[i].x + 600, players[i].y + 375 - 35, players[i].w, players[i].h + 35);
     }
   }
+}
+
+function drawPlayers() {
+  // Update flip direction
+  updatePlayerFlip();
 
   // Draw active player shadow
   fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
