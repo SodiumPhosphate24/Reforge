@@ -249,7 +249,7 @@ function renderMinimapToCache() {
       let tileObj = null;
       let layerIndex = 0;
       if ('layers' in cell) {
-        for (let L = 3; L >= 0; L--) {
+        for (let L = 4; L >= 0; L--) {
           if (cell.layers[L]) {
             tileObj = cell.layers[L];
             layerIndex = L;
@@ -297,17 +297,17 @@ function renderMinimapToCache() {
         finalRotation = variantInfo.rotation;
       } else {
         // Use cached tinted tile
-        if (tintedTileCache[tileType] && tintedTileCache[tileType][colorIndex]) {
+        if (typeof tintedTileCache !== 'undefined' && tintedTileCache[tileType] && tintedTileCache[tileType][colorIndex]) {
           imgToDraw = tintedTileCache[tileType][colorIndex];
-        } else if (tileImgs[tileType]) {
+        } else if (typeof tileImgs !== 'undefined' && tileImgs[tileType]) {
           imgToDraw = tileImgs[tileType];
         }
       }
       
       if (!imgToDraw) continue;
       
-      // Apply sepia tone for old map aesthetic
-      minimapCache.tint(200, 180, 150, 200);
+      // Apply sepia tone for old map aesthetic - duller colors
+      minimapCache.tint(180, 160, 130, 180);
       
       // Draw the tile image with rotation and flips
       const needsTransform = finalRotation > 0 || flipH || flipV;
