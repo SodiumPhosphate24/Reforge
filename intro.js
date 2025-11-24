@@ -292,7 +292,31 @@ function initializeIntro() {
       ]
     }),
 
-    // SCENE 13 - Initialize Game
+    // SCENE 13 - Exit the Cryochamber
+    new IntroScene({
+      id: "exit_cryochamber",
+      type: "text",
+      duration: 120, // 2 seconds
+      backgroundColor: [0, 0, 0],
+      onEnter: function() {
+        console.log("Showing EXIT THE CRYOCHAMBER...");
+      },
+      onUpdate: function(timer) {
+        // Fade in text
+        if (timer < 30) {
+          introState.scenes[introState.currentSceneIndex].textAlpha = map(timer, 0, 30, 0, 255);
+        } else if (timer > 90) {
+          introState.scenes[introState.currentSceneIndex].textAlpha = map(timer, 90, 120, 255, 0);
+        } else {
+          introState.scenes[introState.currentSceneIndex].textAlpha = 255;
+        }
+      },
+      onExit: function() {
+        console.log("Moving to game initialization...");
+      }
+    }),
+
+    // SCENE 14 - Initialize Game
     new IntroScene({
       id: "initialize_game",
       type: "transition",
@@ -357,30 +381,6 @@ function initializeIntro() {
         // Keep screen black during initialization
         const scene = introState.scenes[introState.currentSceneIndex];
         scene.fadeAlpha = 255;
-      },
-      onExit: function() {
-        console.log("Moving to exit cryochamber scene...");
-      }
-    }),
-
-    // SCENE 14 - Exit the Cryochamber
-    new IntroScene({
-      id: "exit_cryochamber",
-      type: "text",
-      duration: 120, // 2 seconds
-      backgroundColor: [0, 0, 0],
-      onEnter: function() {
-        console.log("Showing EXIT THE CRYOCHAMBER...");
-      },
-      onUpdate: function(timer) {
-        // Fade in text
-        if (timer < 30) {
-          introState.scenes[introState.currentSceneIndex].textAlpha = map(timer, 0, 30, 0, 255);
-        } else if (timer > 90) {
-          introState.scenes[introState.currentSceneIndex].textAlpha = map(timer, 90, 120, 255, 0);
-        } else {
-          introState.scenes[introState.currentSceneIndex].textAlpha = 255;
-        }
       },
       onExit: function() {
         console.log("Intro complete - game ready");
