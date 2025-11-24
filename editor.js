@@ -262,44 +262,47 @@ function renderMinimapToCache() {
       const tileType = tileObj.type;
       const colorIndex = tileObj.colorIndex || 0;
 
-      // Get base color with sepia-toned old map aesthetic
-      let baseColor = [140, 130, 110]; // default neutral sepia
+      // Get base color based on tile name
+      let baseColor = [140, 130, 110]; // default neutral
 
-      if (tileType === 0) baseColor = [135, 125, 95];        // deadGrass - dull greenish-brown
-      else if (tileType === 1) baseColor = [85, 80, 70];     // asphalt - dark sepia gray
-      else if (tileType === 2) baseColor = [92, 87, 77];     // lined asphalt - slightly lighter gray
-      else if (tileType === 3) baseColor = [145, 135, 115];  // Concrete - light sepia gray
-      else if (tileType === 4) baseColor = [130, 95, 75];    // Brick - reddish-brown sepia
-      else if (tileType === 5) baseColor = [150, 130, 100];  // Crate - tan/brown
-      else if (tileType === 6) baseColor = [110, 105, 130];  // Workbench - dull purple-gray
-      else if (tileType === 7) baseColor = [115, 100, 80];   // dirt - brown
-      else if (tileType === 8) baseColor = [70, 65, 55];     // darkConcrete - very dark gray
-      else if (tileType === 9) baseColor = [125, 100, 75];   // door - warm brown
-      else if (tileType === 10) baseColor = [130, 140, 145]; // window - dull blue-gray
-      else if (tileType === 11) baseColor = [105, 100, 90];  // crack - medium gray
-      else if (tileType === 12) baseColor = [130, 105, 80];  // wood - brown
-      else if (tileType === 13) baseColor = [155, 150, 135]; // whiteConcrete - off-white sepia
-      else if (tileType === 14) baseColor = [120, 95, 70];   // barnDoor - darker brown
-      else if (tileType === 15) baseColor = [125, 135, 140]; // barnWindow - dull blue-gray
-      else if (tileType === 16) baseColor = [125, 110, 85];  // fence - wood tone
-      else if (tileType === 17) baseColor = [128, 113, 88];  // fenceCorner - slightly different
-      else if (tileType === 18) baseColor = [122, 107, 82];  // fenceDown - slightly darker
-      else if (tileType === 19) baseColor = [127, 112, 87];  // fenceEdge - slightly lighter
-      else if (tileType === 20) baseColor = [123, 108, 83];  // fencePost - distinct shade
-      else if (tileType === 21) baseColor = [110, 105, 100]; // Grave 1 - stone gray
-      else if (tileType === 22) baseColor = [108, 103, 98];  // Grave 2 - slightly darker
-      else if (tileType === 23) baseColor = [112, 107, 102]; // Grave 3 - slightly lighter
-      else if (tileType === 24) baseColor = [95, 85, 70];    // Rail - metallic brown
-      else if (tileType === 25) baseColor = [120, 110, 95];  // Stone Brick - stone sepia
-      else if (tileType === 26) baseColor = [118, 108, 93];  // Stone Brick Wall - slightly darker
-      else if (tileType === 27) baseColor = [105, 95, 75];   // Pipe - copper/bronze tone
-      else if (tileType === 28) baseColor = [115, 125, 110]; // CopperTileGreen - dull green
+      if (tileType === 0) baseColor = [160, 140, 90];        // deadGrass - dead yellow-brown grass
+      else if (tileType === 1) baseColor = [50, 50, 50];     // asphalt - dark gray road
+      else if (tileType === 2) baseColor = [60, 60, 60];     // lined asphalt - slightly lighter gray
+      else if (tileType === 3) baseColor = [180, 180, 180];  // Concrete - light gray
+      else if (tileType === 4) baseColor = [140, 70, 50];    // Brick - reddish-brown brick
+      else if (tileType === 5) baseColor = [150, 120, 70];   // Crate - wooden crate brown
+      else if (tileType === 6) baseColor = [100, 100, 100];  // Workbench - metal gray
+      else if (tileType === 7) baseColor = [120, 85, 60];    // dirt - brown earth
+      else if (tileType === 8) baseColor = [40, 40, 40];     // darkConcrete - very dark gray
+      else if (tileType === 9) baseColor = [110, 80, 50];    // door - wooden door brown
+      else if (tileType === 10) baseColor = [150, 180, 200]; // window - light blue glass
+      else if (tileType === 11) baseColor = [90, 90, 90];    // crack - medium gray damage
+      else if (tileType === 12) baseColor = [140, 100, 60];  // wood - medium brown wood
+      else if (tileType === 13) baseColor = [220, 220, 220]; // whiteConcrete - off-white
+      else if (tileType === 14) baseColor = [100, 70, 50];   // barnDoor - dark barn wood
+      else if (tileType === 15) baseColor = [140, 160, 170]; // barnWindow - grayish-blue
+      else if (tileType === 16) baseColor = [130, 100, 70];  // fence - weathered wood
+      else if (tileType === 17) baseColor = [130, 100, 70];  // fenceCorner - weathered wood
+      else if (tileType === 18) baseColor = [130, 100, 70];  // fenceDown - weathered wood
+      else if (tileType === 19) baseColor = [130, 100, 70];  // fenceEdge - weathered wood
+      else if (tileType === 20) baseColor = [130, 100, 70];  // fencePost - weathered wood
+      else if (tileType === 21) baseColor = [100, 100, 100]; // Grave 1 - stone gray
+      else if (tileType === 22) baseColor = [95, 95, 95];    // Grave 2 - slightly darker stone
+      else if (tileType === 23) baseColor = [105, 105, 105]; // Grave 3 - slightly lighter stone
+      else if (tileType === 24) baseColor = [80, 70, 60];    // Rail - rusty metal brown
+      else if (tileType === 25) baseColor = [120, 120, 110]; // Stone Brick - gray stone
+      else if (tileType === 26) baseColor = [115, 115, 105]; // Stone Brick Wall - darker stone
+      else if (tileType === 27) baseColor = [160, 110, 80];  // Pipe - copper/bronze
+      else if (tileType === 28) baseColor = [100, 140, 120]; // CopperTileGreen - greenish copper patina
 
-      // Apply color variant if available
+      // Apply color variant if available (adjust base color slightly)
       if (typeof tileColors !== 'undefined' && tileColors[tileType] && tileColors[tileType][colorIndex]) {
         const variantColor = tileColors[tileType][colorIndex];
-        // Use variant color directly without sepia blending
-        minimapCache.fill(variantColor[0], variantColor[1], variantColor[2]);
+        // Blend the variant color with base color (80% variant, 20% base)
+        const blendedR = Math.floor(variantColor[0] * 0.8 + baseColor[0] * 0.2);
+        const blendedG = Math.floor(variantColor[1] * 0.8 + baseColor[1] * 0.2);
+        const blendedB = Math.floor(variantColor[2] * 0.8 + baseColor[2] * 0.2);
+        minimapCache.fill(blendedR, blendedG, blendedB);
       } else {
         minimapCache.fill(baseColor[0], baseColor[1], baseColor[2]);
       }
