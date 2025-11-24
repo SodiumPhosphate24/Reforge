@@ -85,7 +85,7 @@ function drawFadeToGame() {
 
   // Draw items (dropped items)
   updateDroppedItems();
-  
+
   // Draw NPCs before roofs so they appear underneath
   fill(255);
   drawNPCs();
@@ -99,7 +99,6 @@ function drawFadeToGame() {
   drawGunDebugRect();
   drawEnemies();
   drawBullets();
-  updateParticles();
 
   drawWorldLayer(gameWorld, 4);
 
@@ -303,7 +302,7 @@ function preload() {
       'corner': loadImage("Tiles/WhiteConcreteCorner.png")
     }
   };
-  
+
   // Pipe variants - straight, L, T, cross
   tileVariants[27] = {
     variants: {
@@ -487,18 +486,22 @@ function drawGameplay() {
 
   // LAYERS 0, 1 behind everything
   drawWorldLayer(gameWorld, 0);
+  updateParticlesForLayer(0);
   drawWorldLayer(gameWorld, 1);
+  updateParticlesForLayer(1);
 
   // Draw items (dropped items)
   updateDroppedItems();
-  
+
   // Draw NPCs before roofs so they appear underneath
   fill(255);
   drawNPCs();
 
   // LAYERS 2, 3 over items but under player
   drawWorldLayer(gameWorld, 2);
+  updateParticlesForLayer(2);
   drawWorldLayer(gameWorld, 3);
+  updateParticlesForLayer(3);
 
   fill(255);
   drawPlayers();
@@ -510,7 +513,7 @@ function drawGameplay() {
   mainHand();
   drawEnemies();
   drawBullets();
-  
+
   // Spawn particles from sources
   if (typeof particleSources !== 'undefined') {
     for (const ps of particleSources) {
@@ -519,13 +522,13 @@ function drawGameplay() {
         if (random() < 0.3) { // 30% chance per particle slot
           const angle = random(ps.arcStart, ps.arcEnd);
           const particleSize = ps.size + random(-ps.sizeVariance, ps.sizeVariance);
-          
+
           // Create particle using existing particle system
           const px = ps.x;
           const py = ps.y;
-          
+
           // Manual particle creation with custom direction
-          const p = new Particle(px, py, ps.color, ps.duration, ps.speed);
+          const p = new Particle(px, py, ps.color, ps.duration, ps.speed, ps.layer || 0);
           p.angle = radians(angle);
           p.vx = cos(p.angle) * ps.speed;
           p.vy = sin(p.angle) * ps.speed;
@@ -535,13 +538,13 @@ function drawGameplay() {
       }
     }
   }
-  
-  updateParticles(); // Draw particles
+
   controls();
   resolveCollisions();
 
   // LAYER 4 on top of player
   drawWorldLayer(gameWorld, 4);
+  updateParticlesForLayer(4);
 
   // Draw particle sources in editor mode
   if (typeof drawParticleSources === 'function') {
@@ -555,7 +558,7 @@ function drawGameplay() {
 
   // Draw NPC prompt after camera pop (screen-fixed)
   drawNPCPromptIfNeeded();
-  
+
   // Draw waypoint arrow (screen-fixed at edge)
   drawWaypoint();
 
@@ -717,16 +720,16 @@ function worldToString(world) {
     }
     out += "|";
   }
-  
+
   // Add particle sources at the end with & separator
   if (typeof particleSources !== 'undefined' && particleSources.length > 0) {
     out += "&";
     const psData = particleSources.map(ps => {
-      return `${ps.x},${ps.y},${ps.arcStart},${ps.arcEnd},${ps.color[0]},${ps.color[1]},${ps.color[2]},${ps.size},${ps.sizeVariance},${ps.speed},${ps.spawnRate},${ps.duration}`;
+      return `${ps.x},${ps.y},${ps.arcStart},${ps.arcEnd},${ps.color[0]},${ps.color[1]},${ps.color[2]},${ps.size},${ps.sizeVariance},${ps.speed},${ps.spawnRate},${ps.duration},${ps.layer || 0}`;
     });
     out += psData.join(";");
   }
-  
+
   return out;
 }
 
@@ -737,14 +740,14 @@ function stringToWorld(s) {
   }
 
   crateInventories.clear(); // Clear before parsing
-  
+
   // Check for particle sources (after & separator)
   let worldData = s;
   if (s.includes("&")) {
     const parts = s.split("&");
     worldData = parts[0];
     const psData = parts[1];
-    
+
     // Parse particle sources
     if (typeof particleSources !== 'undefined') {
       particleSources.length = 0; // Clear existing
@@ -752,7 +755,7 @@ function stringToWorld(s) {
       for (const sourceStr of sources) {
         if (!sourceStr.trim()) continue;
         const vals = sourceStr.split(",").map(v => parseFloat(v));
-        if (vals.length === 12) {
+        if (vals.length === 13) {
           particleSources.push({
             x: vals[0],
             y: vals[1],
@@ -763,14 +766,15 @@ function stringToWorld(s) {
             sizeVariance: vals[8],
             speed: vals[9],
             spawnRate: vals[10],
-            duration: vals[11]
+            duration: vals[11],
+            layer: vals[12] || 0 // Default to layer 0 if not specified
           });
         }
       }
       console.log("Loaded", particleSources.length, "particle sources");
     }
   }
-  
+
   const rows = worldData.split("|");
   const world = [];
 
@@ -904,22 +908,22 @@ function coordsToGrid(x, y) {
 // Draw waypoint arrow pointing to current waypoint
 function drawWaypoint() {
   if (currentWaypointIndex >= waypointCoordinates.length) return; // No more waypoints
-  
+
   const targetX = waypointCoordinates[currentWaypointIndex][0];
   const targetY = waypointCoordinates[currentWaypointIndex][1];
-  
+
   // Calculate player center in world coordinates
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
-  
+
   // Calculate distance to waypoint
   const distToWaypoint = dist(playerCenterX, playerCenterY, targetX, targetY);
-  
+
   // Fade out when close (within 200 units), fade in when far
   const fadeDistance = 200;
   const maxDistance = 400;
   let waypointAlpha;
-  
+
   if (distToWaypoint < fadeDistance) {
     // Close: fade out completely
     waypointAlpha = map(distToWaypoint, 0, fadeDistance, 0, 255);
@@ -930,28 +934,28 @@ function drawWaypoint() {
     // Far: fully visible
     waypointAlpha = 255;
   }
-  
+
   if (waypointAlpha < 5) return; // Don't draw if nearly invisible
-  
+
   // Calculate angle from player to waypoint
   const angle = atan2(targetY - playerCenterY, targetX - playerCenterX);
-  
+
   // Convert waypoint world coordinates to screen coordinates
   const waypointScreenX = targetX + camX;
   const waypointScreenY = targetY + camY;
-  
+
   // Screen boundaries with padding
   const padding = 40;
   const minX = padding;
   const maxX = width - padding;
   const minY = padding;
   const maxY = height - padding;
-  
+
   // Check if waypoint is on screen
   let arrowX, arrowY;
-  
-  if (waypointScreenX >= minX && waypointScreenX <= maxX && 
-      waypointScreenY >= minY && waypointScreenY <= maxY) {
+
+  if (waypointScreenX >= minX && waypointScreenX <= maxX &&
+    waypointScreenY >= minY && waypointScreenY <= maxY) {
     // Waypoint is on screen - show arrow at waypoint location
     arrowX = waypointScreenX;
     arrowY = waypointScreenY;
@@ -959,20 +963,20 @@ function drawWaypoint() {
     // Waypoint is off screen - constrain to screen edge
     const screenCenterX = width / 2;
     const screenCenterY = height / 2;
-    
+
     // Calculate direction from screen center to waypoint
     const dirX = waypointScreenX - screenCenterX;
     const dirY = waypointScreenY - screenCenterY;
-    
+
     // Find intersection with screen boundaries
     const tX = dirX > 0 ? (maxX - screenCenterX) / dirX : (minX - screenCenterX) / dirX;
     const tY = dirY > 0 ? (maxY - screenCenterY) / dirY : (minY - screenCenterY) / dirY;
     const t = Math.min(tX, tY);
-    
+
     arrowX = screenCenterX + dirX * t;
     arrowY = screenCenterY + dirY * t;
   }
-  
+
   // Draw waypoint arrow with 180° flip and pointing toward waypoint
   push();
   translate(arrowX, arrowY);
@@ -996,7 +1000,7 @@ function isSameTileType(row, col, layer, tileType) {
 // Pipe (27) uses variants: straight, L, T, cross
 function getPipeVariant(row, col, layer, tileType) {
   if (tileType !== 27) return null;
-  
+
   // Check all cardinal neighbors for same pipe type
   const n = isSameTileType(row - 1, col, layer, tileType);
   const s = isSameTileType(row + 1, col, layer, tileType);
@@ -1258,6 +1262,44 @@ function drawWorldLayer(world, layerIndex) {
   }
 }
 
+// --- Particle rendering by layer ---
+function updateParticlesForLayer(layerIndex) {
+  // Calculate viewport bounds in world coordinates
+  const viewLeft = -camX - 50;
+  const viewRight = -camX + width + 50;
+  const viewTop = -camY - 50;
+  const viewBottom = -camY + height + 50;
+
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+
+    // Check if particle belongs to this layer
+    if (p.layer === layerIndex) {
+      p.update();
+
+      // Apply roof fade if particle is on a roof layer and the roof is fading
+      let fadeAlpha = 255;
+      if (layerIndex >= 1 && layerIndex <= 4 && p.onRoof) { // Assuming 'onRoof' property is set on particle
+        const __k = tileKey(p.roofRow, p.roofCol); // Assuming particle stores roof tile coords
+        fadeAlpha = roofAlpha.has(__k) ? roofAlpha.get(__k) : 255;
+        // Particles on layer 3 or higher disappear if part of a roof fade out
+        if ((layerIndex >= 3 || p.layer >= 3) && fadeAlpha < 255) {
+          fadeAlpha = 0; // Make particle disappear if it's on a fading roof and on layer 3+
+        }
+      }
+
+      // Only draw particles within viewport and with sufficient alpha
+      if (p.x >= viewLeft && p.x <= viewRight &&
+        p.y >= viewTop && p.y <= viewBottom && fadeAlpha > 0) {
+        p.draw(fadeAlpha); // Pass fadeAlpha to particle's draw method
+      }
+
+      if (p.isDead()) {
+        particles.splice(i, 1);
+      }
+    }
+  }
+}
 
 
 // Editor functionality comes from editor.js (you’ll share next)
@@ -1360,16 +1402,17 @@ function checkTileCollisions(x, y, w, h) {
       const cell = gameWorld[row][col];
 
       if (cell && 'layers' in cell) {
+        // Check all layers for solid tiles (tileWalls[type] === 1)
         for (let L = 0; L < 5; L++) {
           const t = cell.layers[L];
           if (!t) continue;
-          if (tileWalls[t.type] == 1) {
+          if (tileWalls[t.type] === 1) {
             const tL = col * 50, tT = row * 50, tR = tL + 50, tB = tT + 50;
             if (left < tR && right > tL && top < tB && bottom > tT) return true;
           }
         }
       } else if (cell) { // legacy
-        if (tileWalls[cell.type] == 1) {
+        if (tileWalls[cell.type] === 1) {
           const tL = col * 50, tT = row * 50, tR = tL + 50, tB = tT + 50;
           if (left < tR && right > tL && top < tB && bottom > tT) return true;
         }
@@ -1405,14 +1448,10 @@ function isRoof(row, col) {
 
   // Treat roof as tiles placed on layers 1, 2, 3, or 4
   if ('layers' in cell) {
-    const L4 = cell.layers?.[4];
-    if (L4 && tileWalls[L4.type] === 2) return true;
-    const L3 = cell.layers?.[3];
-    if (L3 && tileWalls[L3.type] === 2) return true;
-    const L2 = cell.layers?.[2];
-    if (L2 && tileWalls[L2.type] === 2) return true;
-    const L1 = cell.layers?.[1];
-    if (L1 && tileWalls[L1.type] === 2) return true;
+    for (let L = 1; L <= 4; L++) { // Check layers 1 through 4
+      const t = cell.layers[L];
+      if (t && tileWalls[t.type] === 2) return true;
+    }
     return false;
   } else {
     // legacy single-layer maps: allow roof there too

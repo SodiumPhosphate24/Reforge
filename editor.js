@@ -827,6 +827,7 @@ function handleEditorMouseReleased() {
     particleSources.push({
       x: worldX,
       y: worldY,
+      layer: editorLayer, // Use current editor layer
       arcStart: particleSourceConfig.arcStart,
       arcEnd: particleSourceConfig.arcEnd,
       color: [...particleSourceConfig.color],
@@ -836,7 +837,7 @@ function handleEditorMouseReleased() {
       spawnRate: particleSourceConfig.spawnRate,
       duration: particleSourceConfig.duration
     });
-    console.log("Placed particle source at", worldX, worldY);
+    console.log("Placed particle source at", worldX, worldY, "on layer", editorLayer);
     return true;
   }
   
