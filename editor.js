@@ -515,41 +515,37 @@ function handleEditorClick() {
   var worldX = mouseX - camX;
   var worldY = mouseY - camY;
 
-  // Handle particle source placement
-  if (placingParticleSource && mouseButton === LEFT) {
-    particleSources.push({
-      x: worldX,
-      y: worldY,
-      arcStart: particleSourceConfig.arcStart,
-      arcEnd: particleSourceConfig.arcEnd,
-      color: [...particleSourceConfig.color],
-      size: particleSourceConfig.size,
-      sizeVariance: particleSourceConfig.sizeVariance,
-      speed: particleSourceConfig.speed,
-      spawnRate: particleSourceConfig.spawnRate,
-      duration: particleSourceConfig.duration
-    });
-    console.log("Placed particle source at", worldX, worldY);
-    placingParticleSource = false;
-    return;
-  }
-  
-  // Right click to delete particle source
-  if (placingParticleSource && mouseButton === RIGHT) {
-    // Find and delete nearby particle source
-    for (let i = particleSources.length - 1; i >= 0; i--) {
-      const ps = particleSources[i];
-      const d = dist(worldX, worldY, ps.x, ps.y);
-      if (d < 25) {
-        particleSources.splice(i, 1);
-        console.log("Deleted particle source", i);
-        return;
+  // Handle particle source placement - consume ALL clicks in particle mode
+  if (placingParticleSource) {
+    if (mouseButton === LEFT) {
+      particleSources.push({
+        x: worldX,
+        y: worldY,
+        arcStart: particleSourceConfig.arcStart,
+        arcEnd: particleSourceConfig.arcEnd,
+        color: [...particleSourceConfig.color],
+        size: particleSourceConfig.size,
+        sizeVariance: particleSourceConfig.sizeVariance,
+        speed: particleSourceConfig.speed,
+        spawnRate: particleSourceConfig.spawnRate,
+        duration: particleSourceConfig.duration
+      });
+      console.log("Placed particle source at", worldX, worldY);
+    } else if (mouseButton === RIGHT) {
+      // Find and delete nearby particle source
+      for (let i = particleSources.length - 1; i >= 0; i--) {
+        const ps = particleSources[i];
+        const d = dist(worldX, worldY, ps.x, ps.y);
+        if (d < 25) {
+          particleSources.splice(i, 1);
+          console.log("Deleted particle source", i);
+          break;
+        }
       }
     }
+    // Always return when in particle mode to prevent tile placement
     return;
   }
-  
-  if (placingParticleSource) return;
 
   var gridCol = Math.floor(worldX / EDIT_TILE_SIZE);
   var gridRow = Math.floor(worldY / EDIT_TILE_SIZE);
@@ -709,10 +705,11 @@ function handleEditorKeyPress() {
     console.log("Color index:", tileColorIndex);
   }
 
-  // O to toggle particle source placement mode
+  // O to toggle between particle source mode and tile editor mode
   if (keyCode == 79) { // O
     placingParticleSource = !placingParticleSource;
     console.log("Particle source mode:", placingParticleSource);
+    console.log("Tile editor mode:", !placingParticleSource);
   }
 
   // Ctrl+C to copy world string to clipboard
