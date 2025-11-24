@@ -210,7 +210,7 @@ let maxTileTypes = 0; // will be set in setup()
 var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
 
 function preload() {
-  console.log("Updated version Prometheus");
+  console.log("Updated version particulate");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   Prometheus = loadImage("Characters/Prometheus.png");
