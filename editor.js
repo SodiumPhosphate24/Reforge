@@ -182,7 +182,7 @@ function drawEditorUI() {
     text("PARTICLE SOURCE MODE - Click to place | ESC to cancel", width / 2, 90);
     text(`Arc: ${particleSourceConfig.arcStart}° - ${particleSourceConfig.arcEnd}° | Size: ${particleSourceConfig.size}±${particleSourceConfig.sizeVariance}`, width / 2, 110);
     text(`Color: RGB(${particleSourceConfig.color[0]}, ${particleSourceConfig.color[1]}, ${particleSourceConfig.color[2]}) | Speed: ${particleSourceConfig.speed} | Rate: ${particleSourceConfig.spawnRate}`, width / 2, 130);
-    text("Use +/- for arc, 1-8 for adjustments", width / 2, 150);
+    text("+/- arc end | 1/2 arc start | 3 size | 4 variance | 5 speed | 6 rate | 7-9 RGB", width / 2, 150);
   }
 
   // Show particle source count
@@ -742,46 +742,52 @@ function handleEditorKeyPress() {
       console.log("Arc end:", particleSourceConfig.arcEnd);
     }
     
-    // 1 to adjust arc start
+    // 1 to increase arc start
     if (keyCode == 49) {
       particleSourceConfig.arcStart = (particleSourceConfig.arcStart + 15) % 360;
       console.log("Arc start:", particleSourceConfig.arcStart);
     }
     
-    // 2 to adjust size
+    // 2 to decrease arc start
     if (keyCode == 50) {
+      particleSourceConfig.arcStart = (particleSourceConfig.arcStart - 15 + 360) % 360;
+      console.log("Arc start:", particleSourceConfig.arcStart);
+    }
+    
+    // 3 to adjust size
+    if (keyCode == 51) {
       particleSourceConfig.size = constrain(particleSourceConfig.size + 1, 1, 20);
       console.log("Size:", particleSourceConfig.size);
     }
     
-    // 3 to adjust size variance
-    if (keyCode == 51) {
+    // 4 to adjust size variance
+    if (keyCode == 52) {
       particleSourceConfig.sizeVariance = constrain(particleSourceConfig.sizeVariance + 1, 0, 10);
       console.log("Size variance:", particleSourceConfig.sizeVariance);
     }
     
-    // 4 to adjust speed
-    if (keyCode == 52) {
+    // 5 to adjust speed
+    if (keyCode == 53) {
       particleSourceConfig.speed = constrain(particleSourceConfig.speed + 0.5, 0.5, 10);
       console.log("Speed:", particleSourceConfig.speed);
     }
     
-    // 5 to adjust spawn rate
-    if (keyCode == 53) {
+    // 6 to adjust spawn rate
+    if (keyCode == 54) {
       particleSourceConfig.spawnRate = constrain(particleSourceConfig.spawnRate + 1, 1, 20);
       console.log("Spawn rate:", particleSourceConfig.spawnRate);
     }
     
-    // 6-8 to adjust RGB color
-    if (keyCode == 54) {
+    // 7-9 to adjust RGB color
+    if (keyCode == 55) {
       particleSourceConfig.color[0] = (particleSourceConfig.color[0] + 25) % 256;
       console.log("Color R:", particleSourceConfig.color[0]);
     }
-    if (keyCode == 55) {
+    if (keyCode == 56) {
       particleSourceConfig.color[1] = (particleSourceConfig.color[1] + 25) % 256;
       console.log("Color G:", particleSourceConfig.color[1]);
     }
-    if (keyCode == 56) {
+    if (keyCode == 57) {
       particleSourceConfig.color[2] = (particleSourceConfig.color[2] + 25) % 256;
       console.log("Color B:", particleSourceConfig.color[2]);
     }
