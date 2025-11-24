@@ -1,3 +1,39 @@
+
+// Tile color reference array - RGB values for each tile type
+// Used for minimap and visual reference
+var tileColorReference = [
+  [180, 160, 120],  // 0 - deadGrass - tan/beige
+  [60, 60, 60],     // 1 - asphalt - dark gray
+  [70, 70, 70],     // 2 - lined asphalt - slightly lighter gray
+  [200, 200, 200],  // 3 - Concrete - light gray
+  [150, 80, 60],    // 4 - Brick - reddish brown
+  [160, 120, 80],   // 5 - Crate - brown/tan
+  [100, 100, 120],  // 6 - Workbench - gray with blue tint
+  [120, 90, 60],    // 7 - dirt - brown
+  [50, 50, 50],     // 8 - darkConcrete - very dark gray
+  [140, 100, 70],   // 9 - door - wood brown
+  [180, 200, 220],  // 10 - window - light blue-gray
+  [90, 90, 90],     // 11 - crack - medium gray
+  [160, 120, 80],   // 12 - wood - brown
+  [220, 220, 220],  // 13 - whiteConcrete - off-white
+  [130, 90, 60],    // 14 - barnDoor - darker brown
+  [170, 190, 200],  // 15 - barnWindow - blue-gray
+  [150, 120, 90],   // 16 - fence - wood tone
+  [150, 120, 90],   // 17 - fenceCorner - wood tone
+  [150, 120, 90],   // 18 - fenceDown - wood tone
+  [150, 120, 90],   // 19 - fenceEdge - wood tone
+  [150, 120, 90],   // 20 - fencePost - wood tone
+  [100, 100, 100],  // 21 - Grave 1 - stone gray
+  [100, 100, 100],  // 22 - Grave 2 - stone gray
+  [100, 100, 100],  // 23 - Grave 3 - stone gray
+  [80, 80, 80],     // 24 - Rail - metallic gray
+  [140, 130, 120],  // 25 - Stone Brick - gray-tan
+  [140, 130, 120],  // 26 - Stone Brick Wall - gray-tan
+  [180, 130, 90],   // 27 - Pipe - copper/bronze
+  [120, 140, 120]   // 28 - CopperTileGreen - greenish
+];
+
+
 // ============== EDITOR (3-LAYER SUPPORT) ==============
 var editorMode = false;
 var selectedTileType = 0;    // current tile type
