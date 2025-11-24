@@ -86,10 +86,9 @@ function drawFadeToGame() {
   // Draw items (dropped items)
   updateDroppedItems();
 
-  // Draw NPCs and non-active players before roofs so they appear underneath
+  // Draw NPCs before roofs so they appear underneath
   fill(255);
   drawNPCs();
-  drawNonActivePlayers();
 
   drawWorldLayer(gameWorld, 2);
   drawWorldLayer(gameWorld, 3);
@@ -418,12 +417,7 @@ function setup() {
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
 
-  // Intro will be started from menu screen
-
-  // Initialize roof fade system early so it's ready when game starts
-  const __roofSeeds = getOverlappingRoofSeeds(pX, pY, pWidth, pHeight);
-  floodFillRoof(__roofSeeds);
-  stepRoofFades();
+  // Tutorial will be started from menu screen
 }
 
 function draw() {
@@ -499,10 +493,9 @@ function drawGameplay() {
   // Draw items (dropped items)
   updateDroppedItems();
 
-  // Draw NPCs and non-active players before roofs so they appear underneath
+  // Draw NPCs before roofs so they appear underneath
   fill(255);
   drawNPCs();
-  drawNonActivePlayers();
 
   // LAYERS 2, 3 over items but under player
   drawWorldLayer(gameWorld, 2);
@@ -1308,18 +1301,6 @@ function updateParticlesForLayer(layerIndex) {
   }
 }
 
-// Draw non-active players
-function drawNonActivePlayers() {
-  fill(255);
-  for (let i = 0; i < players.length; i++) {
-    if (i !== activePlayer) {
-      const p = players[i];
-      const img = p.image || PlayerImage; // Use player-specific image or default
-      // Draw player with correct positioning and size
-      image(img, p.x + camX, p.y + camY, p.width, p.height);
-    }
-  }
-}
 
 // Editor functionality comes from editor.js (you’ll share next)
 
