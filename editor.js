@@ -833,7 +833,6 @@ function handleEditorMouseWheel(event) {
 function mousePressed() {
   if (editorMode) {
     handleEditorClick();
-    return false; // Prevent default behavior
   }
 }
 // ============== END EDITOR (3-LAYER SUPPORT) ==============
