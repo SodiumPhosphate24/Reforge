@@ -210,7 +210,7 @@ let maxTileTypes = 0; // will be set in setup()
 var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
 
 function preload() {
-  console.log("Updated version particulate");
+  console.log("Updated version Prometheus");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   Prometheus = loadImage("Characters/Prometheus.png");
@@ -496,7 +496,22 @@ function drawGameplay() {
   fill(255);
   drawNPCs();
 
-  // Spawn particles from sources (before drawing any layers)
+  // LAYERS 2, 3 over items but under player
+  drawWorldLayer(gameWorld, 2);
+  drawWorldLayer(gameWorld, 3);
+
+  fill(255);
+  drawPlayers();
+
+  // --- Only the gun rotates (isolated) ---
+  drawGunDebugRect(); // uses calculateAim()
+  // ---------------------------------------
+
+  mainHand();
+  drawEnemies();
+  drawBullets();
+  
+  // Spawn particles from sources
   if (typeof particleSources !== 'undefined') {
     for (const ps of particleSources) {
       // Spawn particles based on spawn rate
@@ -510,7 +525,7 @@ function drawGameplay() {
           const py = ps.y;
           
           // Manual particle creation with custom direction
-          const p = new Particle(px, py, ps.color, ps.duration, ps.speed, ps.layer || 0);
+          const p = new Particle(px, py, ps.color, ps.duration, ps.speed);
           p.angle = radians(angle);
           p.vx = cos(p.angle) * ps.speed;
           p.vy = sin(p.angle) * ps.speed;
@@ -520,49 +535,13 @@ function drawGameplay() {
       }
     }
   }
-
-  // Update particle positions (but don't draw yet)
-  for (let i = particles.length - 1; i >= 0; i--) {
-    particles[i].update();
-    if (particles[i].isDead()) {
-      particles.splice(i, 1);
-    }
-  }
-
-  // Draw particles on layer 0
-  drawParticlesOnLayer(0);
-
-  // LAYER 2 over layer 0
-  drawWorldLayer(gameWorld, 2);
-
-  // Draw particles on layer 2
-  drawParticlesOnLayer(2);
-
-  // LAYER 3 over layer 2
-  drawWorldLayer(gameWorld, 3);
-
-  // Draw particles on layer 3
-  drawParticlesOnLayer(3);
-
-  fill(255);
-  drawPlayers();
-
-  // --- Only the gun rotates (isolated) ---
-  drawGunDebugRect(); // uses calculateAim()
-  // ---------------------------------------
-
-  mainHand();
-  drawEnemies();
-  drawBullets();
   
+  updateParticles(); // Draw particles
   controls();
   resolveCollisions();
 
   // LAYER 4 on top of player
   drawWorldLayer(gameWorld, 4);
-
-  // Draw particles on layer 4
-  drawParticlesOnLayer(4);
 
   // Draw particle sources in editor mode
   if (typeof drawParticleSources === 'function') {
@@ -743,7 +722,7 @@ function worldToString(world) {
   if (typeof particleSources !== 'undefined' && particleSources.length > 0) {
     out += "&";
     const psData = particleSources.map(ps => {
-      return `${ps.x},${ps.y},${ps.layer || 0},${ps.arcStart},${ps.arcEnd},${ps.color[0]},${ps.color[1]},${ps.color[2]},${ps.size},${ps.sizeVariance},${ps.speed},${ps.spawnRate},${ps.duration}`;
+      return `${ps.x},${ps.y},${ps.arcStart},${ps.arcEnd},${ps.color[0]},${ps.color[1]},${ps.color[2]},${ps.size},${ps.sizeVariance},${ps.speed},${ps.spawnRate},${ps.duration}`;
     });
     out += psData.join(";");
   }
@@ -773,27 +752,10 @@ function stringToWorld(s) {
       for (const sourceStr of sources) {
         if (!sourceStr.trim()) continue;
         const vals = sourceStr.split(",").map(v => parseFloat(v));
-        if (vals.length === 13) {
-          // New format with layer
+        if (vals.length === 12) {
           particleSources.push({
             x: vals[0],
             y: vals[1],
-            layer: vals[2],
-            arcStart: vals[3],
-            arcEnd: vals[4],
-            color: [vals[5], vals[6], vals[7]],
-            size: vals[8],
-            sizeVariance: vals[9],
-            speed: vals[10],
-            spawnRate: vals[11],
-            duration: vals[12]
-          });
-        } else if (vals.length === 12) {
-          // Old format without layer (default to layer 0)
-          particleSources.push({
-            x: vals[0],
-            y: vals[1],
-            layer: 0,
             arcStart: vals[2],
             arcEnd: vals[3],
             color: [vals[4], vals[5], vals[6]],
@@ -1696,24 +1658,25 @@ function keyPressedOnce(k) {
   return false;
 }
 
-// Draw particles for a specific layer
-function drawParticlesOnLayer(layer) {
+// Update and draw all particles
+function updateParticles() {
   // Calculate viewport bounds in world coordinates
   const viewLeft = -camX - 50;
   const viewRight = -camX + width + 50;
   const viewTop = -camY - 50;
   const viewBottom = -camY + height + 50;
 
-  for (let i = 0; i < particles.length; i++) {
-    const p = particles[i];
-    
-    // Only draw particles on this layer
-    if (p.layer !== layer) continue;
+  for (let i = particles.length - 1; i >= 0; i--) {
+    particles[i].update();
 
     // Only draw particles within viewport (with padding)
-    if (p.x >= viewLeft && p.x <= viewRight &&
-      p.y >= viewTop && p.y <= viewBottom) {
-      p.draw();
+    if (particles[i].x >= viewLeft && particles[i].x <= viewRight &&
+      particles[i].y >= viewTop && particles[i].y <= viewBottom) {
+      particles[i].draw();
+    }
+
+    if (particles[i].isDead()) {
+      particles.splice(i, 1);
     }
   }
 }
