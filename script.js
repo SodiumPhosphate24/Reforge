@@ -855,41 +855,47 @@ function drawWaypoint() {
   // Calculate angle from player to waypoint
   const angle = atan2(targetY - playerCenterY, targetX - playerCenterX);
   
-  // Calculate position on screen edge
-  // Screen center is at (width/2, height/2) = (600, 375)
-  const screenCenterX = width / 2;
-  const screenCenterY = height / 2;
-  
-  // Calculate direction vector
-  const dirX = cos(angle);
-  const dirY = sin(angle);
+  // Convert waypoint world coordinates to screen coordinates
+  const waypointScreenX = targetX + camX;
+  const waypointScreenY = targetY + camY;
   
   // Screen boundaries with padding
-  const padding = 40; // Keep arrow away from edge
+  const padding = 40;
   const minX = padding;
   const maxX = width - padding;
   const minY = padding;
   const maxY = height - padding;
   
-  // Find intersection with screen boundaries
-  // Start from center and extend until hitting boundary
-  let arrowX = screenCenterX;
-  let arrowY = screenCenterY;
+  // Check if waypoint is on screen
+  let arrowX, arrowY;
   
-  // Calculate which edge the arrow should be on
-  // Use the angle to determine the boundary intersection
-  const t = Math.min(
-    dirX > 0 ? (maxX - screenCenterX) / dirX : (minX - screenCenterX) / dirX,
-    dirY > 0 ? (maxY - screenCenterY) / dirY : (minY - screenCenterY) / dirY
-  );
+  if (waypointScreenX >= minX && waypointScreenX <= maxX && 
+      waypointScreenY >= minY && waypointScreenY <= maxY) {
+    // Waypoint is on screen - show arrow at waypoint location
+    arrowX = waypointScreenX;
+    arrowY = waypointScreenY;
+  } else {
+    // Waypoint is off screen - constrain to screen edge
+    const screenCenterX = width / 2;
+    const screenCenterY = height / 2;
+    
+    // Calculate direction from screen center to waypoint
+    const dirX = waypointScreenX - screenCenterX;
+    const dirY = waypointScreenY - screenCenterY;
+    
+    // Find intersection with screen boundaries
+    const tX = dirX > 0 ? (maxX - screenCenterX) / dirX : (minX - screenCenterX) / dirX;
+    const tY = dirY > 0 ? (maxY - screenCenterY) / dirY : (minY - screenCenterY) / dirY;
+    const t = Math.min(tX, tY);
+    
+    arrowX = screenCenterX + dirX * t;
+    arrowY = screenCenterY + dirY * t;
+  }
   
-  arrowX = screenCenterX + dirX * t;
-  arrowY = screenCenterY + dirY * t;
-  
-  // Draw waypoint arrow at screen edge (world coordinates already handled by camera)
+  // Draw waypoint arrow with 180° flip and pointing toward waypoint
   push();
   translate(arrowX, arrowY);
-  rotate(angle + HALF_PI); // Add HALF_PI since arrow points down by default
+  rotate(angle + HALF_PI + PI); // Add PI to flip 180°, HALF_PI to adjust for down-pointing default
   imageMode(CENTER);
   tint(255, waypointAlpha);
   image(WaypointImg, 0, 0, 40, 40);
