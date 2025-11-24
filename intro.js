@@ -305,6 +305,23 @@ function initializeIntro() {
         if (gameWorld.length === 0 && worldString.length > 0) {
           gameWorld = stringToWorld(worldString[0]);
         }
+        
+        // Initialize player position variables early
+        pX = players[activePlayer].x;
+        pY = players[activePlayer].y;
+        pWidth = players[activePlayer].w;
+        pHeight = players[activePlayer].h;
+        
+        // Initialize roof fade system so roofs are ready before fade completes
+        const __roofSeeds = getOverlappingRoofSeeds(pX, pY, pWidth, pHeight);
+        floodFillRoof(__roofSeeds);
+        // Step the roof fade multiple times to ensure it's fully faded before game starts
+        for (let i = 0; i < 10; i++) {
+          stepRoofFades();
+        }
+        
+        console.log("Player position initialized:", pX, pY);
+        console.log("Roof fade system initialized");
       },
       onUpdate: function(timer) {
         // Fade to black as if eyes closing, then opening into the game
@@ -316,6 +333,11 @@ function initializeIntro() {
           // Second half: stay black (brief moment)
           scene.fadeAlpha = 255;
         }
+        
+        // Continue updating roof fade during transition
+        const __roofSeeds = getOverlappingRoofSeeds(pX, pY, pWidth, pHeight);
+        floodFillRoof(__roofSeeds);
+        stepRoofFades();
       },
       onExit: function() {
         // Transition to main game

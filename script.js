@@ -412,12 +412,13 @@ function setup() {
   inventoryList = players[activePlayer].inventory;
 
   // Initialize indicator position
-  indicatorCurrentX = pX + 600 + pWidth / 2;
-  indicatorCurrentY = pY + 375 - 50;
+  indicatorCurrentX = pX + 600;
+  indicatorCurrentY = pY + 375;
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
 
-  // Tutorial will be started from menu screen
+  // Intro will be started from menu screen
+  // Roof fade will be initialized during intro sequence
 }
 
 function draw() {
