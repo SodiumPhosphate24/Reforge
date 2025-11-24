@@ -22,7 +22,7 @@ var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
 var tileColors = [
-  [[240, 210, 170]], // 0 - grass 
+  [[255, 255, 255]], // 0 - grass (white = no tint, shows base green color)
   [[255, 255, 255]], // 1 - asphalt
   [[255, 255, 255]], // 2 - lined asphalt
   [[255, 255, 255]], // 3 - Concrete
