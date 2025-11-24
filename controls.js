@@ -31,8 +31,6 @@ function controls() {
   pY = constrain(pY, -400, gameWorld.length * 50 - height / 2 - pHeight);
 }
 
-function mousePressed() { }
-
 function keyPressed() {
   if (keyCode == 81) {
     activePlayer += 1;
