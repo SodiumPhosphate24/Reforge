@@ -295,11 +295,19 @@ function renderMinimapToCache() {
       else if (tileType === 27) baseColor = [180, 120, 80];  // Pipe - copper orange
       else if (tileType === 28) baseColor = [90, 140, 110];  // CopperTileGreen - green patina
 
-      // Apply color variant if available
+      // Apply color variant if available (skip white tints as they mean "no tint")
       if (typeof tileColors !== 'undefined' && tileColors[tileType] && tileColors[tileType][colorIndex]) {
         const variantColor = tileColors[tileType][colorIndex];
-        // Use variant color directly without sepia blending
-        minimapCache.fill(variantColor[0], variantColor[1], variantColor[2]);
+        // Check if this is a white tint (which means no tint should be applied)
+        const isWhiteTint = variantColor[0] === 255 && variantColor[1] === 255 && variantColor[2] === 255;
+        
+        if (isWhiteTint) {
+          // Use base color when tint is white
+          minimapCache.fill(baseColor[0], baseColor[1], baseColor[2]);
+        } else {
+          // Apply the tint color
+          minimapCache.fill(variantColor[0], variantColor[1], variantColor[2]);
+        }
       } else {
         minimapCache.fill(baseColor[0], baseColor[1], baseColor[2]);
       }
