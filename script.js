@@ -1,4 +1,8 @@
-let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus;
+let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg;
+
+// Waypoint system
+var waypointCoordinates = [[12700, 12500], [13000, 12800], [12500, 13000]]; // Array of [x, y] coordinates
+var currentWaypointIndex = 0; // Current waypoint to show
 var itemConstructors = [];
 var pX = 12500; var pY = 12500; var playerDamage = 1;
 var prePX = 0, prePY = 0;
@@ -264,6 +268,7 @@ function preload() {
   EnergyTank = loadImage("hud/EnergyTank.png");
   ReforgeLogo = loadImage("REFORGE.png");
   titleScreenImg = loadImage("hud/titleScreen.png");
+  WaypointImg = loadImage("Waypoint.png");
 
   // Intro sequence images
   BunkerImg = loadImage("Buschwick Industries.png");
@@ -485,6 +490,9 @@ function drawGameplay() {
   fill(255);
   drawNPCs();
   drawPlayers();
+  
+  // Draw waypoint arrow
+  drawWaypoint();
 
   // --- Only the gun rotates (isolated) ---
   drawGunDebugRect(); // uses calculateAim()
@@ -992,6 +1000,30 @@ function drawWorldLayer(world, layerIndex) {
 
       // Determine which image to draw (use cached tinted version)
       let imgToDraw = null;
+
+
+// Draw waypoint arrow pointing to current waypoint
+function drawWaypoint() {
+  if (currentWaypointIndex >= waypointCoordinates.length) return; // No more waypoints
+  
+  const targetX = waypointCoordinates[currentWaypointIndex][0];
+  const targetY = waypointCoordinates[currentWaypointIndex][1];
+  
+  // Calculate angle from player to waypoint
+  const playerCenterX = pX + 600 + pWidth / 2;
+  const playerCenterY = pY + 375 + pHeight / 2;
+  const angle = atan2(targetY - playerCenterY, targetX - playerCenterX);
+  
+  // Draw waypoint arrow above player
+  push();
+  translate(playerCenterX, playerCenterY - 80);
+  rotate(angle + HALF_PI); // Add HALF_PI since arrow points down
+  imageMode(CENTER);
+  image(WaypointImg, 0, 0, 40, 40);
+  imageMode(CORNER);
+  pop();
+}
+
       let finalRotation = rotation;
 
       // Check if this is a pipe tile (auto-connect pipes using variants)
