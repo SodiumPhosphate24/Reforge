@@ -292,13 +292,12 @@ function initializeIntro() {
       ]
     }),
 
-    // SCENE 13 - Initialize Game (happens before fade)
+    // SCENE 13 - Initialize Game
     new IntroScene({
       id: "initialize_game",
       type: "transition",
       duration: 1, // Just 1 frame to initialize
-      backgroundColor: [35, 28, 18],
-      backgroundImage: CryochamberImg,
+      backgroundColor: [0, 0, 0],
       onEnter: function() {
         console.log("Initializing game world...");
         
@@ -360,24 +359,28 @@ function initializeIntro() {
         scene.fadeAlpha = 255;
       },
       onExit: function() {
-        console.log("Moving to final fade...");
+        console.log("Moving to exit cryochamber scene...");
       }
     }),
 
-    // SCENE 14 - Exit the Cryochamber Fade
+    // SCENE 14 - Exit the Cryochamber
     new IntroScene({
-      id: "fade_to_game",
-      type: "transition",
-      duration: 90, // 1.5 seconds fade
-      backgroundColor: [35, 28, 18],
-      backgroundImage: CryochamberImg,
+      id: "exit_cryochamber",
+      type: "text",
+      duration: 120, // 2 seconds
+      backgroundColor: [0, 0, 0],
       onEnter: function() {
-        console.log("Starting exit cryochamber fade...");
+        console.log("Showing EXIT THE CRYOCHAMBER...");
       },
       onUpdate: function(timer) {
-        // Fade from black to transparent
-        const scene = introState.scenes[introState.currentSceneIndex];
-        scene.fadeAlpha = map(timer, 0, 90, 255, 0);
+        // Fade in text
+        if (timer < 30) {
+          introState.scenes[introState.currentSceneIndex].textAlpha = map(timer, 0, 30, 0, 255);
+        } else if (timer > 90) {
+          introState.scenes[introState.currentSceneIndex].textAlpha = map(timer, 90, 120, 255, 0);
+        } else {
+          introState.scenes[introState.currentSceneIndex].textAlpha = 255;
+        }
       },
       onExit: function() {
         console.log("Intro complete - game ready");
@@ -435,61 +438,36 @@ function drawIntro() {
 
   const currentScene = introState.scenes[introState.currentSceneIndex];
 
-  // If we're in the final fade scene and game is playing, draw the game underneath
-  if (currentScene.id === "fade_to_game" && gameState === "playing") {
-    // Draw the full game
-    drawGameplay();
-    
-    // Draw fade overlay on top
-    push();
-    fill(0, 0, 0, currentScene.fadeAlpha);
-    noStroke();
-    rect(0, 0, width, height);
-    pop();
-    
-    // Draw "EXIT THE CRYOCHAMBER" text with fade in/out
-    const fadeProgress = currentScene.timer / currentScene.duration;
-    if (fadeProgress < 0.9) {
-      push();
-      textFont(Silkscreen);
-      textAlign(CENTER, CENTER);
-
-      // Calculate text alpha - fade in then fade out
-      let textAlpha;
-      if (fadeProgress < 0.15) {
-        // Fade in
-        textAlpha = map(fadeProgress, 0, 0.15, 0, 255);
-      } else if (fadeProgress < 0.7) {
-        // Stay visible
-        textAlpha = 255;
-      } else {
-        // Fade out
-        textAlpha = map(fadeProgress, 0.7, 0.9, 255, 0);
-      }
-
-      // Draw text with sepia glow
-      textSize(42);
-
-      // Outer glow
-      strokeWeight(6);
-      stroke(112, 66, 20, textAlpha * 0.4);
-      fill(255, 200, 80, textAlpha);
-      text("EXIT THE CRYOCHAMBER", width / 2, height / 2);
-
-      // Inner sharp text
-      noStroke();
-      fill(255, 220, 100, textAlpha);
-      text("EXIT THE CRYOCHAMBER", width / 2, height / 2);
-
-      pop();
-    }
-    
-    return; // Skip rest of intro drawing
-  }
-  
   // If we're in the initialization scene, just show black
   if (currentScene.id === "initialize_game") {
     background(0);
+    return;
+  }
+  
+  // If we're in the exit_cryochamber scene, show custom large text
+  if (currentScene.id === "exit_cryochamber") {
+    background(0);
+    push();
+    textFont(Silkscreen);
+    textAlign(CENTER, CENTER);
+    
+    // Draw large glowing text
+    textSize(64);
+    
+    // Outer glow layers
+    for (let i = 0; i < 3; i++) {
+      strokeWeight(12 - i * 3);
+      stroke(112, 66, 20, currentScene.textAlpha * 0.3);
+      fill(255, 200, 80, currentScene.textAlpha);
+      text("EXIT THE CRYOCHAMBER", width / 2, height / 2);
+    }
+    
+    // Inner sharp text
+    noStroke();
+    fill(255, 220, 100, currentScene.textAlpha);
+    text("EXIT THE CRYOCHAMBER", width / 2, height / 2);
+    
+    pop();
     return;
   }
 
