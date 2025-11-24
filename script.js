@@ -580,6 +580,9 @@ function drawGameplay() {
   doRecoil();
   if (editorMode) {
     drawEditorUI();
+    if (mouseIsPressed) {
+      handleEditorClick();
+    }
   }
 }
 

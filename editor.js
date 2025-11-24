@@ -508,19 +508,16 @@ function drawParticleSources() {
   }
 }
 
-function handleEditorClick(clickButton) {
+function handleEditorClick() {
   if (!(editorMode && gameWorld && gameWorld.length > 0)) return;
   if (cratePlacementPaused) return; // Don't allow clicks when paused
 
   var worldX = mouseX - camX;
   var worldY = mouseY - camY;
 
-  // Use passed button parameter if available, otherwise fall back to mouseButton
-  const button = clickButton !== undefined ? clickButton : mouseButton;
-
   // Handle particle source placement - consume ALL clicks in particle mode
   if (placingParticleSource) {
-    if (button === LEFT) {
+    if (mouseButton === LEFT) {
       particleSources.push({
         x: worldX,
         y: worldY,
@@ -534,7 +531,7 @@ function handleEditorClick(clickButton) {
         duration: particleSourceConfig.duration
       });
       console.log("Placed particle source at", worldX, worldY);
-    } else if (button === RIGHT) {
+    } else if (mouseButton === RIGHT) {
       // Find and delete nearby particle source
       for (let i = particleSources.length - 1; i >= 0; i--) {
         const ps = particleSources[i];
@@ -557,7 +554,7 @@ function handleEditorClick(clickButton) {
   if (gridCol < 0 || gridCol >= gameWorld[gridRow].length) return;
 
   // Alt + Left click = eyedropper from current layer
-  if (keyIsDown(18) && button === LEFT) { // 18 is Alt in p5
+  if (keyIsDown(18) && mouseButton === LEFT) { // 18 is Alt in p5
     if (typeof getTile === 'function') {
       const t = getTile(gridRow, gridCol, editorLayer);
       if (t) {
@@ -573,7 +570,7 @@ function handleEditorClick(clickButton) {
   }
 
   // Right click = erase current layer
-  if (button === RIGHT) {
+  if (mouseButton === RIGHT) {
     if (typeof clearTile === 'function') {
       clearTile(gridRow, gridCol, editorLayer);
       console.log("Erased at row", gridRow, "col", gridCol, "layer", editorLayer);
@@ -585,7 +582,7 @@ function handleEditorClick(clickButton) {
   }
 
   // Left click = paint current layer
-  if (button === LEFT) {
+  if (mouseButton === LEFT) {
     if (typeof setTile === 'function') {
       setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation, tileFlipH, tileFlipV, tileColorIndex);
     } else {
@@ -830,13 +827,5 @@ function handleEditorMouseWheel(event) {
   }
   console.log("Mouse wheel changed to tile type:", selectedTileType);
   return true; // consume wheel in editor mode
-}
-
-// Handle mouse press events for editor (called once per click)
-function mousePressed() {
-  if (editorMode) {
-    // mouseButton is available here during the event
-    handleEditorClick(mouseButton);
-  }
 }
 // ============== END EDITOR (3-LAYER SUPPORT) ==============
