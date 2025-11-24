@@ -919,17 +919,17 @@ function drawWaypoint() {
   // Calculate distance to waypoint
   const distToWaypoint = dist(playerCenterX, playerCenterY, targetX, targetY);
 
-  // Fade out when close (within 1500 units), fade in when far
-  const fadeDistance = 1500;
-  const maxDistance = 2000;
+  // Fade out when close (within 300 units), fade in when far
+  const fadeDistance = 300;
+  const maxDistance = 600;
   let waypointAlpha;
 
   if (distToWaypoint < fadeDistance) {
-    // Close: fade out completely
+    // Close: fade out completely (0 alpha at 0px, 255 alpha at 300px)
     waypointAlpha = map(distToWaypoint, 0, fadeDistance, 0, 255);
   } else if (distToWaypoint < maxDistance) {
-    // Medium distance: fade in
-    waypointAlpha = map(distToWaypoint, fadeDistance, maxDistance, 255, 255);
+    // Medium distance: stay fully visible
+    waypointAlpha = 255;
   } else {
     // Far: fully visible
     waypointAlpha = 255;
