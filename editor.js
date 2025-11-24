@@ -1,4 +1,3 @@
-
 // Tile color reference array - RGB values for each tile type
 // Used for minimap and visual reference
 var tileColorReference = [
@@ -72,35 +71,35 @@ if (typeof window !== "undefined") {
 
 function drawSelectedItemImage() {
   if (typeof itemConstructors === 'undefined' || !itemConstructors.length) return;
-  
+
   // Get the selected item constructor
   const itemData = itemConstructors[selectedItemIndex];
   const itemType = itemData[0];
   const itemName = itemData[1];
   const itemImage = itemData[3]; // Get image from index 3 (4th position)
-  
+
   // Draw the item image centered on screen
   push();
   imageMode(CENTER);
-  
+
   // Draw background box
   fill(0, 0, 0, 200);
   stroke(255, 255, 0);
   strokeWeight(3);
   rectMode(CENTER);
   rect(width / 2, height / 2 - 50, 200, 200, 10);
-  
+
   // Draw the item image
   if (itemImage) {
     // Calculate size to fit in box while maintaining aspect ratio
     const maxSize = 150;
     let displayWidth, displayHeight;
-    
+
     // Get image dimensions to calculate aspect ratio
     const imgWidth = itemImage.width;
     const imgHeight = itemImage.height;
     const aspectRatio = imgHeight / imgWidth; // HtoW ratio
-    
+
     if (aspectRatio > 1) {
       // Height is larger
       displayHeight = maxSize;
@@ -110,21 +109,21 @@ function drawSelectedItemImage() {
       displayWidth = maxSize;
       displayHeight = maxSize * aspectRatio;
     }
-    
+
     image(itemImage, width / 2, height / 2 - 50, displayWidth, displayHeight);
   }
-  
+
   // Draw item name below image
   fill(255, 255, 0);
   noStroke();
   textSize(16);
   textAlign(CENTER, CENTER);
   text(itemName, width / 2, height / 2 + 80);
-  
+
   // Draw counter showing position in list
   textSize(14);
   text(`Item ${selectedItemIndex + 1} of ${itemConstructors.length}`, width / 2, height / 2 + 110);
-  
+
   pop();
 }
 
@@ -147,7 +146,7 @@ function drawEditorUI() {
   textAlign(CENTER);
   text("EDITOR MODE - Press Shift+E to exit", width / 2, 25);
   text("Left-click: place | Right-click: erase | Alt+Click: pick | R: rotate | H: flip horizontal | V: flip vertical", width / 2, 45);
-  
+
   const flipText = (tileFlipH ? "H" : "") + (tileFlipV ? "V" : "") || "none";
   const maxColors = (tileColors[selectedTileType] || [[255, 255, 255]]).length;
   text(
@@ -170,81 +169,81 @@ function drawEditorUI() {
     text("SPACE: Add item | ENTER: Finish crate", width / 2, height - 80);
     text("ARROW KEYS or SCROLL to browse items", width / 2, height - 50);
     text(`Items in crate: ${selectedCrateItems.length}`, width / 2, height - 20);
-    
+
     // Draw selected item image
     drawSelectedItemImage();
   } else {
     drawTilePreview();
   }
-  
+
   // Draw minimap when P is held
   const pKeyPressed = keyIsDown(80); // 80 is 'P'
-  
+
   if (pKeyPressed) {
     // If P just got pressed (transition from not pressed to pressed)
     if (!lastMinimapPress) {
       minimapNeedsRedraw = true;
     }
-    
+
     // Render minimap (either fresh or from cache)
     if (minimapNeedsRedraw) {
       renderMinimapToCache();
       minimapNeedsRedraw = false;
     }
-    
+
     // Draw the cached minimap
     drawCachedMinimap();
-    
+
     // Draw player indicator in real-time (not cached)
     drawMinimapPlayerIndicator();
   }
-  
+
   // Update last frame state
   lastMinimapPress = pKeyPressed;
 }
 
 function renderMinimapToCache() {
   if (!gameWorld || gameWorld.length === 0) return;
-  
+
   const minimapSize = 250;
   const rows = gameWorld.length;
   const cols = gameWorld[0] ? gameWorld[0].length : 0;
-  
+
   if (rows === 0 || cols === 0) return;
-  
+
   // Create graphics buffer for minimap
   if (!minimapCache) {
     minimapCache = createGraphics(minimapSize + 40, minimapSize + 40);
   }
-  
+
   // Clear the cache
   minimapCache.clear();
-  
+
   // Calculate tile size on minimap
   const tileSize = Math.min(minimapSize / cols, minimapSize / rows);
   const mapWidth = cols * tileSize;
   const mapHeight = rows * tileSize;
-  
+
   // Center the map in the minimap area
   const offsetX = 20 + (minimapSize - mapWidth) / 2;
   const offsetY = 20 + (minimapSize - mapHeight) / 2;
-  
+
   // Draw background
   minimapCache.fill(0, 0, 0, 200);
   minimapCache.stroke(255, 255, 0);
   minimapCache.strokeWeight(2);
   minimapCache.rect(20, 20, minimapSize, minimapSize);
-  
+
   minimapCache.noStroke();
-  
+
   // Draw tiles
   for (let i = 0; i < rows; i++) {
     if (!gameWorld[i]) continue;
-    
+
     for (let j = 0; j < cols; j++) {
       const cell = gameWorld[i][j];
       if (!cell) continue;
-      
+
       // Find the highest visible layer
       let tileObj = null;
       if ('layers' in cell) {
@@ -257,15 +256,15 @@ function renderMinimapToCache() {
       } else {
         tileObj = cell;
       }
-      
+
       if (!tileObj) continue;
-      
+
       const tileType = tileObj.type;
       const colorIndex = tileObj.colorIndex || 0;
-      
+
       // Get base color with sepia-toned old map aesthetic
       let baseColor = [140, 130, 110]; // default neutral sepia
-      
+
       if (tileType === 0) baseColor = [135, 125, 95];        // deadGrass - dull greenish-brown
       else if (tileType === 1) baseColor = [85, 80, 70];     // asphalt - dark sepia gray
       else if (tileType === 2) baseColor = [92, 87, 77];     // lined asphalt - slightly lighter gray
@@ -295,23 +294,20 @@ function renderMinimapToCache() {
       else if (tileType === 26) baseColor = [118, 108, 93];  // Stone Brick Wall - slightly darker
       else if (tileType === 27) baseColor = [105, 95, 75];   // Pipe - copper/bronze tone
       else if (tileType === 28) baseColor = [115, 125, 110]; // CopperTileGreen - dull green
-      
+
       // Apply color variant if available
       if (typeof tileColors !== 'undefined' && tileColors[tileType] && tileColors[tileType][colorIndex]) {
         const variantColor = tileColors[tileType][colorIndex];
-        // Blend the variant color with base color for sepia effect
-        const r = Math.floor((baseColor[0] * 0.4) + (variantColor[0] * 0.6 * 0.6));
-        const g = Math.floor((baseColor[1] * 0.4) + (variantColor[1] * 0.6 * 0.55));
-        const b = Math.floor((baseColor[2] * 0.4) + (variantColor[2] * 0.6 * 0.45));
-        minimapCache.fill(r, g, b);
+        // Use variant color directly without sepia blending
+        minimapCache.fill(variantColor[0], variantColor[1], variantColor[2]);
       } else {
         minimapCache.fill(baseColor[0], baseColor[1], baseColor[2]);
       }
-      
+
       minimapCache.rect(offsetX + j * tileSize, offsetY + i * tileSize, tileSize, tileSize);
     }
   }
-  
+
   // Label
   minimapCache.noStroke();
   minimapCache.fill(255, 255, 0);
@@ -322,40 +318,40 @@ function renderMinimapToCache() {
 
 function drawCachedMinimap() {
   if (!minimapCache) return;
-  
+
   const minimapSize = 250;
   const minimapX = width - minimapSize - 20;
   const minimapY = 90;
-  
+
   // Draw the cached minimap image
   image(minimapCache, minimapX - 20, minimapY - 20);
 }
 
 function drawMinimapPlayerIndicator() {
   if (!gameWorld || gameWorld.length === 0) return;
-  
+
   const minimapSize = 250;
   const minimapX = width - minimapSize - 20;
   const minimapY = 90;
-  
+
   const rows = gameWorld.length;
   const cols = gameWorld[0] ? gameWorld[0].length : 0;
-  
+
   if (rows === 0 || cols === 0) return;
-  
+
   // Calculate tile size on minimap
   const tileSize = Math.min(minimapSize / cols, minimapSize / rows);
   const mapWidth = cols * tileSize;
   const mapHeight = rows * tileSize;
-  
+
   // Center the map in the minimap area
   const offsetX = minimapX + (minimapSize - mapWidth) / 2;
   const offsetY = minimapY + (minimapSize - mapHeight) / 2;
-  
+
   // Draw player position
   const playerGridX = Math.floor((pX + 600) / 50);
   const playerGridY = Math.floor((pY + 375) / 50);
-  
+
   fill(255, 0, 0);
   stroke(255, 255, 255);
   strokeWeight(1);
@@ -464,10 +460,10 @@ function handleEditorClick() {
       setTile(gridRow, gridCol, editorLayer, selectedTileType, tileRotation, tileFlipH, tileFlipV, tileColorIndex);
     } else {
       // Fallback if helpers missing (legacy)
-      gameWorld[gridRow][gridCol] = { 
-        type: selectedTileType, 
-        rotation: tileRotation, 
-        flipH: tileFlipH, 
+      gameWorld[gridRow][gridCol] = {
+        type: selectedTileType,
+        rotation: tileRotation,
+        flipH: tileFlipH,
         flipV: tileFlipV,
         colorIndex: tileColorIndex
       };
@@ -501,17 +497,17 @@ function handleEditorKeyPress() {
     }
     return;
   }
-  
+
   // Finalize and close crate menu with Enter
   if (cratePlacementPaused && keyCode === 13) { // 13 is Enter
     // Store the items for this specific crate using its coordinates
     const crateKey = lastCrateRow + "," + lastCrateCol;
     crateInventories.set(crateKey, [...selectedCrateItems]); // Store a copy of the array
     console.log("Stored", selectedCrateItems.length, "items for crate at", crateKey);
-    
+
     // Reset the array for the next crate
     selectedCrateItems = [];
-    
+
     cratePlacementPaused = false;
     console.log("Resumed tile placement");
     return;
@@ -585,7 +581,7 @@ function handleEditorKeyPress() {
 
 function handleEditorMouseWheel(event) {
   if (!editorMode) return false;
-  
+
   // If paused, use wheel to browse items instead
   if (cratePlacementPaused) {
     if (typeof itemConstructors !== 'undefined' && itemConstructors.length > 0) {
