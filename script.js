@@ -421,17 +421,10 @@ function draw() {
     return;
   }
 
-  // Show intro cutscene
+  // Show intro cutscene (now includes fade)
   if (gameState === "intro") {
     updateIntro();
     drawIntro();
-    return;
-  }
-
-  // Fade from intro to gameplay (eyes opening)
-  if (gameState === "fade_to_game") {
-    updateFadeToGame();
-    drawFadeToGame();
     return;
   }
 

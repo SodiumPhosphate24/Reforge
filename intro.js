@@ -296,27 +296,38 @@ function initializeIntro() {
     new IntroScene({
       id: "fade_to_game",
       type: "transition",
-      duration: 120, // 2 seconds fade
+      duration: 90, // 1.5 seconds fade
       backgroundColor: [35, 28, 18],
       backgroundImage: CryochamberImg,
       onEnter: function() {
-        console.log("Starting fade to gameplay...");
-        // Ensure game world is loaded before fade completes
+        console.log("Initializing game world before fade...");
+        
+        // Load game world
         if (gameWorld.length === 0 && worldString.length > 0) {
           gameWorld = stringToWorld(worldString[0]);
         }
         
-        // Initialize player position variables early
+        // Initialize ALL player variables
         pX = players[activePlayer].x;
         pY = players[activePlayer].y;
         pWidth = players[activePlayer].w;
         pHeight = players[activePlayer].h;
+        pSpeed = players[activePlayer].speed;
+        healthPoints = players[activePlayer].health;
+        playerDamage = players[activePlayer].damage;
+        PlayerImage = players[activePlayer].picture;
+        inventoryList = players[activePlayer].inventory;
+        laserEnergy = players[activePlayer].laserEnergy;
         
-        // Initialize roof fade system so roofs are ready before fade completes
+        // Initialize camera to final position immediately
+        camX = -pX;
+        camY = -pY;
+        
+        // Initialize roof fade system completely
         const __roofSeeds = getOverlappingRoofSeeds(pX, pY, pWidth, pHeight);
         floodFillRoof(__roofSeeds);
-        // Step the roof fade multiple times to ensure it's fully faded before game starts
-        for (let i = 0; i < 10; i++) {
+        // Run many iterations to ensure roofs are fully faded
+        for (let i = 0; i < 20; i++) {
           stepRoofFades();
         }
         
@@ -325,42 +336,35 @@ function initializeIntro() {
           currentWaypointIndex = 0;
         }
         
-        // Initialize particles array
+        // Clear particles
         if (typeof particles !== 'undefined') {
           particles.length = 0;
         }
         
-        // Initialize camera position
-        camX = -pX;
-        camY = -pY;
-        
-        console.log("Player position initialized:", pX, pY);
-        console.log("Roof fade system initialized");
-        console.log("All game systems initialized");
-      },
-      onUpdate: function(timer) {
-        // Fade to black as if eyes closing, then opening into the game
-        const scene = introState.scenes[introState.currentSceneIndex];
-        if (timer < 60) {
-          // First half: fade to black (eyes closing)
-          scene.fadeAlpha = map(timer, 0, 60, 0, 255);
-        } else {
-          // Second half: stay black (brief moment)
-          scene.fadeAlpha = 255;
+        // Initialize indicator position
+        if (typeof indicatorCurrentX !== 'undefined') {
+          indicatorCurrentX = pX + 600;
+          indicatorCurrentY = pY + 375;
+          indicatorTargetX = indicatorCurrentX;
+          indicatorTargetY = indicatorCurrentY;
         }
         
-        // Continue updating roof fade during transition
-        const __roofSeeds = getOverlappingRoofSeeds(pX, pY, pWidth, pHeight);
-        floodFillRoof(__roofSeeds);
-        stepRoofFades();
+        // Switch to playing state NOW, before fade begins
+        gameState = "playing";
         
-        // Update camera smoothly
-        camX -= (camX + pX) * 0.1;
-        camY -= (camY + pY) * 0.1;
+        console.log("Game fully initialized and playing");
+      },
+      onUpdate: function(timer) {
+        // Just fade from black to transparent
+        const scene = introState.scenes[introState.currentSceneIndex];
+        scene.fadeAlpha = map(timer, 0, 90, 255, 0);
       },
       onExit: function() {
-        // Transition to main game
-        console.log("Intro sequence complete - transitioning to gameplay");
+        console.log("Intro fade complete");
+        // Start tutorial if available
+        if (typeof startTutorial === 'function') {
+          startTutorial();
+        }
       }
     })
   ];
@@ -411,6 +415,21 @@ function drawIntro() {
 
   const currentScene = introState.scenes[introState.currentSceneIndex];
 
+  // If we're in the final fade scene and game is playing, draw the game underneath
+  if (currentScene.id === "fade_to_game" && gameState === "playing") {
+    // Draw the full game
+    drawGameplay();
+    
+    // Draw fade overlay on top
+    push();
+    fill(0, 0, 0, currentScene.fadeAlpha);
+    noStroke();
+    rect(0, 0, width, height);
+    pop();
+    
+    return; // Skip rest of intro drawing
+  }
+
   // Apply camera shake
   push();
   translate(cameraShakeX, cameraShakeY);
@@ -457,8 +476,8 @@ function drawIntro() {
       break;
     case "transition":
       // Transition scenes show background with effects
-      if (currentScene.fadeAlpha !== undefined) {
-        // Draw fade overlay for eye-closing effect
+      if (currentScene.fadeAlpha !== undefined && currentScene.id !== "fade_to_game") {
+        // Draw fade overlay for eye-closing effect (but not for final fade)
         push();
         fill(0, 0, 0, currentScene.fadeAlpha);
         noStroke();
