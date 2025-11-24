@@ -171,7 +171,7 @@ function drawEditorUI() {
     " | Tile: " + selectedTileType +
     " | Rotation: " + tileRotation + "° | Flip: " + flipText +
     " | Color: " + tileColorIndex + "/" + (maxColors - 1) +
-    " | [ ] to change color | P for Particles",
+    " | [ ] to change color | O for Particles",
     width / 2, 65
   );
 
@@ -709,8 +709,8 @@ function handleEditorKeyPress() {
     console.log("Color index:", tileColorIndex);
   }
 
-  // P to toggle particle source placement mode
-  if (keyCode == 80) { // P
+  // O to toggle particle source placement mode
+  if (keyCode == 79) { // O
     placingParticleSource = !placingParticleSource;
     console.log("Particle source mode:", placingParticleSource);
   }
