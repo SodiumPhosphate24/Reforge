@@ -496,9 +496,6 @@ function drawGameplay() {
 
   fill(255);
   drawPlayers();
-  
-  // Draw waypoint arrow
-  drawWaypoint();
 
   // --- Only the gun rotates (isolated) ---
   drawGunDebugRect(); // uses calculateAim()
@@ -521,6 +518,9 @@ function drawGameplay() {
 
   // Draw NPC prompt after camera pop (screen-fixed)
   drawNPCPromptIfNeeded();
+  
+  // Draw waypoint arrow (screen-fixed at edge)
+  drawWaypoint();
 
   drawUI();
   messageDisplay();
@@ -827,17 +827,73 @@ function drawWaypoint() {
   const targetX = waypointCoordinates[currentWaypointIndex][0];
   const targetY = waypointCoordinates[currentWaypointIndex][1];
   
-  // Calculate angle from player to waypoint
+  // Calculate player center in world coordinates
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
+  
+  // Calculate distance to waypoint
+  const distToWaypoint = dist(playerCenterX, playerCenterY, targetX, targetY);
+  
+  // Fade out when close (within 100 units), fade in when far
+  const fadeDistance = 100;
+  const maxDistance = 300;
+  let waypointAlpha;
+  
+  if (distToWaypoint < fadeDistance) {
+    // Close: fade out completely
+    waypointAlpha = map(distToWaypoint, 0, fadeDistance, 0, 255);
+  } else if (distToWaypoint < maxDistance) {
+    // Medium distance: fade in
+    waypointAlpha = map(distToWaypoint, fadeDistance, maxDistance, 255, 255);
+  } else {
+    // Far: fully visible
+    waypointAlpha = 255;
+  }
+  
+  if (waypointAlpha < 5) return; // Don't draw if nearly invisible
+  
+  // Calculate angle from player to waypoint
   const angle = atan2(targetY - playerCenterY, targetX - playerCenterX);
   
-  // Draw waypoint arrow above player
+  // Calculate position on screen edge
+  // Screen center is at (width/2, height/2) = (600, 375)
+  const screenCenterX = width / 2;
+  const screenCenterY = height / 2;
+  
+  // Calculate direction vector
+  const dirX = cos(angle);
+  const dirY = sin(angle);
+  
+  // Screen boundaries with padding
+  const padding = 40; // Keep arrow away from edge
+  const minX = padding;
+  const maxX = width - padding;
+  const minY = padding;
+  const maxY = height - padding;
+  
+  // Find intersection with screen boundaries
+  // Start from center and extend until hitting boundary
+  let arrowX = screenCenterX;
+  let arrowY = screenCenterY;
+  
+  // Calculate which edge the arrow should be on
+  // Use the angle to determine the boundary intersection
+  const t = Math.min(
+    dirX > 0 ? (maxX - screenCenterX) / dirX : (minX - screenCenterX) / dirX,
+    dirY > 0 ? (maxY - screenCenterY) / dirY : (minY - screenCenterY) / dirY
+  );
+  
+  arrowX = screenCenterX + dirX * t;
+  arrowY = screenCenterY + dirY * t;
+  
+  // Draw waypoint arrow at screen edge (world coordinates already handled by camera)
   push();
-  translate(playerCenterX, playerCenterY - 80);
-  rotate(angle + HALF_PI); // Add HALF_PI since arrow points down
+  translate(arrowX, arrowY);
+  rotate(angle + HALF_PI); // Add HALF_PI since arrow points down by default
   imageMode(CENTER);
+  tint(255, waypointAlpha);
   image(WaypointImg, 0, 0, 40, 40);
+  noTint();
   imageMode(CORNER);
   pop();
 }
