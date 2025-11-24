@@ -265,35 +265,35 @@ function renderMinimapToCache() {
       // Get base color based on tile name
       let baseColor = [140, 130, 110]; // default neutral
 
-      if (tileType === 0) baseColor = [160, 140, 90];        // deadGrass - dead yellow-brown grass
-      else if (tileType === 1) baseColor = [50, 50, 50];     // asphalt - dark gray road
-      else if (tileType === 2) baseColor = [60, 60, 60];     // lined asphalt - slightly lighter gray
-      else if (tileType === 3) baseColor = [180, 180, 180];  // Concrete - light gray
-      else if (tileType === 4) baseColor = [140, 70, 50];    // Brick - reddish-brown brick
-      else if (tileType === 5) baseColor = [150, 120, 70];   // Crate - wooden crate brown
-      else if (tileType === 6) baseColor = [100, 100, 100];  // Workbench - metal gray
-      else if (tileType === 7) baseColor = [120, 85, 60];    // dirt - brown earth
-      else if (tileType === 8) baseColor = [40, 40, 40];     // darkConcrete - very dark gray
-      else if (tileType === 9) baseColor = [110, 80, 50];    // door - wooden door brown
+      if (tileType === 0) baseColor = [110, 130, 85];        // deadGrass - greenish grass
+      else if (tileType === 1) baseColor = [60, 60, 60];     // asphalt - gray road
+      else if (tileType === 2) baseColor = [70, 70, 70];     // lined asphalt - slightly lighter gray road
+      else if (tileType === 3) baseColor = [160, 160, 160];  // Concrete - medium gray
+      else if (tileType === 4) baseColor = [150, 80, 60];    // Brick - reddish brick
+      else if (tileType === 5) baseColor = [140, 110, 75];   // Crate - wooden crate brown
+      else if (tileType === 6) baseColor = [90, 90, 90];     // Workbench - metal gray
+      else if (tileType === 7) baseColor = [110, 80, 55];    // dirt - brown earth
+      else if (tileType === 8) baseColor = [45, 45, 45];     // darkConcrete - very dark gray
+      else if (tileType === 9) baseColor = [120, 90, 60];    // door - wooden door brown
       else if (tileType === 10) baseColor = [150, 180, 200]; // window - light blue glass
-      else if (tileType === 11) baseColor = [90, 90, 90];    // crack - medium gray damage
-      else if (tileType === 12) baseColor = [140, 100, 60];  // wood - medium brown wood
-      else if (tileType === 13) baseColor = [220, 220, 220]; // whiteConcrete - off-white
-      else if (tileType === 14) baseColor = [100, 70, 50];   // barnDoor - dark barn wood
-      else if (tileType === 15) baseColor = [140, 160, 170]; // barnWindow - grayish-blue
-      else if (tileType === 16) baseColor = [130, 100, 70];  // fence - weathered wood
-      else if (tileType === 17) baseColor = [130, 100, 70];  // fenceCorner - weathered wood
-      else if (tileType === 18) baseColor = [130, 100, 70];  // fenceDown - weathered wood
-      else if (tileType === 19) baseColor = [130, 100, 70];  // fenceEdge - weathered wood
-      else if (tileType === 20) baseColor = [130, 100, 70];  // fencePost - weathered wood
+      else if (tileType === 11) baseColor = [85, 85, 85];    // crack - medium gray damage
+      else if (tileType === 12) baseColor = [130, 100, 65];  // wood - medium brown wood
+      else if (tileType === 13) baseColor = [210, 210, 210]; // whiteConcrete - light gray
+      else if (tileType === 14) baseColor = [105, 75, 50];   // barnDoor - dark barn wood
+      else if (tileType === 15) baseColor = [135, 155, 165]; // barnWindow - grayish-blue
+      else if (tileType === 16) baseColor = [125, 95, 65];   // fence - weathered wood
+      else if (tileType === 17) baseColor = [125, 95, 65];   // fenceCorner - weathered wood
+      else if (tileType === 18) baseColor = [125, 95, 65];   // fenceDown - weathered wood
+      else if (tileType === 19) baseColor = [125, 95, 65];   // fenceEdge - weathered wood
+      else if (tileType === 20) baseColor = [125, 95, 65];   // fencePost - weathered wood
       else if (tileType === 21) baseColor = [100, 100, 100]; // Grave 1 - stone gray
       else if (tileType === 22) baseColor = [95, 95, 95];    // Grave 2 - slightly darker stone
       else if (tileType === 23) baseColor = [105, 105, 105]; // Grave 3 - slightly lighter stone
-      else if (tileType === 24) baseColor = [80, 70, 60];    // Rail - rusty metal brown
-      else if (tileType === 25) baseColor = [120, 120, 110]; // Stone Brick - gray stone
-      else if (tileType === 26) baseColor = [115, 115, 105]; // Stone Brick Wall - darker stone
-      else if (tileType === 27) baseColor = [160, 110, 80];  // Pipe - copper/bronze
-      else if (tileType === 28) baseColor = [100, 140, 120]; // CopperTileGreen - greenish copper patina
+      else if (tileType === 24) baseColor = [75, 65, 55];    // Rail - rusty metal brown
+      else if (tileType === 25) baseColor = [140, 130, 110]; // Stone Brick - sepia stone
+      else if (tileType === 26) baseColor = [135, 125, 105]; // Stone Brick Wall - darker sepia stone
+      else if (tileType === 27) baseColor = [165, 115, 85];  // Pipe - copper/bronze
+      else if (tileType === 28) baseColor = [95, 135, 115];  // CopperTileGreen - greenish copper patina
 
       // Apply color variant if available (adjust base color slightly)
       if (typeof tileColors !== 'undefined' && tileColors[tileType] && tileColors[tileType][colorIndex]) {
