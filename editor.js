@@ -71,7 +71,6 @@ var particleSourceConfig = {
   spawnRate: 5,     // Particles per frame
   duration: 60      // Particle lifetime in frames
 };
-var lastMousePressed = false; // Track previous mouse state for particle placement
 
 // Minimap caching variables
 var minimapCache = null;     // Cached screenshot of the minimap
@@ -518,43 +517,35 @@ function handleEditorClick() {
 
   // Handle particle source placement - consume ALL clicks in particle mode
   if (placingParticleSource) {
-    // Only place on mouse release (mouseIsPressed was true, now false)
-    if (!mouseIsPressed && lastMousePressed) {
-      if (mouseButton === LEFT) {
-        particleSources.push({
-          x: worldX,
-          y: worldY,
-          arcStart: particleSourceConfig.arcStart,
-          arcEnd: particleSourceConfig.arcEnd,
-          color: [...particleSourceConfig.color],
-          size: particleSourceConfig.size,
-          sizeVariance: particleSourceConfig.sizeVariance,
-          speed: particleSourceConfig.speed,
-          spawnRate: particleSourceConfig.spawnRate,
-          duration: particleSourceConfig.duration
-        });
-        console.log("Placed particle source at", worldX, worldY);
-      } else if (mouseButton === RIGHT) {
-        // Find and delete nearby particle source
-        for (let i = particleSources.length - 1; i >= 0; i--) {
-          const ps = particleSources[i];
-          const d = dist(worldX, worldY, ps.x, ps.y);
-          if (d < 25) {
-            particleSources.splice(i, 1);
-            console.log("Deleted particle source", i);
-            break;
-          }
+    if (mouseButton === LEFT) {
+      particleSources.push({
+        x: worldX,
+        y: worldY,
+        arcStart: particleSourceConfig.arcStart,
+        arcEnd: particleSourceConfig.arcEnd,
+        color: [...particleSourceConfig.color],
+        size: particleSourceConfig.size,
+        sizeVariance: particleSourceConfig.sizeVariance,
+        speed: particleSourceConfig.speed,
+        spawnRate: particleSourceConfig.spawnRate,
+        duration: particleSourceConfig.duration
+      });
+      console.log("Placed particle source at", worldX, worldY);
+    } else if (mouseButton === RIGHT) {
+      // Find and delete nearby particle source
+      for (let i = particleSources.length - 1; i >= 0; i--) {
+        const ps = particleSources[i];
+        const d = dist(worldX, worldY, ps.x, ps.y);
+        if (d < 25) {
+          particleSources.splice(i, 1);
+          console.log("Deleted particle source", i);
+          break;
         }
       }
     }
-    // Update mouse state
-    lastMousePressed = mouseIsPressed;
     // Always return when in particle mode to prevent tile placement
     return;
   }
-  
-  // Update mouse state for non-particle mode too
-  lastMousePressed = mouseIsPressed;
 
   var gridCol = Math.floor(worldX / EDIT_TILE_SIZE);
   var gridRow = Math.floor(worldY / EDIT_TILE_SIZE);
