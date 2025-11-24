@@ -828,4 +828,12 @@ function handleEditorMouseWheel(event) {
   console.log("Mouse wheel changed to tile type:", selectedTileType);
   return true; // consume wheel in editor mode
 }
+
+// Handle mouse press events for editor (called once per click)
+function mousePressed() {
+  if (editorMode) {
+    handleEditorClick();
+    return false; // Prevent default behavior
+  }
+}
 // ============== END EDITOR (3-LAYER SUPPORT) ==============
