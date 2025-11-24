@@ -814,6 +814,28 @@ function coordsToGrid(x, y) {
   };
 }
 
+// Draw waypoint arrow pointing to current waypoint
+function drawWaypoint() {
+  if (currentWaypointIndex >= waypointCoordinates.length) return; // No more waypoints
+  
+  const targetX = waypointCoordinates[currentWaypointIndex][0];
+  const targetY = waypointCoordinates[currentWaypointIndex][1];
+  
+  // Calculate angle from player to waypoint
+  const playerCenterX = pX + 600 + pWidth / 2;
+  const playerCenterY = pY + 375 + pHeight / 2;
+  const angle = atan2(targetY - playerCenterY, targetX - playerCenterX);
+  
+  // Draw waypoint arrow above player
+  push();
+  translate(playerCenterX, playerCenterY - 80);
+  rotate(angle + HALF_PI); // Add HALF_PI since arrow points down
+  imageMode(CENTER);
+  image(WaypointImg, 0, 0, 40, 40);
+  imageMode(CORNER);
+  pop();
+}
+
 // Check if a tile has the same type as another (for auto-tiling)
 function isSameTileType(row, col, layer, tileType) {
   const tile = getTile(row, col, layer);
@@ -1000,30 +1022,6 @@ function drawWorldLayer(world, layerIndex) {
 
       // Determine which image to draw (use cached tinted version)
       let imgToDraw = null;
-
-
-// Draw waypoint arrow pointing to current waypoint
-function drawWaypoint() {
-  if (currentWaypointIndex >= waypointCoordinates.length) return; // No more waypoints
-  
-  const targetX = waypointCoordinates[currentWaypointIndex][0];
-  const targetY = waypointCoordinates[currentWaypointIndex][1];
-  
-  // Calculate angle from player to waypoint
-  const playerCenterX = pX + 600 + pWidth / 2;
-  const playerCenterY = pY + 375 + pHeight / 2;
-  const angle = atan2(targetY - playerCenterY, targetX - playerCenterX);
-  
-  // Draw waypoint arrow above player
-  push();
-  translate(playerCenterX, playerCenterY - 80);
-  rotate(angle + HALF_PI); // Add HALF_PI since arrow points down
-  imageMode(CENTER);
-  image(WaypointImg, 0, 0, 40, 40);
-  imageMode(CORNER);
-  pop();
-}
-
       let finalRotation = rotation;
 
       // Check if this is a pipe tile (auto-connect pipes using variants)
