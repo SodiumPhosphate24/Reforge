@@ -265,7 +265,7 @@ function renderMinimapToCache() {
       // Get base color - distinct colors for each tile type
       let baseColor = [140, 130, 110]; // default neutral
 
-      if (tileType === 0) baseColor = [95, 115, 75];         // deadGrass - muted greenish
+      if (tileType === 0) baseColor = [50, 160, 50];         // deadGrass - bright green
       else if (tileType === 1) baseColor = [50, 50, 50];     // asphalt - dark gray road
       else if (tileType === 2) baseColor = [65, 65, 65];     // lined asphalt - lighter gray
       else if (tileType === 3) baseColor = [150, 150, 150];  // Concrete - medium gray
