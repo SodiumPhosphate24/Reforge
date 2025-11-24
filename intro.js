@@ -292,15 +292,15 @@ function initializeIntro() {
       ]
     }),
 
-    // SCENE 13 - Fade to Game (Eyelids Opening)
+    // SCENE 13 - Initialize Game (happens before fade)
     new IntroScene({
-      id: "fade_to_game",
+      id: "initialize_game",
       type: "transition",
-      duration: 90, // 1.5 seconds fade
+      duration: 1, // Just 1 frame to initialize
       backgroundColor: [35, 28, 18],
       backgroundImage: CryochamberImg,
       onEnter: function() {
-        console.log("Initializing game world before fade...");
+        console.log("Initializing game world...");
         
         // Load game world
         if (gameWorld.length === 0 && worldString.length > 0) {
@@ -349,18 +349,38 @@ function initializeIntro() {
           indicatorTargetY = indicatorCurrentY;
         }
         
-        // Switch to playing state NOW, before fade begins
+        // Switch to playing state NOW
         gameState = "playing";
         
         console.log("Game fully initialized and playing");
       },
       onUpdate: function(timer) {
-        // Just fade from black to transparent
+        // Keep screen black during initialization
+        const scene = introState.scenes[introState.currentSceneIndex];
+        scene.fadeAlpha = 255;
+      },
+      onExit: function() {
+        console.log("Moving to final fade...");
+      }
+    }),
+
+    // SCENE 14 - Exit the Cryochamber Fade
+    new IntroScene({
+      id: "fade_to_game",
+      type: "transition",
+      duration: 90, // 1.5 seconds fade
+      backgroundColor: [35, 28, 18],
+      backgroundImage: CryochamberImg,
+      onEnter: function() {
+        console.log("Starting exit cryochamber fade...");
+      },
+      onUpdate: function(timer) {
+        // Fade from black to transparent
         const scene = introState.scenes[introState.currentSceneIndex];
         scene.fadeAlpha = map(timer, 0, 90, 255, 0);
       },
       onExit: function() {
-        console.log("Intro fade complete");
+        console.log("Intro complete - game ready");
         // Start tutorial if available
         if (typeof startTutorial === 'function') {
           startTutorial();
@@ -427,7 +447,50 @@ function drawIntro() {
     rect(0, 0, width, height);
     pop();
     
+    // Draw "EXIT THE CRYOCHAMBER" text with fade in/out
+    const fadeProgress = currentScene.timer / currentScene.duration;
+    if (fadeProgress < 0.9) {
+      push();
+      textFont(Silkscreen);
+      textAlign(CENTER, CENTER);
+
+      // Calculate text alpha - fade in then fade out
+      let textAlpha;
+      if (fadeProgress < 0.15) {
+        // Fade in
+        textAlpha = map(fadeProgress, 0, 0.15, 0, 255);
+      } else if (fadeProgress < 0.7) {
+        // Stay visible
+        textAlpha = 255;
+      } else {
+        // Fade out
+        textAlpha = map(fadeProgress, 0.7, 0.9, 255, 0);
+      }
+
+      // Draw text with sepia glow
+      textSize(42);
+
+      // Outer glow
+      strokeWeight(6);
+      stroke(112, 66, 20, textAlpha * 0.4);
+      fill(255, 200, 80, textAlpha);
+      text("EXIT THE CRYOCHAMBER", width / 2, height / 2);
+
+      // Inner sharp text
+      noStroke();
+      fill(255, 220, 100, textAlpha);
+      text("EXIT THE CRYOCHAMBER", width / 2, height / 2);
+
+      pop();
+    }
+    
     return; // Skip rest of intro drawing
+  }
+  
+  // If we're in the initialization scene, just show black
+  if (currentScene.id === "initialize_game") {
+    background(0);
+    return;
   }
 
   // Apply camera shake
