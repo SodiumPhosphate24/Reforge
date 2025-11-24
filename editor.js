@@ -1,7 +1,7 @@
 // Tile color reference array - RGB values for each tile type
 // Used for minimap and visual reference
 var tileColorReference = [
-  [180, 160, 120],  // 0 - deadGrass - tan/beige
+  [100, 160, 110],  // 0 - deadGrass - tan/beige
   [60, 60, 60],     // 1 - asphalt - dark gray
   [70, 70, 70],     // 2 - lined asphalt - slightly lighter gray
   [200, 200, 200],  // 3 - Concrete - light gray
