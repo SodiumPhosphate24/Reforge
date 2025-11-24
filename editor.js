@@ -784,17 +784,17 @@ function handleEditorKeyPress() {
     
     // 7-9 to adjust RGB color
     if (keyCode == 55) {
-      const delta = keyIsDown(SHIFT) ? -25 : 25;
+      const delta = keyIsDown(SHIFT) ? -5 : 5;
       particleSourceConfig.color[0] = (particleSourceConfig.color[0] + delta + 256) % 256;
       console.log("Color R:", particleSourceConfig.color[0]);
     }
     if (keyCode == 56) {
-      const delta = keyIsDown(SHIFT) ? -25 : 25;
+      const delta = keyIsDown(SHIFT) ? -5 : 5;
       particleSourceConfig.color[1] = (particleSourceConfig.color[1] + delta + 256) % 256;
       console.log("Color G:", particleSourceConfig.color[1]);
     }
     if (keyCode == 57) {
-      const delta = keyIsDown(SHIFT) ? -25 : 25;
+      const delta = keyIsDown(SHIFT) ? -5 : 5;
       particleSourceConfig.color[2] = (particleSourceConfig.color[2] + delta + 256) % 256;
       console.log("Color B:", particleSourceConfig.color[2]);
     }
