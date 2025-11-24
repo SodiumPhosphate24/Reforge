@@ -919,8 +919,8 @@ function drawWaypoint() {
   // Calculate distance to waypoint
   const distToWaypoint = dist(playerCenterX, playerCenterY, targetX, targetY);
 
-  // Fade out when close (within 200 units), fade in when far
-  const fadeDistance = 200;
+  // Fade out when close (within 250 units), fade in when far
+  const fadeDistance = 250;
   const maxDistance = 400;
   let waypointAlpha;
 
