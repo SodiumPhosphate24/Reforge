@@ -226,21 +226,37 @@ function renderMinimapToCache() {
       
       const tileType = tileObj.type;
       
-      // Color code tiles by type
-      if (tileType === 0) minimapCache.fill(100, 150, 100);
-      else if (tileType === 1) minimapCache.fill(80, 80, 80);
-      else if (tileType === 2) minimapCache.fill(90, 90, 90);
-      else if (tileType === 3) minimapCache.fill(150, 150, 150);
-      else if (tileType === 4) minimapCache.fill(160, 80, 60);
-      else if (tileType === 5) minimapCache.fill(200, 150, 100);
-      else if (tileType === 6) minimapCache.fill(100, 100, 200);
-      else if (tileType === 7) minimapCache.fill(120, 90, 60);
-      else if (tileType === 8) minimapCache.fill(60, 60, 60);
-      else if (tileType === 9) minimapCache.fill(139, 90, 60);
-      else if (tileType === 10) minimapCache.fill(173, 216, 230);
-      else if (tileType === 11) minimapCache.fill(100, 100, 100);
-      else if (tileType === 12) minimapCache.fill(139, 90, 43);
-      else minimapCache.fill(200, 200, 200);
+      // Color code tiles by type - sepia-toned old map aesthetic
+      if (tileType === 0) minimapCache.fill(135, 125, 95);        // deadGrass - dull greenish-brown
+      else if (tileType === 1) minimapCache.fill(85, 80, 70);     // asphalt - dark sepia gray
+      else if (tileType === 2) minimapCache.fill(90, 85, 75);     // lined asphalt - slightly lighter gray
+      else if (tileType === 3) minimapCache.fill(145, 135, 115);  // Concrete - light sepia gray
+      else if (tileType === 4) minimapCache.fill(130, 95, 75);    // Brick - reddish-brown sepia
+      else if (tileType === 5) minimapCache.fill(150, 130, 100);  // Crate - tan/brown
+      else if (tileType === 6) minimapCache.fill(110, 105, 130);  // Workbench - dull purple-gray
+      else if (tileType === 7) minimapCache.fill(115, 100, 80);   // dirt - brown
+      else if (tileType === 8) minimapCache.fill(70, 65, 55);     // darkConcrete - very dark gray
+      else if (tileType === 9) minimapCache.fill(125, 100, 75);   // door - warm brown
+      else if (tileType === 10) minimapCache.fill(130, 140, 145); // window - dull blue-gray
+      else if (tileType === 11) minimapCache.fill(105, 100, 90);  // crack - medium gray
+      else if (tileType === 12) minimapCache.fill(130, 105, 80);  // wood - brown
+      else if (tileType === 13) minimapCache.fill(155, 150, 135); // whiteConcrete - off-white sepia
+      else if (tileType === 14) minimapCache.fill(120, 95, 70);   // barnDoor - darker brown
+      else if (tileType === 15) minimapCache.fill(125, 135, 140); // barnWindow - dull blue-gray
+      else if (tileType === 16) minimapCache.fill(125, 110, 85);  // fence - wood tone
+      else if (tileType === 17) minimapCache.fill(125, 110, 85);  // fenceCorner
+      else if (tileType === 18) minimapCache.fill(125, 110, 85);  // fenceDown
+      else if (tileType === 19) minimapCache.fill(125, 110, 85);  // fenceEdge
+      else if (tileType === 20) minimapCache.fill(125, 110, 85);  // fencePost
+      else if (tileType === 21) minimapCache.fill(110, 105, 100); // Grave 1 - stone gray
+      else if (tileType === 22) minimapCache.fill(110, 105, 100); // Grave 2
+      else if (tileType === 23) minimapCache.fill(110, 105, 100); // Grave 3
+      else if (tileType === 24) minimapCache.fill(95, 85, 70);    // Rail - metallic brown
+      else if (tileType === 25) minimapCache.fill(120, 110, 95);  // Stone Brick - stone sepia
+      else if (tileType === 26) minimapCache.fill(120, 110, 95);  // Stone Brick Wall
+      else if (tileType === 27) minimapCache.fill(105, 95, 75);   // Pipe - copper/bronze tone
+      else if (tileType === 28) minimapCache.fill(115, 125, 110); // CopperTileGreen - dull green
+      else minimapCache.fill(140, 130, 110);                      // default - neutral sepia
       
       minimapCache.rect(offsetX + j * tileSize, offsetY + i * tileSize, tileSize, tileSize);
     }
