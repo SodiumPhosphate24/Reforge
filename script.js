@@ -52,7 +52,7 @@ var tileColors = [
   [[240, 210, 170]], // 27 - Pipe
   [[240, 210, 170]], // 28 - CopperTileGreen
   [[255, 255, 255]] // 29 - Gravel
-  
+
 ];
 
 // Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image
@@ -232,9 +232,9 @@ function preload() {
   itemImgs[2] = loadImage("Items/Consumables/CommonBattery.png");
   itemImgs[3] = loadImage("Items/Consumables/RareBattery.png");
   itemImgs[4] = loadImage("Items/Consumables/LegendaryBattery.png");
-  matImgs[0] = loadImage("Items/Materials/CommonCard.png");
-  matImgs[1] = loadImage("Items/Materials/RareCard.png");
-  matImgs[2] = loadImage("Items/Materials/LegendaryCard.png");
+  matImgs[0] = loadImage("Items/Materials/CommonWheel.png");
+  matImgs[1] = loadImage("Items/Materials/RareWheel.png");
+  matImgs[2] = loadImage("Items/Materials/LegendaryWheel.png");
   matImgs[3] = loadImage("Items/Materials/Wires.png");
   projImgs[0] = loadImage("Items/Projectiles/Grenade.png");
   projImgs[1] = loadImage("Items/Projectiles/Rock.png");
@@ -380,6 +380,7 @@ function setup() {
   // Now parse the world with itemConstructors available
   gameWorld = stringToWorld(worldString[0]);
   console.log(worldString);
+  players.push(new Player(12500, 12500, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
 
   NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", [" : Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
   inventoryList = players[activePlayer].inventory;
