@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg;
+let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg;
 
 // Waypoint system
 var waypointCoordinates = [[12700, 12500], [13000, 12800], [12500, 13000]]; // Array of [x, y] coordinates
@@ -16,8 +16,8 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen"];
-var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel"];
+var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
@@ -50,7 +50,9 @@ var tileColors = [
   [[255, 255, 255], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]],  // 25 - Stone Brick (default white, light sepia, medium-light sepia, medium sepia, darker sepia)
   [[255, 255, 255], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]], // 26 - Stone Brick Wall
   [[240, 210, 170]], // 27 - Pipe
-  [[240, 210, 170]] // 28 - CopperTileGreen
+  [[240, 210, 170]], // 28 - CopperTileGreen
+  [[255, 255, 255]] // 29 - Gravel
+  
 ];
 
 // Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image
@@ -378,9 +380,6 @@ function setup() {
   // Now parse the world with itemConstructors available
   gameWorld = stringToWorld(worldString[0]);
   console.log(worldString);
-  players.push(new Player(12500, 12500, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
-  players.push(new Player(0, 100, 100, 100, .5, 350, playerDamage, PlayerImage));
-  players.push(new Player(500, 100, 25, 25, 2, healthPoints, playerDamage, PlayerImage));
 
   NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", [" : Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
   inventoryList = players[activePlayer].inventory;
