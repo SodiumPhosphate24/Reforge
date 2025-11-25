@@ -185,6 +185,11 @@ class Item {
         this.image = matImgs[3];
         this.HtoW = 1;
       }
+      if (name == "pipe") {
+        this.name = name;
+        this.image = matImgs[4];
+        this.HtoW = 1;
+      }
     }
 
     if (type == "projectile") {

@@ -13,20 +13,21 @@ var selectedTab = 0;
 var craftingRecipes = [
   // ROBOTS
   {
-    name: "Busch-I",
+    name: "SPUD",
     category: "Robots",
     type: "player",
     unlocked : true,
     playerConstructor: {width : 35, height : 25, speed : 1.3, health : 100, damage : 1},
     ingredients: [
-      { itemName: "common CPU", amount: 1 },
-      { itemName: "common battery", amount: 1 },
-      { itemName: "cheese", amount: 1}
+      { itemName: "common wheel", amount: 2 },
+      { itemName: "common cartridge", amount: 1 },
+      { itemName: "cog", amount: 1 },
+      { itemName: "pipe", amount: 1 }
     ],
-    output: { type: "player", name: "busch-I", amount: 1 }
+    output: { type: "player", name: "SPUD", amount: 1 }
   },
   {
-    name: "Fast Buschy",
+    name: "SCAMPER",
     category: "Robots",
     type: "player",
     unlocked : false,
@@ -36,10 +37,10 @@ var craftingRecipes = [
       { itemName: "cheese", amount: 1 },
       { itemName: "soda", amount: 1 }
     ],
-    output: { type: "player", name: "fast buschy", amount: 1 }
+    output: { type: "player", name: "SCAMPER", amount: 1 }
   },
   {
-    name: "Fat Buschy",
+    name: "STUR-D",
     category: "Robots",
     type: "player",
     unlocked : false,
@@ -49,7 +50,7 @@ var craftingRecipes = [
       { itemName: "cheese", amount: 5 },
       { itemName: "legendary CPU", amount: 1 }
     ],
-    output: { type: "player", name: "fat buschy", amount: 1 }
+    output: { type: "player", name: "STUR-D", amount: 1 }
   },
   // WEAPONS
   {

@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg;
+let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg;
 
 // Waypoint system
 var waypointCoordinates = [[12700, 12500], [13000, 12800], [12500, 13000]]; // Array of [x, y] coordinates
@@ -253,6 +253,7 @@ function preload() {
   matImgs[1] = loadImage("Items/Materials/RareWheel.png");
   matImgs[2] = loadImage("Items/Materials/LegendaryWheel.png");
   matImgs[3] = loadImage("Items/Materials/Cog.png");
+  matImgs[4] = loadImage("Tiles/Pipe.png");
   projImgs[0] = loadImage("Items/Projectiles/Grenade.png");
   projImgs[1] = loadImage("Items/Projectiles/Rock.png");
   InventoryImg = loadImage("hud/Inventory.png");
@@ -391,7 +392,8 @@ function setup() {
     ["material", "common wheel", 1, matImgs[0]],
     ["material", "rare wheel", 1, matImgs[1]],
     ["material", "legendary wheel", 1, matImgs[2]],
-    ["material", "cog", 1, matImgs[3]]
+    ["material", "cog", 1, matImgs[3]],
+    ["material", "pipe", 1, matImgs[4]]
   ];
 
   // Now parse the world with itemConstructors available
