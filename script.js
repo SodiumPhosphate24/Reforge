@@ -20,8 +20,8 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel"];
-var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd"];
+var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
@@ -55,7 +55,13 @@ var tileColors = [
   [[255, 255, 255], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]], // 26 - Stone Brick Wall
   [[240, 210, 170]], // 27 - Pipe
   [[240, 210, 170]], // 28 - CopperTileGreen
-  [[255, 255, 255]] // 29 - Gravel
+  [[255, 255, 255]], // 29 - Gravel
+  [[255, 255, 255]], // 30 - Note
+  [[255, 255, 255]], // 31 - ChainLink
+  [[255, 255, 255]], // 32 - ChainLinkBottomCorner
+  [[255, 255, 255]], // 33 - ChainLinkCorner
+  [[255, 255, 255]], // 34 - ChainLinkVertical
+  [[255, 255, 255]] // 35 - ChainLinkEnd
 
 ];
 
@@ -232,6 +238,12 @@ function preload() {
   tileImgs[27] = null; // Pipe uses variants, loaded below
   tileImgs[28] = loadImage("Tiles/CopperTile.png");
   tileImgs[29] = loadImage("Tiles/Gravel.png");
+  tileImgs[30] = loadImage("Tiles/Note.png");
+  tileImgs[31] = loadImage("Tiles/ChainLink.png");
+  tileImgs[32] = loadImage("Tiles/ChainLinkBottomCorner.png");
+  tileImgs[33] = loadImage("Tiles/ChainLinkCorner.png");
+  tileImgs[34] = loadImage("Tiles/ChainLinkVertical.png");
+  tileImgs[35] = loadImage("Tiles/ChainLinkEnd.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonCartridge.png");
@@ -1712,7 +1724,7 @@ function drawAlarmFlash() {
   const minDistance = 500;
   const maxDistance = 2000;
   let distanceFade = 1.0;
-  
+
   if (distFromCenter > minDistance) {
     if (distFromCenter >= maxDistance) {
       return; // Too far away, no alarm
