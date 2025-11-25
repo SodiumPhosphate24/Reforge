@@ -1701,6 +1701,25 @@ function updateParticles() {
 function drawAlarmFlash() {
   if (currentWaypointIndex > 3) return; // Stop alarm after waypoint 3
 
+  // Calculate distance from bunker center (spawn point)
+  const bunkerCenterX = 12500;
+  const bunkerCenterY = 12500;
+  const playerCenterX = pX + 600 + pWidth / 2;
+  const playerCenterY = pY + 375 + pHeight / 2;
+  const distFromCenter = dist(playerCenterX, playerCenterY, bunkerCenterX, bunkerCenterY);
+
+  // Fade out alarm based on distance (fully visible within 500 units, fades out by 2000 units)
+  const minDistance = 500;
+  const maxDistance = 2000;
+  let distanceFade = 1.0;
+  
+  if (distFromCenter > minDistance) {
+    if (distFromCenter >= maxDistance) {
+      return; // Too far away, no alarm
+    }
+    distanceFade = map(distFromCenter, minDistance, maxDistance, 1.0, 0.0);
+  }
+
   // Update flash alpha with pulsing effect
   if (alarmFlashIncreasing) {
     alarmFlashAlpha += 3;
@@ -1714,9 +1733,9 @@ function drawAlarmFlash() {
     }
   }
 
-  // Draw red overlay
+  // Draw red overlay with distance-based fade
   push();
-  fill(255, 0, 0, alarmFlashAlpha);
+  fill(255, 0, 0, alarmFlashAlpha * distanceFade);
   noStroke();
   rect(0, 0, width, height);
   pop();
