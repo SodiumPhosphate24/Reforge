@@ -4,6 +4,10 @@ let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = 
 var waypointCoordinates = [[12700, 12500], [13000, 12800], [12500, 13000]]; // Array of [x, y] coordinates
 var currentWaypointIndex = 0; // Current waypoint to show
 var itemConstructors = [];
+
+// Alarm system
+var alarmFlashAlpha = 0;
+var alarmFlashIncreasing = true;
 var pX = 12500; var pY = 12500; var playerDamage = 1;
 var prePX = 0, prePY = 0;
 var camX = -12500; var camY = -12500;
@@ -534,6 +538,9 @@ function drawGameplay() {
 
   drawUI();
   messageDisplay();
+
+  // Draw alarm flash if waypoint index is 3 or less
+  drawAlarmFlash();
 
   // Handle crafting menu
   if (typeof handleCraftingInput === 'function') {
@@ -1688,4 +1695,29 @@ function updateParticles() {
       particles.splice(i, 1);
     }
   }
+}
+
+// Draw red alarm flash overlay
+function drawAlarmFlash() {
+  if (currentWaypointIndex > 3) return; // Stop alarm after waypoint 3
+
+  // Update flash alpha with pulsing effect
+  if (alarmFlashIncreasing) {
+    alarmFlashAlpha += 3;
+    if (alarmFlashAlpha >= 80) {
+      alarmFlashIncreasing = false;
+    }
+  } else {
+    alarmFlashAlpha -= 3;
+    if (alarmFlashAlpha <= 0) {
+      alarmFlashIncreasing = true;
+    }
+  }
+
+  // Draw red overlay
+  push();
+  fill(255, 0, 0, alarmFlashAlpha);
+  noStroke();
+  rect(0, 0, width, height);
+  pop();
 }
