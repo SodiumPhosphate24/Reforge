@@ -1,15 +1,11 @@
 var inventorySlot = 1;
 var healthPoints = 100;
 var speedBuff = false;
-var laserEnergy = 100;
-var energyGauge = 100;
 var itemLabelAlpha = 0;
 var lastInventorySlot = 1;
-var itemLabelAlpha = 0;
 function drawUI() {
   inventory();
   health();
-  projectileEnergy();
   buffs();
 }
 
@@ -93,14 +89,6 @@ function health() {
   rect(100 + players[activePlayer].maxHealth * 1.2, 110, 5, 25)
   noStroke();
 }
-function projectileEnergy() {
-  fill(0, 255, 255);
-  energyGauge = lerp(energyGauge, laserEnergy, 0.1);
-  rect(130, 160, energyGauge * .63, 25);
-  image(EnergyTank, 100, 148, 135, 62);
-  laserEnergy = constrain(laserEnergy, 0, 100);
-  players[activePlayer].laserEnergy = laserEnergy;
-}
 
 function buffs() {
   if (speedBuff) {
@@ -124,7 +112,6 @@ class Item {
         this.ammo = 100;
         this.ammoType = "common";
         this.fireRate = .33;
-        this.energyCost = 10;
         this.HtoW = 0.68;
 
       }
@@ -134,7 +121,6 @@ class Item {
         this.damage = 2;
         this.ammo = 100;
         this.fireRate = .5;
-        this.energyCost = 7;
         this.HtoW = 0.55;
       }
       if (name == "rare pistol") {
@@ -142,7 +128,6 @@ class Item {
         this.image = GunImgs[2];
         this.damage = 3;
         this.fireRate = .67;
-        this.energyCost = 5;
         this.HtoW = .46;
       }
     }

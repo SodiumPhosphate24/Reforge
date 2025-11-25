@@ -24,7 +24,6 @@ class Player {
     this.damage = damage;
     this.picture = picture;
     this.inventory = [null, null, null, null, null, null, null, null];
-    this.laserEnergy = 100;
     this.frozen = false;
   }
   getImage() {
@@ -50,7 +49,6 @@ function switchPlayer(newPlayer) {
   pWidth = players[activePlayer].w;
   pHeight = players[activePlayer].h;
   inventoryList = players[activePlayer].inventory;
-  laserEnergy = players[activePlayer].laserEnergy;
   // Reset velocity to prevent collision errors
   pXVel = 0;
   pYVel = 0;

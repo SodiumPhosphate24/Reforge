@@ -164,8 +164,8 @@ function mouseClicked() {
       var currentItem = inventoryList[inventorySlot - 1];
 
       if (currentItem.type == "gun") {
-        if (laserEnergy > 0 && recoil >= 10) {
-          laserEnergy -= 10;
+        if (players[activePlayer].health > 10 && recoil >= 10) {
+          players[activePlayer].health -= 10;
           bullets.push(new Bullet("common", currentItem.damage));
         }
       }
@@ -174,6 +174,9 @@ function mouseClicked() {
           switch (currentItem.name) {
             case "cheese":
               players[activePlayer].health += 10;
+              break;
+            case "soda":
+              players[activePlayer].health += 50;
               break;
             case "common battery":
               players[activePlayer].health += 25;
@@ -186,15 +189,6 @@ function mouseClicked() {
               break;
           }
           // Use the item, then check if amount is zero.
-          useItem();
-          return;
-        }
-        if (laserEnergy < 100) {
-          switch (currentItem.name) {
-            case "soda":
-              laserEnergy += 50;
-              break;
-          }
           useItem();
           return;
         }
