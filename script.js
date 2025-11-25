@@ -1699,6 +1699,9 @@ function drawGunDebugRect() {
         baseSize = 24;
       }
 
+      // Apply scale factor to base size
+      baseSize *= (item.scaleFactor || 1.0);
+
       // Calculate width and height based on aspect ratio
       let itemWidth, itemHeight;
       if (item.HtoW > 1) {

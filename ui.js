@@ -35,7 +35,7 @@ function inventory() {
       imageMode(CENTER);
 
       // Calculate proper sizing to fit within inventory slot (max 50x50)
-      const maxSize = 50;
+      const maxSize = 50 * (inventoryList[i].scaleFactor || 1.0);
       let itemWidth, itemHeight;
 
       if (inventoryList[i].HtoW > 1) {
@@ -100,8 +100,10 @@ function buffs() {
 }
 
 class Item {
-  constructor(type, name, amount) {
+  constructor(type, name, amount, scaleFactor = 1.0) {
     this.amount = amount;
+    this.scaleFactor = scaleFactor; // Default scale is 1.0 (no scaling)
+    
     if (type == "gun") {
       this.type = "gun";
       this.stackable = false;
@@ -248,6 +250,9 @@ class DroppedItem {
     } else if (this.item.type === "projectile") {
       baseSize = 28; // Projectiles are medium-small
     }
+
+    // Apply scale factor to base size
+    baseSize *= (this.item.scaleFactor || 1.0);
 
     // Calculate width and height based on aspect ratio
     // Use the MAX dimension and scale the other
