@@ -235,7 +235,10 @@ function preload() {
   matImgs[0] = loadImage("Items/Materials/CommonWheel.png");
   matImgs[1] = loadImage("Items/Materials/RareWheel.png");
   matImgs[2] = loadImage("Items/Materials/LegendaryWheel.png");
-  matImgs[3] = loadImage("Items/Materials/Wires.png");
+  matImgs[3] = loadImage("Items/Materials/Cog.png");
+  matImgs[4] = loadImage("Items/Materials/CommonCartridge.png");
+  matImgs[5] = loadImage("Items/Materials/RareCartridge.png");
+  matImgs[6] = loadImage("Items/Materials/LegendaryCartridge.png");
   projImgs[0] = loadImage("Items/Projectiles/Grenade.png");
   projImgs[1] = loadImage("Items/Projectiles/Rock.png");
   InventoryImg = loadImage("hud/Inventory.png");
