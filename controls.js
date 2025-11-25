@@ -54,6 +54,14 @@ function keyPressed() {
   }
 
   if (keyCode == 69) {
+    // Check for leak repair first (highest priority when holding wrench)
+    if (nearestLeak) {
+      // Permanently repair the leak by setting spawn rate to 0
+      particleSources[nearestLeak.index].spawnRate = 0;
+      nearestLeak = null; // Clear the nearest leak
+      return;
+    }
+
     for (let i = droppedItems.length - 1; i >= 0; i--) {
       if (droppedItems[i].checkPickup()) {
         if (droppedItems[i].item.stackable) {

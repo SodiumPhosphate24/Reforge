@@ -5,6 +5,12 @@ var waypointCoordinates = [[12700, 12500], [13000, 12800], [12500, 13000]]; // A
 var currentWaypointIndex = 0; // Current waypoint to show
 var itemConstructors = [];
 
+// Leak repair system
+var nearestLeak = null; // Stores nearest repairable leak info
+var leakPromptAlpha = 0; // Fade animation for leak repair prompt
+var leakPromptScale = 0; // Scale animation for leak repair prompt
+var leakPromptGrowScale = 0.5; // Growing scale animation
+
 // Alarm system
 var alarmFlashAlpha = 0;
 var alarmFlashIncreasing = true;
@@ -508,23 +514,31 @@ function drawGameplay() {
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
 
+  // Check for nearby leaks and update nearestLeak for prompt
+  nearestLeak = null;
+  let nearestLeakDistance = Infinity;
+
   // Spawn particles from sources
   if (typeof particleSources !== 'undefined') {
     for (let sourceIndex = 0; sourceIndex < particleSources.length; sourceIndex++) {
       const ps = particleSources[sourceIndex];
       
-      // Check if this is one of the first 5 sources and player is holding old wrench
-      let effectiveSpawnRate = ps.spawnRate;
-      if (holdingOldWrench && sourceIndex < 5) {
-        // Check distance to player (suppress if within 150 units)
+      // Check if this is one of the first 5 sources (repairable leaks)
+      if (sourceIndex < 5 && ps.spawnRate > 0) {
         const distToPlayer = dist(playerCenterX, playerCenterY, ps.x, ps.y);
-        if (distToPlayer < 150) {
-          effectiveSpawnRate = 0; // Suppress particle spawning
+        
+        // Check if player is near and holding wrench
+        if (holdingOldWrench && distToPlayer < 150) {
+          // Track nearest leak for prompt
+          if (distToPlayer < nearestLeakDistance) {
+            nearestLeakDistance = distToPlayer;
+            nearestLeak = { source: ps, index: sourceIndex, distance: distToPlayer };
+          }
         }
       }
       
       // Spawn particles based on spawn rate
-      for (let i = 0; i < effectiveSpawnRate; i++) {
+      for (let i = 0; i < ps.spawnRate; i++) {
         if (random() < 0.3) { // 30% chance per particle slot
           const angle = random(ps.arcStart, ps.arcEnd);
           const particleSize = ps.size + random(-ps.sizeVariance, ps.sizeVariance);
@@ -564,6 +578,9 @@ function drawGameplay() {
 
   // Draw NPC prompt after camera pop (screen-fixed)
   drawNPCPromptIfNeeded();
+
+  // Draw leak repair prompt after camera pop (screen-fixed)
+  drawLeakPromptIfNeeded();
 
   // Draw waypoint arrow (screen-fixed at edge)
   drawWaypoint();
@@ -1821,6 +1838,45 @@ function updateParticles() {
     if (particles[i].isDead()) {
       particles.splice(i, 1);
     }
+  }
+}
+
+// Draw leak repair prompt
+function drawLeakPromptIfNeeded() {
+  // Fade in/out and scale based on whether leak is near
+  if (nearestLeak) {
+    leakPromptAlpha = lerp(leakPromptAlpha, 255, 0.2);
+    leakPromptScale = lerp(leakPromptScale, 1, 0.2);
+    leakPromptGrowScale = lerp(leakPromptGrowScale, 1, 0.15);
+  } else {
+    leakPromptAlpha = lerp(leakPromptAlpha, 0, 0.15);
+    leakPromptScale = lerp(leakPromptScale, 0, 0.15);
+    leakPromptGrowScale = lerp(leakPromptGrowScale, 0.5, 0.15);
+  }
+
+  if (leakPromptAlpha > 5) {
+    push();
+    translate(600, 47);
+    scale(leakPromptScale * leakPromptGrowScale);
+    translate(-600, -47);
+
+    fill(255, 150, 0, leakPromptAlpha * 0.78); // Orange color for leak repair
+    textSize(20);
+    textFont(Silkscreen);
+    textAlign(CENTER, CENTER);
+
+    const promptText = "Press E to Repair Leak";
+
+    // Background for text
+    const promptWidth = textWidth(promptText);
+    fill(0, 0, 0, leakPromptAlpha * 0.6);
+    rect(600 - promptWidth / 2 - 10, 30, promptWidth + 20, 35, 5);
+
+    // Text
+    fill(255, 150, 0, leakPromptAlpha); // Orange color
+    text(promptText, 600, 47);
+
+    pop();
   }
 }
 
