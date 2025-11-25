@@ -25,7 +25,7 @@ function controls() {
   players[activePlayer].x = pX;
   players[activePlayer].y = pY;
   if(Math.abs(players[activePlayer].xVel) > 0 || Math.abs(players[activePlayer].yVel) > 0){
-    players[activePlayer].health -= 0.05;
+    healthPoints -= .05;
   }
   // Guard if world failed to load
   if (!gameWorld.length || !gameWorld[0]?.length) return;
