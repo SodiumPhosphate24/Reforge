@@ -118,9 +118,9 @@ function messageDisplay() {
 
       // Subtle glow effect
       drawingContext.shadowBlur = 20;
-      drawingContext.shadowColor = 'rgba(100, 255, 255, 0.6)';
+      drawingContext.shadowColor = 'rgba(255, 150, 0, 0.6)';
 
-      fill(100, 255, 255, messages[i].alpha);
+      fill(255, 150, 0, messages[i].alpha);
       textSize(50);
       textFont(Silkscreen);
       text(messages[i].message, 0, 0);
@@ -196,13 +196,13 @@ function messageDisplay() {
 
       // Draw accent border
       strokeWeight(3);
-      stroke(100, 255, 255, messages[i].alpha * 0.8);
+      stroke(255, 150, 0, messages[i].alpha * 0.8);
       noFill();
       rect(messages[i].x, messages[i].y, 1000 * messages[i].boxScale, 200 * messages[i].boxScale, 5);
       noStroke();
 
       // Text with fade in
-      fill(100, 255, 255, messages[i].alpha);
+      fill(255, 150, 0, messages[i].alpha);
       textFont(Silkscreen);
       textSize(20);
       text(person, messages[i].x, messages[i].y - 75);

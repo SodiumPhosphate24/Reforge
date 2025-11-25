@@ -104,7 +104,7 @@ function drawNPCPromptIfNeeded() {
     scale(npcPromptScale * npcPromptGrowScale);
     translate(-600, -47);
 
-    fill(100, 255, 255, npcPromptAlpha * 0.78);
+    fill(255, 150, 0, npcPromptAlpha * 0.78);
     textSize(20);
     textFont(Silkscreen);
     textAlign(CENTER, CENTER);
@@ -117,7 +117,7 @@ function drawNPCPromptIfNeeded() {
     rect(600 - promptWidth / 2 - 10, 30, promptWidth + 20, 35, 5);
 
     // Text
-    fill(100, 255, 255, npcPromptAlpha);
+    fill(255, 150, 0, npcPromptAlpha);
     text(promptText, 600, 47);
 
     pop();

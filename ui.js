@@ -422,7 +422,7 @@ function drawPickupPrompt(item) {
   scale(pickupPromptScale * pickupPromptGrowScale);
   translate(-600, -47);
 
-  fill(100, 255, 255, pickupPromptAlpha * 0.78);
+  fill(255, 150, 0, pickupPromptAlpha * 0.78);
   textSize(20);
   textFont(Silkscreen);
   textAlign(CENTER, CENTER);
@@ -436,7 +436,7 @@ function drawPickupPrompt(item) {
   rect(600 - promptWidth / 2 - 10, 30, promptWidth + 20, 35, 5);
 
   // Text
-  fill(100, 255, 255, pickupPromptAlpha);
+  fill(255, 150, 0, pickupPromptAlpha);
   text(promptText, 600, 47);
 
   pop();

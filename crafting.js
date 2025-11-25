@@ -277,7 +277,7 @@ function drawCraftingMenu() {
   
   // Accent border
   strokeWeight(3);
-  stroke(100, 255, 255, craftingMenuAlpha * 0.8);
+  stroke(255, 150, 0, craftingMenuAlpha * 0.8);
   noFill();
   rect(600, 375, 800 * craftingMenuScale, 550 * craftingMenuScale, 10);
   noStroke();
@@ -286,7 +286,7 @@ function drawCraftingMenu() {
   // Only draw content if scale is reasonable
   if (craftingMenuScale > 0.3) {
     // Title
-    fill(100, 255, 255, craftingMenuAlpha);
+    fill(255, 150, 0, craftingMenuAlpha);
     textSize(32);
     textFont(Silkscreen);
     textAlign(CENTER, CENTER);
@@ -302,7 +302,7 @@ function drawCraftingMenu() {
       
       // Tab background
       if (i === selectedTab) {
-        fill(100, 255, 255, craftingMenuAlpha * 0.6);
+        fill(255, 150, 0, craftingMenuAlpha * 0.6);
       } else {
         fill(50, 50, 50, craftingMenuAlpha * 0.4);
       }
@@ -315,7 +315,7 @@ function drawCraftingMenu() {
     }
   
     // Instructions
-    fill(100, 255, 255, craftingMenuAlpha * 0.9);
+    fill(255, 150, 0, craftingMenuAlpha * 0.9);
     textSize(14);
     textAlign(CENTER, CENTER);
     text("LEFT/RIGHT: Switch tabs | UP/DOWN: Select | ENTER: Craft | E: Close", 600, 205);
@@ -360,7 +360,7 @@ function drawCraftingMenu() {
       
       // Highlight selected recipe
       if (index === selectedRecipe) {
-        fill(100, 255, 255, craftingMenuAlpha * 0.4);
+        fill(255, 150, 0, craftingMenuAlpha * 0.4);
         rect(220, yPos - 5, 760, 80, 5);
       }
       
@@ -393,7 +393,7 @@ function drawCraftingMenu() {
     
     // Draw scroll indicators
     if (unlockedRecipes.length > maxVisibleRecipes) {
-      fill(100, 255, 255, craftingMenuAlpha * 0.6);
+      fill(255, 150, 0, craftingMenuAlpha * 0.6);
       textSize(14);
       textAlign(CENTER, CENTER);
       
@@ -406,9 +406,9 @@ function drawCraftingMenu() {
       
       // Show position indicator
       const scrollPercent = craftingScrollOffset / Math.max(1, unlockedRecipes.length - maxVisibleRecipes);
-      fill(100, 255, 255, craftingMenuAlpha * 0.3);
+      fill(255, 150, 0, craftingMenuAlpha * 0.3);
       rect(970, 235, 10, 385, 5);
-      fill(100, 255, 255, craftingMenuAlpha);
+      fill(255, 150, 0, craftingMenuAlpha);
       const indicatorHeight = 385 / Math.max(1, unlockedRecipes.length / maxVisibleRecipes);
       rect(970, 235 + scrollPercent * (385 - indicatorHeight), 10, indicatorHeight, 5);
     }
