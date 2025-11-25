@@ -500,11 +500,31 @@ function drawGameplay() {
   drawEnemies();
   drawBullets();
 
+  // Check if player is holding old wrench
+  const holdingOldWrench = inventoryList[inventorySlot - 1] != null && 
+                           inventoryList[inventorySlot - 1].name === "old wrench";
+
+  // Calculate player center for distance checks
+  const playerCenterX = pX + 600 + pWidth / 2;
+  const playerCenterY = pY + 375 + pHeight / 2;
+
   // Spawn particles from sources
   if (typeof particleSources !== 'undefined') {
-    for (const ps of particleSources) {
+    for (let sourceIndex = 0; sourceIndex < particleSources.length; sourceIndex++) {
+      const ps = particleSources[sourceIndex];
+      
+      // Check if this is one of the first 5 sources and player is holding old wrench
+      let effectiveSpawnRate = ps.spawnRate;
+      if (holdingOldWrench && sourceIndex < 5) {
+        // Check distance to player (suppress if within 150 units)
+        const distToPlayer = dist(playerCenterX, playerCenterY, ps.x, ps.y);
+        if (distToPlayer < 150) {
+          effectiveSpawnRate = 0; // Suppress particle spawning
+        }
+      }
+      
       // Spawn particles based on spawn rate
-      for (let i = 0; i < ps.spawnRate; i++) {
+      for (let i = 0; i < effectiveSpawnRate; i++) {
         if (random() < 0.3) { // 30% chance per particle slot
           const angle = random(ps.arcStart, ps.arcEnd);
           const particleSize = ps.size + random(-ps.sizeVariance, ps.sizeVariance);
