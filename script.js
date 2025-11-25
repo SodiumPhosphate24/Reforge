@@ -1308,6 +1308,9 @@ function controlCamera() {
 function resolveCollisions() {
   const w = pWidth, h = pHeight;
 
+  // Check for crate collisions and destroy them
+  checkCrateCollisions(pX, pY, w, h);
+
   // If new position isn't colliding, we're done
   if (!checkTileCollisions(pX, pY, w, h)) return;
 
@@ -1371,6 +1374,95 @@ function resolveCollisions() {
   if (xCaused && yCaused) {
     pXVel = 0;
     pYVel = 0;
+  }
+}
+
+/* ===== Check for crate collisions and destroy them ===== */
+function checkCrateCollisions(x, y, w, h) {
+  const left = x + 600;
+  const top = y + 375;
+  const right = left + w;
+  const bottom = top + h;
+
+  const leftTile = Math.floor(left / 50);
+  const rightTile = Math.floor(right / 50);
+  const topTile = Math.floor(top / 50);
+  const bottomTile = Math.floor(bottom / 50);
+
+  for (let row = topTile; row <= bottomTile; row++) {
+    for (let col = leftTile; col <= rightTile; col++) {
+      if (row < 0 || col < 0 || row >= gameWorld.length || col >= gameWorld[row].length) continue;
+
+      const cell = gameWorld[row][col];
+
+      if (cell && 'layers' in cell) {
+        for (let L = 0; L < 5; L++) {
+          const t = cell.layers[L];
+          if (!t) continue;
+          if (t.type === 5) { // Crate
+            const tL = col * 50, tT = row * 50, tR = tL + 50, tB = tT + 50;
+            if (left < tR && right > tL && top < tB && bottom > tT) {
+              // Get stored items for this crate
+              const crateKey = row + "," + col;
+              const storedItems = crateInventories.get(crateKey);
+
+              if (storedItems && storedItems.length > 0) {
+                // Drop all stored items
+                for (const itemConstructor of storedItems) {
+                  droppedItems.push(new DroppedItem(
+                    new Item(itemConstructor[0], itemConstructor[1], itemConstructor[2]),
+                    col * 50 + 25,
+                    row * 50 + 25
+                  ));
+                }
+                // Remove from inventory map
+                crateInventories.delete(crateKey);
+              } else {
+                // Fallback: drop random item if no inventory stored
+                let r = Math.floor(Math.random() * itemConstructors.length);
+                droppedItems.push(new DroppedItem(
+                  new Item(itemConstructors[r][0], itemConstructors[r][1], itemConstructors[r][2]),
+                  col * 50 + 25,
+                  row * 50 + 25
+                ));
+              }
+
+              clearTile(row, col, L);
+              particle(col * 50 + 25, row * 50 + 25, [139, 69, 19], 30, 5);
+            }
+          }
+        }
+      } else if (cell) { // legacy
+        if (cell.type === 5) { // Crate
+          const tL = col * 50, tT = row * 50, tR = tL + 50, tB = tT + 50;
+          if (left < tR && right > tL && top < tB && bottom > tT) {
+            const crateKey = row + "," + col;
+            const storedItems = crateInventories.get(crateKey);
+
+            if (storedItems && storedItems.length > 0) {
+              for (const itemConstructor of storedItems) {
+                droppedItems.push(new DroppedItem(
+                  new Item(itemConstructor[0], itemConstructor[1], itemConstructor[2]),
+                  col * 50 + 25,
+                  row * 50 + 25
+                ));
+              }
+              crateInventories.delete(crateKey);
+            } else {
+              let r = Math.floor(Math.random() * itemConstructors.length);
+              droppedItems.push(new DroppedItem(
+                new Item(itemConstructors[r][0], itemConstructors[r][1], itemConstructors[r][2]),
+                col * 50 + 25,
+                row * 50 + 25
+              ));
+            }
+
+            clearTile(row, col, 0);
+            particle(col * 50 + 25, row * 50 + 25, [139, 69, 19], 30, 5);
+          }
+        }
+      }
+    }
   }
 }
 
