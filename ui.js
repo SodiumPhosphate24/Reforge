@@ -205,6 +205,11 @@ class Item {
         this.image = projImgs[1];
         this.HtoW = .75;
       }
+      if (name == "old wrench") {
+        this.name = name;
+        this.image = projImgs[2];
+        this.HtoW = 2.18;
+      }
     }
   }
 }
