@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg;
+let Buschy, InventoryImg, EnergyTank, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0], matImgs = [0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg;
 
 // Waypoint system
 var waypointCoordinates = [[12700, 12500], [13000, 12800], [12500, 13000]]; // Array of [x, y] coordinates
@@ -227,18 +227,16 @@ function preload() {
   tileImgs[26] = loadImage("Tiles/StoneBrick.png");
   tileImgs[27] = null; // Pipe uses variants, loaded below
   tileImgs[28] = loadImage("Tiles/CopperTile.png");
+  tileImgs[29] = loadImage("Tiles/Gravel.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
-  itemImgs[2] = loadImage("Items/Consumables/CommonBattery.png");
-  itemImgs[3] = loadImage("Items/Consumables/RareBattery.png");
-  itemImgs[4] = loadImage("Items/Consumables/LegendaryBattery.png");
+  itemImgs[2] = loadImage("Items/Consumables/CommonCartridge.png");
+  itemImgs[3] = loadImage("Items/Consumables/RareCartridge.png");
+  itemImgs[4] = loadImage("Items/Consumables/LegendaryCartridge.png");
   matImgs[0] = loadImage("Items/Materials/CommonWheel.png");
   matImgs[1] = loadImage("Items/Materials/RareWheel.png");
   matImgs[2] = loadImage("Items/Materials/LegendaryWheel.png");
   matImgs[3] = loadImage("Items/Materials/Cog.png");
-  matImgs[4] = loadImage("Items/Materials/CommonCartridge.png");
-  matImgs[5] = loadImage("Items/Materials/RareCartridge.png");
-  matImgs[6] = loadImage("Items/Materials/LegendaryCartridge.png");
   projImgs[0] = loadImage("Items/Projectiles/Grenade.png");
   projImgs[1] = loadImage("Items/Projectiles/Rock.png");
   InventoryImg = loadImage("hud/Inventory.png");
@@ -370,14 +368,15 @@ function setup() {
     ["gun", "rare pistol", 1, GunImgs[2]],
     ["consumable", "cheese", 1, itemImgs[0]],
     ["consumable", "soda", 1, itemImgs[1]],
-    ["consumable", "common battery", 1, itemImgs[2]],
-    ["consumable", "rare battery", 1, itemImgs[3]],
-    ["consumable", "legendary battery", 1, itemImgs[4]],
+    ["consumable", "common CA", 1, itemImgs[2]],
+    ["consumable", "rare CA", 1, itemImgs[3]],
+    ["consumable", "legendary CA", 1, itemImgs[4]],
     ["projectile", "grenade", 1, projImgs[0]],
     ["projectile", "rock", 10, projImgs[1]],
-    ["material", "common CPU", 1, matImgs[0]],
-    ["material", "rare CPU", 1, matImgs[1]],
-    ["material", "legendary CPU", 1, matImgs[2]]
+    ["material", "common wheel", 1, matImgs[0]],
+    ["material", "rare wheel", 1, matImgs[1]],
+    ["material", "legendary wheel", 1, matImgs[2]],
+    ["material", "cog", 1, matImgs[3]]
   ];
 
   // Now parse the world with itemConstructors available

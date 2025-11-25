@@ -160,45 +160,45 @@ class Item {
         this.image = itemImgs[1];
         this.HtoW = 1.64;
       }
-      if (name == "common battery") {
+      if (name == "common cartridge") {
         this.name = name;
         this.image = itemImgs[2];
-        this.HtoW = 2;
+        this.HtoW = 1;
       }
-      if (name == "rare battery") {
+      if (name == "rare cartridge") {
         this.name = name;
         this.image = itemImgs[3];
-        this.HtoW = 2;
+        this.HtoW = 1;
       }
-      if (name == "legendary battery") {
+      if (name == "legendary cartridge") {
         this.name = name;
         this.image = itemImgs[4];
-        this.HtoW = 2;
+        this.HtoW = 1;
       }
     }
 
     if (type == "material") {
       this.type = "material";
       this.stackable = true;
-      if (name == "common CPU") {
+      if (name == "common wheel") {
         this.name = name;
         this.image = matImgs[0];
-        this.HtoW = 1.5;
+        this.HtoW = 1;
       }
-      if (name == "rare CPU") {
+      if (name == "rare wheel") {
         this.name = name;
         this.image = matImgs[1];
-        this.HtoW = 1.5;
+        this.HtoW = 1;
       }
-      if (name == "legendary CPU") {
+      if (name == "legendary wheel") {
         this.name = name;
         this.image = matImgs[2];
-        this.HtoW = 1.5;
+        this.HtoW = 1;
       }
-      if (name == "wires") {
+      if (name == "cog") {
         this.name = name;
         this.image = matImgs[3];
-        this.HtoW = 1.25;
+        this.HtoW = 1;
       }
     }
 
