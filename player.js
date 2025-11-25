@@ -92,6 +92,8 @@ function drawPlayers() {
     }
   }
 
+ 
+
   // Draw active player shadow
   fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
   ellipse(pX + 600 + pWidth / 2, pY + 375 + pHeight, pWidth, pHeight * 0.6);

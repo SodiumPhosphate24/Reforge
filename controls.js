@@ -24,6 +24,7 @@ function controls() {
   pY += pYVel;
   players[activePlayer].x = pX;
   players[activePlayer].y = pY;
+  if(players[activePlayer].xVel <= 0)
   // Guard if world failed to load
   if (!gameWorld.length || !gameWorld[0]?.length) return;
 
@@ -165,7 +166,7 @@ function mouseClicked() {
 
       if (currentItem.type == "gun") {
         if (players[activePlayer].health > 10 && recoil >= 10) {
-          players[activePlayer].health -= 10;
+          players[activePlayer].health -= 3;
           bullets.push(new Bullet("common", currentItem.damage));
         }
       }
@@ -178,13 +179,13 @@ function mouseClicked() {
             case "soda":
               players[activePlayer].health += 50;
               break;
-            case "common battery":
+            case "common cartridge":
               players[activePlayer].health += 25;
               break;
-            case "rare battery":
+            case "rare cartridge":
               players[activePlayer].health += 50;
               break;
-            case "legendary battery":
+            case "legendary cartridge":
               players[activePlayer].health += 100;
               break;
           }
