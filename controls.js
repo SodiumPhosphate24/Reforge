@@ -160,6 +160,7 @@ function keyPressed() {
     if (keyPressedOnce(50)) editorLayer = 1; // Key '2'
     if (keyPressedOnce(51)) editorLayer = 2; // Key '3'
     if (keyPressedOnce(52)) editorLayer = 3; // Key '4'
+    if (keyPressedOnce(53)) editorLayer = 4; // Key '5'
   }
 
 }
