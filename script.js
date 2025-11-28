@@ -201,7 +201,7 @@ let maxTileTypes = 0; // will be set in setup()
 var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
 
 function preload() {
-  console.log("Easter egg");
+  console.log("Updated version Prometheus");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   SPUDImage = loadImage("Characters/SPUD.png");
@@ -421,33 +421,6 @@ function setup() {
 }
 
 function draw() {
-  // Spawn particles from sources (works in all game states)
-  if (typeof particleSources !== 'undefined') {
-    for (let sourceIndex = 0; sourceIndex < particleSources.length; sourceIndex++) {
-      const ps = particleSources[sourceIndex];
-
-      // Spawn particles based on spawn rate
-      for (let i = 0; i < ps.spawnRate; i++) {
-        if (random() < 0.3) { // 30% chance per particle slot
-          const angle = random(ps.arcStart, ps.arcEnd);
-          const particleSize = ps.size + random(-ps.sizeVariance, ps.sizeVariance);
-
-          // Create particle using existing particle system
-          const px = ps.x;
-          const py = ps.y;
-
-          // Manual particle creation with custom direction
-          const p = new Particle(px, py, ps.color, ps.duration, ps.speed, ps.layer || 0);
-          p.angle = radians(angle);
-          p.vx = cos(p.angle) * ps.speed;
-          p.vy = sin(p.angle) * ps.speed;
-          p.size = Math.max(1, particleSize);
-          particles.push(p);
-        }
-      }
-    }
-  }
-
   // Show menu screen if not playing
   if (gameState === "menu") {
     drawMenuScreen();
@@ -546,7 +519,7 @@ function drawGameplay() {
   nearestLeak = null;
   let nearestLeakDistance = Infinity;
 
-  // Check for repairable leaks
+  // Spawn particles from sources
   if (typeof particleSources !== 'undefined') {
     for (let sourceIndex = 0; sourceIndex < particleSources.length; sourceIndex++) {
       const ps = particleSources[sourceIndex];
@@ -562,6 +535,26 @@ function drawGameplay() {
             nearestLeakDistance = distToPlayer;
             nearestLeak = { source: ps, index: sourceIndex, distance: distToPlayer };
           }
+        }
+      }
+
+      // Spawn particles based on spawn rate
+      for (let i = 0; i < ps.spawnRate; i++) {
+        if (random() < 0.3) { // 30% chance per particle slot
+          const angle = random(ps.arcStart, ps.arcEnd);
+          const particleSize = ps.size + random(-ps.sizeVariance, ps.sizeVariance);
+
+          // Create particle using existing particle system
+          const px = ps.x;
+          const py = ps.y;
+
+          // Manual particle creation with custom direction
+          const p = new Particle(px, py, ps.color, ps.duration, ps.speed, ps.layer || 0);
+          p.angle = radians(angle);
+          p.vx = cos(p.angle) * ps.speed;
+          p.vy = sin(p.angle) * ps.speed;
+          p.size = Math.max(1, particleSize);
+          particles.push(p);
         }
       }
     }
