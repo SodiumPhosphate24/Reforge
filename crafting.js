@@ -254,15 +254,17 @@ function craftItem(recipe) {
       robotImage = SPUDImage;
     }
 
-    // Find nearest workbench position
+    // Find nearest workbench position (bottom-right corner of 2x2 workbench)
     const playerCenterX = pX + 600 + pWidth / 2;
     const playerCenterY = pY + 375 + pHeight / 2;
-    const checkRadius = 125;
+    const checkRadius = 150;
 
-    let workbenchX = pX; // Fallback to player position
-    let workbenchY = pY;
+    let workbenchBottomRightX = pX; // Fallback to player position
+    let workbenchBottomRightY = pY;
     let foundWorkbench = false;
 
+    // Find all workbench tiles near player
+    const workbenchTiles = [];
     for (let row = 0; row < gameWorld.length; row++) {
       for (let col = 0; col < gameWorld[row].length; col++) {
         const cell = gameWorld[row][col];
@@ -280,24 +282,36 @@ function craftItem(recipe) {
             for (let L = 0; L < 3; L++) {
               const tile = cell.layers[L];
               if (tile && tile.type === 6) {
-                workbenchX = col * 50 - 600;
-                workbenchY = row * 50 - 375;
-                foundWorkbench = true;
+                workbenchTiles.push({ row, col });
                 break;
               }
             }
           } else if (cell.type === 6) {
-            workbenchX = col * 50 - 600;
-            workbenchY = row * 50 - 375;
-            foundWorkbench = true;
+            workbenchTiles.push({ row, col });
           }
         }
-        if (foundWorkbench) break;
       }
-      if (foundWorkbench) break;
     }
 
-    players.push(new Player(workbenchX + 200, workbenchY + 15, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
+    // Find the bottom-right corner of the workbench cluster
+    if (workbenchTiles.length > 0) {
+      let maxRow = workbenchTiles[0].row;
+      let maxCol = workbenchTiles[0].col;
+      
+      for (const tile of workbenchTiles) {
+        if (tile.row > maxRow || (tile.row === maxRow && tile.col > maxCol)) {
+          maxRow = tile.row;
+          maxCol = tile.col;
+        }
+      }
+      
+      // Position is 200px to the right of the bottom-right tile's right edge
+      workbenchBottomRightX = (maxCol + 1) * 50 + 200 - 600;
+      workbenchBottomRightY = maxRow * 50 - 375;
+      foundWorkbench = true;
+    }
+
+    players.push(new Player(workbenchBottomRightX, workbenchBottomRightY + 15, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
 
     // Trigger particle system #5 for 1 second
     if (typeof particleSources !== 'undefined' && particleSources.length > 5) {
