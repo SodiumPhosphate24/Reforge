@@ -415,9 +415,11 @@ function drawCraftingMenu() {
       const recipe = craftingRecipes[i];
       const canCraft = canCraftRecipe(recipe);
 
+      /*
       if (!recipe.unlocked && canCraft) {
         recipe.unlocked = true;
       }
+      */
 
       if (recipe.unlocked && recipe.category === craftingTabs[selectedTab]) {
         unlockedRecipes.push({ index: i, recipe: recipe });
