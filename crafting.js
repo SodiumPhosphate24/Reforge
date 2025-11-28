@@ -285,16 +285,16 @@ function craftItem(recipe) {
   craftingMenuClosing = true;
 }
 
-// Trigger particle effect for index 5
+// Trigger particle effect for index 4
 function triggerParticleEffect() {
-  if (typeof particleSources !== 'undefined' && particleSources.length > 5) {
+  if (typeof particleSources !== 'undefined' && particleSources.length > 4) {
     // Set spawn rate to 3
-    particleSources[5].spawnRate = 21;
+    particleSources[4].spawnRate = 3;
     
     // Reset back to 0 after 1 second (60 frames at 60fps)
     setTimeout(() => {
-      if (typeof particleSources !== 'undefined' && particleSources.length > 5) {
-        particleSources[5].spawnRate = 0;
+      if (typeof particleSources !== 'undefined' && particleSources.length > 4) {
+        particleSources[4].spawnRate = 0;
       }
     }, 1000);
   }
