@@ -1942,5 +1942,5 @@ function initializeHardcodes() {
   players.push(new Player(12500, 12500, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
   NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", ["Prometheus IV: Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
-  droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 12500, 12500));
+  droppedItems.push(new DroppedItem(new Item("material", "boiler cartridge", 1), 15400, 12875));
 }
