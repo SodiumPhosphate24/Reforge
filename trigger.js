@@ -1,26 +1,26 @@
 var triggerState = 0;
 var wayPointList = [[100, 100], [24900, 24900]];
 var triggerList = {
-  Prometheus : {
+  Prometheus: {
     talkToPrometheus: false,
     dropppedStarterGun: false,
     openedFirstCrate: false,
-  }, 
-  Crafting : {
+  },
+  Crafting: {
     craftedFirstRobot: false,
-  }, 
-  Objective : {
+  },
+  Objective: {
     fixLeaks: false,
     fixBoiler: false
   },
-  Pickup : {
+  Pickup: {
     pickedUpWrench: false
   }
 };
 
-function handleTriggers(trigger){
-  if (trigger == "Prometheus"){
-    if (triggerList.Prometheus.talkToPrometheus == false){
+function handleTriggers(trigger) {
+  if (trigger == "Prometheus") {
+    if (triggerList.Prometheus.talkToPrometheus == false) {
       triggerList.Prometheus.talkToPrometheus = true;
       //droppedItems.push(new DroppedItem(new Item("gun", "glock", 1), 13300, 12800));
       triggerList.Prometheus.dropppedStarterGun = true;
@@ -39,29 +39,30 @@ function handleTriggers(trigger){
       return;
     }
   }
-  if (trigger == "Crafting"){
-    if(triggerList.Crafting.craftedFirstRobot == false){
+  if (trigger == "Crafting") {
+    if (triggerList.Crafting.craftedFirstRobot == false) {
       triggerList.Crafting.craftedFirstRobot = true;
-      messages.push(new Message("dialogue", ["Prometheus IV: Excellent. Your first creation.", "Prometheus IV: This is a SPUD. A Steam Powered Utility Droid.", "Prometheus IV: It was one of your most famous steam inventions", "Prometheus IV: It can serve as a mobility robot.", "Prometheus IV: You can send it to the factory to find the wrench to fix the leaks."], "Prometheus", true)); // Pass true for isTriggered
+      messages.push(new Message("dialogue", ["Prometheus IV: Excellent. Your first creation.", "Prometheus IV: T-This is a SPUD. A Steam Powered Utility Droid.", "Prometheus IV: It was one of your most famous steam inven-ntions", "Prometheus IV: It can serve as a mobility robot.", "Prometheus IV: You can send it to the factory to find the wrench to fix the leaks.", "Prometheus IV: Press and hold Q to switch to your SPUD, using your arrow keys to navigate."], "Prometheus", true)); // Pass true for isTriggered
       currentWaypointIndex = 2;
     }
   }
-  if (trigger == "Objective"){
-    if(triggerList.Objective.fixLeaks == false){
+  if (trigger == "Objective") {
+    if (triggerList.Objective.fixLeaks == false) {
       triggerList.Objective.fixLeaks = true;
+      messages.push(new Message("dialogue", ["Prometheus IV: Head to the boiler room to [I don't know]"], "Prometheus", true);
       currentWaypointIndex = 4;
     }
   }
-  if (trigger == "Pickup"){
-    if(triggerList.Pickup.pickedUpWrench == false && searchInventory("old wrench")){
+  if (trigger == "Pickup") {
+    if (triggerList.Pickup.pickedUpWrench == false && searchInventory("old wrench")) {
       triggerList.Pickup.pickedUpWrench = true;
-      messages.push(new Message("dialogue", ["Prometheus IV: Excellent. You found the wrench.", "Prometheus IV: Now, go fix the leaks."], "Prometheus", true)); // Pass true for isTriggered
+      messages.push(new Message("dialogue", ["Prometheus IV: Exc-xcellent. You fo...ound the wrench.", "Prometheus IV: Pass the item to yo-urself by pressing and holding R.", "Prometheus IV: N-ow, go fix the l-leaks."], "Prometheus", true)); // Pass true for isTriggered
       currentWaypointIndex = 3;
     }
   }
 }
 
-function wayPoints(){
+function wayPoints() {
   var currentWayPoint = wayPointList[triggerState];
   var rotation = atan2(currentWayPoint[1] - pY, currentWayPoint[0] - pX);
 }

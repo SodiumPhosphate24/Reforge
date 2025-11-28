@@ -192,6 +192,11 @@ class Item {
         this.image = matImgs[4];
         this.HtoW = 1;
       }
+      if (name == "boiler cartridge"){
+        this.name = name;
+        this.image = matImgs[5];
+        this.HtoW = 1;
+      }
     }
 
     if (type == "projectile") {

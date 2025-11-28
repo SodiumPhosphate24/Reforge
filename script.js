@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage;
+let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage;
 
 // Waypoint system
 var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [100, 100]];
@@ -265,6 +265,7 @@ function preload() {
   matImgs[2] = loadImage("Items/Materials/LegendaryWheel.png");
   matImgs[3] = loadImage("Items/Materials/Cog.png");
   matImgs[4] = loadImage("Tiles/Pipe.png");
+  matImgs[5] = loadImage("Items/Consumables/LegendaryCartridge.png");
   projImgs[0] = loadImage("Items/Projectiles/Grenade.png");
   projImgs[1] = loadImage("Items/Projectiles/Rock.png");
   projImgs[2] = loadImage("Items/Projectiles/OldWrench.png");
