@@ -286,18 +286,18 @@ function craftItem(recipe) {
       // Light gray/white fog color
       const fogColor = [200, 200, 200];
       
-      // Create particle object manually
-      const fogParticle = {
-        x: spawnX + offsetX,
-        y: spawnY + offsetY,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        color: fogColor,
-        life: 120, // 2 seconds at 60fps
-        maxLife: 120,
-        size: Math.random() * 15 + 15,
-        layer: 2
-      };
+      // Create proper Particle instance
+      const fogParticle = new Particle(
+        spawnX + offsetX,
+        spawnY + offsetY,
+        fogColor,
+        120, // 2 seconds at 60fps
+        0.5, // slow speed
+        2 // layer 2
+      );
+      
+      // Customize particle size
+      fogParticle.size = Math.random() * 15 + 15;
       
       particles.push(fogParticle);
     }
