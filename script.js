@@ -421,6 +421,33 @@ function setup() {
 }
 
 function draw() {
+  // Spawn particles from sources (works in all game states)
+  if (typeof particleSources !== 'undefined') {
+    for (let sourceIndex = 0; sourceIndex < particleSources.length; sourceIndex++) {
+      const ps = particleSources[sourceIndex];
+
+      // Spawn particles based on spawn rate
+      for (let i = 0; i < ps.spawnRate; i++) {
+        if (random() < 0.3) { // 30% chance per particle slot
+          const angle = random(ps.arcStart, ps.arcEnd);
+          const particleSize = ps.size + random(-ps.sizeVariance, ps.sizeVariance);
+
+          // Create particle using existing particle system
+          const px = ps.x;
+          const py = ps.y;
+
+          // Manual particle creation with custom direction
+          const p = new Particle(px, py, ps.color, ps.duration, ps.speed, ps.layer || 0);
+          p.angle = radians(angle);
+          p.vx = cos(p.angle) * ps.speed;
+          p.vy = sin(p.angle) * ps.speed;
+          p.size = Math.max(1, particleSize);
+          particles.push(p);
+        }
+      }
+    }
+  }
+
   // Show menu screen if not playing
   if (gameState === "menu") {
     drawMenuScreen();
@@ -519,7 +546,7 @@ function drawGameplay() {
   nearestLeak = null;
   let nearestLeakDistance = Infinity;
 
-  // Spawn particles from sources
+  // Check for repairable leaks
   if (typeof particleSources !== 'undefined') {
     for (let sourceIndex = 0; sourceIndex < particleSources.length; sourceIndex++) {
       const ps = particleSources[sourceIndex];
@@ -535,26 +562,6 @@ function drawGameplay() {
             nearestLeakDistance = distToPlayer;
             nearestLeak = { source: ps, index: sourceIndex, distance: distToPlayer };
           }
-        }
-      }
-
-      // Spawn particles based on spawn rate
-      for (let i = 0; i < ps.spawnRate; i++) {
-        if (random() < 0.3) { // 30% chance per particle slot
-          const angle = random(ps.arcStart, ps.arcEnd);
-          const particleSize = ps.size + random(-ps.sizeVariance, ps.sizeVariance);
-
-          // Create particle using existing particle system
-          const px = ps.x;
-          const py = ps.y;
-
-          // Manual particle creation with custom direction
-          const p = new Particle(px, py, ps.color, ps.duration, ps.speed, ps.layer || 0);
-          p.angle = radians(angle);
-          p.vx = cos(p.angle) * ps.speed;
-          p.vy = sin(p.angle) * ps.speed;
-          p.size = Math.max(1, particleSize);
-          particles.push(p);
         }
       }
     }
