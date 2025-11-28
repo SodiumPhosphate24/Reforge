@@ -1022,16 +1022,16 @@ function drawWaypoint() {
   // Calculate distance to waypoint
   const distToWaypoint = dist(playerCenterX, playerCenterY, targetX, targetY);
 
-  // Fade out starting at 1000px, completely transparent by 600px
-  const fadeStartDistance = 1000;
-  const fadeEndDistance = 600;
+  // Fade out starting at 700px, completely transparent by 300px
+  const fadeStartDistance = 700;
+  const fadeEndDistance = 300;
   let waypointAlpha;
 
   if (distToWaypoint <= fadeEndDistance) {
     // Close: completely transparent
     waypointAlpha = 0;
   } else if (distToWaypoint < fadeStartDistance) {
-    // Fading zone: fade from 255 (at 1000px) to 0 (at 600px)
+    // Fading zone: fade from 255 (at 700px) to 0 (at 300px)
     waypointAlpha = map(distToWaypoint, fadeEndDistance, fadeStartDistance, 0, 255);
   } else {
     // Far: fully visible
@@ -2044,6 +2044,6 @@ function initializeHardcodes() {
   NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", ["Prometheus IV: Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
   NonPlayerCharacters.push(new NPC(12950, 12450, "Book", ["Bastian's Journal: Cheese"], Book, "Book"));
   NonPlayerCharacters.push(new NPC(12890, 13287, "Book", ["Steam Power for Dummies : Wing"], Book, "Book"));
-  NonPlayerCharacters.push(new NPC(13650, 12400, "Book", ["The 7 Habits of Highly Effective Engineers That Have Been Cryogenically Frozen for 400 Years: Cheese"], Book, "Book"));
+  NonPlayerCharacters.push(new NPC(13650, 12400, "Book", ["The 7 Habits of Highly Effective Engineers That Have Been Cryogenically Frozen for 400 Years: Burger"], Book, "Book"));
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
 }
