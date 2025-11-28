@@ -147,30 +147,19 @@ function keyPressed() {
   }
 
   if (keyCode == 82) {
-    // Transfer item from active robot to Buschy (player 0)
-    if (activePlayer !== 0 && inventoryList[inventorySlot - 1] != null) {
-      const itemToTransfer = inventoryList[inventorySlot - 1];
-      
-      // Find an empty slot in Buschy's inventory
-      let transferred = false;
-      for (let i = 0; i < players[0].inventory.length; i++) {
-        if (players[0].inventory[i] == null) {
-          players[0].inventory[i] = itemToTransfer;
-          inventoryList[inventorySlot - 1] = null;
-          transferred = true;
-          
-          // Show feedback message
-          messages.push(new Message("quest", "Transferred " + itemToTransfer.name + " to " + players[0].name));
-          break;
+    // Open player selection menu for item transfer (if holding item and multiple players exist)
+    if (players.length > 1 && inventoryList[inventorySlot - 1] != null) {
+      if (!playerTransferMenuOpen) {
+        playerTransferMenuOpen = true;
+        selectedTransferPlayerIndex = 0;
+        // Skip current player in selection
+        if (selectedTransferPlayerIndex === activePlayer) {
+          selectedTransferPlayerIndex = (selectedTransferPlayerIndex + 1) % players.length;
         }
+        frozen = true;
       }
-      
-      if (!transferred) {
-        // Buschy's inventory is full
-        messages.push(new Message("quest", players[0].name + "'s inventory is full!"));
-      }
-    } else if (activePlayer === 0) {
-      messages.push(new Message("quest", "You are already controlling " + players[0].name));
+    } else if (players.length <= 1) {
+      messages.push(new Message("quest", "No other robots to transfer to"));
     } else {
       messages.push(new Message("quest", "No item in hand to transfer"));
     }
@@ -202,6 +191,44 @@ function keyPressed() {
     }
   }
 
+  // Handle arrow keys for transfer menu
+  if (playerTransferMenuOpen) {
+    if (keyCode === UP_ARROW) {
+      do {
+        selectedTransferPlayerIndex = (selectedTransferPlayerIndex - 1 + players.length) % players.length;
+      } while (selectedTransferPlayerIndex === activePlayer);
+    }
+    if (keyCode === DOWN_ARROW) {
+      do {
+        selectedTransferPlayerIndex = (selectedTransferPlayerIndex + 1) % players.length;
+      } while (selectedTransferPlayerIndex === activePlayer);
+    }
+    // Confirm transfer with Enter
+    if (keyCode === ENTER) {
+      const itemToTransfer = inventoryList[inventorySlot - 1];
+      const targetPlayer = players[selectedTransferPlayerIndex];
+      
+      // Find empty slot in target player's inventory
+      let transferred = false;
+      for (let i = 0; i < targetPlayer.inventory.length; i++) {
+        if (targetPlayer.inventory[i] == null) {
+          targetPlayer.inventory[i] = itemToTransfer;
+          inventoryList[inventorySlot - 1] = null;
+          transferred = true;
+          messages.push(new Message("quest", "Transferred " + itemToTransfer.name + " to " + targetPlayer.name));
+          break;
+        }
+      }
+      
+      if (!transferred) {
+        messages.push(new Message("quest", targetPlayer.name + "'s inventory is full!"));
+      }
+      
+      playerTransferMenuOpen = false;
+      frozen = false;
+    }
+  }
+
   if (typeof handleEditorKeyPress === "function") {
     handleEditorKeyPress();
   }
@@ -224,6 +251,14 @@ function keyReleased() {
       playerSelectionMenuOpen = false;
     }
     qKeyHeldFrames = 0;
+  }
+  
+  // R key release - close transfer menu without action
+  if (keyCode == 82) {
+    if (playerTransferMenuOpen) {
+      playerTransferMenuOpen = false;
+      frozen = false;
+    }
   }
 }
 

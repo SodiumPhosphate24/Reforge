@@ -19,6 +19,11 @@ var selectedPlayerIndex = 0;
 var qKeyHeldFrames = 0;
 var qKeyHoldThreshold = 10; // Frames to hold Q before menu opens
 
+// Item transfer menu
+var playerTransferMenuOpen = false;
+var playerTransferMenuAlpha = 0;
+var selectedTransferPlayerIndex = 0;
+
 class Player {
   constructor(x, y, width, height, speed, health, damage, image, name = "Player") {
     this.x = x;
@@ -257,6 +262,89 @@ function drawPlayerSelectionMenu() {
   textSize(14);
   textAlign(CENTER, CENTER);
   text("UP/DOWN: Navigate | Release Q: Select", 600, startY + players.length * 50 + 20);
+  
+  pop();
+}
+
+function drawPlayerTransferMenu() {
+  if (!playerTransferMenuOpen && playerTransferMenuAlpha < 5) return;
+  
+  // Animate menu appearance
+  if (playerTransferMenuOpen) {
+    playerTransferMenuAlpha = lerp(playerTransferMenuAlpha, 255, 0.2);
+  } else {
+    playerTransferMenuAlpha = lerp(playerTransferMenuAlpha, 0, 0.2);
+  }
+  
+  push();
+  
+  // Semi-transparent background
+  fill(0, 0, 0, playerTransferMenuAlpha * 0.7);
+  rectMode(CENTER);
+  rect(600, 375, 400, 80 + players.length * 60, 10);
+  
+  // Border
+  strokeWeight(3);
+  stroke(255, 150, 0, playerTransferMenuAlpha * 0.8);
+  noFill();
+  rect(600, 375, 400, 80 + players.length * 60, 10);
+  noStroke();
+  rectMode(CORNER);
+  
+  // Title
+  fill(255, 150, 0, playerTransferMenuAlpha);
+  textSize(24);
+  textFont(Silkscreen);
+  textAlign(CENTER, CENTER);
+  text("TRANSFER ITEM TO...", 600, 315);
+  
+  // Player list (skip current player)
+  textSize(18);
+  const startY = 360;
+  
+  for (let i = 0; i < players.length; i++) {
+    if (i === activePlayer) continue; // Skip current player
+    
+    const yPos = startY + i * 50;
+    
+    // Highlight selected player
+    if (i === selectedTransferPlayerIndex) {
+      fill(255, 150, 0, playerTransferMenuAlpha * 0.4);
+      rect(410, yPos - 20, 380, 40, 5);
+    }
+    
+    // Player name
+    fill(255, 255, 255, playerTransferMenuAlpha);
+    textAlign(LEFT, CENTER);
+    text(players[i].name, 430, yPos);
+    
+    // Health bar
+    const healthPercent = players[i].health / players[i].maxHealth;
+    fill(50, 50, 50, playerTransferMenuAlpha * 0.6);
+    rect(630, yPos - 10, 150, 20, 3);
+    
+    if (healthPercent > 0.5) {
+      fill(100, 255, 100, playerTransferMenuAlpha);
+    } else if (healthPercent > 0.25) {
+      fill(255, 200, 0, playerTransferMenuAlpha);
+    } else {
+      fill(255, 100, 100, playerTransferMenuAlpha);
+    }
+    rect(630, yPos - 10, 150 * healthPercent, 20, 3);
+    
+    // Health text
+    fill(255, 255, 255, playerTransferMenuAlpha);
+    textAlign(CENTER, CENTER);
+    textSize(12);
+    text(Math.floor(players[i].health) + "/" + players[i].maxHealth, 705, yPos);
+    textSize(18);
+  }
+  
+  // Instructions
+  fill(255, 150, 0, playerTransferMenuAlpha * 0.9);
+  textSize(14);
+  textAlign(CENTER, CENTER);
+  text("UP/DOWN: Navigate | ENTER: Transfer | Release R: Cancel", 600, startY + players.length * 50 + 20);
   
   pop();
 }

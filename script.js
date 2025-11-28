@@ -587,6 +587,11 @@ function drawGameplay() {
   // Draw leak repair prompt after camera pop (screen-fixed)
   drawLeakPromptIfNeeded();
 
+  // Draw crafting prompt after camera pop (screen-fixed)
+  if (typeof drawCraftingPromptIfNeeded === 'function') {
+    drawCraftingPromptIfNeeded();
+  }
+
   // Draw waypoint arrow (screen-fixed at edge)
   drawWaypoint();
 
@@ -606,6 +611,11 @@ function drawGameplay() {
   // Draw player selection menu
   if (typeof drawPlayerSelectionMenu === 'function') {
     drawPlayerSelectionMenu();
+  }
+
+  // Draw player transfer menu
+  if (typeof drawPlayerTransferMenu === 'function') {
+    drawPlayerTransferMenu();
   }
 
   // Draw fog centered on camera, constrained to screen
