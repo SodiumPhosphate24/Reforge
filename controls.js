@@ -147,21 +147,13 @@ function keyPressed() {
   }
 
   if (keyCode == 82) {
-    // Open player selection menu for item transfer (if holding item and multiple players exist)
-    if (players.length > 1 && inventoryList[inventorySlot - 1] != null) {
+    // Open player selection menu for item transfer (if holding item)
+    if (inventoryList[inventorySlot - 1] != null) {
       if (!playerTransferMenuOpen) {
         playerTransferMenuOpen = true;
         selectedTransferPlayerIndex = 0;
-        // Skip current player in selection
-        if (selectedTransferPlayerIndex === activePlayer) {
-          selectedTransferPlayerIndex = (selectedTransferPlayerIndex + 1) % players.length;
-        }
         frozen = true;
       }
-    } else if (players.length <= 1) {
-      messages.push(new Message("quest", "No other robots to transfer to"));
-    } else {
-      messages.push(new Message("quest", "No item in hand to transfer"));
     }
   }
   if (keyCode == 77) {
@@ -194,38 +186,10 @@ function keyPressed() {
   // Handle arrow keys for transfer menu
   if (playerTransferMenuOpen) {
     if (keyCode === UP_ARROW) {
-      do {
-        selectedTransferPlayerIndex = (selectedTransferPlayerIndex - 1 + players.length) % players.length;
-      } while (selectedTransferPlayerIndex === activePlayer);
+      selectedTransferPlayerIndex = (selectedTransferPlayerIndex - 1 + players.length) % players.length;
     }
     if (keyCode === DOWN_ARROW) {
-      do {
-        selectedTransferPlayerIndex = (selectedTransferPlayerIndex + 1) % players.length;
-      } while (selectedTransferPlayerIndex === activePlayer);
-    }
-    // Confirm transfer with Enter
-    if (keyCode === ENTER) {
-      const itemToTransfer = inventoryList[inventorySlot - 1];
-      const targetPlayer = players[selectedTransferPlayerIndex];
-      
-      // Find empty slot in target player's inventory
-      let transferred = false;
-      for (let i = 0; i < targetPlayer.inventory.length; i++) {
-        if (targetPlayer.inventory[i] == null) {
-          targetPlayer.inventory[i] = itemToTransfer;
-          inventoryList[inventorySlot - 1] = null;
-          transferred = true;
-          messages.push(new Message("quest", "Transferred " + itemToTransfer.name + " to " + targetPlayer.name));
-          break;
-        }
-      }
-      
-      if (!transferred) {
-        messages.push(new Message("quest", targetPlayer.name + "'s inventory is full!"));
-      }
-      
-      playerTransferMenuOpen = false;
-      frozen = false;
+      selectedTransferPlayerIndex = (selectedTransferPlayerIndex + 1) % players.length;
     }
   }
 
@@ -253,9 +217,23 @@ function keyReleased() {
     qKeyHeldFrames = 0;
   }
   
-  // R key release - close transfer menu without action
+  // R key release - complete transfer
   if (keyCode == 82) {
     if (playerTransferMenuOpen) {
+      const itemToTransfer = inventoryList[inventorySlot - 1];
+      const targetPlayer = players[selectedTransferPlayerIndex];
+      
+      // Find empty slot in target player's inventory
+      let transferred = false;
+      for (let i = 0; i < targetPlayer.inventory.length; i++) {
+        if (targetPlayer.inventory[i] == null) {
+          targetPlayer.inventory[i] = itemToTransfer;
+          inventoryList[inventorySlot - 1] = null;
+          transferred = true;
+          break;
+        }
+      }
+      
       playerTransferMenuOpen = false;
       frozen = false;
     }

@@ -21,8 +21,8 @@ var craftingRecipes = [
     name: "SPUD",
     category: "Robots",
     type: "player",
-    unlocked : false,
-    playerConstructor: {width : 87.5, height : 62.5, speed : 1.3, health : 100, damage : 1},
+    unlocked : true,
+    playerConstructor: {width : 70, height : 50, speed : 1.3, health : 100, damage : 1},
     ingredients: [
       { itemName: "common wheel", amount: 2 },
       { itemName: "common cartridge", amount: 1 },
@@ -96,6 +96,8 @@ var craftingRecipes = [
 var selectedRecipe = 0;
 var craftingScrollOffset = 0; // Tracks scroll position
 var maxVisibleRecipes = 4; // How many recipes to show at once
+
+
 
 function isNearWorkbench() {
   const playerCenterX = pX + 600 + pWidth / 2;

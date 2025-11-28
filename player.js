@@ -298,13 +298,11 @@ function drawPlayerTransferMenu() {
   textAlign(CENTER, CENTER);
   text("TRANSFER ITEM TO...", 600, 315);
   
-  // Player list (skip current player)
+  // Player list (include all players)
   textSize(18);
   const startY = 360;
   
   for (let i = 0; i < players.length; i++) {
-    if (i === activePlayer) continue; // Skip current player
-    
     const yPos = startY + i * 50;
     
     // Highlight selected player
@@ -344,7 +342,7 @@ function drawPlayerTransferMenu() {
   fill(255, 150, 0, playerTransferMenuAlpha * 0.9);
   textSize(14);
   textAlign(CENTER, CENTER);
-  text("UP/DOWN: Navigate | ENTER: Transfer | Release R: Cancel", 600, startY + players.length * 50 + 20);
+  text("UP/DOWN: Navigate | Release R: Transfer", 600, startY + players.length * 50 + 20);
   
   pop();
 }
