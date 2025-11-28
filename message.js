@@ -187,27 +187,22 @@ function messageDisplay() {
 
       rectMode(CENTER);
 
-      // Calculate dynamic box height based on number of lines
-      var lineHeight = 32;
-      var minBoxHeight = 200;
-      var headerPadding = 90; // Space for speaker name
-      var bottomPadding = 100; // Space for "Press Z" indicator
-      var contentHeight = wrappedLines.length * lineHeight;
-      var dynamicBoxHeight = Math.max(minBoxHeight, contentHeight + headerPadding + bottomPadding);
+      // Constant box size
+      var boxHeight = 200;
 
       // Draw shadow for depth
       fill(0, 0, 0, messages[i].alpha * 0.3);
-      rect(messages[i].x + 5, messages[i].y + 5, 1000 * messages[i].boxScale, dynamicBoxHeight * messages[i].boxScale, 5);
+      rect(messages[i].x + 5, messages[i].y + 5, 1000 * messages[i].boxScale, boxHeight * messages[i].boxScale, 5);
 
       // Draw main box with scale animation
       fill(0, 0, 0, messages[i].alpha * 0.78);
-      rect(messages[i].x, messages[i].y, 1000 * messages[i].boxScale, dynamicBoxHeight * messages[i].boxScale, 5);
+      rect(messages[i].x, messages[i].y, 1000 * messages[i].boxScale, boxHeight * messages[i].boxScale, 5);
 
       // Draw accent border
       strokeWeight(3);
       stroke(255, 150, 0, messages[i].alpha * 0.8);
       noFill();
-      rect(messages[i].x, messages[i].y, 1000 * messages[i].boxScale, dynamicBoxHeight * messages[i].boxScale, 5);
+      rect(messages[i].x, messages[i].y, 1000 * messages[i].boxScale, boxHeight * messages[i].boxScale, 5);
       noStroke();
 
       // Text with fade in
@@ -218,19 +213,18 @@ function messageDisplay() {
 
       fill(255, 255, 255, messages[i].alpha);
       textSize(18);
-      // Draw each wrapped line with proper spacing (no vertical limit)
-      var lineHeight = 32;
-      var startY = messages[i].y - 50; // Fixed starting position from top of dialogue body
+      // Draw wrapped lines with constant spacing
+      var lineHeight = 30;
+      var startY = messages[i].y - 40;
       for (var lineIdx = 0; lineIdx < wrappedLines.length; lineIdx++) {
         text(wrappedLines[lineIdx], messages[i].x, startY + (lineIdx * lineHeight));
       }
 
-      // "Press Z" indicator at bottom with pulsing animation
+      // "Press Z" indicator at bottom right with pulsing animation
       const pulseAlpha = 100 + sin(frameCount / 15) * 50;
       fill(150, 150, 150, messages[i].alpha * (pulseAlpha / 255));
       textSize(14);
-      var pressZY = startY + (wrappedLines.length * lineHeight) + 30;
-      text("Press Z", messages[i].x + 420, pressZY);
+      text("Press Z", messages[i].x + 420, messages[i].y + 80);
 
       rectMode(CORNER);
       pop();
