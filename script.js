@@ -2042,9 +2042,37 @@ function drawAlarmFlash() {
 function initializeHardcodes() {
   players.push(new Player(12500, 12500, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
   NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", ["Prometheus IV: Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
-  NonPlayerCharacters.push(new NPC(12950, 12450, "Book", ["Bastian's Journal: Cheese"], Book, "Book"));
-  NonPlayerCharacters.push(new NPC(12910, 13310, "Book", ["Steam Power for Dummies : Wing"], Book, "Book"));
-  NonPlayerCharacters.push(new NPC(13650, 12420, "Book", ["The 7 Habits of Highly Effective Engineers \n That Have Been Cryogenically Frozen for \n400 Years: Burger"], Book, "Book"));
+  NonPlayerCharacters.push(new NPC(
+    12950,
+    12450,
+    "Book",
+    [
+      "Bastian's Journal: Page 1\nApril 12th, 1838\n\nAnother sleepless night. The workshops across Albion roar long after dusk, every furnace screaming for more coal, more steam, more progress. Yet for all the noise, I feel we understand so little. We build greater engines without first learning how to protect the people who stand beside them. That is what pushes me forward.",
+
+      "Page 2\nNovember 3rd, 1840\n\nWork on the chamber continues. Sometimes I stare at it for hours, imagining what it could mean for injured workers—preservation without decay, time briefly held at bay. Not immortality, not magic… just science used with restraint. I find myself frustrated that no one else sees the necessity of this device.",
+
+      "Page 3\nJune 17th, 1842\n\nAnother explosion at the northern mill today. The smoke rose like a funeral banner over the district. I walked past the wreckage after sunset. Tools still sat where they were dropped. If the chamber had been finished… perhaps those men would have had a chance. That thought clings to me like soot.",
+
+      "Page 4\nFebruary 9th, 1846\n\nThe prototype functions. At least, in theory. All calculations align—the cooling cycle maintains stability, and the steam regulators hold pressure with remarkable consistency. But theory is thin comfort. Someone must test it. Someone must step inside. The decision haunts every meal, every breath.",
+
+      "Page 5\nOctober 21st, 1849\n\nThe bunker is complete. I did not intend for secrecy, but public curiosity grows tiresome. People fear what resembles a coffin, even when it is a lifeboat. Down here, beneath the workshop, the chamber hums with possibility. This place feels like the only part of the world still under my control.",
+
+      "Page 6\nMarch 5th, 1852\n\nMy latest challenge is sustaining power for extended durations. A simple coal burner would never do; heat fluctuates too wildly. So I constructed a closed-loop steam cycle—steam condensed, collected, reheated, and fed back again. Elegant. Efficient. Unproven. I can almost hear Father telling me I should be satisfied. But I am not satisfied. Not yet.",
+
+      "Page 7\nAugust 10th, 1853\n\nI caught myself today imagining what it might feel like inside the chamber—senses quieted, the world slipping away, time reduced to nothing more than machinery and breath. Am I afraid? Of course. But fear does not outweigh purpose. If I cannot trust my own invention with my life, then no one ever will.",
+
+      "Page 8\nJanuary 18th, 1854\n\nWhat will change while I sleep? Weeks perhaps. Maybe a month. Time for the chamber’s mechanics to prove themselves. I wonder if the guild will still be chasing larger boilers when I return, or if some new distraction will have caught their appetite. The world above never stops spinning, even when one man pauses.",
+
+      "Page 9\nMay 2nd, 1855\n\nI stood inside the chamber today for the first time—not sealed, just testing fit and posture. I expected the metal to feel cold, but instead it felt… calm. As if it were waiting. Perhaps I project too much meaning onto steel. Still, the sensation lingered.",
+
+      "Page 10\nJune 27th, 1855\n\nEverything is ready.\nThe gauges hold. The coolant flows. The pressure-loop generator runs without stutter. Months of hesitation have given way to certainty.\n\nTomorrow, I begin the test.\n\nIf all goes well, I will wake in a week—rested, victorious, and armed with proof that preservation is possible.\n\nIf something fails…\nNo. I will not entertain that thought.\n\nScience demands courage.\nAnd I will give it mine.\n\n—Bastian Buschwick"
+    ],
+    Book,
+    "Book"
+  ));
+
+  NonPlayerCharacters.push(new NPC(12910, 13262, "Book", ["Steam Power for Dummies : So you wish to master the power of steam. Excellent choice, as steam is the newest, most advanced technology for the future", "Steam Power for Dummies : As long as no corrupt, omnipotent apocalypse never causes civilization to collapse", "Steam Power for Dummies : Steam is powerful and reliable for any environment that \nIsn't on fire\nIsn't overrun\nStill has government\nStill has science\n", "Steam Power for Dummies : Wing", "Steam Power for Dummies : Wing", "Steam Power for Dummies : Wing"], Book, "Book"));
+  NonPlayerCharacters.push(new NPC(13650, 12420, "Book", ["The 7 Habits of Highly Effective Engineers \n That Have Been Cryogenically Frozen for 500 Years: Burger"], Book, "Book"));
   NonPlayerCharacters.push(new NPC(13350, 13050, "Book", ["Walden : Tuberculosis"], Book, "Book"));
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
 }
