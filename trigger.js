@@ -22,7 +22,7 @@ function handleTriggers(trigger){
   if (trigger == "Prometheus"){
     if (triggerList.Prometheus.talkToPrometheus == false){
       triggerList.Prometheus.talkToPrometheus = true;
-      droppedItems.push(new DroppedItem(new Item("gun", "glock", 1), 13300, 12800));
+      //droppedItems.push(new DroppedItem(new Item("gun", "glock", 1), 13300, 12800));
       triggerList.Prometheus.dropppedStarterGun = true;
       NonPlayerCharacters[0].message = [
         "Prometheus IV: Good. You adapt quickly.",
@@ -34,6 +34,7 @@ function handleTriggers(trigger){
         "Prometheus IV: The surface is… unforgiving. But together… we may yet reclaim it."
       ];
       triggerState++;
+      currentWaypointIndex = 1;
       return;
     }
   }
@@ -41,20 +42,20 @@ function handleTriggers(trigger){
     if(triggerList.Crafting.craftedFirstRobot == false){
       triggerList.Crafting.craftedFirstRobot = true;
       messages.push(new Message("dialogue", ["Prometheus IV: Excellent. Your first creation.", "Prometheus IV: This is a SPUD. A Steam Powered Utility Droid.", "Prometheus IV: It was one of your most famous steam inventions", "Prometheus IV: It can serve as a mobility robot.", "Prometheus IV: You can send it to the factory to find the wrench to fix the leaks."], "Prometheus")); //not working, don't know why
-      currentWaypointIndex = 1;
+      currentWaypointIndex = 2;
     }
   }
   if (trigger == "Objective"){
     if(triggerList.Objective.fixLeaks == false){
       triggerList.Objective.fixLeaks = true;
-      currentWaypointIndex = 3;
+      currentWaypointIndex = 4;
     }
   }
   if (trigger == "Pickup"){
     if(triggerList.Pickup.pickedUpWrench == false && searchInventory("old wrench")){
       triggerList.Pickup.pickedUpWrench = true;
       messages.push(new Message("dialogue", ["Prometheus IV: Excellent. You found the wrench.", "Prometheus IV: Now, go fix the leaks."], "Prometheus"));
-      currentWaypointIndex = 2;
+      currentWaypointIndex = 3;
     }
   }
 }

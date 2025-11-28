@@ -187,7 +187,7 @@ function mouseClicked() {
           bullets.push(new Bullet("common", currentItem.damage));
         }
       }
-      if (currentItem.type == "consumable" && currentWaypointIndex != 0) {
+      if (currentItem.type == "consumable" && currentWaypointIndex > 1) {
         if (healthPoints < players[activePlayer].maxHealth) {
           switch (currentItem.name) {
             case "cheese":

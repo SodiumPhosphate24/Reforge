@@ -1,7 +1,7 @@
 let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage;
 
 // Waypoint system
-var waypointCoordinates = [[13375, 12875], [16500, 14250], [13100, 12875], [100, 100]];
+var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [100, 100]];
 var currentWaypointIndex = 0;
 var itemConstructors = [];
 
@@ -1881,7 +1881,7 @@ function drawLeakPromptIfNeeded() {
 
 // Draw red alarm flash overlay
 function drawAlarmFlash() {
-  if (currentWaypointIndex > 2) return; // Stop alarm after waypoint 3
+  if (currentWaypointIndex > 3) return; // Stop alarm after waypoint 3 (Fixing the leaks)
 
   // Calculate distance from bunker center (spawn point)
   const bunkerCenterX = 12500;
