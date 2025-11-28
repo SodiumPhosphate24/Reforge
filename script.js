@@ -132,9 +132,8 @@ function drawFadeToGame() {
   drawNPCPromptIfNeeded();
 
   // Draw UI elements
-  drawUI();
+  
   messageDisplay();
-
   // Draw fog centered on camera, constrained to screen
   tint(255, 200);
   const fogSize = width + 100;
@@ -147,6 +146,8 @@ function drawFadeToGame() {
   image(Fog, fogX, fogY, fogSize, fogSize);
   imageMode(CORNER);
   noTint();
+
+  drawUI();
 
   // Overlay with fading black (eyes opening)
   push();
