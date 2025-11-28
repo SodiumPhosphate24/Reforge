@@ -274,9 +274,22 @@ function craftItem(recipe) {
     }
     
     players.push(new Player(workbenchX + 200, workbenchY, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
+    
+    // Trigger particle system #5 for 1 second
+    if (typeof particleSources !== 'undefined' && particleSources.length > 5) {
+      particleSources[5].spawnRate = 20;
+      setTimeout(() => {
+        if (particleSources.length > 5) {
+          particleSources[5].spawnRate = 0;
+        }
+      }, 1000);
+    }
   }
 
   handleTriggers("Crafting");
+  
+  // Close crafting menu after crafting
+  craftingMenuClosing = true;
 }
 
   
