@@ -346,12 +346,13 @@ function initializeIntro() {
         camX = -pX;
         camY = -pY;
         
-        // Initialize roof fade system completely
-        const __roofSeeds = getOverlappingRoofSeeds(pX, pY, pWidth, pHeight);
-        floodFillRoof(__roofSeeds);
-        // Run many iterations to ensure roofs are fully faded
-        for (let i = 0; i < 20; i++) {
-          stepRoofFades();
+        // Initialize roof fade system - just set up initial state, don't animate yet
+        // The main game loop will handle roof fading once gameplay starts
+        if (typeof roofScale !== 'undefined') {
+          roofScale.clear();
+        }
+        if (typeof roofTarget !== 'undefined') {
+          roofTarget.clear();
         }
         
         // Initialize waypoint system
