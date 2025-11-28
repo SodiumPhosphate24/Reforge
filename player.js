@@ -103,6 +103,20 @@ function drawPlayers() {
       fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
       ellipse(players[i].x + 600 + players[i].width / 2, players[i].y + 375 + players[i].height, players[i].width, players[i].height * 0.6);
 
+      // Emit steam particles for SPUD robots
+      if (players[i].name === "SPUD" && random() < 0.3) {
+        const headX = players[i].x + 600 + players[i].width / 2;
+        const headY = players[i].y + 375; // Top of robot
+        
+        // Create upward steam particle
+        const steamParticle = new Particle(headX, headY, [220, 220, 230], 40, 0.5, 3);
+        steamParticle.angle = radians(-90 + random(-15, 15)); // Mostly upward with slight variation
+        steamParticle.vx = cos(steamParticle.angle) * 0.5;
+        steamParticle.vy = sin(steamParticle.angle) * 0.5;
+        steamParticle.size = random(2, 5);
+        particles.push(steamParticle);
+      }
+
       // Draw player image with preserved aspect ratio
       const img = players[i].image;
       const aspectRatio = img.width / img.height;
@@ -117,6 +131,20 @@ function drawPlayers() {
   // Draw active player shadow
   fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
   ellipse(pX + 600 + pWidth / 2, pY + 375 + pHeight, pWidth, pHeight * 0.6);
+
+  // Emit steam particles for SPUD active player
+  if (players[activePlayer] && players[activePlayer].name === "SPUD" && random() < 0.3) {
+    const headX = pX + 600 + pWidth / 2;
+    const headY = pY + 375; // Top of robot
+    
+    // Create upward steam particle
+    const steamParticle = new Particle(headX, headY, [220, 220, 230], 40, 0.5, 3);
+    steamParticle.angle = radians(-90 + random(-15, 15)); // Mostly upward with slight variation
+    steamParticle.vx = cos(steamParticle.angle) * 0.5;
+    steamParticle.vy = sin(steamParticle.angle) * 0.5;
+    steamParticle.size = random(2, 5);
+    particles.push(steamParticle);
+  }
 
   // Draw active player with flip and preserved aspect ratio
   push();
