@@ -1192,11 +1192,14 @@ function drawWorldLayer(world, layerIndex) {
       let rotation = tileObj.rotation || 0;
       let colorIndex = tileObj.colorIndex || 0;
 
-      // Check for roof fade alpha
+      // Check for roof fade alpha (using discrete steps)
       let roofFadeAlpha = 255;
       if ((layerIndex === 1 || layerIndex === 2 || layerIndex === 3 || layerIndex === 4) && tileWalls[tileType] === 2) {
         const __k = tileKey(i, j);
-        roofFadeAlpha = roofAlpha.has(__k) ? roofAlpha.get(__k) : 255;
+        if (roofAlpha.has(__k)) {
+          const stepIndex = roofAlpha.get(__k);
+          roofFadeAlpha = ROOF_FADE_STEPS[stepIndex];
+        }
         if (roofFadeAlpha <= 0) continue; // fully transparent; skip draw
       }
 
@@ -1304,11 +1307,14 @@ function updateParticlesForLayer(layerIndex) {
     if (p.layer === layerIndex) {
       p.update();
 
-      // Apply roof fade if particle is on a roof layer and the roof is fading
+      // Apply roof fade if particle is on a roof layer and the roof is fading (using discrete steps)
       let fadeAlpha = 255;
       if (layerIndex >= 1 && layerIndex <= 4 && p.onRoof) { // Assuming 'onRoof' property is set on particle
         const __k = tileKey(p.roofRow, p.roofCol); // Assuming particle stores roof tile coords
-        fadeAlpha = roofAlpha.has(__k) ? roofAlpha.get(__k) : 255;
+        if (roofAlpha.has(__k)) {
+          const stepIndex = roofAlpha.get(__k);
+          fadeAlpha = ROOF_FADE_STEPS[stepIndex];
+        }
         // Particles on layer 3 or higher disappear if part of a roof fade out
         if ((layerIndex >= 3 || p.layer >= 3) && fadeAlpha < 255) {
           fadeAlpha = 0; // Make particle disappear if it's on a fading roof and on layer 3+
@@ -1550,10 +1556,12 @@ function checkCollision(x, y, x2, y2, w, h, w2 = 50, h2 = 50) {
   );
 }
 
-/* ========= Roof fade system (optimized with caching and range limiting) ========= */
-const ROOF_FADE_SPEED = 42.5;   // alpha change per frame (0..255) - instant fade
-const ROOF_MAX_DISTANCE = 25;  // max tiles to flood fill from player - reduced range
-let roofAlpha = new Map();     // key "row,col" -> alpha
+/* ========= Roof step-fade system (3 discrete states for performance) ========= */
+const ROOF_FADE_STEPS = [255, 128, 0]; // Discrete alpha states: opaque, semi-transparent, hidden
+const ROOF_STEP_DELAY = 3; // frames between steps
+const ROOF_MAX_DISTANCE = 25;  // max tiles to flood fill from player
+let roofAlpha = new Map();     // key "row,col" -> current alpha step index (0, 1, or 2)
+let roofStepTimer = new Map(); // key "row,col" -> frames until next step
 let roofTarget = new Set();    // keys that should fade to 0 this frame
 let lastPlayerTile = { row: -1, col: -1 }; // cache player position
 let cachedRoofTarget = new Set(); // cached flood fill results
@@ -1656,31 +1664,55 @@ function floodFillRoof(seeds) {
 }
 
 function stepRoofFades() {
-  // Fade targets toward transparent (0)
+  // Step targets toward transparent (step index 2 = alpha 0)
   for (const k of roofTarget) {
-    const curr = roofAlpha.has(k) ? roofAlpha.get(k) : 255;
-    if (curr === 0) continue; // Skip if already fully transparent
-    const next = Math.max(0, curr - ROOF_FADE_SPEED);
-    roofAlpha.set(k, next);
-  }
-  // Fade non-targets back toward opaque (255)
-  const toDelete = [];
-  for (const [k, curr] of roofAlpha.entries()) {
-    if (roofTarget.has(k)) continue;
-    if (curr === 255) continue; // Skip if already fully opaque
-    const next = Math.min(255, curr + ROOF_FADE_SPEED);
-    if (next === 255) {
-      toDelete.push(k);
+    const currStep = roofAlpha.has(k) ? roofAlpha.get(k) : 0; // 0 = opaque (255)
+    if (currStep === 2) continue; // Already fully transparent
+    
+    // Check/update timer
+    const timer = roofStepTimer.has(k) ? roofStepTimer.get(k) : 0;
+    if (timer <= 0) {
+      // Advance to next step
+      roofAlpha.set(k, currStep + 1);
+      roofStepTimer.set(k, ROOF_STEP_DELAY);
     } else {
-      roofAlpha.set(k, next);
+      roofStepTimer.set(k, timer - 1);
     }
   }
+  
+  // Step non-targets back toward opaque (step index 0 = alpha 255)
+  const toDelete = [];
+  for (const [k, currStep] of roofAlpha.entries()) {
+    if (roofTarget.has(k)) continue;
+    if (currStep === 0) {
+      // Already opaque, clean up
+      toDelete.push(k);
+      continue;
+    }
+    
+    // Check/update timer
+    const timer = roofStepTimer.has(k) ? roofStepTimer.get(k) : 0;
+    if (timer <= 0) {
+      // Step back toward opaque
+      const nextStep = currStep - 1;
+      if (nextStep === 0) {
+        toDelete.push(k);
+      } else {
+        roofAlpha.set(k, nextStep);
+      }
+      roofStepTimer.set(k, ROOF_STEP_DELAY);
+    } else {
+      roofStepTimer.set(k, timer - 1);
+    }
+  }
+  
   // Batch delete fully opaque tiles
   for (const k of toDelete) {
     roofAlpha.delete(k);
+    roofStepTimer.delete(k);
   }
 }
-/* ====== End roof fade system ====== */
+/* ====== End roof step-fade system ====== */
 
 // --- Gun flip animation state ---
 let currentGunFlip = 0; // current flip angle (0 or 180)
