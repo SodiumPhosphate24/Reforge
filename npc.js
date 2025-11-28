@@ -109,7 +109,12 @@ function drawNPCPromptIfNeeded() {
     textFont(Silkscreen);
     textAlign(CENTER, CENTER);
 
-    const promptText = nearestNPC ? "Press E to talk to " + nearestNPC.name : "";
+    let promptText = "";
+    if (nearestNPC) {
+      const nameLower = nearestNPC.name.toLowerCase();
+      const isReadable = nameLower.includes("book") || nameLower.includes("journal") || nameLower.includes("sign");
+      promptText = isReadable ? "Press E to read " + nearestNPC.name : "Press E to talk to " + nearestNPC.name;
+    }
 
     // Background for text
     const promptWidth = textWidth(promptText);
