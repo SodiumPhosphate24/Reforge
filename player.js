@@ -13,21 +13,22 @@ var playerFlipScale = 1; // Current flip scale (-1 for left, 1 for right)
 var targetFlipScale = 1; // Target flip scale
 
 class Player {
-  constructor(x, y, w, h, speed, health, damage, picture) {
+  constructor(x, y, width, height, speed, health, damage, image, name = "Player") {
     this.x = x;
     this.y = y;
-    this.w = w;
-    this.h = h;
+    this.width = width;
+    this.height = height;
     this.speed = speed;
-    this.maxHealth = health;
     this.health = health;
+    this.maxHealth = health;
     this.damage = damage;
-    this.picture = picture;
     this.inventory = [null, null, null, null, null, null, null, null];
+    this.image = image;
+    this.name = name;
     this.frozen = false;
   }
   getImage() {
-    return picture;
+    return this.image;
   }
   isDead() {
     if (this.health <= 0) {
@@ -45,9 +46,9 @@ function switchPlayer(newPlayer) {
   pSpeed = players[activePlayer].speed;
   healthPoints = players[activePlayer].health;
   playerDamage = players[activePlayer].damage;
-  PlayerImage = players[activePlayer].picture;
-  pWidth = players[activePlayer].w;
-  pHeight = players[activePlayer].h;
+  PlayerImage = players[activePlayer].image;
+  pWidth = players[activePlayer].width;
+  pHeight = players[activePlayer].height;
   inventoryList = players[activePlayer].inventory;
   // Reset velocity to prevent collision errors
   pXVel = 0;
@@ -70,7 +71,7 @@ function updatePlayerFlip() {
     // Set target flip based on velocity direction
     targetFlipScale = pXVel > 0 ? 1 : -1;
   }
-  
+
   // Smoothly lerp current flip to target
   playerFlipScale = lerp(playerFlipScale, targetFlipScale, 0.2);
 }
@@ -78,21 +79,21 @@ function updatePlayerFlip() {
 function drawPlayers() {
   // Update flip direction
   updatePlayerFlip();
-  
+
   // Draw other players at their world positions with same visual buffer
   for (let i = 0; i < players.length; i++) {
     players[i].isDead();
     if (i !== activePlayer) {
       // Draw shadow for this player
       fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
-      ellipse(players[i].x + 600 + players[i].w / 2, players[i].y + 375 + players[i].h, players[i].w, players[i].h * 0.6);
+      ellipse(players[i].x + 600 + players[i].width / 2, players[i].y + 375 + players[i].height, players[i].width, players[i].height * 0.6);
 
       // Draw player image
-      image(players[i].picture, players[i].x + 600, players[i].y + 375 - 35, players[i].w, players[i].h + 35);
+      image(players[i].image, players[i].x + 600, players[i].y + 375 - 35, players[i].width, players[i].height + 35);
     }
   }
 
- 
+
 
   // Draw active player shadow
   fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);

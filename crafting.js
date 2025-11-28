@@ -224,7 +224,12 @@ function craftItem(recipe) {
 
   if (recipe.type === "player") {
     let p = recipe.playerConstructor;
-    players.push(new Player(pX + 150, pY, p.width, p.height, p.speed, p.health, p.damage, PlayerImage));
+    // Determine which image to use based on recipe name
+    let robotImage = PlayerImage;
+    if (recipe.name === "SPUD") {
+      robotImage = SPUDImage;
+    }
+    players.push(new Player(pX + 150, pY, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
   }
 
   handleTriggers("Crafting");
