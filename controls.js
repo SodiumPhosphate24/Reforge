@@ -138,7 +138,33 @@ function keyPressed() {
   }
 
   if (keyCode == 84) {
-    enemies.push(new Enemy("zombie"));
+    // Transfer item from active robot to Buschy (player 0)
+    if (activePlayer !== 0 && inventoryList[inventorySlot - 1] != null) {
+      const itemToTransfer = inventoryList[inventorySlot - 1];
+      
+      // Find an empty slot in Buschy's inventory
+      let transferred = false;
+      for (let i = 0; i < players[0].inventory.length; i++) {
+        if (players[0].inventory[i] == null) {
+          players[0].inventory[i] = itemToTransfer;
+          inventoryList[inventorySlot - 1] = null;
+          transferred = true;
+          
+          // Show feedback message
+          messages.push(new Message("quest", "Transferred " + itemToTransfer.name + " to " + players[0].name));
+          break;
+        }
+      }
+      
+      if (!transferred) {
+        // Buschy's inventory is full
+        messages.push(new Message("quest", players[0].name + "'s inventory is full!"));
+      }
+    } else if (activePlayer === 0) {
+      messages.push(new Message("quest", "You are already controlling " + players[0].name));
+    } else {
+      messages.push(new Message("quest", "No item in hand to transfer"));
+    }
   }
   if (keyCode == 77) {
     // Check if there's already a dialogue message active
