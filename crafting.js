@@ -274,30 +274,9 @@ function craftItem(recipe) {
     }
     
     players.push(new Player(workbenchX + 200, workbenchY, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
-    
-    // Trigger particle effect on particle source index 5
-    triggerParticleEffect();
   }
 
   handleTriggers("Crafting");
-  
-  // Close crafting menu after crafting
-  craftingMenuClosing = true;
-}
-
-// Trigger particle effect for index 4
-function triggerParticleEffect() {
-  if (typeof particleSources !== 'undefined' && particleSources.length > 4) {
-    // Set spawn rate to 3
-    particleSources[4].spawnRate = 3;
-    
-    // Reset back to 0 after 1 second (60 frames at 60fps)
-    setTimeout(() => {
-      if (typeof particleSources !== 'undefined' && particleSources.length > 4) {
-        particleSources[4].spawnRate = 0;
-      }
-    }, 1000);
-  }
 }
 
   
