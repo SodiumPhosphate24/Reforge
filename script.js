@@ -1995,7 +1995,7 @@ function drawLeakPromptIfNeeded() {
 
 // Draw red alarm flash overlay
 function drawAlarmFlash() {
-  if (currentWaypointIndex > 3) return; // Stop alarm after waypoint 3 (Fixing the leaks)
+  if (currentWaypointIndex > 4) return; // Stop alarm after waypoint 3 (Fixing the leaks)
 
   // Calculate distance from bunker center (spawn point)
   const bunkerCenterX = 12500;
@@ -2036,6 +2036,7 @@ function drawAlarmFlash() {
   rect(0, 0, width, height);
   pop();
 }
+
 function initializeHardcodes() {
   players.push(new Player(12500, 12500, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
   NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", ["Prometheus IV: Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
