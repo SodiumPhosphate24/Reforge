@@ -343,23 +343,23 @@ function generateWorkbenchVariants() {
   const fullImg = workbenchConfig.fullImage;
   
   // Create top-left quadrant (source: 0, 0, 16, 16)
-  const topLeft = createGraphics(50, 50);
-  topLeft.image(fullImg, 0, 0, 50, 50, 0, 0, 16, 16);
+  const topLeft = createGraphics(16, 16);
+  topLeft.copy(fullImg, 0, 0, 16, 16, 0, 0, 16, 16);
   workbenchConfig.variants.top_left = topLeft;
 
   // Create top-right quadrant (source: 16, 0, 16, 16)
-  const topRight = createGraphics(50, 50);
-  topRight.image(fullImg, 0, 0, 50, 50, 16, 0, 16, 16);
+  const topRight = createGraphics(16, 16);
+  topRight.copy(fullImg, 16, 0, 16, 16, 0, 0, 16, 16);
   workbenchConfig.variants.top_right = topRight;
 
   // Create bottom-left quadrant (source: 0, 16, 16, 16)
-  const bottomLeft = createGraphics(50, 50);
-  bottomLeft.image(fullImg, 0, 0, 50, 50, 0, 16, 16, 16);
+  const bottomLeft = createGraphics(16, 16);
+  bottomLeft.copy(fullImg, 0, 16, 16, 16, 0, 0, 16, 16);
   workbenchConfig.variants.bottom_left = bottomLeft;
 
   // Create bottom-right quadrant (source: 16, 16, 16, 16)
-  const bottomRight = createGraphics(50, 50);
-  bottomRight.image(fullImg, 0, 0, 50, 50, 16, 16, 16, 16);
+  const bottomRight = createGraphics(16, 16);
+  bottomRight.copy(fullImg, 16, 16, 16, 16, 0, 0, 16, 16);
   workbenchConfig.variants.bottom_right = bottomRight;
 
   console.log("Workbench variants generated from 32x32 image");
