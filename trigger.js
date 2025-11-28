@@ -40,7 +40,7 @@ function handleTriggers(trigger){
   if (trigger == "Crafting"){
     if(triggerList.Crafting.craftedFirstRobot == false){
       triggerList.Crafting.craftedFirstRobot = true;
-      messages.push(new Message("dialogue", ["Prometheus IV: Excellent. Your first creation.", "Prometheus IV: This is a SPUD. A Steam Powered Utility Droid.", "Prometheus IV: It was one of your most famous steam inventions", "Prometheus IV: It can serve as a mobility robot.", "Prometheus IV: You can send it to the factory to find the wrench to fix the leaks."], "Prometheus"));
+      messages.push(new Message("dialogue", ["Prometheus IV: Excellent. Your first creation.", "Prometheus IV: This is a SPUD. A Steam Powered Utility Droid.", "Prometheus IV: It was one of your most famous steam inventions", "Prometheus IV: It can serve as a mobility robot.", "Prometheus IV: You can send it to the factory to find the wrench to fix the leaks."], "Prometheus")); //not working, don't know why
       currentWaypointIndex = 1;
     }
   }

@@ -1880,7 +1880,7 @@ function drawLeakPromptIfNeeded() {
 
 // Draw red alarm flash overlay
 function drawAlarmFlash() {
-  if (currentWaypointIndex > 3) return; // Stop alarm after waypoint 3
+  if (currentWaypointIndex > 2) return; // Stop alarm after waypoint 3
 
   // Calculate distance from bunker center (spawn point)
   const bunkerCenterX = 12500;

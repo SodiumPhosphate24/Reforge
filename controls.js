@@ -68,7 +68,6 @@ function keyPressed() {
 
     for (let i = droppedItems.length - 1; i >= 0; i--) {
       if (droppedItems[i].checkPickup()) {
-        handleTriggers("Pickup");
         if (droppedItems[i].item.stackable) {
           let stacked = false;
           for (let j = 0; j < inventoryList.length; j++) {
@@ -78,6 +77,7 @@ function keyPressed() {
                 droppedItems.splice(i, 1);
                 stacked = true;
                 itemLabelAlpha = 1.5;
+                handleTriggers("Pickup");
                 return;
               }
             }
@@ -96,6 +96,7 @@ function keyPressed() {
               droppedItems.splice(i, 1);
               itemLabelAlpha = 1.5;
             }
+            handleTriggers("Pickup");
             return;
           }
         }
@@ -113,6 +114,7 @@ function keyPressed() {
             droppedItems.splice(i, 1);
             itemLabelAlpha = 1.5;
           }
+          handleTriggers("Pickup");
           return;
         }
       }
@@ -185,7 +187,7 @@ function mouseClicked() {
           bullets.push(new Bullet("common", currentItem.damage));
         }
       }
-      if (currentItem.type == "consumable") {
+      if (currentItem.type == "consumable" && currentWaypointIndex != 0) {
         if (healthPoints < players[activePlayer].maxHealth) {
           switch (currentItem.name) {
             case "cheese":
