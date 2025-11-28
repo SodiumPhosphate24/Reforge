@@ -46,7 +46,7 @@ var tileRotation = 0;        // 0, 90, 180, 270
 var tileFlipH = false;       // horizontal flip
 var tileFlipV = false;       // vertical flip
 var tileColorIndex = 0;      // color variant index
-var editorLayer = 0;         // 0 & 1 behind; 2 & 3 between; 4 in front
+var editorLayer = 0;         // 5 layers total: 0-1 behind, 2-3 between, 4 in front
 const EDIT_TILE_SIZE = 50;
 var cratePlacementPaused = false; // Pauses tile placement after crate is placed
 var lastCrateRow = -1;       // Row of last placed crate
@@ -642,10 +642,12 @@ function handleEditorKeyPress() {
     return; // Don't allow other keys when paused
   }
 
-  // Layer selection: 1 / 2 / 3
+  // Layer selection: 1-5 for layers 0-4
   if (key === '1') { editorLayer = 0; console.log("Layer -> 0"); }
   if (key === '2') { editorLayer = 1; console.log("Layer -> 1"); }
   if (key === '3') { editorLayer = 2; console.log("Layer -> 2"); }
+  if (key === '4') { editorLayer = 3; console.log("Layer -> 3"); }
+  if (key === '5') { editorLayer = 4; console.log("Layer -> 4"); }
 
   // Tile switching with comma and period keys
   if (keyCode == 188) { // ,

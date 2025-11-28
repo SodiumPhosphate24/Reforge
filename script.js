@@ -645,12 +645,6 @@ function getTile(row, col, layer = 0) {
   const cell = gameWorld[row]?.[col];
   if (!cell) return null;
   if ('layers' in cell) {
-    // Ensure the layers array has 5 elements
-    if (cell.layers.length < 5) {
-      while (cell.layers.length < 5) {
-        cell.layers.push(null);
-      }
-    }
     return cell.layers[layer] || null;
   }
   return (layer === 0) ? cell : null; // legacy cell is layer 0
@@ -663,6 +657,10 @@ function setTile(row, col, layer, type, rotation = 0, flipH = false, flipV = fal
   } else if (!('layers' in gameWorld[row][col])) {
     const old = gameWorld[row][col];
     gameWorld[row][col] = { layers: [old, null, null, null, null] };
+  }
+  // Ensure the layers array has exactly 5 elements (0-4)
+  while (gameWorld[row][col].layers.length < 5) {
+    gameWorld[row][col].layers.push(null);
   }
   gameWorld[row][col].layers[layer] = (type == null) ? null : {
     type: parseInt(type, 10),
@@ -819,13 +817,13 @@ function stringToWorld(s) {
       if (cellStr === "") { outRow.push(undefined); continue; }
 
       if (cellStr.includes(",")) {
-        // Multi-layer format
+        // Multi-layer format - exactly 5 layers (0-4)
         const layerStrs = cellStr.split(",");
         const layers = [null, null, null, null, null];
         let crateItemsForCell = null;
         let crateLayerIndex = -1;
 
-        for (let L = 0; L < Math.min(5, layerStrs.length); L++) {
+        for (let L = 0; L < 5 && L < layerStrs.length; L++) {
           const tstr = layerStrs[L].trim();
           if (tstr === "") { layers[L] = null; continue; }
 
@@ -1194,9 +1192,9 @@ function drawWorldLayer(world, layerIndex) {
       let rotation = tileObj.rotation || 0;
       let colorIndex = tileObj.colorIndex || 0;
 
-      // Check for roof scale (smooth scale transition)
+      // Check for roof scale (smooth scale transition) - layers 1-4 can be roofs
       let roofScaleValue = 1.0;
-      if ((layerIndex === 1 || layerIndex === 2 || layerIndex === 3 || layerIndex === 4) && tileWalls[tileType] === 2) {
+      if (layerIndex >= 1 && layerIndex <= 4 && tileWalls[tileType] === 2) {
         const __k = tileKey(i, j);
         if (roofScale.has(__k)) {
           roofScaleValue = roofScale.get(__k);
