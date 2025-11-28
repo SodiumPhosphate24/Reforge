@@ -2042,8 +2042,8 @@ function drawAlarmFlash() {
 function initializeHardcodes() {
   players.push(new Player(12500, 12500, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
   NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", ["Prometheus IV: Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
-  NonPlayerCharacters.push(new NPC(12950, 12450, "Book", ["Bastian's Journal: ", " : Cheese"], Book, "Book"));
-  NonPlayerCharacters.push(new NPC(12900, 13275, "Book", ["Steam Power for Dummies: ", " : Wing"], Book, "Book"));
-  //NonPlayerCharacters.push(new NPC(13650, 12400, "Book", ["The 7 Habits of Highly Effective Engineers That Have Been Cryogenically Frozen for : ", " : Cheese"], Book, "Book"));
+  NonPlayerCharacters.push(new NPC(12950, 12450, "Book", ["Bastian's Journal: Cheese"], Book, "Book"));
+  NonPlayerCharacters.push(new NPC(12890, 13287, "Book", ["Steam Power for Dummies : Wing"], Book, "Book"));
+  NonPlayerCharacters.push(new NPC(13650, 12400, "Book", ["The 7 Habits of Highly Effective Engineers That Have Been Cryogenically Frozen for 400 Years: Cheese"], Book, "Book"));
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
 }
