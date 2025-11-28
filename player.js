@@ -115,7 +115,7 @@ function drawPlayers() {
             const offsetRadius = random(0, 8);
             const offsetAngle = random(0, TWO_PI);
             const spawnX = headX + cos(offsetAngle) * offsetRadius;
-            const spawnY = headY + sin(offsetAngle) * offsetRadius;
+            const spawnY = (headY + sin(offsetAngle) * offsetRadius)-10;
             
             // Create upward steam particle with wider arc spread
             const steamParticle = new Particle(spawnX, spawnY, [220, 220, 230], 50, 1.2, 3);

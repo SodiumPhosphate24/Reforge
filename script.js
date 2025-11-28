@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage;
+let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, Book;
 
 // Waypoint system
 var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875]];
@@ -211,6 +211,7 @@ function preload() {
   SPUDImage = loadImage("Characters/SPUD.png");
   Prometheus = loadImage("Characters/Prometheus.png");
   BadGuy = loadImage("Characters/Enemy.png")
+  Book = loadImage("Characters/Book.png");
   BulletImgs[0] = loadImage("Items/Bullets/CommonBullet.png");
   BulletImgs[1] = loadImage("Items/Bullets/UncommonBullet.png");
   BulletImgs[2] = loadImage("Items/Bullets/RareBullet.png");
@@ -2041,5 +2042,8 @@ function drawAlarmFlash() {
 function initializeHardcodes() {
   players.push(new Player(12500, 12500, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
   NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", ["Prometheus IV: Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
+  NonPlayerCharacters.push(new NPC(12950, 12450, "Book", ["Bastian's Journal: ", [" : Cheese"]], Book, "Book"));
+  NonPlayerCharacters.push(new NPC(12900, 13275, "Book", ["Steam Power for Dummies: ", [" : Wing"]], Book, "Book"));
+  //NonPlayerCharacters.push(new NPC(13650, 12400, "Book", ["Bastian's Journal: ", [" : Cheese"]], Book, "Book"));
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
 }
