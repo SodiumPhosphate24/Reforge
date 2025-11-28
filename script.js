@@ -2045,6 +2045,6 @@ function initializeHardcodes() {
   NonPlayerCharacters.push(new NPC(12950, 12450, "Book", ["Bastian's Journal: Cheese"], Book, "Book"));
   NonPlayerCharacters.push(new NPC(12910, 13310, "Book", ["Steam Power for Dummies : Wing"], Book, "Book"));
   NonPlayerCharacters.push(new NPC(13650, 12420, "Book", ["The 7 Habits of Highly Effective Engineers \n That Have Been Cryogenically Frozen for \n400 Years: Burger"], Book, "Book"));
-  //NonPlayerCharacters.push(new NPC(12890, 13287, "Book", ["Steam Power for Dummies : Wing"], Book, "Book"));
+  NonPlayerCharacters.push(new NPC(13350, 13050, "Book", ["Walden : Tuberculosis"], Book, "Book"));
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
 }
