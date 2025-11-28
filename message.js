@@ -209,8 +209,9 @@ function messageDisplay() {
       text(person, messages[i].x, messages[i].y - 75);
 
       fill(255, 255, 255, messages[i].alpha);
+      textSize(18);
       // Draw each wrapped line with proper spacing
-      var lineHeight = 25;
+      var lineHeight = 32;
       var startY = messages[i].y - ((wrappedLines.length - 1) * lineHeight) / 2;
       for (var lineIdx = 0; lineIdx < wrappedLines.length; lineIdx++) {
         text(wrappedLines[lineIdx], messages[i].x, startY + (lineIdx * lineHeight));
