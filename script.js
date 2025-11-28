@@ -118,7 +118,9 @@ function drawFadeToGame() {
   drawEnemies();
   drawBullets();
 
+  // LAYER 4 on top of everything
   drawWorldLayer(gameWorld, 4);
+  updateParticlesForLayer(4);
 
   pop();
 
@@ -1250,7 +1252,7 @@ function drawWorldLayer(world, layerIndex) {
         translate(j * 50 + 25, i * 50 + 25);
         rotate(radians(finalRotation));
         scale(
-          (tileObj.flipH ? -1 : 1) * roofScaleValue, 
+          (tileObj.flipH ? -1 : 1) * roofScaleValue,
           (tileObj.flipV ? -1 : 1) * roofScaleValue
         );
         image(imgToDraw, -25, -25, 50, 50);
@@ -1647,12 +1649,12 @@ function stepRoofFades() {
       roofScale.set(k, 0);
       continue;
     }
-    
+
     // Smooth lerp toward 0
     const newScale = Math.max(0, currScale - ROOF_SCALE_SPEED);
     roofScale.set(k, newScale);
   }
-  
+
   // Scale non-targets back toward 1.0 (visible)
   const toDelete = [];
   for (const [k, currScale] of roofScale.entries()) {
@@ -1661,7 +1663,7 @@ function stepRoofFades() {
       toDelete.push(k);
       continue;
     }
-    
+
     // Smooth lerp toward 1.0
     const newScale = Math.min(1.0, currScale + ROOF_SCALE_SPEED);
     if (newScale >= 0.99) {
@@ -1670,7 +1672,7 @@ function stepRoofFades() {
       roofScale.set(k, newScale);
     }
   }
-  
+
   // Batch delete fully visible tiles
   for (const k of toDelete) {
     roofScale.delete(k);
