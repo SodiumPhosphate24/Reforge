@@ -1192,15 +1192,14 @@ function drawWorldLayer(world, layerIndex) {
       let rotation = tileObj.rotation || 0;
       let colorIndex = tileObj.colorIndex || 0;
 
-      // Check for roof fade alpha (using discrete steps)
-      let roofFadeAlpha = 255;
+      // Check for roof scale (smooth scale transition)
+      let roofScaleValue = 1.0;
       if ((layerIndex === 1 || layerIndex === 2 || layerIndex === 3 || layerIndex === 4) && tileWalls[tileType] === 2) {
         const __k = tileKey(i, j);
-        if (roofAlpha.has(__k)) {
-          const stepIndex = roofAlpha.get(__k);
-          roofFadeAlpha = ROOF_FADE_STEPS[stepIndex];
+        if (roofScale.has(__k)) {
+          roofScaleValue = roofScale.get(__k);
         }
-        if (roofFadeAlpha <= 0) continue; // fully transparent; skip draw
+        if (roofScaleValue <= 0.01) continue; // fully scaled down; skip draw
       }
 
       // Determine which image to draw (use cached tinted version)
@@ -1244,27 +1243,20 @@ function drawWorldLayer(world, layerIndex) {
         }
       }
 
-      // Apply roof fade tint if needed
-      if (roofFadeAlpha < 255) {
-        tint(255, roofFadeAlpha);
-      }
-
-      // Draw the tile (apply rotation and flips)
-      const needsTransform = finalRotation > 0 || tileObj.flipH || tileObj.flipV;
+      // Draw the tile (apply rotation, flips, and scale)
+      const needsTransform = finalRotation > 0 || tileObj.flipH || tileObj.flipV || roofScaleValue < 1.0;
       if (needsTransform) {
         push();
         translate(j * 50 + 25, i * 50 + 25);
         rotate(radians(finalRotation));
-        scale(tileObj.flipH ? -1 : 1, tileObj.flipV ? -1 : 1);
+        scale(
+          (tileObj.flipH ? -1 : 1) * roofScaleValue, 
+          (tileObj.flipV ? -1 : 1) * roofScaleValue
+        );
         image(imgToDraw, -25, -25, 50, 50);
         pop();
       } else {
         image(imgToDraw, j * 50, i * 50, 50, 50);
-      }
-
-      // Reset tint after drawing
-      if (roofFadeAlpha < 255) {
-        noTint();
       }
 
       // Draw crate inventory only when needed
@@ -1307,24 +1299,10 @@ function updateParticlesForLayer(layerIndex) {
     if (p.layer === layerIndex) {
       p.update();
 
-      // Apply roof fade if particle is on a roof layer and the roof is fading (using discrete steps)
-      let fadeAlpha = 255;
-      if (layerIndex >= 1 && layerIndex <= 4 && p.onRoof) { // Assuming 'onRoof' property is set on particle
-        const __k = tileKey(p.roofRow, p.roofCol); // Assuming particle stores roof tile coords
-        if (roofAlpha.has(__k)) {
-          const stepIndex = roofAlpha.get(__k);
-          fadeAlpha = ROOF_FADE_STEPS[stepIndex];
-        }
-        // Particles on layer 3 or higher disappear if part of a roof fade out
-        if ((layerIndex >= 3 || p.layer >= 3) && fadeAlpha < 255) {
-          fadeAlpha = 0; // Make particle disappear if it's on a fading roof and on layer 3+
-        }
-      }
-
-      // Only draw particles within viewport and with sufficient alpha
+      // Only draw particles within viewport
       if (p.x >= viewLeft && p.x <= viewRight &&
-        p.y >= viewTop && p.y <= viewBottom && fadeAlpha > 0) {
-        p.draw(fadeAlpha); // Pass fadeAlpha to particle's draw method
+        p.y >= viewTop && p.y <= viewBottom) {
+        p.draw(); // Draw particle normally (scale system doesn't affect particles)
       }
 
       if (p.isDead()) {
@@ -1556,13 +1534,11 @@ function checkCollision(x, y, x2, y2, w, h, w2 = 50, h2 = 50) {
   );
 }
 
-/* ========= Roof step-fade system (3 discrete states for performance) ========= */
-const ROOF_FADE_STEPS = [255, 128, 0]; // Discrete alpha states: opaque, semi-transparent, hidden
-const ROOF_STEP_DELAY = 3; // frames between steps
+/* ========= Roof scale animation system (smooth scale transition, no tint) ========= */
+const ROOF_SCALE_SPEED = 0.08; // How fast roofs scale (0-1)
 const ROOF_MAX_DISTANCE = 25;  // max tiles to flood fill from player
-let roofAlpha = new Map();     // key "row,col" -> current alpha step index (0, 1, or 2)
-let roofStepTimer = new Map(); // key "row,col" -> frames until next step
-let roofTarget = new Set();    // keys that should fade to 0 this frame
+let roofScale = new Map();     // key "row,col" -> current scale (0.0 to 1.0)
+let roofTarget = new Set();    // keys that should scale down this frame
 let lastPlayerTile = { row: -1, col: -1 }; // cache player position
 let cachedRoofTarget = new Set(); // cached flood fill results
 
@@ -1664,55 +1640,43 @@ function floodFillRoof(seeds) {
 }
 
 function stepRoofFades() {
-  // Step targets toward transparent (step index 2 = alpha 0)
+  // Scale targets toward 0 (hidden)
   for (const k of roofTarget) {
-    const currStep = roofAlpha.has(k) ? roofAlpha.get(k) : 0; // 0 = opaque (255)
-    if (currStep === 2) continue; // Already fully transparent
-    
-    // Check/update timer
-    const timer = roofStepTimer.has(k) ? roofStepTimer.get(k) : 0;
-    if (timer <= 0) {
-      // Advance to next step
-      roofAlpha.set(k, currStep + 1);
-      roofStepTimer.set(k, ROOF_STEP_DELAY);
-    } else {
-      roofStepTimer.set(k, timer - 1);
+    const currScale = roofScale.has(k) ? roofScale.get(k) : 1.0;
+    if (currScale <= 0.01) {
+      roofScale.set(k, 0);
+      continue;
     }
+    
+    // Smooth lerp toward 0
+    const newScale = Math.max(0, currScale - ROOF_SCALE_SPEED);
+    roofScale.set(k, newScale);
   }
   
-  // Step non-targets back toward opaque (step index 0 = alpha 255)
+  // Scale non-targets back toward 1.0 (visible)
   const toDelete = [];
-  for (const [k, currStep] of roofAlpha.entries()) {
+  for (const [k, currScale] of roofScale.entries()) {
     if (roofTarget.has(k)) continue;
-    if (currStep === 0) {
-      // Already opaque, clean up
+    if (currScale >= 0.99) {
       toDelete.push(k);
       continue;
     }
     
-    // Check/update timer
-    const timer = roofStepTimer.has(k) ? roofStepTimer.get(k) : 0;
-    if (timer <= 0) {
-      // Step back toward opaque
-      const nextStep = currStep - 1;
-      if (nextStep === 0) {
-        toDelete.push(k);
-      } else {
-        roofAlpha.set(k, nextStep);
-      }
-      roofStepTimer.set(k, ROOF_STEP_DELAY);
+    // Smooth lerp toward 1.0
+    const newScale = Math.min(1.0, currScale + ROOF_SCALE_SPEED);
+    if (newScale >= 0.99) {
+      toDelete.push(k);
     } else {
-      roofStepTimer.set(k, timer - 1);
+      roofScale.set(k, newScale);
     }
   }
   
-  // Batch delete fully opaque tiles
+  // Batch delete fully visible tiles
   for (const k of toDelete) {
-    roofAlpha.delete(k);
-    roofStepTimer.delete(k);
+    roofScale.delete(k);
   }
 }
-/* ====== End roof step-fade system ====== */
+/* ====== End roof scale animation system ====== */
 
 // --- Gun flip animation state ---
 let currentGunFlip = 0; // current flip angle (0 or 180)
