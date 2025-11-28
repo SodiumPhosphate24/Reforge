@@ -25,7 +25,7 @@ function controls() {
   players[activePlayer].x = pX;
   players[activePlayer].y = pY;
   if(Math.abs(pXVel) > 0.2 || Math.abs(pYVel) > 0.2){
-    players[activePlayer].health -= .05;
+    players[activePlayer].health -= .025;
   }
   // Guard if world failed to load
   if (!gameWorld.length || !gameWorld[0]?.length) return;
@@ -59,11 +59,16 @@ function keyPressed() {
       // Permanently repair the leak by setting spawn rate to 0
       particleSources[nearestLeak.index].spawnRate = 0;
       nearestLeak = null; // Clear the nearest leak
+      totalLeaks--;
+      if (totalLeaks == 0){
+        handleTriggers("Objective");
+      }
       return;
     }
 
     for (let i = droppedItems.length - 1; i >= 0; i--) {
       if (droppedItems[i].checkPickup()) {
+        handleTriggers("Pickup");
         if (droppedItems[i].item.stackable) {
           let stacked = false;
           for (let j = 0; j < inventoryList.length; j++) {

@@ -176,6 +176,15 @@ function canCraftRecipe(recipe) {
   return true;
 }
 
+function searchInventory(itemName){
+  for (let item of inventoryList) {
+    if (item && item.name === itemName) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function craftItem(recipe) {
   if (!canCraftRecipe(recipe)) return;
   

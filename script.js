@@ -1,8 +1,8 @@
 let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage;
 
 // Waypoint system
-var waypointCoordinates = [[12700, 12500], [13000, 12800], [12500, 13000]]; // Array of [x, y] coordinates
-var currentWaypointIndex = 0; // Current waypoint to show
+var waypointCoordinates = [[13375, 12875], [16500, 14250], [13100, 12875], [100, 100]];
+var currentWaypointIndex = 0;
 var itemConstructors = [];
 
 // Leak repair system
@@ -10,6 +10,7 @@ var nearestLeak = null; // Stores nearest repairable leak info
 var leakPromptAlpha = 0; // Fade animation for leak repair prompt
 var leakPromptScale = 0; // Scale animation for leak repair prompt
 var leakPromptGrowScale = 0.5; // Growing scale animation
+var totalLeaks = 5;
 
 // Alarm system
 var alarmFlashAlpha = 0;
