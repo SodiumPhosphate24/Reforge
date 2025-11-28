@@ -1022,17 +1022,17 @@ function drawWaypoint() {
   // Calculate distance to waypoint
   const distToWaypoint = dist(playerCenterX, playerCenterY, targetX, targetY);
 
-  // Fade out when close (within 300 units), fade in when far
-  const fadeDistance = 300;
-  const maxDistance = 600;
+  // Fade out starting at 1000px, completely transparent by 600px
+  const fadeStartDistance = 1000;
+  const fadeEndDistance = 600;
   let waypointAlpha;
 
-  if (distToWaypoint < fadeDistance) {
-    // Close: fade out completely (0 alpha at 0px, 255 alpha at 300px)
-    waypointAlpha = map(distToWaypoint, 0, fadeDistance, 0, 255);
-  } else if (distToWaypoint < maxDistance) {
-    // Medium distance: stay fully visible
-    waypointAlpha = 255;
+  if (distToWaypoint <= fadeEndDistance) {
+    // Close: completely transparent
+    waypointAlpha = 0;
+  } else if (distToWaypoint < fadeStartDistance) {
+    // Fading zone: fade from 255 (at 1000px) to 0 (at 600px)
+    waypointAlpha = map(distToWaypoint, fadeEndDistance, fadeStartDistance, 0, 255);
   } else {
     // Far: fully visible
     waypointAlpha = 255;
@@ -2044,6 +2044,6 @@ function initializeHardcodes() {
   NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", ["Prometheus IV: Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
   NonPlayerCharacters.push(new NPC(12950, 12450, "Book", ["Bastian's Journal: ", [" : Cheese"]], Book, "Book"));
   NonPlayerCharacters.push(new NPC(12900, 13275, "Book", ["Steam Power for Dummies: ", [" : Wing"]], Book, "Book"));
-  //NonPlayerCharacters.push(new NPC(13650, 12400, "Book", ["Bastian's Journal: ", [" : Cheese"]], Book, "Book"));
+  //NonPlayerCharacters.push(new NPC(13650, 12400, "Book", [" Journal: ", [" : Cheese"]], Book, "Book"));
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
 }
