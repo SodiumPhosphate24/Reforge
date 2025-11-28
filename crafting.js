@@ -110,7 +110,7 @@ function isNearWorkbench() {
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
 
-  const checkRadius = 125; // 2.5 tiles * 50 pixels
+  const checkRadius = 150; // Slightly larger radius for 2x2 workbench
 
   // Check all tiles within radius
   for (let row = 0; row < gameWorld.length; row++) {
@@ -118,7 +118,8 @@ function isNearWorkbench() {
       const cell = gameWorld[row][col];
       if (!cell) continue;
 
-      // Calculate distance to tile center
+      // For 2x2 workbench, calculate distance to the center of the 2x2 cluster
+      // We'll check if ANY workbench tile is nearby
       const tileCenterX = col * 50 + 25;
       const tileCenterY = row * 50 + 25;
       const dist = Math.sqrt(

@@ -225,7 +225,7 @@ function preload() {
   tileImgs[3] = null; // Concrete uses variants, loaded below
   tileImgs[4] = loadImage("Tiles/Brick.png");
   tileImgs[5] = loadImage("Tiles/Crate.png");
-  tileImgs[6] = loadImage("Tiles/Crafting.png");
+  tileImgs[6] = null; // Workbench uses variants, loaded below
   tileImgs[7] = loadImage("Tiles/Dirt.png");
   tileImgs[8] = null;
   tileImgs[9] = loadImage("Tiles/Door.png");
@@ -317,7 +317,49 @@ function preload() {
       'T': loadImage("Tiles/PipeT.png"),
       'cross': loadImage("Tiles/PipeCross.png")
     }
+  };
+
+  // Workbench variants - 2x2 multi-tile system
+  // The 32x32 image will be split into 4 quadrants
+  tileVariants[6] = {
+    variants: {
+      'top_left': null,     // Will be created from quadrant
+      'top_right': null,    // Will be created from quadrant
+      'bottom_left': null,  // Will be created from quadrant
+      'bottom_right': null  // Will be created from quadrant
+    },
+    fullImage: loadImage("Tiles/Crafting.png") // Load the full 32x32 image
   }
+}
+
+// Generate workbench variants by splitting 32x32 image into 4 quadrants
+function generateWorkbenchVariants() {
+  const workbenchConfig = tileVariants[6];
+  if (!workbenchConfig || !workbenchConfig.fullImage) return;
+
+  const fullImg = workbenchConfig.fullImage;
+  
+  // Create top-left quadrant (0, 0, 16, 16)
+  const topLeft = createGraphics(16, 16);
+  topLeft.image(fullImg, 0, 0, 16, 16, 0, 0, 16, 16);
+  workbenchConfig.variants.top_left = topLeft;
+
+  // Create top-right quadrant (16, 0, 16, 16)
+  const topRight = createGraphics(16, 16);
+  topRight.image(fullImg, 0, 0, 16, 16, 16, 0, 16, 16);
+  workbenchConfig.variants.top_right = topRight;
+
+  // Create bottom-left quadrant (0, 16, 16, 16)
+  const bottomLeft = createGraphics(16, 16);
+  bottomLeft.image(fullImg, 0, 0, 16, 16, 0, 16, 16, 16);
+  workbenchConfig.variants.bottom_left = bottomLeft;
+
+  // Create bottom-right quadrant (16, 16, 16, 16)
+  const bottomRight = createGraphics(16, 16);
+  bottomRight.image(fullImg, 0, 0, 16, 16, 16, 16, 16, 16);
+  workbenchConfig.variants.bottom_right = bottomRight;
+
+  console.log("Workbench variants generated from 32x32 image");
 }
 
 // Generate cached tinted versions of all tiles
@@ -386,6 +428,9 @@ function setup() {
   createCanvas(1200, 750);
   maxTileTypes = tileImgs.length;
   PlayerImage = Buschy;
+
+  // Generate workbench quadrants from the 32x32 image
+  generateWorkbenchVariants();
 
   // Generate tinted tile cache after images are loaded
   generateTintedTileCache();
@@ -1042,6 +1087,34 @@ function isSameTileType(row, col, layer, tileType) {
   return tile.type === tileType;
 }
 
+// Get the appropriate workbench variant based on position in 2x2 grid
+// Workbench (6) uses variants: top_left, top_right, bottom_left, bottom_right
+function getWorkbenchVariant(row, col, layer, tileType) {
+  if (tileType !== 6) return null;
+
+  // Check if this is part of a 2x2 workbench cluster
+  const hasRight = isSameTileType(row, col + 1, layer, tileType);
+  const hasBottom = isSameTileType(row + 1, col, layer, tileType);
+  const hasLeft = isSameTileType(row, col - 1, layer, tileType);
+  const hasTop = isSameTileType(row - 1, col, layer, tileType);
+
+  let variant = 'top_left'; // default
+
+  // Determine position in 2x2 grid
+  if (hasRight && hasBottom) {
+    variant = 'top_left';
+  } else if (hasLeft && hasBottom) {
+    variant = 'top_right';
+  } else if (hasRight && hasTop) {
+    variant = 'bottom_left';
+  } else if (hasLeft && hasTop) {
+    variant = 'bottom_right';
+  }
+
+  const config = tileVariants[6];
+  return { variant, rotation: 0, flipH: false, baseImg: config.variants[variant] };
+}
+
 // Get the appropriate pipe variant and rotation based on neighbors
 // Pipe (27) uses variants: straight, L, T, cross
 function getPipeVariant(row, col, layer, tileType) {
@@ -1225,8 +1298,16 @@ function drawWorldLayer(world, layerIndex) {
       let imgToDraw = null;
       let finalRotation = rotation;
 
+      // Check if this is a workbench tile (2x2 multi-tile using variants)
+      if (tileType === 6) {
+        const workbenchInfo = getWorkbenchVariant(i, j, layerIndex, tileType);
+        if (workbenchInfo && workbenchInfo.baseImg) {
+          imgToDraw = workbenchInfo.baseImg;
+          finalRotation = workbenchInfo.rotation;
+        }
+      }
       // Check if this is a pipe tile (auto-connect pipes using variants)
-      if (tileType === 27) {
+      else if (tileType === 27) {
         const pipeInfo = getPipeVariant(i, j, layerIndex, tileType);
         if (pipeInfo) {
           const config = tileVariants[27];
