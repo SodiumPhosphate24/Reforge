@@ -2043,38 +2043,39 @@ function initializeHardcodes() {
   players.push(new Player(12500, 12500, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
   NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", ["Prometheus IV: Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
   NonPlayerCharacters.push(new NPC(
-    12950,
-    12450,
-    "Book",
-    [
-      "Bastian's Journal: Page 1\n1838\nThe boilers run louder than ever. Accidents grow more frequent. I need a better way to preserve the injured.",
+      12950,
+      12450,
+      "Book",
+      [
+          "Bastian's Journal: Page 1\n1838\nThe boilers grow louder each year. Too many accidents… too many preventable deaths.",
 
-      "Page 2\n1840\nThe preservation chamber prototype works in theory. Steam, coolant, pressure balance… everything aligns. But no one trusts it.",
+          "Bastian's Journal: Page 2\n1840\nMy preservation chamber works in theory. Steam, coolant, pressure balance. No one believes in it but me.",
 
-      "Page 3\n1842\nAnother mill explosion today. If the chamber were finished, lives might have been saved. I cannot ignore this need.",
+          "Bastian's Journal: Page 3\n1842\nAnother mill explosion today. If only the chamber were finished. I must keep working.",
 
-      "Page 4\n1846\nThe chamber is nearly complete. Someone must test it. I cannot ask another man to do what I will not.",
+          "Bastian's Journal: Page 4\n1846\nThe chamber is nearly operational. Someone must test it. It will be me.",
 
-      "Page 5\n1849\nBuilt a small bunker beneath the workshop. Quiet. Private. Safe for the test. The chamber hums like a heartbeat down here.",
+          "Bastian's Journal: Page 5\n1849\nBuilt a small bunker beneath my workshop. Quiet enough to test the chamber in peace.",
 
-      "Page 6\n1852\nNew closed steam-loop system works. Could sustain me for days. Still untested… but promising.",
+          "Bastian's Journal: Page 6\n1852\nCreated a closed steam-loop to sustain stasis for days. Elegant… but untested.",
 
-      "Page 7\n1853\nI practiced stepping inside today. Not sealed—just a fitting test. Strange calm washed over me. As if the machine expects me.",
+          "Bastian's Journal: Page 7\n1853\nStepped inside today. Not sealed. Felt oddly calm, as though the machine already knew me.",
 
-      "Page 8\nMay 1855\nSet the boiler room lock today. The combination… 1855. The year I begin the test. If I forget, it will remind me why I did this.",
+          "Bastian's Journal: Page 8\nMay 1855\nSet the boiler room lock today. Combination is 1855—the year I begin the test.",
 
-      "Page 9\nJune 1855\nEverything is ready. Gauges steady. Coolant clear. No more delays. Tomorrow, I enter the chamber.",
+          "Bastian's Journal: Page 9\nJune 1855\nFinal checks done. Gauges steady. Coolant flowing. Ready at last.",
 
-      "Page 10\nJune 1855\nA week of stasis should prove the chamber works. When I wake, I’ll show the guild that preservation—not expansion—is our future.",
+          "Bastian's Journal: Page 10\nJune 1855\nA week in stasis should prove the chamber’s safety. If I succeed, the guild will have no choice but to see its worth.",
 
-      "Page 11\nJune 27th, 1855\nIf this works, lives will change. If not… at least I tried. Time to sleep.\n—Bastian Buschwick"
-    ],
-    Book,
-    "Book"
+          "Bastian's Journal: Page 11\nJune 27th, 1855\nTime to sleep. May the chamber hold.\n—Bastian Buschwick"
+      ],
+      Book,
+      "Book"
   ));
 
 
-  NonPlayerCharacters.push(new NPC(12910, 13262, "Book", ["Steam Power for Dummies : So you wish to master the power of steam. Excellent choice, as steam is the newest, most advanced technology for the future", "Steam Power for Dummies : As long as no corrupt, tyrranically omnipotent intelligence never causes civilization to collapse", "Steam Power for Dummies : Steam is powerful and reliable for any environment that \nIsn't on fire\nIsn't overrun\nStill has science\nIn the astronomically low chance that you're reading this in an apocalytic wasteland, I wish you the best of luck", "Steam Power for Dummies : Wing", "Steam Power for Dummies : Wing", "Steam Power for Dummies : Wing"], Book, "Book"));
+
+  NonPlayerCharacters.push(new NPC(12910, 13262, "Book", ["Steam Power for Dummies : So you wish to master the power of steam. Excellent choice, as steam is the newest, most advanced technology for the future", "Steam Power for Dummies : As long as no corrupt, tyrranically omnipotent intelligence never causes civilization to collapse", "Steam Power for Dummies : Steam is powerful and reliable for any environment that \nIsn't on fire\nIsn't overrun\nStill has science\nIn the astronomically low chance that you're reading this in an apocalytic wasteland, I wish you the best of luck", "Steam Power for Dummies : A boiler turns water into steam using heat. If your boiler starts rattling ominously, try to communicate with it rationally. If it  voice, leave immediately", "Steam Power for Dummies : Valves can control the pressure of steam. Pressure creates motion. Motion allows for progress. Progress prevents societal collapse", "Steam Power for Dummies : A properly maintained steam engine can last for centuries. If you're reading this in the year 2355, you're doing something right"], Book, "Book"));
   NonPlayerCharacters.push(new NPC(13650, 12420, "Book", ["The 7 Habits of Highly Effective Engineers \n That Have Been Cryogenically Frozen for 500 Years: Burger"], Book, "Book"));
   NonPlayerCharacters.push(new NPC(13350, 13050, "Book", ["Walden : Tuberculosis"], Book, "Book"));
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
