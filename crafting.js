@@ -21,7 +21,7 @@ var craftingRecipes = [
     name: "SPUD",
     category: "Robots",
     type: "player",
-    unlocked : true,
+    unlocked : false,
     playerConstructor: {width : 87.5, height : 62.5, speed : 1.3, health : 100, damage : 1},
     ingredients: [
       { itemName: "common wheel", amount: 2 },
