@@ -132,7 +132,7 @@ function drawFadeToGame() {
   drawNPCPromptIfNeeded();
 
   // Draw UI elements
-  
+
   messageDisplay();
   // Draw fog centered on camera, constrained to screen
   tint(255, 200);
@@ -341,28 +341,35 @@ function generateWorkbenchVariants() {
   }
 
   const fullImg = workbenchConfig.fullImage;
-  
-  // Create top-left quadrant (source: 0, 0, 16, 16)
-  const topLeft = createGraphics(16, 16);
-  topLeft.copy(fullImg, 0, 0, 16, 16, 0, 0, 16, 16);
+
+  // The image is 32x32 pixels - split it into 4 quadrants of 16x16 each
+  const halfWidth = fullImg.width / 2;
+  const halfHeight = fullImg.height / 2;
+
+  console.log("Workbench image dimensions:", fullImg.width, "x", fullImg.height);
+  console.log("Each quadrant will be:", halfWidth, "x", halfHeight);
+
+  // Create top-left quadrant
+  const topLeft = createGraphics(halfWidth, halfHeight);
+  topLeft.copy(fullImg, 0, 0, halfWidth, halfHeight, 0, 0, halfWidth, halfHeight);
   workbenchConfig.variants.top_left = topLeft;
 
-  // Create top-right quadrant (source: 16, 0, 16, 16)
-  const topRight = createGraphics(16, 16);
-  topRight.copy(fullImg, 16, 0, 16, 16, 0, 0, 16, 16);
+  // Create top-right quadrant
+  const topRight = createGraphics(halfWidth, halfHeight);
+  topRight.copy(fullImg, halfWidth, 0, halfWidth, halfHeight, 0, 0, halfWidth, halfHeight);
   workbenchConfig.variants.top_right = topRight;
 
-  // Create bottom-left quadrant (source: 0, 16, 16, 16)
-  const bottomLeft = createGraphics(16, 16);
-  bottomLeft.copy(fullImg, 0, 16, 16, 16, 0, 0, 16, 16);
+  // Create bottom-left quadrant
+  const bottomLeft = createGraphics(halfWidth, halfHeight);
+  bottomLeft.copy(fullImg, 0, halfHeight, halfWidth, halfHeight, 0, 0, halfWidth, halfHeight);
   workbenchConfig.variants.bottom_left = bottomLeft;
 
-  // Create bottom-right quadrant (source: 16, 16, 16, 16)
-  const bottomRight = createGraphics(16, 16);
-  bottomRight.copy(fullImg, 16, 16, 16, 16, 0, 0, 16, 16);
+  // Create bottom-right quadrant
+  const bottomRight = createGraphics(halfWidth, halfHeight);
+  bottomRight.copy(fullImg, halfWidth, halfHeight, halfWidth, halfHeight, 0, 0, halfWidth, halfHeight);
   workbenchConfig.variants.bottom_right = bottomRight;
 
-  console.log("Workbench variants generated from 32x32 image");
+  console.log("Workbench variants generated: 4 quadrants from source image");
 }
 
 // Generate cached tinted versions of all tiles
@@ -1120,7 +1127,7 @@ function getWorkbenchVariant(row, col, layer, tileType) {
     console.error("Workbench variant missing:", variant);
     return null;
   }
-  
+
   return { variant, rotation: 0, flipH: false, baseImg: config.variants[variant] };
 }
 
