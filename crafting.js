@@ -289,7 +289,7 @@ function craftItem(recipe) {
 function triggerParticleEffect() {
   if (typeof particleSources !== 'undefined' && particleSources.length > 5) {
     // Set spawn rate to 3
-    particleSources[5].spawnRate = 3;
+    particleSources[5].spawnRate = 21;
     
     // Reset back to 0 after 1 second (60 frames at 60fps)
     setTimeout(() => {
