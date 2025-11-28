@@ -2050,7 +2050,7 @@ function initializeHardcodes() {
     [
       "Bastian's Journal: April 12th, 1838\nAnother boiler accident today. Good men burned because help arrived too late. We push engines further, but never protect the people working beside them. This must change.",
 
-      "Bastian's Journal: November 3rd, 1840\nThe idea took shape today: a chamber to halt injury long enough for real aid to arrive. Not immortality—just a pause. A way to give the dying a chance.",
+      "Bastian's Journal: November 3rd, 1840\nThe idea took shape today. A chamber to halt injury long enough for real aid to arrive. Not immortality—just a pause. A way to give the dying a chance.",
 
       "Bastian's Journal: June 17th, 1842\nWitnessed a collapsed furnace site. The workers were alive for minutes… then gone. If the chamber existed, they could have been preserved until doctors arrived. I will not let another man die waiting.",
 
@@ -2072,9 +2072,26 @@ function initializeHardcodes() {
     "Book"
   ));
 
-  NonPlayerCharacters.push(new NPC(12910, 13262, "Book", ["Steam Power for Dummies : So you wish to master the power of steam. Excellent choice, as steam is the newest, most advanced technology for the future", "Steam Power for Dummies : As long as no corrupt, tyrranically omnipotent intelligence never causes civilization to collapse", "Steam Power for Dummies : Steam is powerful and reliable for any environment that \nIsn't on fire\nIsn't overrun\nStill has science", "Steam Power for Dummies : In the astronomically low chance that you're reading this in an apocalytic wasteland, I wish you the best of luck", "Steam Power for Dummies : A boiler turns water into steam using heat. If your boiler starts rattling ominously, try to communicate with it rationally. If it rattles back even louder, leave immediately", "Steam Power for Dummies : Valves can control the pressure of steam. Pressure creates motion. Motion allows for progress. Progress prevents societal collapse", "Steam Power for Dummies : A properly maintained steam engine can last for centuries. If you're reading this in the year 2355, you're doing something right", "Steam Power for Dummies : Remember, steam is humanity's greatest ally. If civilization has fallen while you were in cryogenic storage, think of this book as a relic of a more optimistic era, and you're on your own"], Book, "Book"));
-  NonPlayerCharacters.push(new NPC(13650, 12420, "Book", ["The 7 Habits of Highly Effective Engineers \n That Have Been Cryogenically Frozen for 500 Years: Burger"], Book, "Book"));
-  NonPlayerCharacters.push(new NPC(13350, 13050, "Book", ["Walden : Tuberculosis"], Book, "Book"));
+  NonPlayerCharacters.push(new NPC(12910, 13262, "Book", 
+      ["Steam Power for Dummies : So you wish to master the power of steam. Excellent choice, as steam is the newest, most advanced technology for the future", 
+       "Steam Power for Dummies : As long as no corrupt, tyrranically omnipotent intelligence never causes civilization to collapse", 
+       "Steam Power for Dummies : Steam is powerful and reliable for any environment that isn't on fire, isn't overrun, and still has science", 
+       "Steam Power for Dummies : In the astronomically low chance that you're reading this in an apocalytic wasteland, I wish you the best of luck", 
+       "Steam Power for Dummies : A boiler turns water into steam using heat. If your boiler starts rattling ominously, try to communicate with it rationally. If it rattles back even louder, leave immediately", 
+       "Steam Power for Dummies : Valves can control the pressure of steam. Pressure creates motion. Motion allows for progress. Progress prevents societal collapse", 
+       "Steam Power for Dummies : A properly maintained steam engine can last for centuries. If you're reading this in the year 2355, you're doing something right", 
+       "Steam Power for Dummies : Remember, steam is humanity's greatest ally. If civilization has fallen while you were in cryogenic storage, think of this book as a relic of a more optimistic era, and you're on your own"], Book, "Book"));
+  //NonPlayerCharacters.push(new NPC(13650, 12420, "Book", ["The 7 Habits of Highly Effective Engineers \n That Have Been Cryogenically Frozen for 500 Years: Burger"], Book, "Book"));
+  NonPlayerCharacters.push(new NPC(13650, 12420, "Book", [""], Book, "Book"));
+  NonPlayerCharacters.push(new NPC(13350, 13050, "Book", 
+    [
+      "Walden : I went to the woods because I wished to live deliberately, to front only the essential facts of life, and see if I could not learn what it had to teach, and not, when I came to die, discover that I had not lived. I did not wish to live what was not life, living is so dear;",
+      "Walden : nor did I wish to practise resignation, unless it was quite necessary. I wanted to live deep and suck out all the marrow of life, to live so sturdily and Spartan-like as to put to rout all that was not life",
+      "Walden : to cut a broad swath and shave close, to drive life into a corner, and reduce it to its lowest terms, and, if it proved to be mean, why then to get the whole and genuine meanness of it, and publish its meanness to the world",
+      "Walden : or if it were sublime, to know it by experience, and be able to give a true account of it in my next excursion",
+      "Walden :  For most men, it appears to me, are in a strange uncertainty about it, whether it is of the devil or of God, and have somewhat hastily concluded that it is the chief end of man here to \"glorify God and enjoy him forever.\"",
+     
+], Book, "Book"));
 
   
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
