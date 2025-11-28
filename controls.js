@@ -4,7 +4,22 @@ function controls() {
     return;
   }
   
-  if (players[activePlayer].frozen == false) {
+  // Handle Q key hold for player selection menu
+  if (keyIsDown(81) && players.length > 1) {
+    qKeyHeldFrames++;
+    if (qKeyHeldFrames >= qKeyHoldThreshold && !playerSelectionMenuOpen) {
+      playerSelectionMenuOpen = true;
+      selectedPlayerIndex = activePlayer;
+      frozen = true; // Freeze game while menu is open
+    }
+  } else {
+    if (playerSelectionMenuOpen) {
+      // Q was released, close menu
+      frozen = false;
+    }
+  }
+  
+  if (players[activePlayer].frozen == false && !playerSelectionMenuOpen) {
     if (keyIsDown(65)) {
       pXVel -= players[activePlayer].speed;
     }
@@ -37,13 +52,7 @@ function controls() {
 function mousePressed() { }
 
 function keyPressed() {
-  if (keyCode == 81) {
-    activePlayer += 1;
-    if (activePlayer >= players.length) {
-      activePlayer = 0;
-    }
-    switchPlayer(activePlayer);
-  }
+  // Q key handling moved to keyReleased for hold-to-select menu
   if (keyCode == 67 && keyIsDown(17)) {
     navigator.clipboard.writeText(worldToString(gameWorld));
     console.log("map and crate inventories copied to clipboard");
@@ -183,6 +192,16 @@ function keyPressed() {
     droppedItems.push(new DroppedItem(new Item(itemConstructors[r][0], itemConstructors[r][1], itemConstructors[r][2]), pX + 600, pY + 340));
   }
 
+  // Handle arrow keys for player selection menu
+  if (playerSelectionMenuOpen) {
+    if (keyCode === UP_ARROW) {
+      selectedPlayerIndex = (selectedPlayerIndex - 1 + players.length) % players.length;
+    }
+    if (keyCode === DOWN_ARROW) {
+      selectedPlayerIndex = (selectedPlayerIndex + 1) % players.length;
+    }
+  }
+
   if (typeof handleEditorKeyPress === "function") {
     handleEditorKeyPress();
   }
@@ -195,6 +214,17 @@ function keyPressed() {
     if (keyPressedOnce(52)) editorLayer = 3; // Key '4'
   }
 
+}
+
+function keyReleased() {
+  // Q key release - switch to selected player if menu was open
+  if (keyCode == 81) {
+    if (playerSelectionMenuOpen) {
+      switchPlayer(selectedPlayerIndex);
+      playerSelectionMenuOpen = false;
+    }
+    qKeyHeldFrames = 0;
+  }
 }
 
 function mouseClicked() {

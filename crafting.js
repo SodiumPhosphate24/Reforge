@@ -282,7 +282,7 @@ function craftItem(recipe) {
       if (foundWorkbench) break;
     }
     
-    players.push(new Player(workbenchX + 200, workbenchY, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
+    players.push(new Player(workbenchX + 200, workbenchY + 15, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
     
     // Trigger particle system #5 for 1 second
     if (typeof particleSources !== 'undefined' && particleSources.length > 5) {

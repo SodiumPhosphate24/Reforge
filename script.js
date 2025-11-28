@@ -604,6 +604,11 @@ function drawGameplay() {
     drawCraftingMenu();
   }
 
+  // Draw player selection menu
+  if (typeof drawPlayerSelectionMenu === 'function') {
+    drawPlayerSelectionMenu();
+  }
+
   // Draw fog centered on camera, constrained to screen
   tint(255, 200);
   const fogSize = width + 100;
