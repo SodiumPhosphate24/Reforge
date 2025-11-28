@@ -165,7 +165,7 @@ function keyPressed() {
     messages.push(new Message("quest", "Big nerd time"))
   }
   if (keyCode == 86) {
-    droppedItems.push(new DroppedItem(new Item("gun", "glock", 1), pX + 600, pY + 340));
+    droppedItems.push(new DroppedItem(new Item("consumable", "legendary cartridge", 5), pX + 600, pY + 340));
   }
 
   if (keyCode == 67) {
