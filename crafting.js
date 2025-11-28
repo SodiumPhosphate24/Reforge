@@ -229,7 +229,51 @@ function craftItem(recipe) {
     if (recipe.name === "SPUD") {
       robotImage = SPUDImage;
     }
-    players.push(new Player(pX + 150, pY, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
+    
+    // Find nearest workbench position
+    const playerCenterX = pX + 600 + pWidth / 2;
+    const playerCenterY = pY + 375 + pHeight / 2;
+    const checkRadius = 125;
+    
+    let workbenchX = pX; // Fallback to player position
+    let workbenchY = pY;
+    let foundWorkbench = false;
+    
+    for (let row = 0; row < gameWorld.length; row++) {
+      for (let col = 0; col < gameWorld[row].length; col++) {
+        const cell = gameWorld[row][col];
+        if (!cell) continue;
+        
+        const tileCenterX = col * 50 + 25;
+        const tileCenterY = row * 50 + 25;
+        const dist = Math.sqrt(
+          Math.pow(playerCenterX - tileCenterX, 2) + 
+          Math.pow(playerCenterY - tileCenterY, 2)
+        );
+        
+        if (dist <= checkRadius) {
+          if ('layers' in cell) {
+            for (let L = 0; L < 3; L++) {
+              const tile = cell.layers[L];
+              if (tile && tile.type === 6) {
+                workbenchX = col * 50 - 600;
+                workbenchY = row * 50 - 375;
+                foundWorkbench = true;
+                break;
+              }
+            }
+          } else if (cell.type === 6) {
+            workbenchX = col * 50 - 600;
+            workbenchY = row * 50 - 375;
+            foundWorkbench = true;
+          }
+        }
+        if (foundWorkbench) break;
+      }
+      if (foundWorkbench) break;
+    }
+    
+    players.push(new Player(workbenchX + 200, workbenchY, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
   }
 
   handleTriggers("Crafting");
