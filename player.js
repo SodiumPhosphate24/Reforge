@@ -104,17 +104,28 @@ function drawPlayers() {
       ellipse(players[i].x + 600 + players[i].width / 2, players[i].y + 375 + players[i].height, players[i].width, players[i].height * 0.6);
 
       // Emit steam particles for SPUD robots
-      if (players[i].name === "SPUD" && random() < 0.3) {
+      if (players[i].name === "SPUD") {
         const headX = players[i].x + 600 + players[i].width / 2;
         const headY = players[i].y + 375; // Top of robot
         
-        // Create upward steam particle
-        const steamParticle = new Particle(headX, headY, [220, 220, 230], 40, 0.5, 3);
-        steamParticle.angle = radians(-90 + random(-15, 15)); // Mostly upward with slight variation
-        steamParticle.vx = cos(steamParticle.angle) * 0.5;
-        steamParticle.vy = sin(steamParticle.angle) * 0.5;
-        steamParticle.size = random(2, 5);
-        particles.push(steamParticle);
+        // Spawn multiple steam particles per frame for density
+        for (let s = 0; s < 3; s++) {
+          if (random() < 0.5) { // 50% chance per particle slot
+            // Random offset from head center for spread
+            const offsetRadius = random(0, 8);
+            const offsetAngle = random(0, TWO_PI);
+            const spawnX = headX + cos(offsetAngle) * offsetRadius;
+            const spawnY = headY + sin(offsetAngle) * offsetRadius;
+            
+            // Create upward steam particle with wider arc spread
+            const steamParticle = new Particle(spawnX, spawnY, [220, 220, 230], 50, 1.2, 3);
+            steamParticle.angle = radians(-90 + random(-30, 30)); // Wider spread (60° total)
+            steamParticle.vx = cos(steamParticle.angle) * 1.2;
+            steamParticle.vy = sin(steamParticle.angle) * 1.2;
+            steamParticle.size = random(2, 6);
+            particles.push(steamParticle);
+          }
+        }
       }
 
       // Draw player image with preserved aspect ratio
@@ -133,17 +144,28 @@ function drawPlayers() {
   ellipse(pX + 600 + pWidth / 2, pY + 375 + pHeight, pWidth, pHeight * 0.6);
 
   // Emit steam particles for SPUD active player
-  if (players[activePlayer] && players[activePlayer].name === "SPUD" && random() < 0.3) {
+  if (players[activePlayer] && players[activePlayer].name === "SPUD") {
     const headX = pX + 600 + pWidth / 2;
     const headY = pY + 375; // Top of robot
     
-    // Create upward steam particle
-    const steamParticle = new Particle(headX, headY, [220, 220, 230], 40, 0.5, 3);
-    steamParticle.angle = radians(-90 + random(-15, 15)); // Mostly upward with slight variation
-    steamParticle.vx = cos(steamParticle.angle) * 0.5;
-    steamParticle.vy = sin(steamParticle.angle) * 0.5;
-    steamParticle.size = random(2, 5);
-    particles.push(steamParticle);
+    // Spawn multiple steam particles per frame for density
+    for (let s = 0; s < 3; s++) {
+      if (random() < 0.5) { // 50% chance per particle slot
+        // Random offset from head center for spread
+        const offsetRadius = random(0, 8);
+        const offsetAngle = random(0, TWO_PI);
+        const spawnX = headX + cos(offsetAngle) * offsetRadius;
+        const spawnY = headY + sin(offsetAngle) * offsetRadius;
+        
+        // Create upward steam particle with wider arc spread
+        const steamParticle = new Particle(spawnX, spawnY, [220, 220, 230], 50, 1.2, 3);
+        steamParticle.angle = radians(-90 + random(-30, 30)); // Wider spread (60° total)
+        steamParticle.vx = cos(steamParticle.angle) * 1.2;
+        steamParticle.vy = sin(steamParticle.angle) * 1.2;
+        steamParticle.size = random(2, 6);
+        particles.push(steamParticle);
+      }
+    }
   }
 
   // Draw active player with flip and preserved aspect ratio
