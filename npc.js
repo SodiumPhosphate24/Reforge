@@ -63,7 +63,7 @@ function drawNPCs() {
       nearestNPC = NonPlayerCharacters[i];
     }
 
-    // Close dialogue if player walks away from all NPCs
+    // Close dialogue if player walks away from all NPCs (but only for NPC-initiated dialogue, not triggered dialogue)
     const hasActiveDialogue = messages.some(msg => msg.type === "dialogue");
     if (hasActiveDialogue) {
       let nearAnyNPC = false;
@@ -75,9 +75,9 @@ function drawNPCs() {
         }
       }
       if (!nearAnyNPC) {
-        // Animate out dialogue messages before removing
+        // Only close NPC-initiated dialogue, not trigger-based dialogue
         for (let k = messages.length - 1; k >= 0; k--) {
-          if (messages[k].type === "dialogue") {
+          if (messages[k].type === "dialogue" && !messages[k].isTriggered) {
             messages[k].closing = true;
           }
         }
