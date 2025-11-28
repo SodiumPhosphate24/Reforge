@@ -76,7 +76,7 @@ function keyPressed() {
     }
 
     if(inventoryList[inventorySlot-1] != null){
-      if(inventoryList[inventorySlot-1].name == "boiler cartridge" && currentWaypointIndex){
+      if(inventoryList[inventorySlot-1].name == "boiler cartridge" && currentWaypointIndex == 4){
         useItem();
         handleTriggers("Objective");
         return;
