@@ -49,7 +49,7 @@ function handleTriggers(trigger) {
   if (trigger == "Objective") {
     if (triggerList.Objective.fixLeaks == false) {
       triggerList.Objective.fixLeaks = true;
-      messages.push(new Message("dialogue", ["Prometheus IV: Head to the boiler room to [I don't know]"], "Prometheus", true);
+      messages.push(new Message("dialogue", ["Prometheus IV: Head to the boiler room to [I don't know]"], "Prometheus", true));
       currentWaypointIndex = 4;
     }
   }
