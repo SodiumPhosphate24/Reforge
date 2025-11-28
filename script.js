@@ -2041,6 +2041,7 @@ function drawAlarmFlash() {
 
 function initializeHardcodes() {
   players.push(new Player(12500, 12500, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
+  
   NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", ["Prometheus IV: Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
   NonPlayerCharacters.push(new NPC(
     12950,
@@ -2071,11 +2072,10 @@ function initializeHardcodes() {
     "Book"
   ));
 
-
-
-
   NonPlayerCharacters.push(new NPC(12910, 13262, "Book", ["Steam Power for Dummies : So you wish to master the power of steam. Excellent choice, as steam is the newest, most advanced technology for the future", "Steam Power for Dummies : As long as no corrupt, tyrranically omnipotent intelligence never causes civilization to collapse", "Steam Power for Dummies : Steam is powerful and reliable for any environment that \nIsn't on fire\nIsn't overrun\nStill has science\nIn the astronomically low chance that you're reading this in an apocalytic wasteland, I wish you the best of luck", "Steam Power for Dummies : A boiler turns water into steam using heat. If your boiler starts rattling ominously, try to communicate with it rationally. If it rattles back even louder, leave immediately", "Steam Power for Dummies : Valves can control the pressure of steam. Pressure creates motion. Motion allows for progress. Progress prevents societal collapse", "Steam Power for Dummies : A properly maintained steam engine can last for centuries. If you're reading this in the year 2355, you're doing something right", "Steam Power for Dummies : Remember, steam is humanity's greatest ally. If civilization has fallen while you were in cryogenic storage, think of this book as a relic of a more optimistic era, and you're on your own"], Book, "Book"));
   NonPlayerCharacters.push(new NPC(13650, 12420, "Book", ["The 7 Habits of Highly Effective Engineers \n That Have Been Cryogenically Frozen for 500 Years: Burger"], Book, "Book"));
   NonPlayerCharacters.push(new NPC(13350, 13050, "Book", ["Walden : Tuberculosis"], Book, "Book"));
+
+  
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
 }
