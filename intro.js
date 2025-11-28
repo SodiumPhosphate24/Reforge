@@ -300,30 +300,7 @@ function initializeIntro() {
       backgroundColor: [0, 0, 0],
       onEnter: function() {
         console.log("Showing EXIT THE CRYOCHAMBER...");
-      },
-      onUpdate: function(timer) {
-        // Fade in text
-        if (timer < 30) {
-          introState.scenes[introState.currentSceneIndex].textAlpha = map(timer, 0, 30, 0, 255);
-        } else if (timer > 90) {
-          introState.scenes[introState.currentSceneIndex].textAlpha = map(timer, 90, 120, 255, 0);
-        } else {
-          introState.scenes[introState.currentSceneIndex].textAlpha = 255;
-        }
-      },
-      onExit: function() {
-        console.log("Moving to game initialization...");
-      }
-    }),
-
-    // SCENE 14 - Initialize Game
-    new IntroScene({
-      id: "initialize_game",
-      type: "transition",
-      duration: 1, // Just 1 frame to initialize
-      backgroundColor: [0, 0, 0],
-      onEnter: function() {
-        console.log("Initializing game world...");
+        console.log("Initializing game world during EXIT scene...");
         
         // Load game world
         if (gameWorld.length === 0 && worldString.length > 0) {
@@ -372,13 +349,39 @@ function initializeIntro() {
           indicatorTargetY = indicatorCurrentY;
         }
         
-        // Switch to playing state NOW
-        gameState = "playing";
-        
-        console.log("Game fully initialized and playing");
+        console.log("Game initialized during EXIT scene");
       },
       onUpdate: function(timer) {
-        // Keep screen black during initialization
+        // Fade in text
+        if (timer < 30) {
+          introState.scenes[introState.currentSceneIndex].textAlpha = map(timer, 0, 30, 0, 255);
+        } else if (timer > 90) {
+          introState.scenes[introState.currentSceneIndex].textAlpha = map(timer, 90, 120, 255, 0);
+        } else {
+          introState.scenes[introState.currentSceneIndex].textAlpha = 255;
+        }
+      },
+      onExit: function() {
+        console.log("EXIT scene complete, transitioning to gameplay...");
+      }
+    }),
+
+    // SCENE 14 - Transition to Gameplay
+    new IntroScene({
+      id: "transition_to_gameplay",
+      type: "transition",
+      duration: 1, // Just 1 frame to switch state
+      backgroundColor: [0, 0, 0],
+      onEnter: function() {
+        console.log("Transitioning to gameplay state...");
+        
+        // Switch to playing state NOW (game already initialized in Scene 13)
+        gameState = "playing";
+        
+        console.log("Game is now playing");
+      },
+      onUpdate: function(timer) {
+        // Keep screen black during transition
         const scene = introState.scenes[introState.currentSceneIndex];
         scene.fadeAlpha = 255;
       },
@@ -438,8 +441,8 @@ function drawIntro() {
 
   const currentScene = introState.scenes[introState.currentSceneIndex];
 
-  // If we're in the initialization scene, just show black
-  if (currentScene.id === "initialize_game") {
+  // If we're in the transition scene, just show black
+  if (currentScene.id === "transition_to_gameplay") {
     background(0);
     return;
   }
