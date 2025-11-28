@@ -335,28 +335,31 @@ function preload() {
 // Generate workbench variants by splitting 32x32 image into 4 quadrants
 function generateWorkbenchVariants() {
   const workbenchConfig = tileVariants[6];
-  if (!workbenchConfig || !workbenchConfig.fullImage) return;
+  if (!workbenchConfig || !workbenchConfig.fullImage) {
+    console.error("Workbench config or image missing");
+    return;
+  }
 
   const fullImg = workbenchConfig.fullImage;
   
-  // Create top-left quadrant (0, 0, 16, 16)
-  const topLeft = createGraphics(16, 16);
-  topLeft.image(fullImg, 0, 0, 16, 16, 0, 0, 16, 16);
+  // Create top-left quadrant (source: 0, 0, 16, 16)
+  const topLeft = createGraphics(50, 50);
+  topLeft.image(fullImg, 0, 0, 50, 50, 0, 0, 16, 16);
   workbenchConfig.variants.top_left = topLeft;
 
-  // Create top-right quadrant (16, 0, 16, 16)
-  const topRight = createGraphics(16, 16);
-  topRight.image(fullImg, 0, 0, 16, 16, 16, 0, 16, 16);
+  // Create top-right quadrant (source: 16, 0, 16, 16)
+  const topRight = createGraphics(50, 50);
+  topRight.image(fullImg, 0, 0, 50, 50, 16, 0, 16, 16);
   workbenchConfig.variants.top_right = topRight;
 
-  // Create bottom-left quadrant (0, 16, 16, 16)
-  const bottomLeft = createGraphics(16, 16);
-  bottomLeft.image(fullImg, 0, 0, 16, 16, 0, 16, 16, 16);
+  // Create bottom-left quadrant (source: 0, 16, 16, 16)
+  const bottomLeft = createGraphics(50, 50);
+  bottomLeft.image(fullImg, 0, 0, 50, 50, 0, 16, 16, 16);
   workbenchConfig.variants.bottom_left = bottomLeft;
 
-  // Create bottom-right quadrant (16, 16, 16, 16)
-  const bottomRight = createGraphics(16, 16);
-  bottomRight.image(fullImg, 0, 0, 16, 16, 16, 16, 16, 16);
+  // Create bottom-right quadrant (source: 16, 16, 16, 16)
+  const bottomRight = createGraphics(50, 50);
+  bottomRight.image(fullImg, 0, 0, 50, 50, 16, 16, 16, 16);
   workbenchConfig.variants.bottom_right = bottomRight;
 
   console.log("Workbench variants generated from 32x32 image");
@@ -1100,18 +1103,24 @@ function getWorkbenchVariant(row, col, layer, tileType) {
 
   let variant = 'top_left'; // default
 
-  // Determine position in 2x2 grid
-  if (hasRight && hasBottom) {
+  // Determine position in 2x2 grid based on which neighbors exist
+  if (hasRight && hasBottom && !hasLeft && !hasTop) {
     variant = 'top_left';
-  } else if (hasLeft && hasBottom) {
+  } else if (hasLeft && hasBottom && !hasRight && !hasTop) {
     variant = 'top_right';
-  } else if (hasRight && hasTop) {
+  } else if (hasRight && hasTop && !hasLeft && !hasBottom) {
     variant = 'bottom_left';
-  } else if (hasLeft && hasTop) {
+  } else if (hasLeft && hasTop && !hasRight && !hasBottom) {
     variant = 'bottom_right';
   }
+  // If it doesn't match a 2x2 pattern, just use top_left as fallback
 
   const config = tileVariants[6];
+  if (!config || !config.variants || !config.variants[variant]) {
+    console.error("Workbench variant missing:", variant);
+    return null;
+  }
+  
   return { variant, rotation: 0, flipH: false, baseImg: config.variants[variant] };
 }
 
