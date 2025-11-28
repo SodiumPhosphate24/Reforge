@@ -35,6 +35,7 @@ function handleTriggers(trigger){
       ];
       triggerState++;
       currentWaypointIndex = 1;
+      unlockRecipe("SPUD");
       return;
     }
   }
