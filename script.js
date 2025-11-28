@@ -2043,39 +2043,38 @@ function initializeHardcodes() {
   players.push(new Player(12500, 12500, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
   NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", ["Prometheus IV: Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
   NonPlayerCharacters.push(new NPC(
-      12950,
-      12450,
-      "Book",
-      [
-          "Bastian's Journal: Page 1\n1838\nThe boilers grow louder each year. Too many accidents… too many preventable deaths.",
+    12950,
+    12450,
+    "Book",
+    [
+      "Bastian's Journal: April 12th, 1838\nAnother boiler accident today. Good men burned because help arrived too late. We push engines further, but never protect the people working beside them. This must change.",
 
-          "Bastian's Journal: Page 2\n1840\nMy preservation chamber works in theory. Steam, coolant, pressure balance. No one believes in it but me.",
+      "Bastian's Journal: November 3rd, 1840\nThe idea took shape today: a chamber to halt injury long enough for real aid to arrive. Not immortality—just a pause. A way to give the dying a chance.",
 
-          "Bastian's Journal: Page 3\n1842\nAnother mill explosion today. If only the chamber were finished. I must keep working.",
+      "Bastian's Journal: June 17th, 1842\nWitnessed a collapsed furnace site. The workers were alive for minutes… then gone. If the chamber existed, they could have been preserved until doctors arrived. I will not let another man die waiting.",
 
-          "Bastian's Journal: Page 4\n1846\nThe chamber is nearly operational. Someone must test it. It will be me.",
+      "Bastian's Journal: February 9th, 1846\nThe preservation chamber’s systems work on paper. Cooling cycle balanced. Steam regulators stable. Someone must trust it first. That someone must be me.",
 
-          "Bastian's Journal: Page 5\n1849\nBuilt a small bunker beneath my workshop. Quiet enough to test the chamber in peace.",
+      "Bastian's Journal: October 21st, 1849\nBuilt a bunker beneath my workshop. The chamber needs steady heat, no vibration, no curious crowds. Down here, precision is possible.",
 
-          "Bastian's Journal: Page 6\n1852\nCreated a closed steam-loop to sustain stasis for days. Elegant… but untested.",
+      "Bastian's Journal: March 5th, 1852\nDesigned a closed steam-loop to keep a sleeper alive for days. If it works, the injured will have hours—maybe days—of safety instead of minutes. This invention might truly matter.",
 
-          "Bastian's Journal: Page 7\n1853\nStepped inside today. Not sealed. Felt oddly calm, as though the machine already knew me.",
+      "Bastian's Journal: August 10th, 1853\nStood inside the chamber today. Not sealed. Just testing the space. Strange… I didn’t feel fear. Only purpose. The world above races forward, but someone must build tools that save—not tools that endanger.",
 
-          "Bastian's Journal: Page 8\nMay 1855\nSet the boiler room lock today. Combination is 1855—the year I begin the test.",
+      "Bastian's Journal: May 2nd, 1855\nLocked the boiler room today. Combination is 1855—the year of the final test. A reminder of why this chamber exists: to protect the living, not to impress the guild.",
 
-          "Bastian's Journal: Page 9\nJune 1855\nFinal checks done. Gauges steady. Coolant flowing. Ready at last.",
+      "Bastian's Journal: June 20th, 1855\nThe gauges hold perfectly. Steam pressure stable. Coolant clear. All systems functioning. If the chamber can keep me safe, it can keep others safe too.",
 
-          "Bastian's Journal: Page 10\nJune 1855\nA week in stasis should prove the chamber’s safety. If I succeed, the guild will have no choice but to see its worth.",
-
-          "Bastian's Journal: Page 11\nJune 27th, 1855\nTime to sleep. May the chamber hold.\n—Bastian Buschwick"
-      ],
-      Book,
-      "Book"
+      "Bastian's Journal: June 27th, 1855\nTomorrow I enter the chamber. A short stasis—no more than a week. When I wake, I will prove preservation is possible.\n—Bastian Buschwick"
+    ],
+    Book,
+    "Book"
   ));
 
 
 
-  NonPlayerCharacters.push(new NPC(12910, 13262, "Book", ["Steam Power for Dummies : So you wish to master the power of steam. Excellent choice, as steam is the newest, most advanced technology for the future", "Steam Power for Dummies : As long as no corrupt, tyrranically omnipotent intelligence never causes civilization to collapse", "Steam Power for Dummies : Steam is powerful and reliable for any environment that \nIsn't on fire\nIsn't overrun\nStill has science\nIn the astronomically low chance that you're reading this in an apocalytic wasteland, I wish you the best of luck", "Steam Power for Dummies : A boiler turns water into steam using heat. If your boiler starts rattling ominously, try to communicate with it rationally. If it rattles back even louder, leave immediately", "Steam Power for Dummies : Valves can control the pressure of steam. Pressure creates motion. Motion allows for progress. Progress prevents societal collapse", "Steam Power for Dummies : A properly maintained steam engine can last for centuries. If you're reading this in the year 2355, you're doing something right"], Book, "Book"));
+
+  NonPlayerCharacters.push(new NPC(12910, 13262, "Book", ["Steam Power for Dummies : So you wish to master the power of steam. Excellent choice, as steam is the newest, most advanced technology for the future", "Steam Power for Dummies : As long as no corrupt, tyrranically omnipotent intelligence never causes civilization to collapse", "Steam Power for Dummies : Steam is powerful and reliable for any environment that \nIsn't on fire\nIsn't overrun\nStill has science\nIn the astronomically low chance that you're reading this in an apocalytic wasteland, I wish you the best of luck", "Steam Power for Dummies : A boiler turns water into steam using heat. If your boiler starts rattling ominously, try to communicate with it rationally. If it rattles back even louder, leave immediately", "Steam Power for Dummies : Valves can control the pressure of steam. Pressure creates motion. Motion allows for progress. Progress prevents societal collapse", "Steam Power for Dummies : A properly maintained steam engine can last for centuries. If you're reading this in the year 2355, you're doing something right", "Steam Power for Dummies : Remember, steam is humanity's greatest ally. If civilization has fallen while you were in cryogenic storage, think of this book as a relic of a more optimistic era, and you're on your own"], Book, "Book"));
   NonPlayerCharacters.push(new NPC(13650, 12420, "Book", ["The 7 Habits of Highly Effective Engineers \n That Have Been Cryogenically Frozen for 500 Years: Burger"], Book, "Book"));
   NonPlayerCharacters.push(new NPC(13350, 13050, "Book", ["Walden : Tuberculosis"], Book, "Book"));
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
