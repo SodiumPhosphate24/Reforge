@@ -94,6 +94,9 @@ function drawPlayers() {
 
   // Draw other players at their world positions with same visual buffer
   for (let i = 0; i < players.length; i++) {
+    // Safety check for undefined players during initialization
+    if (!players[i]) continue;
+    
     players[i].isDead();
     if (i !== activePlayer) {
       // Draw shadow for this player

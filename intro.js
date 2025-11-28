@@ -1,4 +1,3 @@
-
 // REFORGE - Intro Cutscene System
 // Handles the cinematic opening sequence
 
@@ -30,7 +29,7 @@ class IntroScene {
   update() {
     this.timer++;
     this.onUpdate(this.timer);
-    
+
     // Auto-advance if duration is set
     if (this.duration > 0 && this.timer >= this.duration) {
       this.completed = true;
@@ -324,12 +323,12 @@ function initializeIntro() {
       backgroundColor: [0, 0, 0],
       onEnter: function() {
         console.log("Initializing game world...");
-        
+
         // Load game world
         if (gameWorld.length === 0 && worldString.length > 0) {
           gameWorld = stringToWorld(worldString[0]);
         }
-        
+
         // Initialize ALL player variables
         pX = players[activePlayer].x;
         pY = players[activePlayer].y;
@@ -341,11 +340,11 @@ function initializeIntro() {
         PlayerImage = players[activePlayer].picture;
         inventoryList = players[activePlayer].inventory;
         laserEnergy = players[activePlayer].laserEnergy;
-        
+
         // Initialize camera to final position immediately
         camX = -pX;
         camY = -pY;
-        
+
         // Initialize roof fade system - just set up initial state, don't animate yet
         // The main game loop will handle roof fading once gameplay starts
         if (typeof roofScale !== 'undefined') {
@@ -354,28 +353,18 @@ function initializeIntro() {
         if (typeof roofTarget !== 'undefined') {
           roofTarget.clear();
         }
-        
+
         // Initialize waypoint system
-        if (typeof currentWaypointIndex !== 'undefined') {
-          currentWaypointIndex = 0;
+        currentWaypointIndex = 0;
+
+        // Ensure players array is initialized if not already
+        if (players.length === 0) {
+          players.push(new Player(pX, pY, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
         }
-        
-        // Clear particles
-        if (typeof particles !== 'undefined') {
-          particles.length = 0;
-        }
-        
-        // Initialize indicator position
-        if (typeof indicatorCurrentX !== 'undefined') {
-          indicatorCurrentX = pX + 600;
-          indicatorCurrentY = pY + 375;
-          indicatorTargetX = indicatorCurrentX;
-          indicatorTargetY = indicatorCurrentY;
-        }
-        
-        // Switch to playing state NOW
+
+        // Transition to gameplay
         gameState = "playing";
-        
+
         console.log("Game fully initialized and playing");
       },
       onUpdate: function(timer) {
@@ -402,7 +391,7 @@ function updateIntro() {
   if (!introState.active) return;
 
   const currentScene = introState.scenes[introState.currentSceneIndex];
-  
+
   // Update current scene
   currentScene.update();
 
@@ -444,17 +433,17 @@ function drawIntro() {
     background(0);
     return;
   }
-  
+
   // If we're in the exit_cryochamber scene, show custom large text
   if (currentScene.id === "exit_cryochamber") {
     background(0);
     push();
     textFont(Silkscreen);
     textAlign(CENTER, CENTER);
-    
+
     // Draw large glowing text
     textSize(64);
-    
+
     // Outer glow layers
     for (let i = 0; i < 3; i++) {
       strokeWeight(12 - i * 3);
@@ -462,12 +451,12 @@ function drawIntro() {
       fill(255, 200, 80, currentScene.textAlpha);
       text("EXIT THE CRYOCHAMBER", width / 2, height / 2);
     }
-    
+
     // Inner sharp text
     noStroke();
     fill(255, 220, 100, currentScene.textAlpha);
     text("EXIT THE CRYOCHAMBER", width / 2, height / 2);
-    
+
     pop();
     return;
   }
@@ -480,16 +469,16 @@ function drawIntro() {
 
   // Draw background
   background(currentScene.backgroundColor[0], currentScene.backgroundColor[1], currentScene.backgroundColor[2]);
-  
+
   // Draw background image if available (3:2 aspect ratio, cover screen)
   if (currentScene.backgroundImage) {
     push();
     imageMode(CENTER);
-    
+
     // Calculate scaling to cover screen while maintaining 3:2 aspect ratio
     const imgAspect = 3 / 2; // 3:2 ratio
     const screenAspect = width / height;
-    
+
     let drawWidth, drawHeight;
     if (screenAspect > imgAspect) {
       // Screen is wider than image - scale to width
@@ -500,7 +489,7 @@ function drawIntro() {
       drawHeight = height;
       drawWidth = height * imgAspect;
     }
-    
+
     image(currentScene.backgroundImage, width / 2, height / 2, drawWidth, drawHeight);
     imageMode(CORNER);
     pop();
@@ -553,7 +542,7 @@ function drawTitleScene(scene) {
   push();
   textFont(Silkscreen);
   textAlign(CENTER, CENTER);
-  
+
   // Draw glow effect for title
   textSize(64);
   for (let i = 0; i < 3; i++) {
@@ -562,19 +551,19 @@ function drawTitleScene(scene) {
     fill(255, 200, 80, scene.textAlpha); // Bright golden color
     text("REFORGE", width / 2, height / 2 - 40);
   }
-  
+
   // Final crisp text layer
   noStroke();
   fill(255, 220, 100, scene.textAlpha); // Bright amber/gold
   text("REFORGE", width / 2, height / 2 - 40);
-  
+
   // Subtitle with subtle glow
   textSize(20);
   strokeWeight(3);
   stroke(200, 160, 100, scene.textAlpha * 0.3);
   fill(220, 190, 140, scene.textAlpha * 0.9);
   text("A world broken must be forged again.", width / 2, height / 2 + 40);
-  
+
   noStroke();
   pop();
 }
@@ -594,27 +583,27 @@ function drawCryoFlicker(scene) {
 function drawDialogueScene(scene) {
   push();
   textFont(Silkscreen);
-  
+
   // Add subtle ambient flicker to make scenes feel alive
   if (random() < 0.05) {
     fill(112, 66, 20, random(10, 30)); // Sepia flicker
     noStroke();
     rect(0, 0, width, height);
   }
-  
+
   // Draw ONLY the current dialogue line (one per slide)
   if (scene.dialogue.length > 0 && scene.dialogueIndex < scene.dialogue.length) {
     const currentLine = scene.dialogue[scene.dialogueIndex];
-    
+
     // Determine if this is a system message or Prometheus
     const isSystemMessage = currentLine.startsWith("[");
     const isPrometheus = currentLine.startsWith("PROMETHEUS:");
-    
+
     if (isSystemMessage) {
       // System messages at bottom with subtle border
       textSize(18);
       textAlign(CENTER, BOTTOM);
-      
+
       // Draw subtle dark outline for depth
       strokeWeight(2);
       stroke(40, 30, 20, 200); // Dark sepia outline
@@ -625,18 +614,18 @@ function drawDialogueScene(scene) {
       const parts = currentLine.split(": ");
       const speaker = parts[0];
       const message = parts.slice(1).join(": ") || "";
-      
+
       // Word wrap for text
       textSize(20);
       const maxWidth = width - 200;
       const words = message.split(" ");
       let lines = [];
       let line = "";
-      
+
       for (let w = 0; w < words.length; w++) {
         const testLine = line + words[w] + " ";
         const testWidth = textWidth(testLine);
-        
+
         if (testWidth > maxWidth && line.length > 0) {
           lines.push(line.trim());
           line = words[w] + " ";
@@ -647,16 +636,16 @@ function drawDialogueScene(scene) {
       if (line.length > 0) {
         lines.push(line.trim());
       }
-      
+
       // Calculate total text height
       const lineHeight = 30;
       const speakerHeight = 25;
       const totalTextHeight = speakerHeight + (lines.length * lineHeight);
-      
+
       // Position at bottom with padding
       const bottomPadding = 80;
       let startY = height - bottomPadding - totalTextHeight;
-      
+
       // Draw speaker name with subtle border
       textAlign(CENTER, TOP);
       textSize(16);
@@ -664,19 +653,19 @@ function drawDialogueScene(scene) {
       stroke(60, 45, 30, 220); // Dark warm outline
       fill(180, 140, 90, 255); // Medium amber for speaker name
       text(speaker, width / 2, startY);
-      
+
       // Draw message lines with refined border
       textSize(20);
       strokeWeight(2.5);
       stroke(50, 40, 25, 240); // Darker outline for contrast
       fill(230, 210, 170, 255); // Warm cream color that pops against sepia
-      
+
       startY += speakerHeight;
       for (let i = 0; i < lines.length; i++) {
         text(lines[i], width / 2, startY + i * lineHeight);
       }
     }
-    
+
     // "Press Z" indicator with subtle styling
     const pulseAlpha = 120 + sin(frameCount / 15) * 60;
     strokeWeight(1.5);
@@ -686,14 +675,14 @@ function drawDialogueScene(scene) {
     textAlign(CENTER, BOTTOM);
     text("Press Z to continue", width / 2, height - 20);
   }
-  
+
   pop();
 }
 
 function drawGlitchEffect() {
   push();
   blendMode(ADD);
-  
+
   // Random horizontal lines in sepia tones (increased quantity)
   for (let i = 0; i < glitchIntensity * 25; i++) {
     const y = random(height);
@@ -701,7 +690,7 @@ function drawGlitchEffect() {
     fill(112, 66, 20, glitchIntensity * 80); // Sepia brown color, more opaque
     rect(0, y, width, h);
   }
-  
+
   // Vertical scanlines for static effect
   for (let i = 0; i < glitchIntensity * 15; i++) {
     const x = random(width);
@@ -709,7 +698,7 @@ function drawGlitchEffect() {
     fill(150, 100, 50, glitchIntensity * 60);
     rect(x, 0, w, height);
   }
-  
+
   // Random noise blocks
   for (let i = 0; i < glitchIntensity * 8; i++) {
     const x = random(width);
@@ -718,14 +707,14 @@ function drawGlitchEffect() {
     fill(random(80, 140), random(50, 100), random(10, 40), glitchIntensity * 100);
     rect(x, y, size, size);
   }
-  
+
   // Sepia tint effect with horizontal offset
   if (random() < glitchIntensity) {
     const offset = glitchIntensity * 15;
     tint(112, 66, 20, 120); // Sepia tint, more visible
     translate(offset, 0);
   }
-  
+
   blendMode(BLEND);
   pop();
 }
