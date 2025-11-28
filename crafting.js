@@ -276,23 +276,30 @@ function craftItem(recipe) {
     const spawnX = workbenchX + 200;
     const spawnY = workbenchY;
 
-    // Create multiple fog bursts for thick coverage (8-10 bursts of 10-15 particles each)
-    const fogBursts = Math.floor(random(8, 10));
-    for (let i = 0; i < fogBursts; i++) {
-      const burstX = spawnX + random(-80, 80);
-      const burstY = spawnY + random(-80, 80);
-
+    // Create dense fog particles (100-150 particles)
+    const fogParticleCount = Math.floor(Math.random() * 50 + 100);
+    for (let i = 0; i < fogParticleCount; i++) {
+      // Random position around spawn point
+      const offsetX = Math.random() * 200 - 100;
+      const offsetY = Math.random() * 200 - 100;
+      
       // Light gray/white fog color
       const fogColor = [200, 200, 200];
-
-      // Create burst with 2 second duration, very slow speed
-      particle(burstX, burstY, fogColor, 120, 0.3, 2);
-
-      // Customize the particles that were just created to be larger
-      const recentParticles = particles.slice(-15); // Get last batch
-      for (let p of recentParticles) {
-        p.size = random(15, 30);
-      }
+      
+      // Create particle object manually
+      const fogParticle = {
+        x: spawnX + offsetX,
+        y: spawnY + offsetY,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        color: fogColor,
+        life: 120, // 2 seconds at 60fps
+        maxLife: 120,
+        size: Math.random() * 15 + 15,
+        layer: 2
+      };
+      
+      particles.push(fogParticle);
     }
 
     players.push(new Player(spawnX, spawnY, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
