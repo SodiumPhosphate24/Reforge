@@ -137,7 +137,7 @@ function keyPressed() {
     speedBuff = !speedBuff;
   }
 
-  if (keyCode == 84) {
+  if (keyCode == 82) {
     // Transfer item from active robot to Buschy (player 0)
     if (activePlayer !== 0 && inventoryList[inventorySlot - 1] != null) {
       const itemToTransfer = inventoryList[inventorySlot - 1];
