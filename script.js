@@ -406,7 +406,8 @@ function setup() {
     ["material", "rare wheel", 1, matImgs[1]],
     ["material", "legendary wheel", 1, matImgs[2]],
     ["material", "cog", 1, matImgs[3]],
-    ["material", "pipe", 1, matImgs[4]]
+    ["material", "pipe", 1, matImgs[4]],
+    ["material", "boiler cartridge", 1, matImgs[5]]
   ];
 
   // Now parse the world with itemConstructors available
