@@ -4,8 +4,6 @@ var speedBuff = false;
 var itemLabelAlpha = 0;
 var lastInventorySlot = 1;
 function drawUI() {
-  inventory();
-  health();
   buffs();
 }
 
@@ -13,7 +11,7 @@ function drawItems() {
   updateDroppedItems();
 }
 
-function inventory() {
+function drawInventory() {
   // Check if inventory slot changed
   if (lastInventorySlot !== inventorySlot) {
     itemLabelAlpha = 1.5; // Set to 1.5 for slight delay
@@ -71,7 +69,7 @@ function inventory() {
   }
 }
 
-function health() {
+function drawHealth() {
   // draws health
   players[activePlayer].health = constrain(players[activePlayer].health, 0, players[activePlayer].maxHealth);
   healthPoints = players[activePlayer].health;

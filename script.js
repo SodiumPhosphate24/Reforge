@@ -652,6 +652,7 @@ function drawGameplay() {
   // Draw waypoint arrow (screen-fixed at edge)
   drawWaypoint();
 
+  drawInventory();
   messageDisplay();
 
   // Draw alarm flash if waypoint index is 3 or less
@@ -687,7 +688,7 @@ function drawGameplay() {
 
   image(Fog, fogX, fogY, fogSize, fogSize);
   imageMode(CORNER);
-  drawUI();
+  drawHealth();
   noTint();
   doRecoil();
   if (editorMode) {

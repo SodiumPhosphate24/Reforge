@@ -11,6 +11,7 @@ var triggerList = {
   },
   Objective: {
     fixLeaks: false,
+    openBoilerRoom: false,
     fixBoiler: false
   },
   Pickup: {
@@ -51,6 +52,10 @@ function handleTriggers(trigger) {
       triggerList.Objective.fixLeaks = true;
       messages.push(new Message("dialogue", ["Prometheus IV: Head to the boiler room to [I don't know]"], "Prometheus", true));
       currentWaypointIndex = 4;
+    }
+    if (triggerList.Objective.openBoilerRoom == false) {
+      triggerList.Objective.openBoilerRoom = true;
+      messages.push(new Message("dialogue", ["Prometheus IV: Now fix the boiler"], "Prometheus", true));
     }
   }
   if (trigger == "Pickup") {

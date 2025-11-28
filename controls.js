@@ -75,6 +75,13 @@ function keyPressed() {
       return;
     }
 
+    if(inventoryList[inventorySlot-1] != null){
+      if(inventoryList[inventorySlot-1].name == "boiler cartridge"){
+        useItem();
+        handleTriggers("Objective");
+      }
+    }
+
     for (let i = droppedItems.length - 1; i >= 0; i--) {
       if (droppedItems[i].checkPickup()) {
         if (droppedItems[i].item.stackable) {
