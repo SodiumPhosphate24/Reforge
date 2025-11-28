@@ -563,13 +563,9 @@ function drawGameplay() {
   controls();
   resolveCollisions();
 
-  // Layer 4 renders over the player
+  // LAYER 4 on top of player
   drawWorldLayer(gameWorld, 4);
   updateParticlesForLayer(4);
-
-  // Layer 5 renders over player and layer 4
-  drawWorldLayer(gameWorld, 5);
-  updateParticlesForLayer(5);
 
   // Draw particle sources in editor mode
   if (typeof drawParticleSources === 'function') {
@@ -1198,7 +1194,7 @@ function drawWorldLayer(world, layerIndex) {
 
       // Check for roof scale (smooth scale transition)
       let roofScaleValue = 1.0;
-      if ((layerIndex === 1 || layerIndex === 2 || layerIndex === 3 || layerIndex === 4 || layerIndex === 5) && tileWalls[tileType] === 2) { // Include layer 5 for roofs
+      if ((layerIndex === 1 || layerIndex === 2 || layerIndex === 3 || layerIndex === 4) && tileWalls[tileType] === 2) {
         const __k = tileKey(i, j);
         if (roofScale.has(__k)) {
           roofScaleValue = roofScale.get(__k);
@@ -1254,7 +1250,7 @@ function drawWorldLayer(world, layerIndex) {
         translate(j * 50 + 25, i * 50 + 25);
         rotate(radians(finalRotation));
         scale(
-          (tileObj.flipH ? -1 : 1) * roofScaleValue,
+          (tileObj.flipH ? -1 : 1) * roofScaleValue, 
           (tileObj.flipV ? -1 : 1) * roofScaleValue
         );
         image(imgToDraw, -25, -25, 50, 50);
@@ -1264,7 +1260,7 @@ function drawWorldLayer(world, layerIndex) {
       }
 
       // Draw crate inventory only when needed
-      if (layerIndex === 2 && tileType === 5) { // Only draw crate contents on layer 2
+      if (layerIndex === 2 && tileType === 5) {
         const crateKey = i + "," + j;
         if (crateInventories.has(crateKey)) {
           const items = crateInventories.get(crateKey);
@@ -1651,12 +1647,12 @@ function stepRoofFades() {
       roofScale.set(k, 0);
       continue;
     }
-
+    
     // Smooth lerp toward 0
     const newScale = Math.max(0, currScale - ROOF_SCALE_SPEED);
     roofScale.set(k, newScale);
   }
-
+  
   // Scale non-targets back toward 1.0 (visible)
   const toDelete = [];
   for (const [k, currScale] of roofScale.entries()) {
@@ -1665,7 +1661,7 @@ function stepRoofFades() {
       toDelete.push(k);
       continue;
     }
-
+    
     // Smooth lerp toward 1.0
     const newScale = Math.min(1.0, currScale + ROOF_SCALE_SPEED);
     if (newScale >= 0.99) {
@@ -1674,7 +1670,7 @@ function stepRoofFades() {
       roofScale.set(k, newScale);
     }
   }
-
+  
   // Batch delete fully visible tiles
   for (const k of toDelete) {
     roofScale.delete(k);
