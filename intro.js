@@ -329,17 +329,21 @@ function initializeIntro() {
           gameWorld = stringToWorld(worldString[0]);
         }
 
-        // Initialize ALL player variables
+        // Initialize hardcoded game elements (players, NPCs, items)
+        if (players.length === 0) {
+          initializeHardcodes();
+        }
+
+        // Initialize ALL player variables from the active player
         pX = players[activePlayer].x;
         pY = players[activePlayer].y;
-        pWidth = players[activePlayer].w;
-        pHeight = players[activePlayer].h;
+        pWidth = players[activePlayer].width;
+        pHeight = players[activePlayer].height;
         pSpeed = players[activePlayer].speed;
         healthPoints = players[activePlayer].health;
         playerDamage = players[activePlayer].damage;
-        PlayerImage = players[activePlayer].picture;
+        PlayerImage = players[activePlayer].image;
         inventoryList = players[activePlayer].inventory;
-        laserEnergy = players[activePlayer].laserEnergy;
 
         // Initialize camera to final position immediately
         camX = -pX;
@@ -356,11 +360,6 @@ function initializeIntro() {
 
         // Initialize waypoint system
         currentWaypointIndex = 0;
-
-        // Ensure players array is initialized if not already
-        if (players.length === 0) {
-          players.push(new Player(pX, pY, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
-        }
 
         // Transition to gameplay
         gameState = "playing";
