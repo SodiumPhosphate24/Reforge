@@ -190,14 +190,7 @@ function drawFadeToGame() {
     // Inner sharp text
 
 
-  // Lampost - 1x2 multi-tile (1 tile wide, 2 tiles tall)
-  multiTileConfig[36] = {
-    width: 1,
-    height: 2,
-    fullImage: null  // Will be set in preload
-  };
-
-  // Bench uses variant system (not multi-tile) - 2x1 (2 tiles wide, 1 tile tall)
+  // Lampost and Bench use variant system (not multi-tile)
   // Will be configured in tileVariants below
 
 
@@ -276,7 +269,7 @@ function preload() {
   tileImgs[33] = loadImage("Tiles/ChainLinkCorner.png");
   tileImgs[34] = loadImage("Tiles/ChainLinkVertical.png");
   tileImgs[35] = loadImage("Tiles/ChainLinkEnd.png");
-  tileImgs[36] = null; // Lampost uses multi-tile, loaded below
+  tileImgs[36] = null; // Lampost uses variants, loaded below
   tileImgs[37] = null; // Bench uses variants, loaded below
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
@@ -354,6 +347,16 @@ function preload() {
     fullImage: loadImage("Tiles/Crafting.png") // Load the full 32x32 image
   }
 
+  // Lampost variants - 1x2 multi-tile system (1 tile wide, 2 tiles tall)
+  // The image will be split into top and bottom halves
+  tileVariants[36] = {
+    variants: {
+      'top': null,    // Will be created from top half
+      'bottom': null  // Will be created from bottom half
+    },
+    fullImage: loadImage("Tiles/Lampost.png") // Load the full lampost image
+  }
+
   // Bench variants - 2x1 multi-tile system (2 tiles wide, 1 tile tall)
   // The image will be split into left and right halves
   tileVariants[37] = {
@@ -363,9 +366,6 @@ function preload() {
     },
     fullImage: loadImage("Tiles/Bench.png") // Load the full bench image
   }
-
-  // Load multi-tile images
-  multiTileConfig[36].fullImage = loadImage("Tiles/Lampost.png");
 }
 
 // Generate multi-tile sections by splitting source image into grid
@@ -439,6 +439,36 @@ function generateWorkbenchVariants() {
   workbenchConfig.variants.bottom_right = bottomRight;
 
   console.log("Workbench variants generated: 4 quadrants from source image");
+}
+
+// Generate lampost variants by splitting image into 2 halves (1x2 tiles - vertical)
+function generateLampostVariants() {
+  const lampostConfig = tileVariants[36];
+  if (!lampostConfig || !lampostConfig.fullImage) {
+    console.error("Lampost config or image missing");
+    return;
+  }
+
+  const fullImg = lampostConfig.fullImage;
+
+  // Split the image into 2 halves (top and bottom)
+  const fullWidth = fullImg.width;
+  const halfHeight = fullImg.height / 2;
+
+  console.log("Lampost image dimensions:", fullImg.width, "x", fullImg.height);
+  console.log("Each half will be:", fullWidth, "x", halfHeight);
+
+  // Create top half
+  const top = createGraphics(fullWidth, halfHeight);
+  top.copy(fullImg, 0, 0, fullWidth, halfHeight, 0, 0, fullWidth, halfHeight);
+  lampostConfig.variants.top = top;
+
+  // Create bottom half
+  const bottom = createGraphics(fullWidth, halfHeight);
+  bottom.copy(fullImg, 0, halfHeight, fullWidth, halfHeight, 0, 0, fullWidth, halfHeight);
+  lampostConfig.variants.bottom = bottom;
+
+  console.log("Lampost variants generated: 2 halves from source image");
 }
 
 // Generate bench variants by splitting image into 2 halves (2x1 tiles)
@@ -540,6 +570,9 @@ function setup() {
 
   // Generate workbench quadrants from the 32x32 image
   generateWorkbenchVariants();
+
+  // Generate lampost halves from the image
+  generateLampostVariants();
 
   // Generate bench halves from the image
   generateBenchVariants();
@@ -1292,6 +1325,34 @@ function getWorkbenchVariant(row, col, layer, tileType) {
   return { variant, rotation: 0, flipH: false, baseImg: config.variants[variant] };
 }
 
+// Get the appropriate lampost variant based on position in 1x2 grid
+// Lampost (36) uses variants: top, bottom
+function getLampostVariant(row, col, layer, tileType) {
+  if (tileType !== 36) return null;
+
+  // Check if this is part of a 1x2 lampost cluster
+  const hasBottom = isSameTileType(row + 1, col, layer, tileType);
+  const hasTop = isSameTileType(row - 1, col, layer, tileType);
+
+  let variant = 'top'; // default
+
+  // Determine position in 1x2 grid based on which neighbors exist
+  if (hasBottom && !hasTop) {
+    variant = 'top';
+  } else if (hasTop && !hasBottom) {
+    variant = 'bottom';
+  }
+  // If it doesn't match a 1x2 pattern, just use top as fallback
+
+  const config = tileVariants[36];
+  if (!config || !config.variants || !config.variants[variant]) {
+    console.error("Lampost variant missing:", variant);
+    return null;
+  }
+
+  return { variant, rotation: 0, flipH: false, baseImg: config.variants[variant] };
+}
+
 // Get the appropriate bench variant based on position in 2x1 grid
 // Bench (37) uses variants: left, right
 function getBenchVariant(row, col, layer, tileType) {
@@ -1530,6 +1591,14 @@ function drawWorldLayer(world, layerIndex) {
         if (workbenchInfo && workbenchInfo.baseImg) {
           imgToDraw = workbenchInfo.baseImg;
           finalRotation = workbenchInfo.rotation;
+        }
+      }
+      // Check if this is a lampost tile (1x2 multi-tile using variants)
+      else if (tileType === 36) {
+        const lampostInfo = getLampostVariant(i, j, layerIndex, tileType);
+        if (lampostInfo && lampostInfo.baseImg) {
+          imgToDraw = lampostInfo.baseImg;
+          finalRotation = lampostInfo.rotation;
         }
       }
       // Check if this is a bench tile (2x1 multi-tile using variants)
