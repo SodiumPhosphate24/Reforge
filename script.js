@@ -12,6 +12,12 @@ var leakPromptScale = 0; // Scale animation for leak repair prompt
 var leakPromptGrowScale = 0.5; // Growing scale animation
 var totalLeaks = 5;
 
+// Boiler repair system
+var nearestBoiler = null; // Stores if player is near boiler with cartridge
+var boilerPromptAlpha = 0; // Fade animation for boiler repair prompt
+var boilerPromptScale = 0; // Scale animation for boiler repair prompt
+var boilerPromptGrowScale = 0.5; // Growing scale animation
+
 // Alarm system
 var alarmFlashAlpha = 0;
 var alarmFlashIncreasing = true;
@@ -719,9 +725,22 @@ function drawGameplay() {
   const holdingOldWrench = inventoryList[inventorySlot - 1] != null &&
     inventoryList[inventorySlot - 1].name === "old wrench";
 
+  // Check if player is holding boiler cartridge
+  const holdingBoilerCartridge = inventoryList[inventorySlot - 1] != null &&
+    inventoryList[inventorySlot - 1].name === "boiler cartridge";
+
   // Calculate player center for distance checks
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
+
+  // Check for nearby boiler repair
+  nearestBoiler = null;
+  if (holdingBoilerCartridge && currentWaypointIndex == 4) {
+    const distToBoiler = distance(pX, pY, 12000, 12500);
+    if (distToBoiler < 75) {
+      nearestBoiler = { distance: distToBoiler };
+    }
+  }
 
   // Check for nearby leaks and update nearestLeak for prompt
   nearestLeak = null;
@@ -790,6 +809,9 @@ function drawGameplay() {
 
   // Draw leak repair prompt after camera pop (screen-fixed)
   drawLeakPromptIfNeeded();
+
+  // Draw boiler repair prompt after camera pop (screen-fixed)
+  drawBoilerPromptIfNeeded();
 
   // Draw crafting prompt after camera pop (screen-fixed)
   if (typeof drawCraftingPromptIfNeeded === 'function') {
@@ -2301,43 +2323,76 @@ function updateParticles() {
   }
 }
 
-// Draw leak repair prompt
-function drawLeakPromptIfNeeded() {
-  // Fade in/out and scale based on whether leak is near
-  if (nearestLeak) {
-    leakPromptAlpha = lerp(leakPromptAlpha, 255, 0.2);
-    leakPromptScale = lerp(leakPromptScale, 1, 0.2);
-    leakPromptGrowScale = lerp(leakPromptGrowScale, 1, 0.15);
+// Reusable prompt drawing function
+function drawActionPrompt(isActive, alphaVar, scaleVar, growScaleVar, text, yPosition = 47, color = [255, 150, 0]) {
+  // Fade in/out and scale based on whether condition is active
+  if (isActive) {
+    alphaVar = lerp(alphaVar, 255, 0.2);
+    scaleVar = lerp(scaleVar, 1, 0.2);
+    growScaleVar = lerp(growScaleVar, 1, 0.15);
   } else {
-    leakPromptAlpha = lerp(leakPromptAlpha, 0, 0.15);
-    leakPromptScale = lerp(leakPromptScale, 0, 0.15);
-    leakPromptGrowScale = lerp(leakPromptGrowScale, 0.5, 0.15);
+    alphaVar = lerp(alphaVar, 0, 0.15);
+    scaleVar = lerp(scaleVar, 0, 0.15);
+    growScaleVar = lerp(growScaleVar, 0.5, 0.15);
   }
 
-  if (leakPromptAlpha > 5) {
+  if (alphaVar > 5) {
     push();
-    translate(600, 47);
-    scale(leakPromptScale * leakPromptGrowScale);
-    translate(-600, -47);
+    translate(600, yPosition);
+    scale(scaleVar * growScaleVar);
+    translate(-600, -yPosition);
 
-    fill(255, 150, 0, leakPromptAlpha * 0.78); // Orange color for leak repair
+    fill(color[0], color[1], color[2], alphaVar * 0.78);
     textSize(20);
     textFont(Silkscreen);
     textAlign(CENTER, CENTER);
 
-    const promptText = "Press E to Repair Leak";
-
     // Background for text
-    const promptWidth = textWidth(promptText);
-    fill(0, 0, 0, leakPromptAlpha * 0.6);
-    rect(600 - promptWidth / 2 - 10, 30, promptWidth + 20, 35, 5);
+    const promptWidth = textWidth(text);
+    fill(0, 0, 0, alphaVar * 0.6);
+    rect(600 - promptWidth / 2 - 10, yPosition - 17, promptWidth + 20, 35, 5);
 
     // Text
-    fill(255, 150, 0, leakPromptAlpha); // Orange color
-    text(promptText, 600, 47);
+    fill(color[0], color[1], color[2], alphaVar);
+    text(text, 600, yPosition);
 
     pop();
   }
+
+  // Return updated values
+  return { alpha: alphaVar, scale: scaleVar, growScale: growScaleVar };
+}
+
+// Draw leak repair prompt
+function drawLeakPromptIfNeeded() {
+  const result = drawActionPrompt(
+    nearestLeak != null,
+    leakPromptAlpha,
+    leakPromptScale,
+    leakPromptGrowScale,
+    "Press E to Repair Leak",
+    47,
+    [255, 150, 0]
+  );
+  leakPromptAlpha = result.alpha;
+  leakPromptScale = result.scale;
+  leakPromptGrowScale = result.growScale;
+}
+
+// Draw boiler repair prompt
+function drawBoilerPromptIfNeeded() {
+  const result = drawActionPrompt(
+    nearestBoiler != null,
+    boilerPromptAlpha,
+    boilerPromptScale,
+    boilerPromptGrowScale,
+    "Press E to Restore Boiler",
+    80, // Different Y position to avoid overlap
+    [255, 200, 0] // Slightly different orange/yellow
+  );
+  boilerPromptAlpha = result.alpha;
+  boilerPromptScale = result.scale;
+  boilerPromptGrowScale = result.growScale;
 }
 
 // Draw red alarm flash overlay

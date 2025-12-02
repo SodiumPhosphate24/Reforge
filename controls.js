@@ -83,13 +83,10 @@ function keyPressed() {
       return;
     }
     // Check to fix boiler
-    if(inventoryList[inventorySlot-1] != null){
-      if(inventoryList[inventorySlot-1].name == "boiler cartridge" && currentWaypointIndex == 4 && (distance(pX, pY, 12000, 12500) < 75)){
-        //Prompt here "Press E to fix boiler"
-        useItem();
-        handleTriggers("Objective");
-        return;
-      }
+    if (nearestBoiler) {
+      useItem();
+      handleTriggers("Objective");
+      return;
     }
 
     for (let i = droppedItems.length - 1; i >= 0; i--) {
