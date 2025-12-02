@@ -247,7 +247,7 @@ function createPrompt(config) {
       }
     },
     
-    draw: function(text, color = [255, 150, 0], yPos = 47) {
+    draw: function(promptText, color = [255, 150, 0], yPos = 47) {
       if (this.alpha < 5) return;
       
       push();
@@ -261,13 +261,13 @@ function createPrompt(config) {
       textAlign(CENTER, CENTER);
       
       // Background
-      const promptWidth = textWidth(text);
+      const promptWidth = textWidth(promptText);
       fill(0, 0, 0, this.alpha * 0.6);
       rect(600 - promptWidth / 2 - 10, yPos - 17, promptWidth + 20, 35, 5);
       
       // Text
       fill(color[0], color[1], color[2], this.alpha);
-      text(text, 600, yPos);
+      text(promptText, 600, yPos);
       
       pop();
     }
