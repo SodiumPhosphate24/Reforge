@@ -1,4 +1,4 @@
-var enemySpawns;
+var enemySpawns = "";
 
 function controls() {
   // Don't allow controls during menu or transition
@@ -180,7 +180,7 @@ function keyPressed() {
 
   if (keyCode == 84) {
     enemies.push(new Enemy("zombie", pX + mouseX, pY + mouseY));
-    enemySpawns += "enemies.push(new Enemy(\"zombie\", " + (pX + mouseX) + ", " + (pY + mouseY) + "))\n";
+    enemySpawns += "enemies.push(new Enemy(\"zombie\", " + (pX + mouseX) + ", " + (pY + mouseY) + "));\n";
     console.log(enemySpawns);
   }
 
