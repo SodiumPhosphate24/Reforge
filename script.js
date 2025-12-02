@@ -27,8 +27,8 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd"];
-var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench"];
+var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
@@ -68,7 +68,9 @@ var tileColors = [
   [[255, 255, 255]], // 32 - ChainLinkBottomCorner
   [[255, 255, 255]], // 33 - ChainLinkCorner
   [[255, 255, 255]], // 34 - ChainLinkVertical
-  [[255, 255, 255]] // 35 - ChainLinkEnd
+  [[255, 255, 255]], // 35 - ChainLinkEnd
+  [[255, 255, 255]], // 36 - Lampost
+  [[255, 255, 255]]  // 37 - Bench
 
 ];
 
@@ -188,24 +190,19 @@ function drawFadeToGame() {
     // Inner sharp text
 
 
-  // Example: Define a 2x1 multi-tile (2 tiles wide, 1 tile tall)
-  // Uncomment and modify when you add a 2x1 tile image:
-  /*
-  multiTileConfig[36] = {  // Replace 36 with your tile type number
-    width: 2,
-    height: 1,
-    fullImage: null  // Will be set in preload
-  };
-  */
-
-  // Example: Define a 1x2 multi-tile (1 tile wide, 2 tiles tall)
-  /*
-  multiTileConfig[37] = {  // Replace 37 with your tile type number
+  // Lampost - 1x2 multi-tile (1 tile wide, 2 tiles tall)
+  multiTileConfig[36] = {
     width: 1,
     height: 2,
     fullImage: null  // Will be set in preload
   };
-  */
+
+  // Bench - 1x2 multi-tile (1 tile wide, 2 tiles tall)
+  multiTileConfig[37] = {
+    width: 1,
+    height: 2,
+    fullImage: null  // Will be set in preload
+  };
 
 
     noStroke();
@@ -283,6 +280,8 @@ function preload() {
   tileImgs[33] = loadImage("Tiles/ChainLinkCorner.png");
   tileImgs[34] = loadImage("Tiles/ChainLinkVertical.png");
   tileImgs[35] = loadImage("Tiles/ChainLinkEnd.png");
+  tileImgs[36] = null; // Lampost uses multi-tile, loaded below
+  tileImgs[37] = null; // Bench uses multi-tile, loaded below
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonCartridge.png");
@@ -358,6 +357,10 @@ function preload() {
     },
     fullImage: loadImage("Tiles/Crafting.png") // Load the full 32x32 image
   }
+
+  // Load multi-tile images
+  multiTileConfig[36].fullImage = loadImage("Tiles/Lampost.png");
+  multiTileConfig[37].fullImage = loadImage("Tiles/Bench.png");
 }
 
 // Generate multi-tile sections by splitting source image into grid
