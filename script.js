@@ -65,6 +65,57 @@ var tileColors = [
   [[255, 255, 255], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]], // 26 - Stone Brick Wall
   [[240, 210, 170]], // 27 - Pipe
   [[240, 210, 170]], // 28 - CopperTileGreen
+
+
+// Reusable prompt system
+function createPrompt(config) {
+  return {
+    alpha: 0,
+    scale: 0,
+    growScale: 0.5,
+    isActive: false,
+    
+    update: function(shouldShow) {
+      this.isActive = shouldShow;
+      
+      if (this.isActive) {
+        this.alpha = lerp(this.alpha, 255, 0.2);
+        this.scale = lerp(this.scale, 1, 0.2);
+        this.growScale = lerp(this.growScale, 1, 0.15);
+      } else {
+        this.alpha = lerp(this.alpha, 0, 0.15);
+        this.scale = lerp(this.scale, 0, 0.15);
+        this.growScale = lerp(this.growScale, 0.5, 0.15);
+      }
+    },
+    
+    draw: function(text, color = [255, 150, 0], yPos = 47) {
+      if (this.alpha < 5) return;
+      
+      push();
+      translate(600, yPos);
+      scale(this.scale * this.growScale);
+      translate(-600, -yPos);
+      
+      fill(color[0], color[1], color[2], this.alpha * 0.78);
+      textSize(20);
+      textFont(Silkscreen);
+      textAlign(CENTER, CENTER);
+      
+      // Background
+      const promptWidth = textWidth(text);
+      fill(0, 0, 0, this.alpha * 0.6);
+      rect(600 - promptWidth / 2 - 10, yPos - 17, promptWidth + 20, 35, 5);
+      
+      // Text
+      fill(color[0], color[1], color[2], this.alpha);
+      text(text, 600, yPos);
+      
+      pop();
+    }
+  };
+}
+
   [[255, 255, 255]], // 29 - Gravel
   [[255, 255, 255]], // 30 - Note
   [[255, 255, 255]], // 31 - ChainLink
