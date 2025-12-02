@@ -82,12 +82,6 @@ function keyPressed() {
       }
       return;
     }
-    // Check to fix boiler
-    if (nearestBoiler) {
-      useItem();
-      handleTriggers("Objective");
-      return;
-    }
 
     for (let i = droppedItems.length - 1; i >= 0; i--) {
       if (droppedItems[i].checkPickup()) {
