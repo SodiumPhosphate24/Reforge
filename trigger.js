@@ -64,6 +64,7 @@ function handleTriggers(trigger) {
     }
     if (triggerList.Objective.unlockBoilerRoom == false) {
       triggerList.Objective.unlockBoilerRoom = true;
+      messages.push(new Message("quest", "Boiler Room Unlocked!", "quest"));
       console.log("Lock opened with code 1855!");
       messages.push(new Message("dialogue", ["Prometheus IV: Now fix the boiler"], "Prometheus", true));
       return;
