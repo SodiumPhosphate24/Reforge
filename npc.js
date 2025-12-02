@@ -25,6 +25,11 @@ class NPC {
       // Check if there's already a dialogue message active
       const hasActiveDialogue = messages.some(msg => msg.type === "dialogue");
       if (!hasActiveDialogue) {
+        // Special handling for Lock NPC
+        if (this.id === "Lock") {
+          lockCodeActive = true;
+          lockCodeInput = "";
+        }
         messages.push(new Message("dialogue", this.message, this.id));
       }
     }

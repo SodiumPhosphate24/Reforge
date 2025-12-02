@@ -1,4 +1,6 @@
 var enemySpawns = "";
+var lockCodeInput = ""; // Track code input for Lock NPC
+var lockCodeActive = false; // Whether we're inputting a code
 
 function controls() {
   // Don't allow controls during menu or transition
@@ -187,6 +189,37 @@ function keyPressed() {
     enemies.push(new Enemy("greg", pX + mouseX, pY + mouseY));
     enemySpawns += "enemies.push(new Enemy(\"greg\", " + (pX + mouseX) + ", " + (pY + mouseY) + "));\n";
     console.log(enemySpawns);
+  }
+
+  // Handle numeric input for Lock code (0-9)
+  if (lockCodeActive && keyCode >= 48 && keyCode <= 57) {
+    if (lockCodeInput.length < 4) {
+      lockCodeInput += String.fromCharCode(keyCode);
+    }
+  }
+
+  // Backspace to delete last digit
+  if (lockCodeActive && keyCode == 8) {
+    lockCodeInput = lockCodeInput.slice(0, -1);
+  }
+
+  // Enter to submit code
+  if (lockCodeActive && keyCode == 13) {
+    if (lockCodeInput === "1855") {
+      // Correct code!
+      handleTriggers("LockOpened");
+      lockCodeActive = false;
+      lockCodeInput = "";
+      // Close the dialogue
+      for (let k = messages.length - 1; k >= 0; k--) {
+        if (messages[k].id === "Lock") {
+          messages[k].closing = true;
+        }
+      }
+    } else if (lockCodeInput.length === 4) {
+      // Wrong code, reset
+      lockCodeInput = "";
+    }
   }
 
   if (keyCode == 67) {

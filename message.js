@@ -150,6 +150,13 @@ function messageDisplay() {
       var displayMessage = messages[i].message[messages[i].index].split(": ")[1];
       var person = messages[i].message[messages[i].index].split(": ")[0];
       
+      // Special handling for Lock code input
+      if (messages[i].id === "Lock" && lockCodeActive) {
+        // Replace underscores with entered code digits
+        const codeDisplay = lockCodeInput.padEnd(4, "_");
+        displayMessage = "Enter Code: " + codeDisplay;
+      }
+      
       // Wrap text if too long (max width ~900px, approximately 65 characters at size 20)
       var maxCharsPerLine = 65;
       var wrappedLines = wrapText(displayMessage, maxCharsPerLine);
@@ -220,21 +227,37 @@ function messageDisplay() {
         text(wrappedLines[lineIdx], messages[i].x, startY + (lineIdx * lineHeight));
       }
 
-      // "Press Z" indicator at bottom right with pulsing animation
+      // "Press Z" or code input instructions at bottom right with pulsing animation
       const pulseAlpha = 100 + sin(frameCount / 15) * 50;
       fill(150, 150, 150, messages[i].alpha * (pulseAlpha / 255));
       textSize(14);
-      text("Press Z", messages[i].x + 420, messages[i].y + 80);
+      
+      if (messages[i].id === "Lock" && lockCodeActive) {
+        text("Enter 4-digit code (Backspace to delete, Enter to submit)", messages[i].x, messages[i].y + 80);
+      } else {
+        text("Press Z", messages[i].x + 420, messages[i].y + 80);
+      }
 
       rectMode(CORNER);
       pop();
 
       if (!messages[i].closing && keyPressedOnce(90)) {
+        // Don't allow Z key to advance if Lock code input is active
+        if (messages[i].id === "Lock" && lockCodeActive) {
+          return;
+        }
+        
         messages[i].index++;
         if (messages[i].index >= messages[i].message.length) {
           // Trigger closing animation
           messages[i].closing = true;
           handleTriggers(messages[i].id);
+          
+          // Deactivate code input if closing Lock dialogue
+          if (messages[i].id === "Lock") {
+            lockCodeActive = false;
+            lockCodeInput = "";
+          }
         } else {
           // Reset animations for next message
           messages[i].slideY = 30;

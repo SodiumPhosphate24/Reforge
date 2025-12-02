@@ -20,6 +20,13 @@ var triggerList = {
 };
 
 function handleTriggers(trigger) {
+  if (trigger == "LockOpened") {
+    messages.push(new Message("quest", "Boiler Room Unlocked!"));
+    console.log("Lock opened with code 1855!");
+    // Add your unlock logic here (open door, change waypoint, etc.)
+    return;
+  }
+  
   if (trigger == "Prometheus") {
     if (triggerList.Prometheus.talkToPrometheus == false) {
       triggerList.Prometheus.talkToPrometheus = true;
