@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, Book, Greg;
+let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, Book, Greg, LockNpc;
 
 // Waypoint system
 var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875]];
@@ -190,8 +190,8 @@ function drawFadeToGame() {
     // Inner sharp text
 
 
-  // Lampost and Bench use variant system (not multi-tile)
-  // Will be configured in tileVariants below
+    // Lampost and Bench use variant system (not multi-tile)
+    // Will be configured in tileVariants below
 
 
     noStroke();
@@ -218,11 +218,12 @@ let maxTileTypes = 0; // will be set in setup()
 var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
 
 function preload() {
-  console.log("Updated version Prometheus");
+  console.log("Updated version Lock NPC");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   SPUDImage = loadImage("Characters/SPUD.png");
   Prometheus = loadImage("Characters/Prometheus.png");
+  LockNpc = loadImage("Characters/Lock.png");
   BadGuy = loadImage("Characters/Enemy.png");
   Greg = loadImage("Items/Consumables/CommonBattery.png");
   Book = loadImage("Characters/Book.png");
@@ -1264,7 +1265,7 @@ function getMultiTileSection(row, col, layer, tileType) {
         const checkRow = row - r;
         const checkCol = col - c;
         if (checkRow < 0 || checkCol < 0) continue;
-        
+
         // Check if this position could be the top-left
         let isValidTopLeft = isSameTileType(checkRow, checkCol, layer, tileType);
         if (isValidTopLeft) {
@@ -1277,7 +1278,7 @@ function getMultiTileSection(row, col, layer, tileType) {
             }
             if (!isValidTopLeft) break;
           }
-          
+
           if (isValidTopLeft) {
             // This tile is part of the multi-tile, return skip marker
             return { section: null, isTopLeft: false, shouldSkip: true };
@@ -2327,8 +2328,9 @@ function drawAlarmFlash() {
 
 function initializeHardcodes() {
   players.push(new Player(12500, 12500, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
-  
+
   NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", ["Prometheus IV: Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
+  NonPlayerCharacters.push(new NPC(12750, 12950, "Lock", ["Enter Code: ____ "], LockNpc, "Lock", 2));
   NonPlayerCharacters.push(new NPC(
     12950,
     12450,
@@ -2358,27 +2360,27 @@ function initializeHardcodes() {
     "Book"
   ));
 
-  NonPlayerCharacters.push(new NPC(12910, 13262, "Book", 
-      ["Steam Power for Dummies : So you wish to master the power of steam. Excellent choice, as steam is the newest, most advanced technology for the future", 
-       "Steam Power for Dummies : As long as no corrupt, tyrranically omnipotent intelligence never causes civilization to collapse", 
-       "Steam Power for Dummies : Steam is powerful and reliable for any environment that isn't on fire, isn't overrun, and still has science", 
-       "Steam Power for Dummies : In the astronomically low chance that you're reading this in an apocalytic wasteland, I wish you the best of luck", 
-       "Steam Power for Dummies : A boiler turns water into steam using heat. If your boiler starts rattling ominously, try to communicate with it rationally. If it rattles back even louder, leave immediately", 
-       "Steam Power for Dummies : Valves can control the pressure of steam. Pressure creates motion. Motion allows for progress. Progress prevents societal collapse", 
-       "Steam Power for Dummies : A properly maintained steam engine can last for centuries. If you're reading this in the year 2355, you're doing something right", 
-       "Steam Power for Dummies : Remember, steam is humanity's greatest ally. If civilization has fallen while you were in cryogenic storage, think of this book as a relic of a more optimistic era, and you're on your own"], Book, "Book"));
+  NonPlayerCharacters.push(new NPC(12910, 13262, "Book",
+    ["Steam Power for Dummies : So you wish to master the power of steam. Excellent choice, as steam is the newest, most advanced technology for the future",
+      "Steam Power for Dummies : As long as no corrupt, tyrranically omnipotent intelligence never causes civilization to collapse",
+      "Steam Power for Dummies : Steam is powerful and reliable for any environment that isn't on fire, isn't overrun, and still has science",
+      "Steam Power for Dummies : In the astronomically low chance that you're reading this in an apocalytic wasteland, I wish you the best of luck",
+      "Steam Power for Dummies : A boiler turns water into steam using heat. If your boiler starts rattling ominously, try to communicate with it rationally. If it rattles back even louder, leave immediately",
+      "Steam Power for Dummies : Valves can control the pressure of steam. Pressure creates motion. Motion allows for progress. Progress prevents societal collapse",
+      "Steam Power for Dummies : A properly maintained steam engine can last for centuries. If you're reading this in the year 2355, you're doing something right",
+      "Steam Power for Dummies : Remember, steam is humanity's greatest ally. If civilization has fallen while you were in cryogenic storage, think of this book as a relic of a more optimistic era, and you're on your own"], Book, "Book"));
   //NonPlayerCharacters.push(new NPC(13650, 12420, "Book", ["The 7 Habits of Highly Effective Engineers \n That Have Been Cryogenically Frozen for 500 Years: Burger"], Book, "Book"));
   NonPlayerCharacters.push(new NPC(13650, 12420, "Book", [""], Book, "Book"));
-  NonPlayerCharacters.push(new NPC(13350, 13050, "Book", 
+  NonPlayerCharacters.push(new NPC(13350, 13050, "Book",
     [
       "Walden : I went to the woods because I wished to live deliberately, to front only the essential facts of life, and see if I could not learn what it had to teach, and not, when I came to die, discover that I had not lived. I did not wish to live what was not life, living is so dear;",
       "Walden : nor did I wish to practise resignation, unless it was quite necessary. I wanted to live deep and suck out all the marrow of life, to live so sturdily and Spartan-like as to put to rout all that was not life",
       "Walden : to cut a broad swath and shave close, to drive life into a corner, and reduce it to its lowest terms, and, if it proved to be mean, why then to get the whole and genuine meanness of it, and publish its meanness to the world",
       "Walden : or if it were sublime, to know it by experience, and be able to give a true account of it in my next excursion",
       "Walden :  For most men, it appears to me, are in a strange uncertainty about it, whether it is of the devil or of God, and have somewhat hastily concluded that it is the chief end of man here to \"glorify God and enjoy him forever.\"",
-     
-], Book, "Book"));
 
-  
+    ], Book, "Book"));
+
+
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
 }

@@ -411,9 +411,9 @@ function drawEnemies() {
       }
     }
     if (enemy.isDead()) {
-      let r = Math.floor(Math.random() * 3);
-      if (r == 1) {
-        droppedItems.push(new DroppedItem(new Item("consumable", "common cartridge", 1), enemy.x, enemy.y));
+      let r = Math.floor(Math.random() * (enemy.lootPool.length + 2));
+      if (r < enemy.lootPool.length) {
+        droppedItems.push(new DroppedItem(new Item(enemy.lootPool[r][0], enemy.lootPool[r][1], enemy.lootPool[r][2]), enemy.x, enemy.y));
       }
       enemies.splice(count, 1);
       count--;

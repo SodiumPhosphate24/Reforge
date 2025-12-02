@@ -183,6 +183,11 @@ function keyPressed() {
     enemySpawns += "enemies.push(new Enemy(\"zombie\", " + (pX + mouseX) + ", " + (pY + mouseY) + "));\n";
     console.log(enemySpawns);
   }
+  if (keyCode == 84) {
+    enemies.push(new Enemy("zombie", pX + mouseX, pY + mouseY));
+    enemySpawns += "enemies.push(new Enemy(\"zombie\", " + (pX + mouseX) + ", " + (pY + mouseY) + "));\n";
+    console.log(enemySpawns);
+  }
 
   if (keyCode == 67) {
     let r = Math.floor(Math.random() * itemConstructors.length);
