@@ -82,6 +82,13 @@ function keyPressed() {
       }
       return;
     }
+    // Check for boiler repair next (if holding boiler cartridge)
+    if (inventoryList[inventorySlot - 1] != null){
+      if (inventoryList[inventorySlot - 1].name == "boiler cartridge" && (distance(pX, pY, 12000, 12500) < 75)){
+        useItem();
+        handleTriggers("Objective");    
+      }
+    }
 
     // Use nearestPickupItem instead of looping
     if (nearestPickupItem) {
