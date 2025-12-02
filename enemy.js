@@ -1,8 +1,8 @@
 
 class Enemy {
-  constructor(type) {
-    this.x = pX + mouseX;
-    this.y = pY + mouseY;
+  constructor(type, x, y) {
+    this.x = x;
+    this.y = y;
     this.aggro = false;
     this.vx = 0; // velocity x
     this.vy = 0; // velocity y
@@ -399,6 +399,10 @@ function drawEnemies() {
       }
     }
     if (enemy.isDead()) {
+      let r = Math.floor(Math.random() * 3);
+      if (r == 1) {
+        droppedItems.push(new DroppedItem(new Item("consumable", "common cartridge", 1), enemy.x, enemy.y));
+      }
       enemies.splice(count, 1);
       count--;
     }

@@ -1,3 +1,5 @@
+var enemySpawns;
+
 function controls() {
   // Don't allow controls during menu or transition
   if (gameState !== "playing") {
@@ -61,7 +63,7 @@ function keyPressed() {
   if (keyCode >= 49 && keyCode <= 56) {
     inventorySlot = keyCode - 48;
   }
-
+  
   if (keyCode == 69) {
     // Check for leak repair first (highest priority when holding wrench)
     if (nearestLeak) {
@@ -174,6 +176,12 @@ function keyPressed() {
   }
   if (keyCode == 86) {
     droppedItems.push(new DroppedItem(new Item("consumable", "legendary cartridge", 5), pX + 600, pY + 340));
+  }
+
+  if (keyCode == 84) {
+    enemies.push(new Enemy("zombie", pX + mouseX, pY + mouseY);
+    enemySpawns += "enemies.push(new Enemy(\"zombie\", " + (pX + mouseX) + ", " + (pY + mouseY) + "))\n";
+    console.log(enemySpawns);
   }
 
   if (keyCode == 67) {

@@ -199,8 +199,8 @@ function drawFadeToGame() {
 
   // Bench - 1x2 multi-tile (1 tile wide, 2 tiles tall)
   multiTileConfig[37] = {
-    width: 1,
-    height: 2,
+    width: 2,
+    height: 1,
     fullImage: null  // Will be set in preload
   };
 
