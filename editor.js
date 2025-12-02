@@ -194,6 +194,19 @@ function drawEditorUI() {
     textAlign(CENTER);
   }
 
+  // Show mouse world position and tile coordinates
+  const worldX = mouseX - camX;
+  const worldY = mouseY - camY;
+  const gridCol = Math.floor(worldX / 50);
+  const gridRow = Math.floor(worldY / 50);
+  
+  fill(255, 255, 0);
+  textSize(14);
+  textAlign(LEFT);
+  text(`World Position: (${Math.round(worldX)}, ${Math.round(worldY)})`, 10, height - 30);
+  text(`Tile: Row ${gridRow}, Col ${gridCol}`, 10, height - 50);
+  textAlign(CENTER);
+
   // Draw pause overlay if crate placement is paused
   if (cratePlacementPaused) {
     fill(0, 0, 0, 150);
