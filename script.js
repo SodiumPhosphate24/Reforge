@@ -197,12 +197,8 @@ function drawFadeToGame() {
     fullImage: null  // Will be set in preload
   };
 
-  // Bench - 1x2 multi-tile (1 tile wide, 2 tiles tall)
-  multiTileConfig[37] = {
-    width: 2,
-    height: 1,
-    fullImage: null  // Will be set in preload
-  };
+  // Bench uses variant system (not multi-tile) - 2x1 (2 tiles wide, 1 tile tall)
+  // Will be configured in tileVariants below
 
 
     noStroke();
@@ -281,7 +277,7 @@ function preload() {
   tileImgs[34] = loadImage("Tiles/ChainLinkVertical.png");
   tileImgs[35] = loadImage("Tiles/ChainLinkEnd.png");
   tileImgs[36] = null; // Lampost uses multi-tile, loaded below
-  tileImgs[37] = null; // Bench uses multi-tile, loaded below
+  tileImgs[37] = null; // Bench uses variants, loaded below
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonCartridge.png");
@@ -358,9 +354,18 @@ function preload() {
     fullImage: loadImage("Tiles/Crafting.png") // Load the full 32x32 image
   }
 
+  // Bench variants - 2x1 multi-tile system (2 tiles wide, 1 tile tall)
+  // The image will be split into left and right halves
+  tileVariants[37] = {
+    variants: {
+      'left': null,   // Will be created from left half
+      'right': null   // Will be created from right half
+    },
+    fullImage: loadImage("Tiles/Bench.png") // Load the full bench image
+  }
+
   // Load multi-tile images
   multiTileConfig[36].fullImage = loadImage("Tiles/Lampost.png");
-  multiTileConfig[37].fullImage = loadImage("Tiles/Bench.png");
 }
 
 // Generate multi-tile sections by splitting source image into grid
@@ -436,6 +441,36 @@ function generateWorkbenchVariants() {
   console.log("Workbench variants generated: 4 quadrants from source image");
 }
 
+// Generate bench variants by splitting image into 2 halves (2x1 tiles)
+function generateBenchVariants() {
+  const benchConfig = tileVariants[37];
+  if (!benchConfig || !benchConfig.fullImage) {
+    console.error("Bench config or image missing");
+    return;
+  }
+
+  const fullImg = benchConfig.fullImage;
+
+  // Split the image into 2 halves (left and right)
+  const halfWidth = fullImg.width / 2;
+  const fullHeight = fullImg.height;
+
+  console.log("Bench image dimensions:", fullImg.width, "x", fullImg.height);
+  console.log("Each half will be:", halfWidth, "x", fullHeight);
+
+  // Create left half
+  const left = createGraphics(halfWidth, fullHeight);
+  left.copy(fullImg, 0, 0, halfWidth, fullHeight, 0, 0, halfWidth, fullHeight);
+  benchConfig.variants.left = left;
+
+  // Create right half
+  const right = createGraphics(halfWidth, fullHeight);
+  right.copy(fullImg, halfWidth, 0, halfWidth, fullHeight, 0, 0, halfWidth, fullHeight);
+  benchConfig.variants.right = right;
+
+  console.log("Bench variants generated: 2 halves from source image");
+}
+
 // Generate cached tinted versions of all tiles
 function generateTintedTileCache() {
   console.log("Generating tinted tile cache...");
@@ -505,6 +540,9 @@ function setup() {
 
   // Generate workbench quadrants from the 32x32 image
   generateWorkbenchVariants();
+
+  // Generate bench halves from the image
+  generateBenchVariants();
 
   // Generate multi-tile sections
   generateMultiTileSections();
@@ -1254,6 +1292,34 @@ function getWorkbenchVariant(row, col, layer, tileType) {
   return { variant, rotation: 0, flipH: false, baseImg: config.variants[variant] };
 }
 
+// Get the appropriate bench variant based on position in 2x1 grid
+// Bench (37) uses variants: left, right
+function getBenchVariant(row, col, layer, tileType) {
+  if (tileType !== 37) return null;
+
+  // Check if this is part of a 2x1 bench cluster
+  const hasRight = isSameTileType(row, col + 1, layer, tileType);
+  const hasLeft = isSameTileType(row, col - 1, layer, tileType);
+
+  let variant = 'left'; // default
+
+  // Determine position in 2x1 grid based on which neighbors exist
+  if (hasRight && !hasLeft) {
+    variant = 'left';
+  } else if (hasLeft && !hasRight) {
+    variant = 'right';
+  }
+  // If it doesn't match a 2x1 pattern, just use left as fallback
+
+  const config = tileVariants[37];
+  if (!config || !config.variants || !config.variants[variant]) {
+    console.error("Bench variant missing:", variant);
+    return null;
+  }
+
+  return { variant, rotation: 0, flipH: false, baseImg: config.variants[variant] };
+}
+
 // Get the appropriate pipe variant and rotation based on neighbors
 // Pipe (27) uses variants: straight, L, T, cross
 function getPipeVariant(row, col, layer, tileType) {
@@ -1464,6 +1530,14 @@ function drawWorldLayer(world, layerIndex) {
         if (workbenchInfo && workbenchInfo.baseImg) {
           imgToDraw = workbenchInfo.baseImg;
           finalRotation = workbenchInfo.rotation;
+        }
+      }
+      // Check if this is a bench tile (2x1 multi-tile using variants)
+      else if (tileType === 37) {
+        const benchInfo = getBenchVariant(i, j, layerIndex, tileType);
+        if (benchInfo && benchInfo.baseImg) {
+          imgToDraw = benchInfo.baseImg;
+          finalRotation = benchInfo.rotation;
         }
       }
       // Check if this is a pipe tile (auto-connect pipes using variants)
