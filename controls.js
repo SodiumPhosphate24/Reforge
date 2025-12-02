@@ -82,6 +82,7 @@ function keyPressed() {
       }
       return;
     }
+    // 
 
     if(inventoryList[inventorySlot-1] != null){
       if(inventoryList[inventorySlot-1].name == "boiler cartridge" && currentWaypointIndex == 4){
@@ -223,6 +224,13 @@ function keyPressed() {
       clearTile(256, 257, 1);
       clearTile(257, 257, 1);
       clearTile(258, 257, 1);
+      // Remove Lock NPC
+      for (let i = NonPlayerCharacters.length - 1; i >= 0; i--) {
+        if (NonPlayerCharacters[i].id === "Lock") {
+          NonPlayerCharacters.splice(i, 1);
+          break;
+        }
+      }
       // Trigger objective
       handleTriggers("Objective");
     } else if (lockCodeInput.length === 4) {
