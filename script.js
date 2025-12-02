@@ -186,6 +186,28 @@ function drawFadeToGame() {
     text("EXIT THE CRYOCHAMBER", width / 2, height / 2);
 
     // Inner sharp text
+
+
+  // Example: Define a 2x1 multi-tile (2 tiles wide, 1 tile tall)
+  // Uncomment and modify when you add a 2x1 tile image:
+  /*
+  multiTileConfig[36] = {  // Replace 36 with your tile type number
+    width: 2,
+    height: 1,
+    fullImage: null  // Will be set in preload
+  };
+  */
+
+  // Example: Define a 1x2 multi-tile (1 tile wide, 2 tiles tall)
+  /*
+  multiTileConfig[37] = {  // Replace 37 with your tile type number
+    width: 1,
+    height: 2,
+    fullImage: null  // Will be set in preload
+  };
+  */
+
+
     noStroke();
     fill(255, 220, 100, textAlpha);
     text("EXIT THE CRYOCHAMBER", width / 2, height / 2);
@@ -199,6 +221,11 @@ var tintedTileCache = [];
 
 // Tile variants storage
 var tileVariants = {};
+
+// Multi-tile configuration: defines tiles that span multiple grid cells
+// Format: tileType -> { width, height, fullImage, sections: [] }
+var multiTileConfig = {};
+
 var enemies = [], bullets = [], messages = [], droppedItems = [], NonPlayerCharacters = [];
 var inventoryList;
 let maxTileTypes = 0; // will be set in setup()
@@ -333,6 +360,39 @@ function preload() {
   }
 }
 
+// Generate multi-tile sections by splitting source image into grid
+function generateMultiTileSections() {
+  for (let tileType in multiTileConfig) {
+    const config = multiTileConfig[tileType];
+    if (!config || !config.fullImage) {
+      console.error("Multi-tile config or image missing for tile", tileType);
+      continue;
+    }
+
+    const fullImg = config.fullImage;
+    const tileWidth = fullImg.width / config.width;
+    const tileHeight = fullImg.height / config.height;
+
+    config.sections = [];
+
+    // Split image into grid sections
+    for (let row = 0; row < config.height; row++) {
+      config.sections[row] = [];
+      for (let col = 0; col < config.width; col++) {
+        const section = createGraphics(tileWidth, tileHeight);
+        section.copy(
+          fullImg,
+          col * tileWidth, row * tileHeight, tileWidth, tileHeight,
+          0, 0, tileWidth, tileHeight
+        );
+        config.sections[row][col] = section;
+      }
+    }
+
+    console.log(`Multi-tile ${tileType}: generated ${config.width}x${config.height} sections`);
+  }
+}
+
 // Generate workbench variants by splitting 32x32 image into 4 quadrants
 function generateWorkbenchVariants() {
   const workbenchConfig = tileVariants[6];
@@ -442,6 +502,9 @@ function setup() {
 
   // Generate workbench quadrants from the 32x32 image
   generateWorkbenchVariants();
+
+  // Generate multi-tile sections
+  generateMultiTileSections();
 
   // Generate tinted tile cache after images are loaded
   generateTintedTileCache();
@@ -1099,6 +1162,61 @@ function isSameTileType(row, col, layer, tileType) {
   return tile.type === tileType;
 }
 
+// Get the appropriate multi-tile section based on position
+// Returns null if this tile is not the top-left of a multi-tile, or { section, isTopLeft }
+function getMultiTileSection(row, col, layer, tileType) {
+  const config = multiTileConfig[tileType];
+  if (!config) return null;
+
+  // Check if this is the top-left corner of a multi-tile placement
+  let isTopLeft = true;
+  for (let r = 0; r < config.height; r++) {
+    for (let c = 0; c < config.width; c++) {
+      if (r === 0 && c === 0) continue; // Skip top-left itself
+      if (!isSameTileType(row + r, col + c, layer, tileType)) {
+        isTopLeft = false;
+        break;
+      }
+    }
+    if (!isTopLeft) break;
+  }
+
+  if (!isTopLeft) {
+    // Check if this tile is part of a multi-tile (but not top-left)
+    // Look backwards to find the top-left
+    for (let r = 0; r < config.height; r++) {
+      for (let c = 0; c < config.width; c++) {
+        const checkRow = row - r;
+        const checkCol = col - c;
+        if (checkRow < 0 || checkCol < 0) continue;
+        
+        // Check if this position could be the top-left
+        let isValidTopLeft = isSameTileType(checkRow, checkCol, layer, tileType);
+        if (isValidTopLeft) {
+          for (let dr = 0; dr < config.height; dr++) {
+            for (let dc = 0; dc < config.width; dc++) {
+              if (!isSameTileType(checkRow + dr, checkCol + dc, layer, tileType)) {
+                isValidTopLeft = false;
+                break;
+              }
+            }
+            if (!isValidTopLeft) break;
+          }
+          
+          if (isValidTopLeft) {
+            // This tile is part of the multi-tile, return skip marker
+            return { section: null, isTopLeft: false, shouldSkip: true };
+          }
+        }
+      }
+    }
+    return null; // Not part of a valid multi-tile
+  }
+
+  // This is the top-left, return all sections
+  return { sections: config.sections, isTopLeft: true, width: config.width, height: config.height };
+}
+
 // Get the appropriate workbench variant based on position in 2x2 grid
 // Workbench (6) uses variants: top_left, top_right, bottom_left, bottom_right
 function getWorkbenchVariant(row, col, layer, tileType) {
@@ -1310,6 +1428,27 @@ function drawWorldLayer(world, layerIndex) {
           roofScaleValue = roofScale.get(__k);
         }
         if (roofScaleValue <= 0.01) continue; // fully scaled down; skip draw
+      }
+
+      // Check if this is a multi-tile (generalized system)
+      const multiTileInfo = getMultiTileSection(i, j, layerIndex, tileType);
+      if (multiTileInfo) {
+        if (multiTileInfo.shouldSkip) {
+          continue; // Skip drawing non-top-left parts of multi-tile
+        }
+        if (multiTileInfo.isTopLeft) {
+          // Draw all sections of the multi-tile
+          const sections = multiTileInfo.sections;
+          for (let r = 0; r < multiTileInfo.height; r++) {
+            for (let c = 0; c < multiTileInfo.width; c++) {
+              const section = sections[r][c];
+              if (section) {
+                image(section, (j + c) * 50, (i + r) * 50, 50, 50);
+              }
+            }
+          }
+          continue; // Done with this multi-tile
+        }
       }
 
       // Determine which image to draw (use cached tinted version)
