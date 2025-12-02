@@ -11,7 +11,7 @@ var triggerList = {
   },
   Objective: {
     fixLeaks: false,
-    openBoilerRoom: false,
+    unlockBoilerRoom: false,
     fixBoiler: false
   },
   Pickup: {
@@ -26,7 +26,7 @@ function handleTriggers(trigger) {
     // Add your unlock logic here (open door, change waypoint, etc.)
     return;
   }
-  
+
   if (trigger == "Prometheus") {
     if (triggerList.Prometheus.talkToPrometheus == false) {
       triggerList.Prometheus.talkToPrometheus = true;
@@ -62,9 +62,15 @@ function handleTriggers(trigger) {
       currentWaypointIndex = 4;
       return;
     }
-    if (triggerList.Objective.openBoilerRoom == false) {
-      triggerList.Objective.openBoilerRoom = true;
+    if (triggerList.Objective.unlockBoilerRoom == false) {
+      triggerList.Objective.unlockBoilerRoom = true;
+      console.log("Lock opened with code 1855!");
       messages.push(new Message("dialogue", ["Prometheus IV: Now fix the boiler"], "Prometheus", true));
+      return;
+    }
+    if (triggerList.Objective.fixBoiler == false) {
+      triggerList.Objective.fixBoiler = true;
+      messages.push(new Message("dialogue", ["Prometheus IV: You did it!"], "Prometheus", true));
       return;
     }
   }

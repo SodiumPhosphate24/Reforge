@@ -63,7 +63,11 @@ function keyPressed() {
   }
 
   if (keyCode >= 49 && keyCode <= 56) {
-    inventorySlot = keyCode - 48;
+    // Don't allow inventory switching during dialogue
+    const hasActiveDialogue = messages.some(msg => msg.type === "dialogue");
+    if (!hasActiveDialogue) {
+      inventorySlot = keyCode - 48;
+    }
   }
   
   if (keyCode == 69) {
@@ -207,7 +211,6 @@ function keyPressed() {
   if (lockCodeActive && keyCode == 13) {
     if (lockCodeInput === "1855") {
       // Correct code!
-      handleTriggers("LockOpened");
       lockCodeActive = false;
       lockCodeInput = "";
       // Close the dialogue
@@ -216,6 +219,12 @@ function keyPressed() {
           messages[k].closing = true;
         }
       }
+      // Remove door tiles
+      clearTile(256, 257, 1);
+      clearTile(257, 257, 1);
+      clearTile(258, 257, 1);
+      // Trigger objective
+      handleTriggers("Objective");
     } else if (lockCodeInput.length === 4) {
       // Wrong code, reset
       lockCodeInput = "";
@@ -348,6 +357,12 @@ function useItem(){
 function mouseWheel(event) {
   if (typeof handleEditorMouseWheel === 'function' && handleEditorMouseWheel(event)) {
     return false; // Editor handled it, prevent default behavior
+  }
+
+  // Check if there's an active dialogue - prevent inventory switching
+  const hasActiveDialogue = messages.some(msg => msg.type === "dialogue");
+  if (hasActiveDialogue) {
+    return false;
   }
 
   let currentTime = millis();
