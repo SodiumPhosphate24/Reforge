@@ -21,6 +21,18 @@ class Enemy {
       this.image = BadGuy;
       this.width = 48;
       this.height = 56;
+      this.lootPool = [["consumable", "common cartridge", 1], ["material", "common wheel", 1]];
+    }
+    if (type == "greg") {
+      this.type = "greg";
+      this.health = 100;
+      this.maxHealth = 100;
+      this.speed = 1;
+      this.acceleration = 0.15; // how quickly it changes direction
+      this.image = Greg;
+      this.width = 28;
+      this.height = 54;
+      this.lootPool = [["consumable", "common cartridge", 1], ["material", "common wheel", 1]];
     }
   }
 
