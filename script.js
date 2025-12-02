@@ -15,6 +15,9 @@ var leakPromptScale = 0; // Scale animation for leak repair prompt
 var leakPromptGrowScale = 0.5; // Growing scale animation
 var totalLeaks = 5;
 
+// Boiler repair system
+var boilerPrompt = null; // Will be initialized in setup()
+
 // Alarm system
 var alarmFlashAlpha = 0;
 var alarmFlashIncreasing = true;
@@ -671,6 +674,9 @@ function setup() {
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
 
+  // Initialize boiler prompt
+  boilerPrompt = createPrompt();
+
   // Intro will be started from menu screen
   // Roof fade will be initialized during intro sequence
 }
@@ -837,6 +843,16 @@ function drawGameplay() {
 
   // Draw leak repair prompt after camera pop (screen-fixed)
   drawLeakPromptIfNeeded();
+
+  // Check for boiler repair condition and update prompt
+  const holdingBoilerCartridge = inventoryList[inventorySlot - 1] != null &&
+    inventoryList[inventorySlot - 1].name === "boiler cartridge";
+  const nearBoiler = distance(pX, pY, 12000, 12500) < 75;
+  const atRightWaypoint = currentWaypointIndex >= 4; // Adjust this based on when you want the prompt to appear
+  
+  const shouldShowBoilerPrompt = holdingBoilerCartridge && nearBoiler && atRightWaypoint;
+  boilerPrompt.update(shouldShowBoilerPrompt);
+  boilerPrompt.draw("Press E to Restore Boiler", [255, 200, 0], 90);
 
   // Draw crafting prompt after camera pop (screen-fixed)
   if (typeof drawCraftingPromptIfNeeded === 'function') {
