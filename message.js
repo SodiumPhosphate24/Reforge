@@ -36,7 +36,7 @@ function wrapText(text, maxChars) {
 
 
 class Message {
-  constructor(type, message, triggerID, isTriggered = false) {
+  constructor(type, message, triggerID = "none", isTriggered = false) {
     this.message = message;
     this.id = triggerID;
     this.isTriggered = isTriggered; // Flag for trigger-based messages that ignore proximity
