@@ -118,7 +118,15 @@ function drawNPCPromptIfNeeded() {
     if (nearestNPC) {
       const nameLower = nearestNPC.name.toLowerCase();
       const isReadable = nameLower.includes("book") || nameLower.includes("journal") || nameLower.includes("sign");
-      promptText = isReadable ? "Press E to read " + nearestNPC.name : "Press E to talk to " + nearestNPC.name;
+      const isLock = nameLower.includes("lock");
+      
+      if (isReadable) {
+        promptText = "Press E to read " + nearestNPC.name;
+      } else if (isLock) {
+        promptText = "Press E to Open " + nearestNPC.name;
+      } else {
+        promptText = "Press E to talk to " + nearestNPC.name;
+      }
     }
 
     // Background for text

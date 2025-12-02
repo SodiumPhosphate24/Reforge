@@ -47,6 +47,13 @@ var tileColors = [
   [[255, 255, 255]], // 11 - crack
   [[255, 255, 255], [180, 140, 100], [140, 100, 70], [180, 1, 1]], // 12 - wood (white, oak, dark oak, barn)
   [[255, 255, 255], [200, 1, 1], [180, 150, 110]], // 13 - whiteConcrete
+
+// Example: Custom label for a special object
+var nearestSpecialObject = null; // Store nearest object info
+var specialObjectPromptAlpha = 0; // Fade animation
+var specialObjectPromptScale = 0; // Scale animation
+
+
   [[255, 255, 255]], // 14 - barnDoor
   [[255, 255, 255]], // 15 - barnWindow
   [[255, 255, 255]], // 16 - fence
@@ -790,6 +797,57 @@ function drawGameplay() {
   }
 
   // Draw waypoint arrow (screen-fixed at edge)
+
+// Draw custom object prompt (call this after camera pop in drawGameplay)
+function drawSpecialObjectPromptIfNeeded() {
+  // Example: Check if player is near coordinates (13000, 13000)
+  const playerCenterX = pX + 600 + pWidth / 2;
+  const playerCenterY = pY + 375 + pHeight / 2;
+  const distToObject = dist(playerCenterX, playerCenterY, 13000, 13000);
+  
+  // Update nearestSpecialObject based on distance
+  if (distToObject < 100) { // Within 100 units
+    nearestSpecialObject = { x: 13000, y: 13000, distance: distToObject };
+  } else {
+    nearestSpecialObject = null;
+  }
+  
+  // Fade in/out and scale based on whether object is near
+  if (nearestSpecialObject) {
+    specialObjectPromptAlpha = lerp(specialObjectPromptAlpha, 255, 0.2);
+    specialObjectPromptScale = lerp(specialObjectPromptScale, 1, 0.2);
+  } else {
+    specialObjectPromptAlpha = lerp(specialObjectPromptAlpha, 0, 0.15);
+    specialObjectPromptScale = lerp(specialObjectPromptScale, 0, 0.15);
+  }
+
+  if (specialObjectPromptAlpha > 5) {
+    push();
+    translate(600, 100); // Position on screen (change Y to avoid overlap)
+    scale(specialObjectPromptScale);
+    translate(-600, -100);
+
+    fill(255, 150, 0, specialObjectPromptAlpha * 0.78);
+    textSize(20);
+    textFont(Silkscreen);
+    textAlign(CENTER, CENTER);
+
+    const promptText = "Press E to Activate"; // Your custom message
+
+    // Background for text
+    const promptWidth = textWidth(promptText);
+    fill(0, 0, 0, specialObjectPromptAlpha * 0.6);
+    rect(600 - promptWidth / 2 - 10, 83, promptWidth + 20, 35, 5);
+
+    // Text
+    fill(255, 150, 0, specialObjectPromptAlpha);
+    text(promptText, 600, 100);
+
+    pop();
+  }
+}
+
+
   drawWaypoint();
 
   drawInventory();
