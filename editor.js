@@ -468,13 +468,22 @@ function drawTilePreview() {
   strokeWeight(2);
   rect(snapX, snapY, EDIT_TILE_SIZE, EDIT_TILE_SIZE);
 
-  // Small badge with current layer
+  // Display tile name above the grid
+  const tileName = tileImgs[selectedTileType] || "Unknown";
   noStroke();
+  fill(0, 0, 0, 180);
+  textSize(10);
+  textAlign(CENTER, CENTER);
+  const nameWidth = textWidth(tileName) + 8;
+  rect(snapX + 25 - nameWidth / 2, snapY - 16, nameWidth, 14, 3);
+  fill(255, 255, 0);
+  text(tileName, snapX + 25, snapY - 9);
+
+  // Small badge with current layer
   fill(0, 0, 0, 160);
   rect(snapX + 2, snapY + 2, 16, 16, 3);
   fill(255, 255, 0);
   textSize(12);
-  textAlign(CENTER, CENTER);
   text(String(editorLayer), snapX + 10, snapY + 10);
 
   pop();
