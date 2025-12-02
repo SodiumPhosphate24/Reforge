@@ -83,57 +83,61 @@ function keyPressed() {
       return;
     }
 
-    for (let i = droppedItems.length - 1; i >= 0; i--) {
-      if (droppedItems[i].checkPickup()) {
-        if (droppedItems[i].item.stackable) {
-          let stacked = false;
-          for (let j = 0; j < inventoryList.length; j++) {
-            if (inventoryList[j] != null) {
-              if (inventoryList[j].name == droppedItems[i].item.name) {
-                inventoryList[j].amount += droppedItems[i].item.amount;
-                droppedItems.splice(i, 1);
-                stacked = true;
-                itemLabelAlpha = 1.5;
-                handleTriggers("Pickup");
-                return;
-              }
-            }
-          }
-          if (!stacked) {
-            if (inventoryList[inventorySlot - 1] == null) {
-              inventoryList[inventorySlot - 1] = (droppedItems[i].item);
-              droppedItems.splice(i, 1);
+    // Use nearestPickupItem instead of looping
+    if (nearestPickupItem) {
+      const itemIndex = droppedItems.indexOf(nearestPickupItem);
+      if (itemIndex === -1) return; // Item was removed, shouldn't happen
+
+      const item = droppedItems[itemIndex];
+      
+      if (item.item.stackable) {
+        let stacked = false;
+        for (let j = 0; j < inventoryList.length; j++) {
+          if (inventoryList[j] != null) {
+            if (inventoryList[j].name == item.item.name) {
+              inventoryList[j].amount += item.item.amount;
+              droppedItems.splice(itemIndex, 1);
+              stacked = true;
               itemLabelAlpha = 1.5;
+              handleTriggers("Pickup");
+              return;
             }
-            else {
-              const dropX = pX + 600 + pWidth / 2 - 15; // Center drop position
-              const dropY = pY + 375 + pHeight / 2 - 15;
-              droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], dropX, dropY))
-              inventoryList[inventorySlot - 1] = droppedItems[i].item;
-              droppedItems.splice(i, 1);
-              itemLabelAlpha = 1.5;
-            }
-            handleTriggers("Pickup");
-            return;
           }
         }
-        else {
+        if (!stacked) {
           if (inventoryList[inventorySlot - 1] == null) {
-            inventoryList[inventorySlot - 1] = (droppedItems[i].item);
-            droppedItems.splice(i, 1);
+            inventoryList[inventorySlot - 1] = item.item;
+            droppedItems.splice(itemIndex, 1);
             itemLabelAlpha = 1.5;
           }
           else {
-            const dropX = pX + 600 + pWidth / 2 - 15; // Center drop position
+            const dropX = pX + 600 + pWidth / 2 - 15;
             const dropY = pY + 375 + pHeight / 2 - 15;
             droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], dropX, dropY))
-            inventoryList[inventorySlot - 1] = droppedItems[i].item;
-            droppedItems.splice(i, 1);
+            inventoryList[inventorySlot - 1] = item.item;
+            droppedItems.splice(itemIndex, 1);
             itemLabelAlpha = 1.5;
           }
           handleTriggers("Pickup");
           return;
         }
+      }
+      else {
+        if (inventoryList[inventorySlot - 1] == null) {
+          inventoryList[inventorySlot - 1] = item.item;
+          droppedItems.splice(itemIndex, 1);
+          itemLabelAlpha = 1.5;
+        }
+        else {
+          const dropX = pX + 600 + pWidth / 2 - 15;
+          const dropY = pY + 375 + pHeight / 2 - 15;
+          droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], dropX, dropY))
+          inventoryList[inventorySlot - 1] = item.item;
+          droppedItems.splice(itemIndex, 1);
+          itemLabelAlpha = 1.5;
+        }
+        handleTriggers("Pickup");
+        return;
       }
     }
 
