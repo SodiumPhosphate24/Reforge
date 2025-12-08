@@ -9,9 +9,11 @@ var triggerList = {
   Crafting: {
     craftedFirstRobot: false,
   },
+  LockOpened: {
+    unlockedBoilerRoom: false
+  },
   Objective: {
     fixLeaks: false,
-    unlockBoilerRoom: false,
     fixBoiler: false
   },
   Pickup: {
@@ -60,13 +62,6 @@ function handleTriggers(trigger) {
       triggerList.Objective.fixLeaks = true;
       messages.push(new Message("dialogue", ["Prometheus IV: Head to the boiler room to [I don't know]"], "Prometheus", true));
       currentWaypointIndex = 4;
-      return;
-    }
-    if (triggerList.Objective.unlockBoilerRoom == false) {
-      triggerList.Objective.unlockBoilerRoom = true;
-      messages.push(new Message("quest", "Boiler Room Unlocked!"));
-      console.log("Lock opened with code 1855!");
-      messages.push(new Message("dialogue", ["Prometheus IV: Now fix the boiler"], "Prometheus", true));
       return;
     }
     if (triggerList.Objective.fixBoiler == false) {
