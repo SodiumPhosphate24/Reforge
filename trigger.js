@@ -60,7 +60,12 @@ function handleTriggers(trigger) {
   if (trigger == "Objective") {
     if (triggerList.Objective.fixLeaks == false) {
       triggerList.Objective.fixLeaks = true;
-      messages.push(new Message("dialogue", ["Prometheus IV: Head to the boiler room to [I don't know]"], "Prometheus", true));
+      if(triggerList.LockOpened.unlockedBoilerRoom){
+        messages.push(new Message("dialogue", ["Prometheus IV: Head to the boiler room to fix the boiler"], "Prometheus", true));
+      }
+      else{
+        messages.push(new Message("dialogue", ["Prometheus IV: Now you need to fix the boiler", "Prometheus IV: The door is locked, try looking around the code"], "Prometheus", true));
+      }
       currentWaypointIndex = 4;
       return;
     }

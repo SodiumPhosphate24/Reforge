@@ -216,6 +216,7 @@ function keyPressed() {
       // Correct code!
       lockCodeActive = false;
       lockCodeInput = "";
+      handleTriggers("LockOpened");
       // Close the dialogue
       for (let k = messages.length - 1; k >= 0; k--) {
         if (messages[k].id === "Lock") {
@@ -234,7 +235,6 @@ function keyPressed() {
         }
       }
       // Trigger objective
-      handleTriggers("Objective");
     } else if (lockCodeInput.length === 4) {
       // Wrong code, reset
       lockCodeInput = "";
