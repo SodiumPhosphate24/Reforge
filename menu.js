@@ -168,7 +168,7 @@ function drawMenuScreen() {
   textAlign(CENTER, CENTER);
   textSize(16);
   fill(255, 255, 255, 150);
-  text("↑/↓ Navigate  •  ENTER Select", width / 2, height - 60);
+  text("^/v Navigate  •  ENTER Select", width / 2, height - 60);
   pop();
 }
 

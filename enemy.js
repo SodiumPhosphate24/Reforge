@@ -92,16 +92,17 @@ class Enemy {
         } else if (canMoveX) {
           // Only X works, slide along wall horizontally
           this.x += this.vx;
-          this.vy *= 0.7; // Dampen blocked axis
+          this.vy = 0; // Zero out blocked axis for smooth sliding
         } else if (canMoveY) {
           // Only Y works, slide along wall vertically
-          this.vx *= 0.7; // Dampen blocked axis
+          this.vx = 0; // Zero out blocked axis for smooth sliding
         } else {
-          // Neither works, we're stuck in a corner
+          // Neither works, we're stuck in a corner - try to escape
           this.x = prevX;
           this.y = prevY;
-          this.vx *= 0.3;
-          this.vy *= 0.3;
+          // Try to push away from corner
+          this.vx *= -0.5;
+          this.vy *= -0.5;
         }
       }
     } else {
