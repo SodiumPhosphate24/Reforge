@@ -228,8 +228,8 @@ function messageDisplay() {
       }
 
       // "Press Z" or code input instructions at bottom right with pulsing animation
-      const pulseAlpha = 100 + sin(frameCount / 15) * 50;
-      fill(150, 150, 150, messages[i].alpha * (pulseAlpha / 255));
+      const pulseAlpha = 180 + sin(frameCount / 15) * 75;
+      fill(200, 200, 200, messages[i].alpha * (pulseAlpha / 255));
       textSize(14);
       
       if (messages[i].id === "Lock" && lockCodeActive) {
