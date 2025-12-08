@@ -82,19 +82,23 @@ class Enemy {
         
         // Revert X and try moving only along Y axis (slide vertically)
         this.x = prevX;
-        this.y += this.vy;
+        this.y = prevY + this.vy;
         const canMoveY = !this.checkWallCollision();
         
         // Apply whichever direction(s) work
         if (canMoveX && canMoveY) {
           // Both axes work independently, use both
-          this.x += this.vx;
+          this.x = prevX + this.vx;
+          this.y = prevY + this.vy;
         } else if (canMoveX) {
           // Only X works, slide along wall horizontally
-          this.x += this.vx;
+          this.x = prevX + this.vx;
+          this.y = prevY;
           this.vy = 0; // Zero out blocked axis for smooth sliding
         } else if (canMoveY) {
           // Only Y works, slide along wall vertically
+          this.x = prevX;
+          this.y = prevY + this.vy;
           this.vx = 0; // Zero out blocked axis for smooth sliding
         } else {
           // Neither works, we're stuck in a corner - try to escape
