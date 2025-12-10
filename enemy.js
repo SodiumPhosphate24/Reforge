@@ -193,41 +193,88 @@ class Enemy {
       this.x += this.vx;
       this.y += this.vy;
 
-      // Check for wall collisions and resolve with sliding
+      // Check for wall collisions and resolve with intelligent navigation
       if (this.checkWallCollision()) {
         // Revert to previous position
         this.x = prevX;
         this.y = prevY;
 
-        // Try moving only along X axis (slide horizontally)
-        this.x += this.vx;
-        const canMoveX = !this.checkWallCollision();
+        // Detect which direction the target is relative to enemy
+        const targetDirX = targetX - (this.x + 10);
+        const targetDirY = targetY - (this.y + 10);
+        
+        // Normalize direction to just sign (-1, 0, or 1)
+        const targetSignX = targetDirX > 0 ? 1 : (targetDirX < 0 ? -1 : 0);
+        const targetSignY = targetDirY > 0 ? 1 : (targetDirY < 0 ? -1 : 0);
 
-        // Revert X and try moving only along Y axis (slide vertically)
+        // Test which cardinal directions are blocked
+        const testDist = 3; // pixels to test in each direction
+        
+        this.x = prevX + testDist;
+        const rightBlocked = this.checkWallCollision();
+        this.x = prevX - testDist;
+        const leftBlocked = this.checkWallCollision();
         this.x = prevX;
-        this.y = prevY + this.vy;
-        const canMoveY = !this.checkWallCollision();
+        
+        this.y = prevY + testDist;
+        const downBlocked = this.checkWallCollision();
+        this.y = prevY - testDist;
+        const upBlocked = this.checkWallCollision();
+        this.y = prevY;
 
-        // Apply whichever direction(s) work
-        if (canMoveX && canMoveY) {
-          // Both axes work independently, use both
-          this.x = prevX + this.vx;
-          this.y = prevY + this.vy;
-        } else if (canMoveX) {
-          // Only X works, slide along wall horizontally
-          this.x = prevX + this.vx;
-          this.y = prevY;
-          this.vy = 0; // Zero out blocked axis for smooth sliding
-        } else if (canMoveY) {
-          // Only Y works, slide along wall vertically
-          this.x = prevX;
-          this.y = prevY + this.vy;
-          this.vx = 0; // Zero out blocked axis for smooth sliding
+        // Determine correction direction based on collision and target location
+        let correctionVx = 0;
+        let correctionVy = 0;
+
+        // If hitting a wall on the side we want to go, move perpendicular instead
+        if (rightBlocked && targetSignX > 0) {
+          // Want to go right but blocked - move vertically
+          correctionVx = 0;
+          correctionVy = targetSignY !== 0 ? targetSignY * this.speed : (upBlocked ? this.speed : -this.speed);
+        } else if (leftBlocked && targetSignX < 0) {
+          // Want to go left but blocked - move vertically
+          correctionVx = 0;
+          correctionVy = targetSignY !== 0 ? targetSignY * this.speed : (upBlocked ? this.speed : -this.speed);
+        } else if (downBlocked && targetSignY > 0) {
+          // Want to go down but blocked - move horizontally
+          correctionVx = targetSignX !== 0 ? targetSignX * this.speed : (leftBlocked ? this.speed : -this.speed);
+          correctionVy = 0;
+        } else if (upBlocked && targetSignY < 0) {
+          // Want to go up but blocked - move horizontally
+          correctionVx = targetSignX !== 0 ? targetSignX * this.speed : (leftBlocked ? this.speed : -this.speed);
+          correctionVy = 0;
         } else {
-          // Neither works, we're stuck in a corner - try to escape
+          // General sliding - try each axis independently
+          this.x = prevX + this.vx;
+          const canMoveX = !this.checkWallCollision();
           this.x = prevX;
+          
+          this.y = prevY + this.vy;
+          const canMoveY = !this.checkWallCollision();
           this.y = prevY;
-          // Try to push away from corner
+
+          if (canMoveX) correctionVx = this.vx;
+          if (canMoveY) correctionVy = this.vy;
+        }
+
+        // Apply correction movement
+        if (correctionVx !== 0 || correctionVy !== 0) {
+          this.x = prevX + correctionVx;
+          this.y = prevY + correctionVy;
+          
+          // If still colliding, revert
+          if (this.checkWallCollision()) {
+            this.x = prevX;
+            this.y = prevY;
+            this.vx *= -0.5;
+            this.vy *= -0.5;
+          } else {
+            // Update velocity to match correction
+            this.vx = correctionVx;
+            this.vy = correctionVy;
+          }
+        } else {
+          // Completely stuck
           this.vx *= -0.5;
           this.vy *= -0.5;
         }
