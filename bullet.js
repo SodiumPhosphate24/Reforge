@@ -39,7 +39,6 @@ class Bullet {
     for (let i = 0; i < enemies.length; i++) {
       if (checkCollision(this.x, this.y, enemies[i].x, enemies[i].y, 18, 5, enemies[i].width, enemies[i].height)) {
         this.target = enemies[i];
-        console.log("hits enemy");
         return true;
       }
     }
@@ -50,7 +49,6 @@ class Bullet {
     for(let i = 0; i < enemies.length; i++){
       if (checkCollision(this.x, this.y, players[i].x, players[i].y, 18, 5, players[i].width, players[i].height)){
         this.target = players[i];
-        console.log("hits player");
         return true;
       }
     }
@@ -164,6 +162,10 @@ function drawBullets() {
         rect(-10, -10, 18, 5);
       }
       pop();
+    }
+    if(b.hitsEnemy() || b.hitsPlayer()){
+      b.target.takeDamage(b.damage);
+      console.log("hit");
     }
 
     if (b.hitsEnemy() || b.hitsWall() || b.hitsPlayer() || b.lifespan <= 0) {
