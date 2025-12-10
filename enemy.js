@@ -1,4 +1,3 @@
-
 class Enemy {
   constructor(type, x, y) {
     this.x = x;
@@ -10,7 +9,7 @@ class Enemy {
     this.deaggroRange = 700; // de-aggro at longer distance
     this.currentBreadcrumbIndex = 0; // Which breadcrumb we're following
     this.raycastTarget = null; // For visualization in editor
-    
+
     if (type == "zombie") {
       this.type = "zombie";
       this.health = 3;
@@ -41,41 +40,55 @@ class Enemy {
   canReachPoint(targetX, targetY) {
     const startX = this.x + 10;
     const startY = this.y + 10;
-    
+
     const dx = targetX - startX;
     const dy = targetY - startY;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    
+
     // Number of steps to check along the ray
     const steps = Math.ceil(distance / 10);
-    
+
+    // Hitbox padding - half the enemy size based on actual dimensions
+    const hitboxPaddingX = this.width / 2;
+    const hitboxPaddingY = this.height / 2;
+
     for (let i = 1; i <= steps; i++) {
       const t = i / steps;
       const checkX = startX + dx * t;
       const checkY = startY + dy * t;
-      
-      // Check if this point hits a wall
-      const col = Math.floor(checkX / 50);
-      const row = Math.floor(checkY / 50);
-      
-      if (row < 0 || col < 0 || row >= gameWorld.length || col >= gameWorld[row].length) continue;
-      
-      const cell = gameWorld[row][col];
-      if (cell && 'layers' in cell) {
-        for (let L = 0; L < 3; L++) {
-          const t = cell.layers[L];
-          if (!t) continue;
-          if (tileWalls[t.type] == 1) {
+
+      // Check center point and points around the hitbox edges
+      const checkPoints = [
+        { x: checkX, y: checkY }, // Center
+        { x: checkX - hitboxPaddingX, y: checkY }, // Left
+        { x: checkX + hitboxPaddingX, y: checkY }, // Right
+        { x: checkX, y: checkY - hitboxPaddingY }, // Top
+        { x: checkX, y: checkY + hitboxPaddingY }, // Bottom
+      ];
+
+      for (const point of checkPoints) {
+        const col = Math.floor(point.x / 50);
+        const row = Math.floor(point.y / 50);
+
+        if (row < 0 || col < 0 || row >= gameWorld.length || col >= gameWorld[row].length) continue;
+
+        const cell = gameWorld[row][col];
+        if (cell && 'layers' in cell) {
+          for (let L = 0; L < 3; L++) {
+            const t = cell.layers[L];
+            if (!t) continue;
+            if (tileWalls[t.type] == 1) {
+              return false; // Wall blocking path
+            }
+          }
+        } else if (cell) {
+          if (tileWalls[cell.type] == 1) {
             return false; // Wall blocking path
           }
         }
-      } else if (cell) {
-        if (tileWalls[cell.type] == 1) {
-          return false; // Wall blocking path
-        }
       }
     }
-    
+
     return true; // Clear path
   }
 
@@ -94,7 +107,7 @@ class Enemy {
 
   update() {
     const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
-    
+
     // Aggro/De-aggro logic
     if (!this.aggro && distToPlayer < this.aggroRange) {
       this.aggro = true;
@@ -104,14 +117,14 @@ class Enemy {
       this.vx *= 0.9;
       this.vy *= 0.9;
     }
-    
+
     if (this.aggro) {
       // Breadcrumb AI: Follow the player's trail
       let targetX, targetY;
       if (this.type == "greg"){
         this.shoot();
       }
-      
+
       if (breadcrumbs.length === 0) {
         // No breadcrumbs yet, move toward player directly
         targetX = pX + 600;
@@ -121,14 +134,14 @@ class Enemy {
         if (this.currentBreadcrumbIndex >= breadcrumbs.length) {
           this.currentBreadcrumbIndex = breadcrumbs.length - 1;
         }
-        
+
         let foundReachable = false;
         let targetIndex = -1;
-        
+
         // Search backwards from the most recent breadcrumb to find the farthest reachable one
         for (let searchIndex = breadcrumbs.length - 1; searchIndex >= this.currentBreadcrumbIndex; searchIndex--) {
           const testBreadcrumb = breadcrumbs[searchIndex];
-          
+
           // Check if we can reach this breadcrumb with raycast (no walls blocking)
           if (this.canReachPoint(testBreadcrumb.x, testBreadcrumb.y)) {
             targetX = testBreadcrumb.x;
@@ -139,12 +152,12 @@ class Enemy {
             break; // Found the farthest reachable breadcrumb
           }
         }
-        
+
         // If no breadcrumbs from current to end are reachable, search backwards from current
         if (!foundReachable && this.currentBreadcrumbIndex > 0) {
           for (let searchIndex = this.currentBreadcrumbIndex - 1; searchIndex >= 0; searchIndex--) {
             const testBreadcrumb = breadcrumbs[searchIndex];
-            
+
             if (this.canReachPoint(testBreadcrumb.x, testBreadcrumb.y)) {
               targetX = testBreadcrumb.x;
               targetY = testBreadcrumb.y;
@@ -155,7 +168,7 @@ class Enemy {
             }
           }
         }
-        
+
         // If still no breadcrumbs are reachable, move toward player directly
         if (!foundReachable) {
           targetX = pX + 600;
@@ -164,7 +177,7 @@ class Enemy {
         } else {
           this.currentBreadcrumbIndex = targetIndex;
         }
-        
+
         // Check if we're close enough to move to next breadcrumb
         const distToBreadcrumb = distance(this.x + 10, this.y + 10, targetX, targetY);
         if (distToBreadcrumb < 30 && foundReachable) {
@@ -175,41 +188,41 @@ class Enemy {
           }
         }
       }
-      
+
       // Calculate angle to target
       this.angle = atan2(targetY - (this.y + 10), targetX - (this.x + 10));
-      
+
       // Target velocity based on desired direction
       const targetVx = this.speed * cos(this.angle);
       const targetVy = this.speed * sin(this.angle);
-      
+
       // Smoothly interpolate current velocity toward target
       this.vx = lerp(this.vx, targetVx, this.acceleration);
       this.vy = lerp(this.vy, targetVy, this.acceleration);
-      
+
       // Store previous position for collision resolution
       const prevX = this.x;
       const prevY = this.y;
-      
+
       // Try to move both axes first
       this.x += this.vx;
       this.y += this.vy;
-      
+
       // Check for wall collisions and resolve with sliding
       if (this.checkWallCollision()) {
         // Revert to previous position
         this.x = prevX;
         this.y = prevY;
-        
+
         // Try moving only along X axis (slide horizontally)
         this.x += this.vx;
         const canMoveX = !this.checkWallCollision();
-        
+
         // Revert X and try moving only along Y axis (slide vertically)
         this.x = prevX;
         this.y = prevY + this.vy;
         const canMoveY = !this.checkWallCollision();
-        
+
         // Apply whichever direction(s) work
         if (canMoveX && canMoveY) {
           // Both axes work independently, use both
@@ -238,15 +251,15 @@ class Enemy {
       // Apply friction when not aggroed
       this.vx *= 0.95;
       this.vy *= 0.95;
-      
+
       // Move with remaining velocity
       if (Math.abs(this.vx) > 0.01 || Math.abs(this.vy) > 0.01) {
         const prevX = this.x;
         const prevY = this.y;
-        
+
         this.x += this.vx;
         this.y += this.vy;
-        
+
         if (this.checkWallCollision()) {
           this.x = prevX;
           this.y = prevY;
@@ -258,7 +271,7 @@ class Enemy {
   }
 
   checkWallCollision() {
-    const w = 20, h = 20; // enemy size
+    const w = this.width, h = this.height; // enemy size
     const left = this.x;
     const top = this.y;
     const right = left + w;
@@ -310,23 +323,23 @@ class Enemy {
 
 function drawEnemies() {
   let count = 0;
-  
+
   // Calculate viewport bounds for culling
   const viewLeft = -camX - 100;
   const viewRight = -camX + width + 100;
   const viewTop = -camY - 100;
   const viewBottom = -camY + height + 100;
-  
+
   for (let i = 0; i < enemies.length; i++) {
     const enemy = enemies[count];
-    
+
     // Always update logic
     enemy.update();
-    
+
     // Check if enemy is within viewport for rendering
     const inView = enemy.x >= viewLeft && enemy.x <= viewRight &&
                    enemy.y >= viewTop && enemy.y <= viewBottom;
-    
+
     if (inView) {
       // Visual indicator for aggro state
       if (enemy.aggro) {
@@ -334,7 +347,7 @@ function drawEnemies() {
       } else {
         fill(150, 0, 0);
       }
-      
+
       image(enemy.image, enemy.x, enemy.y, enemy.width, enemy.height);
       if(enemy.health < enemy.maxHealth){
         fill(255, 0, 0);
@@ -343,7 +356,7 @@ function drawEnemies() {
         rect(enemy.x, enemy.y - 10, enemy.width * (enemy.health / enemy.maxHealth), 5);
       }
     }
-    
+
     if (enemy.hitsPlayer()) {
       if (enemy.type == "zombie") {
         players[activePlayer].health -= 2;
@@ -365,7 +378,7 @@ function drawEnemies() {
 // Draw breadcrumbs for editor mode
 function drawBreadcrumbs() {
   if (!breadcrumbs || breadcrumbs.length === 0) return;
-  
+
   push();
   // Draw lines connecting breadcrumbs
   stroke(255, 255, 0, 150);
@@ -376,17 +389,17 @@ function drawBreadcrumbs() {
     vertex(breadcrumbs[i].x, breadcrumbs[i].y);
   }
   endShape();
-  
+
   // Draw breadcrumb markers
   for (let i = 0; i < breadcrumbs.length; i++) {
     const b = breadcrumbs[i];
-    
+
     // Outer circle
     fill(255, 255, 0, 100);
     stroke(255, 255, 0, 200);
     strokeWeight(2);
     ellipse(b.x, b.y, 15, 15);
-    
+
     // Index number
     noStroke();
     fill(255, 255, 0);
@@ -400,17 +413,17 @@ function drawBreadcrumbs() {
 // Draw enemy raycasts for editor mode
 function drawEnemyRaycasts() {
   if (!enemies || enemies.length === 0) return;
-  
+
   push();
   for (let i = 0; i < enemies.length; i++) {
     const enemy = enemies[i];
-    
+
     if (enemy.raycastTarget && enemy.aggro) {
       const startX = enemy.x + 10;
       const startY = enemy.y + 10;
       const endX = enemy.raycastTarget.x;
       const endY = enemy.raycastTarget.y;
-      
+
       // Draw raycast line
       if (enemy.raycastTarget.blocked) {
         stroke(255, 0, 0, 150); // Red if blocked
@@ -419,7 +432,7 @@ function drawEnemyRaycasts() {
       }
       strokeWeight(2);
       line(startX, startY, endX, endY);
-      
+
       // Draw endpoint marker
       noStroke();
       if (enemy.raycastTarget.blocked) {
