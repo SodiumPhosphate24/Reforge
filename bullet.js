@@ -37,6 +37,14 @@ class Bullet {
     return false;
   }
 
+  hitsPlayer(){
+    for(let i = 0; i < players.length; i++){
+      if (checkCollision(this.x, this.y, players[i].x, players[i].y, 18, 5, players[i].width, players[i].height)){
+        
+      }
+    }
+  }
+
   hitsWall() {
     // Bullets are already in world coordinates, so we need a direct tile check
     const w = 18, h = 5;

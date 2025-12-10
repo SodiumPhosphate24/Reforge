@@ -23,6 +23,7 @@ var triggerList = {
 
 function handleTriggers(trigger) {
   if (trigger == "LockOpened") {
+    triggerList.LockOpened.unlockedBoilerRoom = true;
     messages.push(new Message("quest", "Boiler Room Unlocked!"));
     console.log("Lock opened with code 1855!");
     // Add your unlock logic here (open door, change waypoint, etc.)
