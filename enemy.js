@@ -36,6 +36,22 @@ class Enemy {
     }
   }
 
+  shoot(){
+    if (this.shootCooldown > 0) {
+      this.shootCooldown--;
+      return;
+    }
+    const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
+    if (distToPlayer < this.shootRange) {
+      const angle = atan2(pY + 340 - this.y, pX + 600 - this.x);
+      const bulletSpeed = 5;
+      const bulletVx = bulletSpeed * cos(angle);
+      const bulletVy = bulletSpeed * sin(angle);
+      bullets.push(new Bullet(this.x, this.y, bulletVx, bulletVy));
+      this.shootCooldown = 100;
+    }
+  }
+
   update() {
     const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
     
