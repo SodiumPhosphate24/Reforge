@@ -37,8 +37,8 @@ var recoil = 10;
 // Breadcrumb system variables
 var breadcrumbs = [];
 var lastBreadcrumbTime = 0;
-var breadcrumbInterval = 1000; // Leave a breadcrumb every 1 second
-var maxBreadcrumbs = 6; // Keep maximum 6 breadcrumbs for most recent path
+var breadcrumbInterval = 250; // Leave a breadcrumb every 0.25 seconds
+var maxBreadcrumbs = 8; // Keep maximum 8 breadcrumbs for most recent path
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench"];
 var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
