@@ -96,12 +96,26 @@ class Enemy {
   }
 
   update() {
-    const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
+    // Find distance to closest breadcrumb (or player if no breadcrumbs)
+    let closestDist = Infinity;
+    
+    if (breadcrumbs.length > 0) {
+      // Check distance to all breadcrumbs and find the closest
+      for (let i = 0; i < breadcrumbs.length; i++) {
+        const dist = distance(this.x, this.y, breadcrumbs[i].x, breadcrumbs[i].y);
+        if (dist < closestDist) {
+          closestDist = dist;
+        }
+      }
+    } else {
+      // No breadcrumbs, fall back to player distance
+      closestDist = distance(this.x, this.y, pX + 600, pY + 340);
+    }
 
-    // Aggro/De-aggro logic
-    if (!this.aggro && distToPlayer < this.aggroRange) {
+    // Aggro/De-aggro logic based on distance to closest breadcrumb
+    if (!this.aggro && closestDist < this.aggroRange) {
       this.aggro = true;
-    } else if (this.aggro && distToPlayer > this.deaggroRange) {
+    } else if (this.aggro && closestDist > this.deaggroRange) {
       this.aggro = false;
       // Gradually slow down when de-aggroing
       this.vx *= 0.9;
