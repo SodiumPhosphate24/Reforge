@@ -4,6 +4,7 @@ class Bullet {
     const barrelPos = getGunBarrelPosition();
     
     this.damage = damage;
+    this.hit = null;
 
     this.lifespan = 25; // frames
     if (type == "common") {
@@ -37,7 +38,7 @@ class Bullet {
   hitsEnemy() {
     for (let i = 0; i < enemies.length; i++) {
       if (checkCollision(this.x, this.y, enemies[i].x, enemies[i].y, 18, 5, enemies[i].width, enemies[i].height)) {
-        enemies[i].takeDamage(this.damage);
+        this.target = enemies[i];
         console.log("hits enemy");
         return true;
       }
@@ -46,9 +47,9 @@ class Bullet {
   }
 
   hitsPlayer(){
-    for(let i = 0; i < players.length; i++){
+    for(let i = 0; i < enemies.length; i++){
       if (checkCollision(this.x, this.y, players[i].x, players[i].y, 18, 5, players[i].width, players[i].height)){
-        players[i].takeDamage(this.damage*10);
+        this.target = players[i];
         console.log("hits player");
         return true;
       }
