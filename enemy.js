@@ -31,6 +31,8 @@ class Enemy {
       this.width = 28;
       this.height = 54;
       this.lootPool = [["consumable", "common cartridge", 1], ["material", "common wheel", 1]];
+      this.shootRange = 300;
+      this.shootCooldown = 100;
     }
   }
 
