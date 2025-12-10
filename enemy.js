@@ -133,7 +133,7 @@ class Enemy {
         // No breadcrumbs yet, stop moving
         this.vx *= 0.9;
         this.vy *= 0.9;
-        continue; // Skip movement logic
+        return; // Exit update method
       } else {
         // Make sure our index is valid
         if (this.currentBreadcrumbIndex >= breadcrumbs.length) {
@@ -179,7 +179,7 @@ class Enemy {
           // No reachable breadcrumbs - stop moving
           this.vx *= 0.9;
           this.vy *= 0.9;
-          continue; // Skip movement logic
+          return; // Exit update method
         } else {
           this.currentBreadcrumbIndex = targetIndex;
         }
