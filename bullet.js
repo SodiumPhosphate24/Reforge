@@ -40,9 +40,11 @@ class Bullet {
   hitsPlayer(){
     for(let i = 0; i < players.length; i++){
       if (checkCollision(this.x, this.y, players[i].x, players[i].y, 18, 5, players[i].width, players[i].height)){
-        
+        players[i].health -= this.damage;
+        return true;
       }
     }
+    return false;
   }
 
   hitsWall() {
@@ -154,7 +156,7 @@ function drawBullets() {
       pop();
     }
 
-    if (b.hitsEnemy() || b.hitsWall() || b.lifespan <= 0) {
+    if (b.hitsEnemy() || b.hitsWall() || b.hitsPlayer() || b.lifespan <= 0) {
       bullets.splice(count, 1);
       count--;
     }
