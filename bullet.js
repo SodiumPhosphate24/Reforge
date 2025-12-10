@@ -1,5 +1,5 @@
 class Bullet {
-  constructor(type, damage) {
+  constructor(type, damage, angle = 0) {
     // Spawn from gun barrel position, but check for walls first
     recoil = 0;
     const barrelPos = getGunBarrelPosition();
@@ -21,7 +21,8 @@ class Bullet {
     if (type == "enemy") {
       this.type = "enemy";
       this.image = BulletImgs[1];
-      this.speed = 10;
+      this.speed = 15;
+      this.angle = angle;
     }
   }
 
