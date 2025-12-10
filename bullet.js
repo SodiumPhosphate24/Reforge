@@ -46,7 +46,7 @@ class Bullet {
   }
 
   hitsPlayer(){
-    for(let i = 0; i < enemies.length; i++){
+    for(let i = 0; i < players.length; i++){
       if (checkCollision(this.x, this.y, players[i].x, players[i].y, 18, 5, players[i].width, players[i].height)){
         this.target = players[i];
         return true;
