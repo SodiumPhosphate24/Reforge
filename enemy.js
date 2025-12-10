@@ -130,9 +130,10 @@ class Enemy {
       }
 
       if (breadcrumbs.length === 0) {
-        // No breadcrumbs yet, move toward player directly
-        targetX = pX + 600;
-        targetY = pY + 340;
+        // No breadcrumbs yet, stop moving
+        this.vx *= 0.9;
+        this.vy *= 0.9;
+        continue; // Skip movement logic
       } else {
         // Make sure our index is valid
         if (this.currentBreadcrumbIndex >= breadcrumbs.length) {
@@ -173,11 +174,12 @@ class Enemy {
           }
         }
 
-        // If still no breadcrumbs are reachable, move toward player directly
+        // If still no breadcrumbs are reachable, stop moving
         if (!foundReachable) {
-          targetX = pX + 600;
-          targetY = pY + 340;
-          this.raycastTarget = { x: targetX, y: targetY, blocked: false };
+          // No reachable breadcrumbs - stop moving
+          this.vx *= 0.9;
+          this.vy *= 0.9;
+          continue; // Skip movement logic
         } else {
           this.currentBreadcrumbIndex = targetIndex;
         }
