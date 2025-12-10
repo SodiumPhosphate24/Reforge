@@ -87,8 +87,8 @@ class Enemy {
     const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
     if (distToPlayer < this.shootRange) {
       const angle = atan2(pY + 340 - this.y, pX + 600 - this.x);
-      bullets.push(new Bullet("enemy", 1, angle));
-      this.shootCooldown = 25;
+      bullets.push(new Bullet("enemy", 1, angle, this.x+(this.width/2), this.y+(this.height/2)));
+      this.shootCooldown = 50;
     }
   }
 

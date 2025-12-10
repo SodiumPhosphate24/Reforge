@@ -19,11 +19,11 @@ class Bullet {
 
     if (type == "enemy") {
       this.type = "enemy";
-      this.image = BulletImgs[1];
+      this.image = BulletImgs[2];
       this.speed = 15;
       this.angle = angle;
-      this.x = x;
-      this.y = y;
+      this.x = x + (25*cos(this.angle));
+      this.y = y + (25*sin(this.angle));
     }
   }
 
@@ -47,7 +47,7 @@ class Bullet {
   hitsPlayer(){
     for(let i = 0; i < players.length; i++){
       if (checkCollision(this.x, this.y, players[i].x, players[i].y, 18, 5, players[i].width, players[i].height)){
-        players[i].health -= this.damage;
+        players[i].health -= this.damage*10;
         return true;
       }
     }
