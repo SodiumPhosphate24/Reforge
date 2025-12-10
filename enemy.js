@@ -9,10 +9,6 @@ class Enemy {
     this.deaggroRange = 700; // de-aggro at longer distance
     this.currentBreadcrumbIndex = 0; // Which breadcrumb we're following
     this.raycastTarget = null; // For visualization in editor
-    
-    // Obstacle avoidance
-    this.alternativeWaypoint = null; // Temporary waypoint to navigate around obstacles
-    this.lastAlternativeCheck = 0; // Cooldown for alternative waypoint checks
 
     if (type == "zombie") {
       this.type = "zombie";
@@ -81,71 +77,6 @@ class Enemy {
     return true; // Clear path
   }
 
-  // Find an alternative waypoint around obstacles
-  findAlternativeWaypoint(blockedX, blockedY) {
-    const startX = this.x + 10;
-    const startY = this.y + 10;
-
-    // Try angles in a semicircle around the blocked direction
-    const baseAngle = atan2(blockedY - startY, blockedX - startX);
-    const testDistances = [80, 120, 160]; // Multiple distances to test
-    const angleOffsets = [45, -45, 90, -90, 135, -135]; // Degrees to test on each side
-
-    for (const testDist of testDistances) {
-      for (const offset of angleOffsets) {
-        const testAngle = baseAngle + radians(offset);
-        const testX = startX + cos(testAngle) * testDist;
-        const testY = startY + sin(testAngle) * testDist;
-
-        // Check if this alternative point is reachable
-        if (this.canReachPoint(testX, testY)) {
-          // Also check if we can reach the blocked target from this point
-          // This ensures the waypoint actually helps us get around the obstacle
-          const dx = blockedX - testX;
-          const dy = blockedY - testY;
-          const distToTarget = Math.sqrt(dx * dx + dy * dy);
-          const steps = Math.ceil(distToTarget / 10);
-          
-          let pathClear = true;
-          for (let i = 1; i <= steps; i++) {
-            const t = i / steps;
-            const checkX = testX + dx * t;
-            const checkY = testY + dy * t;
-
-            const col = Math.floor(checkX / 50);
-            const row = Math.floor(checkY / 50);
-
-            if (row < 0 || col < 0 || row >= gameWorld.length || col >= gameWorld[row].length) continue;
-
-            const cell = gameWorld[row][col];
-            if (cell && 'layers' in cell) {
-              for (let L = 0; L < 3; L++) {
-                const tile = cell.layers[L];
-                if (!tile) continue;
-                if (tileWalls[tile.type] == 1) {
-                  pathClear = false;
-                  break;
-                }
-              }
-            } else if (cell) {
-              if (tileWalls[cell.type] == 1) {
-                pathClear = false;
-                break;
-              }
-            }
-            if (!pathClear) break;
-          }
-
-          if (pathClear) {
-            return { x: testX, y: testY };
-          }
-        }
-      }
-    }
-
-    return null; // No alternative found
-  }
-
   shoot(){
     if (this.shootCooldown > 0) {
       this.shootCooldown--;
@@ -179,15 +110,6 @@ class Enemy {
         this.shoot();
       }
 
-      // Check if we've reached the alternative waypoint
-      if (this.alternativeWaypoint) {
-        const distToAlt = distance(this.x + 10, this.y + 10, this.alternativeWaypoint.x, this.alternativeWaypoint.y);
-        if (distToAlt < 40) {
-          // Reached alternative waypoint, clear it
-          this.alternativeWaypoint = null;
-        }
-      }
-
       if (breadcrumbs.length === 0) {
         // No breadcrumbs yet, move toward player directly
         targetX = pX + 600;
@@ -201,74 +123,44 @@ class Enemy {
         let foundReachable = false;
         let targetIndex = -1;
 
-        // If we have an alternative waypoint, use it instead
-        if (this.alternativeWaypoint) {
-          targetX = this.alternativeWaypoint.x;
-          targetY = this.alternativeWaypoint.y;
-          foundReachable = true;
-          this.raycastTarget = { x: targetX, y: targetY, blocked: false };
-        } else {
-          // Search backwards from the most recent breadcrumb to find the farthest reachable one
-          for (let searchIndex = breadcrumbs.length - 1; searchIndex >= this.currentBreadcrumbIndex; searchIndex--) {
+        // Search backwards from the most recent breadcrumb to find the farthest reachable one
+        for (let searchIndex = breadcrumbs.length - 1; searchIndex >= this.currentBreadcrumbIndex; searchIndex--) {
+          const testBreadcrumb = breadcrumbs[searchIndex];
+
+          // Check if we can reach this breadcrumb with raycast (no walls blocking)
+          if (this.canReachPoint(testBreadcrumb.x, testBreadcrumb.y)) {
+            targetX = testBreadcrumb.x;
+            targetY = testBreadcrumb.y;
+            targetIndex = searchIndex;
+            foundReachable = true;
+            this.raycastTarget = { x: targetX, y: targetY, blocked: false }; // For editor visualization
+            break; // Found the farthest reachable breadcrumb
+          }
+        }
+
+        // If no breadcrumbs from current to end are reachable, search backwards from current
+        if (!foundReachable && this.currentBreadcrumbIndex > 0) {
+          for (let searchIndex = this.currentBreadcrumbIndex - 1; searchIndex >= 0; searchIndex--) {
             const testBreadcrumb = breadcrumbs[searchIndex];
 
-            // Check if we can reach this breadcrumb with raycast (no walls blocking)
             if (this.canReachPoint(testBreadcrumb.x, testBreadcrumb.y)) {
               targetX = testBreadcrumb.x;
               targetY = testBreadcrumb.y;
               targetIndex = searchIndex;
               foundReachable = true;
-              this.raycastTarget = { x: targetX, y: targetY, blocked: false }; // For editor visualization
-              break; // Found the farthest reachable breadcrumb
-            }
-          }
-
-          // If no breadcrumbs from current to end are reachable, search backwards from current
-          if (!foundReachable && this.currentBreadcrumbIndex > 0) {
-            for (let searchIndex = this.currentBreadcrumbIndex - 1; searchIndex >= 0; searchIndex--) {
-              const testBreadcrumb = breadcrumbs[searchIndex];
-
-              if (this.canReachPoint(testBreadcrumb.x, testBreadcrumb.y)) {
-                targetX = testBreadcrumb.x;
-                targetY = testBreadcrumb.y;
-                targetIndex = searchIndex;
-                foundReachable = true;
-                this.raycastTarget = { x: targetX, y: targetY, blocked: false };
-                break;
-              }
-            }
-          }
-
-          // If still no breadcrumbs are reachable, find an alternative waypoint
-          if (!foundReachable) {
-            const currentTime = millis();
-            // Only search for alternative waypoint every 500ms to avoid performance issues
-            if (currentTime - this.lastAlternativeCheck > 500) {
-              this.lastAlternativeCheck = currentTime;
-              
-              // Try to find alternative waypoint to nearest blocked breadcrumb
-              let nearestBreadcrumb = breadcrumbs[this.currentBreadcrumbIndex] || breadcrumbs[breadcrumbs.length - 1];
-              if (nearestBreadcrumb) {
-                const altWaypoint = this.findAlternativeWaypoint(nearestBreadcrumb.x, nearestBreadcrumb.y);
-                if (altWaypoint) {
-                  this.alternativeWaypoint = altWaypoint;
-                  targetX = altWaypoint.x;
-                  targetY = altWaypoint.y;
-                  foundReachable = true;
-                  this.raycastTarget = { x: targetX, y: targetY, blocked: false };
-                }
-              }
-            }
-            
-            // If still no path found, move toward player directly
-            if (!foundReachable) {
-              targetX = pX + 600;
-              targetY = pY + 340;
               this.raycastTarget = { x: targetX, y: targetY, blocked: false };
+              break;
             }
-          } else {
-            this.currentBreadcrumbIndex = targetIndex;
           }
+        }
+
+        // If still no breadcrumbs are reachable, move toward player directly
+        if (!foundReachable) {
+          targetX = pX + 600;
+          targetY = pY + 340;
+          this.raycastTarget = { x: targetX, y: targetY, blocked: false };
+        } else {
+          this.currentBreadcrumbIndex = targetIndex;
         }
 
         // Check if we're close enough to move to next breadcrumb
