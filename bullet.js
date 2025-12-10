@@ -11,12 +11,17 @@ class Bullet {
     this.damage = damage;
 
     this.lifespan = 25; // frames
-    this.angle = calculateAim(); // use same angle as gun
     if (type == "common") {
       this.type = "common";
       this.image = BulletImgs[0];
       this.speed = 35;
+      this.angle = calculateAim(); // use same angle as gun
+    }
 
+    if (type == "enemy") {
+      this.type = "enemy";
+      this.image = BulletImgs[1];
+      this.speed = 10;
     }
   }
 

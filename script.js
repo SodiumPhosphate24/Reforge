@@ -70,7 +70,7 @@ var tileColors = [
   [[240, 210, 170]], // 28 - CopperTileGreen
 
 
-[[255, 255, 255]], // 29 - Gravel
+  [[255, 255, 255]], // 29 - Gravel
   [[255, 255, 255]], // 30 - Note
   [[255, 255, 255]], // 31 - ChainLink
   [[255, 255, 255]], // 32 - ChainLinkBottomCorner
@@ -275,7 +275,7 @@ function createPrompt(config) {
 }
 
 function preload() {
-  console.log("Updated version Lock NPC");
+  console.log("Updated version Breadcrumb");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   SPUDImage = loadImage("Characters/SPUD.png");
