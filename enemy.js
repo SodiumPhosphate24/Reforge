@@ -114,42 +114,57 @@ class Enemy {
         targetX = pX + 600;
         targetY = pY + 340;
       } else {
-        // Follow breadcrumbs with raycast checking
         // Make sure our index is valid
         if (this.currentBreadcrumbIndex >= breadcrumbs.length) {
           this.currentBreadcrumbIndex = breadcrumbs.length - 1;
         }
         
         let foundReachable = false;
-        let searchIndex = this.currentBreadcrumbIndex;
+        let targetIndex = -1;
         
-        // Search for a reachable breadcrumb, starting from current
-        while (searchIndex < breadcrumbs.length && !foundReachable) {
+        // Search backwards from the most recent breadcrumb to find the farthest reachable one
+        for (let searchIndex = breadcrumbs.length - 1; searchIndex >= this.currentBreadcrumbIndex; searchIndex--) {
           const testBreadcrumb = breadcrumbs[searchIndex];
           
-          // Check if we can reach this breadcrumb with raycast
+          // Check if we can reach this breadcrumb with raycast (no walls blocking)
           if (this.canReachPoint(testBreadcrumb.x, testBreadcrumb.y)) {
             targetX = testBreadcrumb.x;
             targetY = testBreadcrumb.y;
-            this.currentBreadcrumbIndex = searchIndex;
+            targetIndex = searchIndex;
             foundReachable = true;
             this.raycastTarget = { x: targetX, y: targetY, blocked: false }; // For editor visualization
-          } else {
-            this.raycastTarget = { x: testBreadcrumb.x, y: testBreadcrumb.y, blocked: true }; // For editor visualization
-            searchIndex++; // Try next breadcrumb
+            break; // Found the farthest reachable breadcrumb
           }
         }
         
-        // If no breadcrumbs are reachable, move toward player directly
+        // If no breadcrumbs from current to end are reachable, search backwards from current
+        if (!foundReachable && this.currentBreadcrumbIndex > 0) {
+          for (let searchIndex = this.currentBreadcrumbIndex - 1; searchIndex >= 0; searchIndex--) {
+            const testBreadcrumb = breadcrumbs[searchIndex];
+            
+            if (this.canReachPoint(testBreadcrumb.x, testBreadcrumb.y)) {
+              targetX = testBreadcrumb.x;
+              targetY = testBreadcrumb.y;
+              targetIndex = searchIndex;
+              foundReachable = true;
+              this.raycastTarget = { x: targetX, y: targetY, blocked: false };
+              break;
+            }
+          }
+        }
+        
+        // If still no breadcrumbs are reachable, move toward player directly
         if (!foundReachable) {
           targetX = pX + 600;
           targetY = pY + 340;
           this.raycastTarget = { x: targetX, y: targetY, blocked: false };
+        } else {
+          this.currentBreadcrumbIndex = targetIndex;
         }
         
         // Check if we're close enough to move to next breadcrumb
         const distToBreadcrumb = distance(this.x + 10, this.y + 10, targetX, targetY);
-        if (distToBreadcrumb < 30) {
+        if (distToBreadcrumb < 30 && foundReachable) {
           // Move to next breadcrumb
           this.currentBreadcrumbIndex++;
           if (this.currentBreadcrumbIndex >= breadcrumbs.length) {
