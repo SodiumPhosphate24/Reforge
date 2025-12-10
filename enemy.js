@@ -112,10 +112,6 @@ class Enemy {
       closestDist = distance(this.x, this.y, pX + 600, pY + 340);
     }
 
-    // Calculate distance to player for attack radius check
-    const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
-    const withinAttackRadius = distToPlayer < this.aggroRange;
-
     // Aggro/De-aggro logic based on distance to closest breadcrumb
     if (!this.aggro && closestDist < this.aggroRange) {
       this.aggro = true;
@@ -216,35 +212,14 @@ class Enemy {
       this.x += this.vx;
       this.y += this.vy;
 
-      // Check for wall collisions
-      // If within attack radius, only use simple breadcrumb following (no wall avoidance)
+      // Check for wall collisions and resolve with intelligent navigation
       if (this.checkWallCollision()) {
         // Revert to previous position
         this.x = prevX;
         this.y = prevY;
 
-        // If within attack radius, use simple collision resolution (breadcrumb-only logic)
-        if (withinAttackRadius) {
-          // Simple axis-by-axis sliding (no wall avoidance mode)
-          this.x = prevX + this.vx;
-          const canMoveX = !this.checkWallCollision();
-          this.x = prevX;
-          
-          this.y = prevY + this.vy;
-          const canMoveY = !this.checkWallCollision();
-          this.y = prevY;
-
-          if (canMoveX) this.x = prevX + this.vx;
-          if (canMoveY) this.y = prevY + this.vy;
-          
-          // Reset wall avoidance if it was active
-          this.wallAvoidanceMode = false;
-          this.wallAvoidanceDistance = 0;
-        } else {
-          // Outside attack radius - use full wall avoidance logic
-
         // If not already in wall avoidance mode, determine the avoidance direction
-          if (!this.wallAvoidanceMode) {
+        if (!this.wallAvoidanceMode) {
           // Detect which direction the target is relative to enemy
           const targetDirX = targetX - (this.x + 10);
           const targetDirY = targetY - (this.y + 10);
@@ -269,104 +244,84 @@ class Enemy {
           this.y = prevY;
 
           // Determine correction direction based on collision and target location
-            let correctionVx = 0;
-            let correctionVy = 0;
+          let correctionVx = 0;
+          let correctionVy = 0;
 
-            // If hitting a wall on the side we want to go, move perpendicular instead
-            if (rightBlocked && targetSignX > 0) {
-              // Want to go right but blocked - move vertically
-              correctionVx = 0;
-              correctionVy = targetSignY !== 0 ? targetSignY * this.speed : (upBlocked ? this.speed : -this.speed);
-              this.wallAvoidanceMaxDistance = this.height; // Travel height of enemy
-            } else if (leftBlocked && targetSignX < 0) {
-              // Want to go left but blocked - move vertically
-              correctionVx = 0;
-              correctionVy = targetSignY !== 0 ? targetSignY * this.speed : (upBlocked ? this.speed : -this.speed);
-              this.wallAvoidanceMaxDistance = this.height;
-            } else if (downBlocked && targetSignY > 0) {
-              // Want to go down but blocked - move horizontally
-              correctionVx = targetSignX !== 0 ? targetSignX * this.speed : (leftBlocked ? this.speed : -this.speed);
-              correctionVy = 0;
-              this.wallAvoidanceMaxDistance = this.width; // Travel width of enemy
-            } else if (upBlocked && targetSignY < 0) {
-              // Want to go up but blocked - move horizontally
-              correctionVx = targetSignX !== 0 ? targetSignX * this.speed : (leftBlocked ? this.speed : -this.speed);
-              correctionVy = 0;
-              this.wallAvoidanceMaxDistance = this.width;
-            } else {
-              // General sliding - try each axis independently
-              this.x = prevX + this.vx;
-              const canMoveX = !this.checkWallCollision();
-              this.x = prevX;
-              
-              this.y = prevY + this.vy;
-              const canMoveY = !this.checkWallCollision();
-              this.y = prevY;
+          // If hitting a wall on the side we want to go, move perpendicular instead
+          if (rightBlocked && targetSignX > 0) {
+            // Want to go right but blocked - move vertically
+            correctionVx = 0;
+            correctionVy = targetSignY !== 0 ? targetSignY * this.speed : (upBlocked ? this.speed : -this.speed);
+            this.wallAvoidanceMaxDistance = this.height; // Travel height of enemy
+          } else if (leftBlocked && targetSignX < 0) {
+            // Want to go left but blocked - move vertically
+            correctionVx = 0;
+            correctionVy = targetSignY !== 0 ? targetSignY * this.speed : (upBlocked ? this.speed : -this.speed);
+            this.wallAvoidanceMaxDistance = this.height;
+          } else if (downBlocked && targetSignY > 0) {
+            // Want to go down but blocked - move horizontally
+            correctionVx = targetSignX !== 0 ? targetSignX * this.speed : (leftBlocked ? this.speed : -this.speed);
+            correctionVy = 0;
+            this.wallAvoidanceMaxDistance = this.width; // Travel width of enemy
+          } else if (upBlocked && targetSignY < 0) {
+            // Want to go up but blocked - move horizontally
+            correctionVx = targetSignX !== 0 ? targetSignX * this.speed : (leftBlocked ? this.speed : -this.speed);
+            correctionVy = 0;
+            this.wallAvoidanceMaxDistance = this.width;
+          } else {
+            // General sliding - try each axis independently
+            this.x = prevX + this.vx;
+            const canMoveX = !this.checkWallCollision();
+            this.x = prevX;
+            
+            this.y = prevY + this.vy;
+            const canMoveY = !this.checkWallCollision();
+            this.y = prevY;
 
-              if (canMoveX) correctionVx = this.vx;
-              if (canMoveY) correctionVy = this.vy;
-            }
-
-            // Enter wall avoidance mode and lock the direction
-            if (correctionVx !== 0 || correctionVy !== 0) {
-              this.wallAvoidanceMode = true;
-              this.wallAvoidanceVx = correctionVx;
-              this.wallAvoidanceVy = correctionVy;
-              this.wallAvoidanceDistance = 0;
-            }
+            if (canMoveX) correctionVx = this.vx;
+            if (canMoveY) correctionVy = this.vy;
           }
 
-          // Apply the locked wall avoidance movement
-          if (this.wallAvoidanceMode) {
+          // Enter wall avoidance mode and lock the direction
+          if (correctionVx !== 0 || correctionVy !== 0) {
+            this.wallAvoidanceMode = true;
+            this.wallAvoidanceVx = correctionVx;
+            this.wallAvoidanceVy = correctionVy;
+            this.wallAvoidanceDistance = 0;
+          }
+        }
+
+        // Apply the locked wall avoidance movement
+        if (this.wallAvoidanceMode) {
           // Check if we've traveled far enough or can now move toward breadcrumb
-            if (this.wallAvoidanceDistance >= this.wallAvoidanceMaxDistance) {
-              // Try moving toward breadcrumb
-              const testAngle = atan2(targetY - (this.y + 10), targetX - (this.x + 10));
-              const testVx = this.speed * cos(testAngle);
-              const testVy = this.speed * sin(testAngle);
+          if (this.wallAvoidanceDistance >= this.wallAvoidanceMaxDistance) {
+            // Try moving toward breadcrumb
+            const testAngle = atan2(targetY - (this.y + 10), targetX - (this.x + 10));
+            const testVx = this.speed * cos(testAngle);
+            const testVy = this.speed * sin(testAngle);
+            
+            this.x = prevX + testVx;
+            this.y = prevY + testVy;
+            
+            if (!this.checkWallCollision()) {
+              // Success! Can move toward breadcrumb now, step slightly away from wall first
+              this.x = prevX;
+              this.y = prevY;
               
-              this.x = prevX + testVx;
-              this.y = prevY + testVy;
+              // Take small step away from wall (opposite of avoidance direction)
+              const stepAwayDist = 0.5;
+              this.x -= this.wallAvoidanceVx * stepAwayDist / this.speed;
+              this.y -= this.wallAvoidanceVy * stepAwayDist / this.speed;
               
-              if (!this.checkWallCollision()) {
-                // Success! Can move toward breadcrumb now, step slightly away from wall first
-                this.x = prevX;
-                this.y = prevY;
-                
-                // Take small step away from wall (opposite of avoidance direction)
-                const stepAwayDist = 0.5;
-                this.x -= this.wallAvoidanceVx * stepAwayDist / this.speed;
-                this.y -= this.wallAvoidanceVy * stepAwayDist / this.speed;
-                
-                // Exit avoidance mode
-                this.wallAvoidanceMode = false;
-                this.wallAvoidanceDistance = 0;
-                
-                // Apply breadcrumb-following velocity
-                this.vx = testVx;
-                this.vy = testVy;
-              } else {
-                // Still blocked, continue wall avoidance
-                this.x = prevX + this.wallAvoidanceVx;
-                this.y = prevY + this.wallAvoidanceVy;
-                
-                if (this.checkWallCollision()) {
-                  // Stuck
-                  this.x = prevX;
-                  this.y = prevY;
-                  this.vx *= -0.5;
-                  this.vy *= -0.5;
-                  this.wallAvoidanceMode = false;
-                  this.wallAvoidanceDistance = 0;
-                } else {
-                  // Track distance traveled
-                  this.wallAvoidanceDistance += Math.sqrt(this.wallAvoidanceVx * this.wallAvoidanceVx + this.wallAvoidanceVy * this.wallAvoidanceVy);
-                  this.vx = this.wallAvoidanceVx;
-                  this.vy = this.wallAvoidanceVy;
-                }
-              }
+              // Exit avoidance mode
+              this.wallAvoidanceMode = false;
+              this.wallAvoidanceDistance = 0;
+              
+              // Apply breadcrumb-following velocity
+              this.vx = testVx;
+              this.vy = testVy;
             } else {
-              // Continue wall avoidance
+              // Still blocked, continue wall avoidance
               this.x = prevX + this.wallAvoidanceVx;
               this.y = prevY + this.wallAvoidanceVy;
               
@@ -386,11 +341,30 @@ class Enemy {
               }
             }
           } else {
-            // Completely stuck and no avoidance direction found
-            this.vx *= -0.5;
-            this.vy *= -0.5;
+            // Continue wall avoidance
+            this.x = prevX + this.wallAvoidanceVx;
+            this.y = prevY + this.wallAvoidanceVy;
+            
+            if (this.checkWallCollision()) {
+              // Stuck
+              this.x = prevX;
+              this.y = prevY;
+              this.vx *= -0.5;
+              this.vy *= -0.5;
+              this.wallAvoidanceMode = false;
+              this.wallAvoidanceDistance = 0;
+            } else {
+              // Track distance traveled
+              this.wallAvoidanceDistance += Math.sqrt(this.wallAvoidanceVx * this.wallAvoidanceVx + this.wallAvoidanceVy * this.wallAvoidanceVy);
+              this.vx = this.wallAvoidanceVx;
+              this.vy = this.wallAvoidanceVy;
+            }
           }
-        } // End of else block for wall avoidance when outside attack radius
+        } else {
+          // Completely stuck and no avoidance direction found
+          this.vx *= -0.5;
+          this.vy *= -0.5;
+        }
       } else {
         // No collision - exit wall avoidance mode
         this.wallAvoidanceMode = false;
