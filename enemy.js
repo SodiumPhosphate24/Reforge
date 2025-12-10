@@ -48,43 +48,28 @@ class Enemy {
     // Number of steps to check along the ray
     const steps = Math.ceil(distance / 10);
 
-    // Hitbox padding - half the enemy size based on actual dimensions
-    const hitboxPaddingX = this.width / 2;
-    const hitboxPaddingY = this.height / 2;
-
     for (let i = 1; i <= steps; i++) {
       const t = i / steps;
       const checkX = startX + dx * t;
       const checkY = startY + dy * t;
 
-      // Check center point and points around the hitbox edges
-      const checkPoints = [
-        { x: checkX, y: checkY }, // Center
-        { x: checkX - hitboxPaddingX, y: checkY }, // Left
-        { x: checkX + hitboxPaddingX, y: checkY }, // Right
-        { x: checkX, y: checkY - hitboxPaddingY }, // Top
-        { x: checkX, y: checkY + hitboxPaddingY }, // Bottom
-      ];
+      const col = Math.floor(checkX / 50);
+      const row = Math.floor(checkY / 50);
 
-      for (const point of checkPoints) {
-        const col = Math.floor(point.x / 50);
-        const row = Math.floor(point.y / 50);
+      if (row < 0 || col < 0 || row >= gameWorld.length || col >= gameWorld[row].length) continue;
 
-        if (row < 0 || col < 0 || row >= gameWorld.length || col >= gameWorld[row].length) continue;
-
-        const cell = gameWorld[row][col];
-        if (cell && 'layers' in cell) {
-          for (let L = 0; L < 3; L++) {
-            const t = cell.layers[L];
-            if (!t) continue;
-            if (tileWalls[t.type] == 1) {
-              return false; // Wall blocking path
-            }
-          }
-        } else if (cell) {
-          if (tileWalls[cell.type] == 1) {
+      const cell = gameWorld[row][col];
+      if (cell && 'layers' in cell) {
+        for (let L = 0; L < 3; L++) {
+          const t = cell.layers[L];
+          if (!t) continue;
+          if (tileWalls[t.type] == 1) {
             return false; // Wall blocking path
           }
+        }
+      } else if (cell) {
+        if (tileWalls[cell.type] == 1) {
+          return false; // Wall blocking path
         }
       }
     }
