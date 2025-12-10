@@ -37,8 +37,9 @@ var recoil = 10;
 // Breadcrumb system variables
 var breadcrumbs = [];
 var lastBreadcrumbTime = 0;
-var breadcrumbInterval = 250; // Leave a breadcrumb every 0.25 seconds
-var maxBreadcrumbs = 8; // Keep maximum 8 breadcrumbs for most recent path
+var breadcrumbInterval = 200; // Leave a breadcrumb every 0.2 seconds
+var maxBreadcrumbs = 15; // Keep maximum 15 breadcrumbs for most recent path
+var breadcrumbMinDistance = 2; // Minimum distance between breadcrumbs in pixels
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench"];
 var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
@@ -833,12 +834,26 @@ function drawGameplay() {
     // Add a new breadcrumb at the player's world position (center of player)
     const playerWorldX = pX + 600 + pWidth / 2;
     const playerWorldY = pY + 375 + pHeight / 2;
-    breadcrumbs.push({ x: playerWorldX, y: playerWorldY, timestamp: currentTime });
-
-    // Remove old breadcrumbs if we exceed the maximum
-    if (breadcrumbs.length > maxBreadcrumbs) {
-      breadcrumbs.shift(); // Remove the oldest breadcrumb
+    
+    // Check if we should add a new breadcrumb (only if far enough from last one)
+    let shouldAddBreadcrumb = true;
+    if (breadcrumbs.length > 0) {
+      const lastBreadcrumb = breadcrumbs[breadcrumbs.length - 1];
+      const distFromLast = dist(playerWorldX, playerWorldY, lastBreadcrumb.x, lastBreadcrumb.y);
+      if (distFromLast <= breadcrumbMinDistance) {
+        shouldAddBreadcrumb = false;
+      }
     }
+    
+    if (shouldAddBreadcrumb) {
+      breadcrumbs.push({ x: playerWorldX, y: playerWorldY, timestamp: currentTime });
+
+      // Remove old breadcrumbs if we exceed the maximum
+      if (breadcrumbs.length > maxBreadcrumbs) {
+        breadcrumbs.shift(); // Remove the oldest breadcrumb
+      }
+    }
+    
     lastBreadcrumbTime = currentTime;
   }
   // --------------------------------
