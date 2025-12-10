@@ -9,6 +9,9 @@ class Enemy {
     this.deaggroRange = 700; // de-aggro at longer distance
     this.currentBreadcrumbIndex = 0; // Which breadcrumb we're following
     this.raycastTarget = null; // For visualization in editor
+    this.wallAvoidanceMode = false; // Track if we're in wall avoidance mode
+    this.wallAvoidanceVx = 0; // Locked velocity while avoiding wall
+    this.wallAvoidanceVy = 0;
 
     if (type == "zombie") {
       this.type = "zombie";
@@ -199,85 +202,99 @@ class Enemy {
         this.x = prevX;
         this.y = prevY;
 
-        // Detect which direction the target is relative to enemy
-        const targetDirX = targetX - (this.x + 10);
-        const targetDirY = targetY - (this.y + 10);
-        
-        // Normalize direction to just sign (-1, 0, or 1)
-        const targetSignX = targetDirX > 0 ? 1 : (targetDirX < 0 ? -1 : 0);
-        const targetSignY = targetDirY > 0 ? 1 : (targetDirY < 0 ? -1 : 0);
+        // If not already in wall avoidance mode, determine the avoidance direction
+        if (!this.wallAvoidanceMode) {
+          // Detect which direction the target is relative to enemy
+          const targetDirX = targetX - (this.x + 10);
+          const targetDirY = targetY - (this.y + 10);
+          
+          // Normalize direction to just sign (-1, 0, or 1)
+          const targetSignX = targetDirX > 0 ? 1 : (targetDirX < 0 ? -1 : 0);
+          const targetSignY = targetDirY > 0 ? 1 : (targetDirY < 0 ? -1 : 0);
 
-        // Test which cardinal directions are blocked
-        const testDist = 3; // pixels to test in each direction
-        
-        this.x = prevX + testDist;
-        const rightBlocked = this.checkWallCollision();
-        this.x = prevX - testDist;
-        const leftBlocked = this.checkWallCollision();
-        this.x = prevX;
-        
-        this.y = prevY + testDist;
-        const downBlocked = this.checkWallCollision();
-        this.y = prevY - testDist;
-        const upBlocked = this.checkWallCollision();
-        this.y = prevY;
-
-        // Determine correction direction based on collision and target location
-        let correctionVx = 0;
-        let correctionVy = 0;
-
-        // If hitting a wall on the side we want to go, move perpendicular instead
-        if (rightBlocked && targetSignX > 0) {
-          // Want to go right but blocked - move vertically
-          correctionVx = 0;
-          correctionVy = targetSignY !== 0 ? targetSignY * this.speed : (upBlocked ? this.speed : -this.speed);
-        } else if (leftBlocked && targetSignX < 0) {
-          // Want to go left but blocked - move vertically
-          correctionVx = 0;
-          correctionVy = targetSignY !== 0 ? targetSignY * this.speed : (upBlocked ? this.speed : -this.speed);
-        } else if (downBlocked && targetSignY > 0) {
-          // Want to go down but blocked - move horizontally
-          correctionVx = targetSignX !== 0 ? targetSignX * this.speed : (leftBlocked ? this.speed : -this.speed);
-          correctionVy = 0;
-        } else if (upBlocked && targetSignY < 0) {
-          // Want to go up but blocked - move horizontally
-          correctionVx = targetSignX !== 0 ? targetSignX * this.speed : (leftBlocked ? this.speed : -this.speed);
-          correctionVy = 0;
-        } else {
-          // General sliding - try each axis independently
-          this.x = prevX + this.vx;
-          const canMoveX = !this.checkWallCollision();
+          // Test which cardinal directions are blocked
+          const testDist = 3; // pixels to test in each direction
+          
+          this.x = prevX + testDist;
+          const rightBlocked = this.checkWallCollision();
+          this.x = prevX - testDist;
+          const leftBlocked = this.checkWallCollision();
           this.x = prevX;
           
-          this.y = prevY + this.vy;
-          const canMoveY = !this.checkWallCollision();
+          this.y = prevY + testDist;
+          const downBlocked = this.checkWallCollision();
+          this.y = prevY - testDist;
+          const upBlocked = this.checkWallCollision();
           this.y = prevY;
 
-          if (canMoveX) correctionVx = this.vx;
-          if (canMoveY) correctionVy = this.vy;
+          // Determine correction direction based on collision and target location
+          let correctionVx = 0;
+          let correctionVy = 0;
+
+          // If hitting a wall on the side we want to go, move perpendicular instead
+          if (rightBlocked && targetSignX > 0) {
+            // Want to go right but blocked - move vertically
+            correctionVx = 0;
+            correctionVy = targetSignY !== 0 ? targetSignY * this.speed : (upBlocked ? this.speed : -this.speed);
+          } else if (leftBlocked && targetSignX < 0) {
+            // Want to go left but blocked - move vertically
+            correctionVx = 0;
+            correctionVy = targetSignY !== 0 ? targetSignY * this.speed : (upBlocked ? this.speed : -this.speed);
+          } else if (downBlocked && targetSignY > 0) {
+            // Want to go down but blocked - move horizontally
+            correctionVx = targetSignX !== 0 ? targetSignX * this.speed : (leftBlocked ? this.speed : -this.speed);
+            correctionVy = 0;
+          } else if (upBlocked && targetSignY < 0) {
+            // Want to go up but blocked - move horizontally
+            correctionVx = targetSignX !== 0 ? targetSignX * this.speed : (leftBlocked ? this.speed : -this.speed);
+            correctionVy = 0;
+          } else {
+            // General sliding - try each axis independently
+            this.x = prevX + this.vx;
+            const canMoveX = !this.checkWallCollision();
+            this.x = prevX;
+            
+            this.y = prevY + this.vy;
+            const canMoveY = !this.checkWallCollision();
+            this.y = prevY;
+
+            if (canMoveX) correctionVx = this.vx;
+            if (canMoveY) correctionVy = this.vy;
+          }
+
+          // Enter wall avoidance mode and lock the direction
+          if (correctionVx !== 0 || correctionVy !== 0) {
+            this.wallAvoidanceMode = true;
+            this.wallAvoidanceVx = correctionVx;
+            this.wallAvoidanceVy = correctionVy;
+          }
         }
 
-        // Apply correction movement
-        if (correctionVx !== 0 || correctionVy !== 0) {
-          this.x = prevX + correctionVx;
-          this.y = prevY + correctionVy;
+        // Apply the locked wall avoidance movement
+        if (this.wallAvoidanceMode) {
+          this.x = prevX + this.wallAvoidanceVx;
+          this.y = prevY + this.wallAvoidanceVy;
           
-          // If still colliding, revert
+          // If still colliding, we're stuck
           if (this.checkWallCollision()) {
             this.x = prevX;
             this.y = prevY;
             this.vx *= -0.5;
             this.vy *= -0.5;
+            this.wallAvoidanceMode = false; // Reset avoidance mode
           } else {
-            // Update velocity to match correction
-            this.vx = correctionVx;
-            this.vy = correctionVy;
+            // Update velocity to match wall avoidance direction
+            this.vx = this.wallAvoidanceVx;
+            this.vy = this.wallAvoidanceVy;
           }
         } else {
-          // Completely stuck
+          // Completely stuck and no avoidance direction found
           this.vx *= -0.5;
           this.vy *= -0.5;
         }
+      } else {
+        // No collision - exit wall avoidance mode
+        this.wallAvoidanceMode = false;
       }
     } else {
       // Apply friction when not aggroed
