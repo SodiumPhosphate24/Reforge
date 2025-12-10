@@ -9,6 +9,7 @@ class Enemy {
     this.aggroRange = 500;
     this.deaggroRange = 700; // de-aggro at longer distance
     this.currentBreadcrumbIndex = 0; // Which breadcrumb we're following
+    this.raycastTarget = null; // For visualization in editor
     
     if (type == "zombie") {
       this.type = "zombie";
@@ -34,6 +35,48 @@ class Enemy {
       this.shootRange = 300;
       this.shootCooldown = 100;
     }
+  }
+
+  // Raycast from enemy to target position to check for walls
+  canReachPoint(targetX, targetY) {
+    const startX = this.x + 10;
+    const startY = this.y + 10;
+    
+    const dx = targetX - startX;
+    const dy = targetY - startY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    
+    // Number of steps to check along the ray
+    const steps = Math.ceil(distance / 10);
+    
+    for (let i = 1; i <= steps; i++) {
+      const t = i / steps;
+      const checkX = startX + dx * t;
+      const checkY = startY + dy * t;
+      
+      // Check if this point hits a wall
+      const col = Math.floor(checkX / 50);
+      const row = Math.floor(checkY / 50);
+      
+      if (row < 0 || col < 0 || row >= gameWorld.length || col >= gameWorld[row].length) continue;
+      
+      const cell = gameWorld[row][col];
+      if (cell && 'layers' in cell) {
+        for (let L = 0; L < 3; L++) {
+          const t = cell.layers[L];
+          if (!t) continue;
+          if (tileWalls[t.type] == 1) {
+            return false; // Wall blocking path
+          }
+        }
+      } else if (cell) {
+        if (tileWalls[cell.type] == 1) {
+          return false; // Wall blocking path
+        }
+      }
+    }
+    
+    return true; // Clear path
   }
 
   shoot(){
@@ -74,15 +117,38 @@ class Enemy {
         targetX = pX + 600;
         targetY = pY + 340;
       } else {
-        // Follow breadcrumbs
+        // Follow breadcrumbs with raycast checking
         // Make sure our index is valid
         if (this.currentBreadcrumbIndex >= breadcrumbs.length) {
           this.currentBreadcrumbIndex = breadcrumbs.length - 1;
         }
         
-        const targetBreadcrumb = breadcrumbs[this.currentBreadcrumbIndex];
-        targetX = targetBreadcrumb.x;
-        targetY = targetBreadcrumb.y;
+        let foundReachable = false;
+        let searchIndex = this.currentBreadcrumbIndex;
+        
+        // Search for a reachable breadcrumb, starting from current
+        while (searchIndex < breadcrumbs.length && !foundReachable) {
+          const testBreadcrumb = breadcrumbs[searchIndex];
+          
+          // Check if we can reach this breadcrumb with raycast
+          if (this.canReachPoint(testBreadcrumb.x, testBreadcrumb.y)) {
+            targetX = testBreadcrumb.x;
+            targetY = testBreadcrumb.y;
+            this.currentBreadcrumbIndex = searchIndex;
+            foundReachable = true;
+            this.raycastTarget = { x: targetX, y: targetY, blocked: false }; // For editor visualization
+          } else {
+            this.raycastTarget = { x: testBreadcrumb.x, y: testBreadcrumb.y, blocked: true }; // For editor visualization
+            searchIndex++; // Try next breadcrumb
+          }
+        }
+        
+        // If no breadcrumbs are reachable, move toward player directly
+        if (!foundReachable) {
+          targetX = pX + 600;
+          targetY = pY + 340;
+          this.raycastTarget = { x: targetX, y: targetY, blocked: false };
+        }
         
         // Check if we're close enough to move to next breadcrumb
         const distToBreadcrumb = distance(this.x + 10, this.y + 10, targetX, targetY);
@@ -280,4 +346,74 @@ function drawEnemies() {
     }
     count++;
   }
+}
+// Draw breadcrumbs for editor mode
+function drawBreadcrumbs() {
+  if (!breadcrumbs || breadcrumbs.length === 0) return;
+  
+  push();
+  // Draw lines connecting breadcrumbs
+  stroke(255, 255, 0, 150);
+  strokeWeight(2);
+  noFill();
+  beginShape();
+  for (let i = 0; i < breadcrumbs.length; i++) {
+    vertex(breadcrumbs[i].x, breadcrumbs[i].y);
+  }
+  endShape();
+  
+  // Draw breadcrumb markers
+  for (let i = 0; i < breadcrumbs.length; i++) {
+    const b = breadcrumbs[i];
+    
+    // Outer circle
+    fill(255, 255, 0, 100);
+    stroke(255, 255, 0, 200);
+    strokeWeight(2);
+    ellipse(b.x, b.y, 15, 15);
+    
+    // Index number
+    noStroke();
+    fill(255, 255, 0);
+    textSize(10);
+    textAlign(CENTER, CENTER);
+    text(i, b.x, b.y);
+  }
+  pop();
+}
+
+// Draw enemy raycasts for editor mode
+function drawEnemyRaycasts() {
+  if (!enemies || enemies.length === 0) return;
+  
+  push();
+  for (let i = 0; i < enemies.length; i++) {
+    const enemy = enemies[i];
+    
+    if (enemy.raycastTarget && enemy.aggro) {
+      const startX = enemy.x + 10;
+      const startY = enemy.y + 10;
+      const endX = enemy.raycastTarget.x;
+      const endY = enemy.raycastTarget.y;
+      
+      // Draw raycast line
+      if (enemy.raycastTarget.blocked) {
+        stroke(255, 0, 0, 150); // Red if blocked
+      } else {
+        stroke(0, 255, 0, 150); // Green if clear
+      }
+      strokeWeight(2);
+      line(startX, startY, endX, endY);
+      
+      // Draw endpoint marker
+      noStroke();
+      if (enemy.raycastTarget.blocked) {
+        fill(255, 0, 0, 150);
+      } else {
+        fill(0, 255, 0, 150);
+      }
+      ellipse(endX, endY, 8, 8);
+    }
+  }
+  pop();
 }

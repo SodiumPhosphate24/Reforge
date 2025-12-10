@@ -38,7 +38,7 @@ var recoil = 10;
 var breadcrumbs = [];
 var lastBreadcrumbTime = 0;
 var breadcrumbInterval = 1000; // Leave a breadcrumb every 1 second
-var maxBreadcrumbs = 100; // Keep maximum 100 breadcrumbs
+var maxBreadcrumbs = 6; // Keep maximum 6 breadcrumbs for most recent path
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench"];
 var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
@@ -851,6 +851,16 @@ function drawGameplay() {
   // Draw particle sources in editor mode
   if (typeof drawParticleSources === 'function') {
     drawParticleSources();
+  }
+
+  // Draw breadcrumbs in editor mode
+  if (editorMode && typeof drawBreadcrumbs === 'function') {
+    drawBreadcrumbs();
+  }
+
+  // Draw enemy raycasts in editor mode
+  if (editorMode && typeof drawEnemyRaycasts === 'function') {
+    drawEnemyRaycasts();
   }
 
   pop();
