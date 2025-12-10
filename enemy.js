@@ -271,9 +271,14 @@ class Enemy {
   }
 
   checkWallCollision() {
-    const w = this.width, h = this.height; // enemy size
-    const left = this.x;
-    const top = this.y;
+    // Apply hitbox cushion: reduce top by 10px, sides by 4px each
+    const hitboxCushionX = 4;
+    const hitboxCushionTop = 10;
+    
+    const w = this.width - (hitboxCushionX * 2);
+    const h = this.height - hitboxCushionTop;
+    const left = this.x + hitboxCushionX;
+    const top = this.y + hitboxCushionTop;
     const right = left + w;
     const bottom = top + h;
 
@@ -317,7 +322,20 @@ class Enemy {
   }
 
   hitsPlayer() {
-    return checkCollision(this.x, this.y, pX + 600, pY + 340, this.width, this.height, pWidth, pHeight);
+    // Apply same hitbox cushion as wall collision
+    const hitboxCushionX = 4;
+    const hitboxCushionTop = 10;
+    
+    return checkCollision(
+      this.x + hitboxCushionX, 
+      this.y + hitboxCushionTop, 
+      pX + 600, 
+      pY + 340, 
+      this.width - (hitboxCushionX * 2), 
+      this.height - hitboxCushionTop, 
+      pWidth, 
+      pHeight
+    );
   }
 }
 
