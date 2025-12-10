@@ -8,6 +8,7 @@ class Enemy {
     this.vy = 0; // velocity y
     this.aggroRange = 500;
     this.deaggroRange = 700; // de-aggro at longer distance
+    this.currentBreadcrumbIndex = 0; // Which breadcrumb we're following
     
     if (type == "zombie") {
       this.type = "zombie";
@@ -47,11 +48,36 @@ class Enemy {
     }
     
     if (this.aggro) {
-      // Simple direct movement toward player using atan2
-      const targetX = pX + 600;
-      const targetY = pY + 340;
+      // Breadcrumb AI: Follow the player's trail
+      let targetX, targetY;
       
-      // Calculate angle to player
+      if (breadcrumbs.length === 0) {
+        // No breadcrumbs yet, move toward player directly
+        targetX = pX + 600;
+        targetY = pY + 340;
+      } else {
+        // Follow breadcrumbs
+        // Make sure our index is valid
+        if (this.currentBreadcrumbIndex >= breadcrumbs.length) {
+          this.currentBreadcrumbIndex = breadcrumbs.length - 1;
+        }
+        
+        const targetBreadcrumb = breadcrumbs[this.currentBreadcrumbIndex];
+        targetX = targetBreadcrumb.x;
+        targetY = targetBreadcrumb.y;
+        
+        // Check if we're close enough to move to next breadcrumb
+        const distToBreadcrumb = distance(this.x + 10, this.y + 10, targetX, targetY);
+        if (distToBreadcrumb < 30) {
+          // Move to next breadcrumb
+          this.currentBreadcrumbIndex++;
+          if (this.currentBreadcrumbIndex >= breadcrumbs.length) {
+            this.currentBreadcrumbIndex = breadcrumbs.length - 1; // Stay at last one
+          }
+        }
+      }
+      
+      // Calculate angle to target
       this.angle = atan2(targetY - (this.y + 10), targetX - (this.x + 10));
       
       // Target velocity based on desired direction

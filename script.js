@@ -232,10 +232,10 @@ function createPrompt(config) {
     scale: 0,
     growScale: 0.5,
     isActive: false,
-    
+
     update: function(shouldShow) {
       this.isActive = shouldShow;
-      
+
       if (this.isActive) {
         this.alpha = lerp(this.alpha, 255, 0.2);
         this.scale = lerp(this.scale, 1, 0.2);
@@ -246,29 +246,29 @@ function createPrompt(config) {
         this.growScale = lerp(this.growScale, 0.5, 0.15);
       }
     },
-    
+
     draw: function(promptText, color = [255, 150, 0], yPos = 47) {
       if (this.alpha < 5) return;
-      
+
       push();
       translate(600, yPos);
       scale(this.scale * this.growScale);
       translate(-600, -yPos);
-      
+
       fill(color[0], color[1], color[2], this.alpha * 0.78);
       textSize(20);
       textFont(Silkscreen);
       textAlign(CENTER, CENTER);
-      
+
       // Background
       const promptWidth = textWidth(promptText);
       fill(0, 0, 0, this.alpha * 0.6);
       rect(600 - promptWidth / 2 - 10, yPos - 17, promptWidth + 20, 35, 5);
-      
+
       // Text
       fill(color[0], color[1], color[2], this.alpha);
       text(promptText, 600, yPos);
-      
+
       pop();
     }
   };
@@ -821,6 +821,20 @@ function drawGameplay() {
     }
   }
 
+  // --- Breadcrumb system update ---
+  const currentTime = millis();
+  if (currentTime - lastBreadcrumbTime > breadcrumbInterval) {
+    // Add a new breadcrumb at the player's current position
+    breadcrumbs.push({ x: pX, y: pY, timestamp: currentTime });
+
+    // Remove old breadcrumbs if we exceed the maximum
+    if (breadcrumbs.length > maxBreadcrumbs) {
+      breadcrumbs.shift(); // Remove the oldest breadcrumb
+    }
+    lastBreadcrumbTime = currentTime;
+  }
+  // --------------------------------
+
   controls();
   resolveCollisions();
 
@@ -849,7 +863,7 @@ function drawGameplay() {
     inventoryList[inventorySlot - 1].name === "boiler cartridge";
   const nearBoiler = distance(pX, pY, 12000, 12500) < 75;
   const atRightWaypoint = currentWaypointIndex >= 4; // Adjust this based on when you want the prompt to appear
-  
+
   const shouldShowBoilerPrompt = holdingBoilerCartridge && nearBoiler && atRightWaypoint;
   boilerPrompt.update(shouldShowBoilerPrompt);
   boilerPrompt.draw("Press E to Restore Boiler", [255, 200, 0], 90);
