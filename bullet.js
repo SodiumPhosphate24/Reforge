@@ -1,13 +1,13 @@
 class Bullet {
   constructor(type, damage, angle = 0, x = 0, y = 0) {
     // Spawn from gun barrel position, but check for walls first
-    recoil = 0;
     const barrelPos = getGunBarrelPosition();
     
     this.damage = damage;
 
     this.lifespan = 25; // frames
     if (type == "common") {
+      recoil = 0;
       this.type = "common";
       this.image = BulletImgs[0];
       this.speed = 35;
@@ -38,7 +38,7 @@ class Bullet {
     for (let i = 0; i < enemies.length; i++) {
       if (checkCollision(this.x, this.y, enemies[i].x, enemies[i].y, 18, 5, enemies[i].width, enemies[i].height)) {
         enemies[i].takeDamage(this.damage);
-        console.log();
+        console.log("hits enemy");
         return true;
       }
     }
@@ -49,6 +49,7 @@ class Bullet {
     for(let i = 0; i < players.length; i++){
       if (checkCollision(this.x, this.y, players[i].x, players[i].y, 18, 5, players[i].width, players[i].height)){
         players[i].takeDamage(this.damage*10);
+        console.log("hits player");
         return true;
       }
     }
