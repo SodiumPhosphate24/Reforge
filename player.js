@@ -42,6 +42,9 @@ class Player {
   getImage() {
     return this.image;
   }
+  takeDamage(damage) {
+    this.health -= damage;
+  }
   isDead() {
     if (this.health <= 0) {
       this.frozen = true;
