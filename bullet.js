@@ -22,8 +22,8 @@ class Bullet {
       this.image = BulletImgs[2];
       this.speed = 15;
       this.angle = angle;
-      this.x = x + (25*cos(this.angle));
-      this.y = y + (25*sin(this.angle));
+      this.x = x + (30*cos(this.angle));
+      this.y = y + (30*sin(this.angle));
     }
   }
 
