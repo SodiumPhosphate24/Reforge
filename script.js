@@ -830,8 +830,10 @@ function drawGameplay() {
   // --- Breadcrumb system update ---
   const currentTime = millis();
   if (currentTime - lastBreadcrumbTime > breadcrumbInterval) {
-    // Add a new breadcrumb at the player's current position
-    breadcrumbs.push({ x: pX, y: pY, timestamp: currentTime });
+    // Add a new breadcrumb at the player's world position (center of player)
+    const playerWorldX = pX + 600 + pWidth / 2;
+    const playerWorldY = pY + 375 + pHeight / 2;
+    breadcrumbs.push({ x: playerWorldX, y: playerWorldY, timestamp: currentTime });
 
     // Remove old breadcrumbs if we exceed the maximum
     if (breadcrumbs.length > maxBreadcrumbs) {
