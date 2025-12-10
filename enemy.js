@@ -9,6 +9,13 @@ class Enemy {
     this.deaggroRange = 700; // de-aggro at longer distance
     this.currentBreadcrumbIndex = 0; // Which breadcrumb we're following
     this.raycastTarget = null; // For visualization in editor
+    
+    // Stuck detection
+    this.lastPosition = { x: x, y: y };
+    this.stuckCounter = 0;
+    this.stuckThreshold = 15; // frames before considered stuck
+    this.unstuckDirection = null; // Direction to move when stuck
+    this.unstuckTimer = 0;
 
     if (type == "zombie") {
       this.type = "zombie";
@@ -110,6 +117,58 @@ class Enemy {
         this.shoot();
       }
 
+      // Stuck detection - check if enemy is barely moving
+      const distMoved = distance(this.x, this.y, this.lastPosition.x, this.lastPosition.y);
+      const expectedSpeed = this.speed * 0.5; // Should move at least half speed
+      
+      if (distMoved < expectedSpeed && (Math.abs(this.vx) > 0.1 || Math.abs(this.vy) > 0.1)) {
+        // Enemy is trying to move but not getting anywhere
+        this.stuckCounter++;
+        
+        if (this.stuckCounter >= this.stuckThreshold) {
+          // Enemy is stuck, initiate unstuck behavior
+          if (this.unstuckDirection === null) {
+            // Determine unstuck direction based on target
+            if (breadcrumbs.length > 0 && this.currentBreadcrumbIndex < breadcrumbs.length) {
+              const currentTarget = breadcrumbs[this.currentBreadcrumbIndex];
+              const deltaX = currentTarget.x - this.x;
+              const deltaY = currentTarget.y - this.y;
+              
+              // Try moving perpendicular to current direction
+              // If target is above, try moving up-right or up-left
+              // If target is below, try moving down-right or down-left
+              if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                // Vertical priority
+                this.unstuckDirection = {
+                  x: deltaX > 0 ? 1 : -1,
+                  y: deltaY > 0 ? 1 : -1
+                };
+              } else {
+                // Horizontal priority
+                this.unstuckDirection = {
+                  x: deltaX > 0 ? 1 : -1,
+                  y: deltaY > 0 ? 1 : -1
+                };
+              }
+            } else {
+              // Default: try moving up-right
+              this.unstuckDirection = { x: 1, y: -1 };
+            }
+            this.unstuckTimer = 30; // Apply unstuck movement for 30 frames
+          }
+        }
+      } else {
+        // Enemy is moving normally, reset stuck counter
+        this.stuckCounter = 0;
+        if (this.unstuckTimer <= 0) {
+          this.unstuckDirection = null;
+        }
+      }
+      
+      // Update last position for next frame
+      this.lastPosition.x = this.x;
+      this.lastPosition.y = this.y;
+
       if (breadcrumbs.length === 0) {
         // No breadcrumbs yet, move toward player directly
         targetX = pX + 600;
@@ -178,8 +237,20 @@ class Enemy {
       this.angle = atan2(targetY - (this.y + 10), targetX - (this.x + 10));
 
       // Target velocity based on desired direction
-      const targetVx = this.speed * cos(this.angle);
-      const targetVy = this.speed * sin(this.angle);
+      let targetVx = this.speed * cos(this.angle);
+      let targetVy = this.speed * sin(this.angle);
+      
+      // Override with unstuck movement if stuck
+      if (this.unstuckDirection !== null && this.unstuckTimer > 0) {
+        targetVx = this.speed * this.unstuckDirection.x;
+        targetVy = this.speed * this.unstuckDirection.y;
+        this.unstuckTimer--;
+        
+        if (this.unstuckTimer <= 0) {
+          this.unstuckDirection = null;
+          this.stuckCounter = 0;
+        }
+      }
 
       // Smoothly interpolate current velocity toward target
       this.vx = lerp(this.vx, targetVx, this.acceleration);
