@@ -33,7 +33,7 @@ class Enemy {
       this.height = 54;
       this.lootPool = [["consumable", "common cartridge", 1], ["material", "common wheel", 1]];
       this.shootRange = 300;
-      this.shootCooldown = 100;
+      this.shootCooldown = 25;
     }
   }
 
@@ -87,11 +87,8 @@ class Enemy {
     const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
     if (distToPlayer < this.shootRange) {
       const angle = atan2(pY + 340 - this.y, pX + 600 - this.x);
-      const bulletSpeed = 5;
-      const bulletVx = bulletSpeed * cos(angle);
-      const bulletVy = bulletSpeed * sin(angle);
-      bullets.push(new Bullet(this.x, this.y, bulletVx, bulletVy));
-      this.shootCooldown = 100;
+      bullets.push(new Bullet("enemy", 1, angle));
+      this.shootCooldown = 25;
     }
   }
 
