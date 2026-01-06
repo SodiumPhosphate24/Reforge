@@ -48,9 +48,11 @@ class Bullet {
 
   hitsPlayer(){
     for(let i = 0; i < players.length; i++){
-      if (checkCollision(this.x, this.y, players[i].x, players[i].y, 18, 5, players[i].width, players[i].height)){
-        this.target = players[i];
-        console.log("Hits player: " + this.target);
+      const p = players[i];
+      // Use world coordinates for collision
+      if (checkCollision(this.x, this.y, p.x, p.y, 18, 5, p.width, p.height)){
+        this.target = p;
+        console.log("Hits player: " + i);
         return true;
       }
     }
