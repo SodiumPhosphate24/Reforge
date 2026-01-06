@@ -963,7 +963,7 @@ function drawGameplay() {
   drawInventory();
   messageDisplay();
 
-  // Draw alarm flash if waypoint index is 3 or less
+  // Draw alarm flash
   drawAlarmFlash();
 
   // Handle crafting menu
@@ -2452,7 +2452,7 @@ function drawLeakPromptIfNeeded() {
 
 // Draw red alarm flash overlay
 function drawAlarmFlash() {
-  if (currentWaypointIndex > 4) return; // Stop alarm after waypoint 3 (Fixing the leaks)
+  if (triggerList.Objective.fixBoiler) return; // Stop alarm after fixing the boiler
 
   // Calculate distance from bunker center (spawn point)
   const bunkerCenterX = 12500;

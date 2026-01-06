@@ -39,6 +39,7 @@ class Bullet {
     for (let i = 0; i < enemies.length; i++) {
       if (checkCollision(this.x, this.y, enemies[i].x, enemies[i].y, 18, 5, enemies[i].width, enemies[i].height)) {
         this.target = enemies[i];
+        console.log("Hit enemy: " + this.target);
         return true;
       }
     }
@@ -46,9 +47,10 @@ class Bullet {
   }
 
   hitsPlayer(){
-    for(let i = 0; i < enemies.length; i++){
+    for(let i = 0; i < players.length; i++){
       if (checkCollision(this.x, this.y, players[i].x, players[i].y, 18, 5, players[i].width, players[i].height)){
         this.target = players[i];
+        console.log("Hits player: " + this.target);
         return true;
       }
     }
@@ -163,16 +165,27 @@ function drawBullets() {
       }
       pop();
     }
-    if(b.hitsEnemy() || b.hitsPlayer()){
+    if(b.hitsEnemy()){
       b.target.takeDamage(b.damage);
-      console.log("hit");
+      bullets.splice(i, 1);
+      i--;
+      continue;
     }
 
-    if (b.hitsEnemy() || b.hitsWall() || b.hitsPlayer() || b.lifespan <= 0) {
-      bullets.splice(count, 1);
-      count--;
+    if(b.hitsPlayer()){
+      if (b.type === "enemy") {
+        b.target.takeDamage(b.damage);
+        bullets.splice(i, 1);
+        i--;
+        continue;
+      }
     }
-    count++;
+
+    if (b.hitsWall() || b.lifespan <= 0) {
+      bullets.splice(i, 1);
+      i--;
+      continue;
+    }
   }
 }
 
