@@ -165,27 +165,16 @@ function drawBullets() {
       }
       pop();
     }
-    if(b.hitsEnemy()){
+    if(b.hitsEnemy() || b.hitsPlayer()){
       b.target.takeDamage(b.damage);
-      bullets.splice(i, 1);
-      i--;
-      continue;
+      console.log("hit");
     }
 
-    if(b.hitsPlayer()){
-      if (b.type === "enemy") {
-        b.target.takeDamage(b.damage);
-        bullets.splice(i, 1);
-        i--;
-        continue;
-      }
+    if (b.hitsEnemy() || b.hitsWall() || b.hitsPlayer() || b.lifespan <= 0) {
+      bullets.splice(count, 1);
+      count--;
     }
-
-    if (b.hitsWall() || b.lifespan <= 0) {
-      bullets.splice(i, 1);
-      i--;
-      continue;
-    }
+    count++;
   }
 }
 
