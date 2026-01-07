@@ -7,9 +7,9 @@ class IntroScene {
     this.type = sceneData.type; // 'text', 'dialogue', 'gameplay', 'transition'
     this.duration = sceneData.duration || 0; // frames, 0 = wait for input
     this.dialogue = sceneData.dialogue || [];
-    this.onEnter = sceneData.onEnter || (() => {});
-    this.onUpdate = sceneData.onUpdate || (() => {});
-    this.onExit = sceneData.onExit || (() => {});
+    this.onEnter = sceneData.onEnter || (() => { });
+    this.onUpdate = sceneData.onUpdate || (() => { });
+    this.onExit = sceneData.onExit || (() => { });
     this.backgroundImage = sceneData.backgroundImage || null;
     this.backgroundColor = sceneData.backgroundColor || [20, 15, 10]; // Sepia tone
     this.timer = 0;
@@ -69,6 +69,8 @@ function initializeIntro() {
       backgroundImage: BunkerImg,
       onEnter: function() {
         console.log("Starting intro sequence...");
+        theme.play();
+        theme.loop();
       },
       onUpdate: function(timer) {
         // Fade in text
@@ -500,7 +502,7 @@ function drawIntro() {
   }
 
   // Draw scene-specific content
-  switch(currentScene.type) {
+  switch (currentScene.type) {
     case "text":
       drawTitleScene(currentScene);
       break;

@@ -1,5 +1,6 @@
 let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, Book, Greg, LockNpc;
-
+//music
+let theme;
 // Waypoint system
 var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875]];
 var currentWaypointIndex = 0;
@@ -359,7 +360,7 @@ function preload() {
   ReforgeLogo = loadImage("REFORGE.png");
   titleScreenImg = loadImage("hud/titleScreen.png");
   WaypointImg = loadImage("Waypoint.png");
-
+  theme = loadSound("Mysteries-InfraredScale.mp3");
   // Intro sequence images
   BunkerImg = loadImage("Buschwick Industries.png");
   PrometheusIntroImg = loadImage("PrometheusIntro.png");
