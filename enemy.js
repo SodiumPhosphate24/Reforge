@@ -459,7 +459,7 @@ class Enemy {
       this.width - (hitboxCushionX * 2), 
       this.height - hitboxCushionTop, 
       pWidth, 
-      pHeight
+      pHeight + 35
     );
   }
 }

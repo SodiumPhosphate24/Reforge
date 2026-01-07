@@ -38,8 +38,7 @@ class Bullet {
   hitsEnemy() {
     for (let i = 0; i < enemies.length; i++) {
       if (checkCollision(this.x, this.y, enemies[i].x, enemies[i].y, 18, 5, enemies[i].width, enemies[i].height)) {
-        this.target = enemies[i];
-        console.log("Hit enemy: " + this.target);
+        enemies[i].health -= this.damage;
         return true;
       }
     }
@@ -48,11 +47,8 @@ class Bullet {
 
   hitsPlayer(){
     for(let i = 0; i < players.length; i++){
-      const p = players[i];
-      // Use world coordinates for collision
-      if (checkCollision(this.x, this.y, p.x, p.y, 18, 5, p.width, p.height)){
-        this.target = p;
-        console.log("Hits player: " + i);
+      if (checkCollision(this.x, this.y, players[i].x+600, players[i].y+340, 18, 5, players[i].width, players[i].height+35)){
+        players[i].health -= this.damage * 10;
         return true;
       }
     }
@@ -167,11 +163,6 @@ function drawBullets() {
       }
       pop();
     }
-    if(b.hitsEnemy() || b.hitsPlayer()){
-      b.target.takeDamage(b.damage);
-      console.log("hit");
-    }
-
     if (b.hitsEnemy() || b.hitsWall() || b.hitsPlayer() || b.lifespan <= 0) {
       bullets.splice(count, 1);
       count--;
