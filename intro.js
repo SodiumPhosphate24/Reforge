@@ -69,8 +69,7 @@ function initializeIntro() {
       backgroundImage: BunkerImg,
       onEnter: function() {
         console.log("Starting intro sequence...");
-        theme.play();
-        theme.loop();
+        themeSong.loop();
       },
       onUpdate: function(timer) {
         // Fade in text
