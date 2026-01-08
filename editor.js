@@ -208,9 +208,9 @@ function drawEditorUI() {
   text(`World Position: (${Math.round(worldX)}, ${Math.round(worldY)})`, 10, height - 30);
   text(`Tile: Row ${gridRow}, Col ${gridCol}`, 10, height - 50);
 
-  text("Press T to spawn enemy", 1000, 650);
-  text("Current Enemy Type: " + enemyTypes[selectedEnemyIndex], 1000, 670);
-  text("Press J/K to change enemy type", 1000, 690);
+  text("Press T to spawn enemy", 930, 650);
+  text("Current Enemy Type: " + enemyTypes[selectedEnemyIndex], 930, 670);
+  text("Press J/K to change enemy type", 930, 690);
   
   textAlign(CENTER);
 
@@ -731,7 +731,7 @@ function handleEditorKeyPress() {
     
   //T to spawn enemy
   if (keyCode == 84) {
-    enemies.push(new Enemy("zombie", pX + mouseX, pY + mouseY));
+    enemies.push(new Enemy(enemyTypes[selectedEnemyIndex], pX + mouseX, pY + mouseY));
     enemySpawns += "enemies.push(new Enemy(\"" + enemyTypes[selectedEnemyIndex] + "\", " + (pX + mouseX) + ", " + (pY + mouseY) + "));\n";
     console.log(enemySpawns);
   }
