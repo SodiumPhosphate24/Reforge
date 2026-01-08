@@ -54,6 +54,8 @@ var lastCrateCol = -1;       // Column of last placed crate
 var selectedItemIndex = 0;   // Currently selected item from itemConstructors
 var selectedCrateItems = []; // Array to store selected item constructors for this crate
 var crateInventories = new Map(); // Map to store items for each crate: key = "row,col", value = array of item constructors
+var selectedEnemyIndex = 0;
+var enemyTypes = ["harpy", "cyclops", "greg"]
 
 // Particle source system
 var particleSources = []; // Array of particle source objects
@@ -205,6 +207,11 @@ function drawEditorUI() {
   textAlign(LEFT);
   text(`World Position: (${Math.round(worldX)}, ${Math.round(worldY)})`, 10, height - 30);
   text(`Tile: Row ${gridRow}, Col ${gridCol}`, 10, height - 50);
+
+  text("Press T to spawn enemy", 1000, 650);
+  text("Current Enemy Type: " + enemyTypes[selectedEnemyIndex], 1000, 670);
+  text("Press J/K to change enemy type", 1000, 690);
+  
   textAlign(CENTER);
 
   // Draw pause overlay if crate placement is paused
@@ -720,6 +727,27 @@ function handleEditorKeyPress() {
     placingParticleSource = !placingParticleSource;
     console.log("Particle source mode:", placingParticleSource);
     console.log("Tile editor mode:", !placingParticleSource);
+  }
+    
+  //T to spawn enemy
+  if (keyCode == 84) {
+    enemies.push(new Enemy("zombie", pX + mouseX, pY + mouseY));
+    enemySpawns += "enemies.push(new Enemy(\"" + enemyTypes[selectedEnemyIndex] + "\", " + (pX + mouseX) + ", " + (pY + mouseY) + "));\n";
+    console.log(enemySpawns);
+  }
+
+  //J/K to change enemy type
+  if (keyCode == 74) {
+    selectedEnemyIndex--;
+    if(selectedEnemyIndex < 0){
+      selectedEnemyIndex = enemyTypes.length - 1;
+    }
+  }
+  if (keyCode == 75) {
+    selectedEnemyIndex++;
+    if(selectedEnemyIndex >= enemyTypes.length){
+      selectedEnemyIndex = 0;
+    }
   }
 
   // Ctrl+C to copy world string to clipboard

@@ -314,7 +314,7 @@ function drawCreditsScreen() {
   
   text("GAME DESIGN & PROGRAMMING", width / 2, startY);
   fill(255, 220, 100);
-  text("The Reforge Team", width / 2, startY + spacing);
+  text("The Reforge Programming Team", width / 2, startY + spacing);
   
   fill(255, 255, 255, 220);
   text("MUSIC", width / 2, startY + spacing * 3);
@@ -329,7 +329,7 @@ function drawCreditsScreen() {
   fill(255, 255, 255, 220);
   text("ART ASSETS", width / 2, startY + spacing * 7);
   fill(255, 220, 100);
-  text("Reforge Asset Library", width / 2, startY + spacing * 8);
+  text("The Reforge Art Team", width / 2, startY + spacing * 8);
 
   // Back instruction
   textSize(18);

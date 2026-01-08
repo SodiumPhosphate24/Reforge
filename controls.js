@@ -187,17 +187,6 @@ function keyPressed() {
     droppedItems.push(new DroppedItem(new Item("consumable", "legendary cartridge", 5), pX + 600, pY + 340));
   }
 
-  if (keyCode == 84) {
-    enemies.push(new Enemy("zombie", pX + mouseX, pY + mouseY));
-    enemySpawns += "enemies.push(new Enemy(\"harpy\", " + (pX + mouseX) + ", " + (pY + mouseY) + "));\n";
-    console.log(enemySpawns);
-  }
-  if (keyCode == 89) {
-    enemies.push(new Enemy("greg", pX + mouseX, pY + mouseY));
-    enemySpawns += "enemies.push(new Enemy(\"greg\", " + (pX + mouseX) + ", " + (pY + mouseY) + "));\n";
-    console.log(enemySpawns);
-  }
-
   // Handle numeric input for Lock code (0-9)
   if (lockCodeActive && keyCode >= 48 && keyCode <= 57) {
     if (lockCodeInput.length < 4) {

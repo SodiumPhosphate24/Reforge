@@ -15,32 +15,32 @@ class Enemy {
     this.wallAvoidanceDistance = 0; // How far we've traveled in avoidance mode
     this.wallAvoidanceMaxDistance = 0; // Maximum distance to travel before checking
 
-    if (type == "harpy") {//Basic Melee Damage, Slow, Low Health
+    if (type == "harpy") {//Basic Melee Damage, Medium Speed, Low Health
       this.type = "harpy";
       this.health = 3;
       this.maxHealth = 3;
-      this.speed = 1.5;
+      this.speed = 2;
       this.acceleration = 0.15; // how quickly it changes direction
       this.image = BadGuy;
       this.width = 48;
       this.height = 56;
       this.lootPool = [["consumable", "common cartridge", 1], ["material", "common wheel", 1]];
     }
-    if (type == "cyclops") {
+    if (type == "cyclops") {//High Melee Damage, Low Speed, High Health
       this.type = "cyclops";
       this.health = 10;
       this.maxHealth = 10;
       this.speed = 1;
       this.acceleration = 0.15; // how quickly it changes direction
-      this.image = Cyclops;
+      this.image = BadGuy;
       this.width = 48;
       this.height = 56;
     }
-    if (type == "greg") {
+    if (type == "greg") {//Low Ranged Damage, Medium Speed, Medium Health
       this.type = "greg";
-      this.health = 100;
-      this.maxHealth = 100;
-      this.speed = 1;
+      this.health = 4;
+      this.maxHealth = 4;
+      this.speed = 2;
       this.acceleration = 0.15; // how quickly it changes direction
       this.image = Greg;
       this.width = 28;
