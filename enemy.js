@@ -15,7 +15,7 @@ class Enemy {
     this.wallAvoidanceDistance = 0; // How far we've traveled in avoidance mode
     this.wallAvoidanceMaxDistance = 0; // Maximum distance to travel before checking
 
-    if (type == "harpy") {
+    if (type == "harpy") {//
       this.type = "harpy";
       this.health = 3;
       this.maxHealth = 3;
