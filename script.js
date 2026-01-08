@@ -360,7 +360,8 @@ function preload() {
   ReforgeLogo = loadImage("REFORGE.png");
   titleScreenImg = loadImage("hud/titleScreen.png");
   WaypointImg = loadImage("Waypoint.png");
-  themeSong = loadSound("music/themeSong.mp3");
+  // themeSong = new Audio("music/themeSong.mp3"); // Removed Audio constructor
+  themeSong = loadSound("music/themeSong.mp3"); // Using p5.sound loadSound instead
   // Intro sequence images
   BunkerImg = loadImage("Buschwick Industries.png");
   PrometheusIntroImg = loadImage("PrometheusIntro.png");
@@ -835,7 +836,7 @@ function drawGameplay() {
     // Add a new breadcrumb at the player's world position (center of player)
     const playerWorldX = pX + 600 + pWidth / 2;
     const playerWorldY = pY + 375 + pHeight / 2;
-    
+
     // Check if we should add a new breadcrumb (only if far enough from last one)
     let shouldAddBreadcrumb = true;
     if (breadcrumbs.length > 0) {
@@ -845,7 +846,7 @@ function drawGameplay() {
         shouldAddBreadcrumb = false;
       }
     }
-    
+
     if (shouldAddBreadcrumb) {
       breadcrumbs.push({ x: playerWorldX, y: playerWorldY, timestamp: currentTime });
 
@@ -854,7 +855,7 @@ function drawGameplay() {
         breadcrumbs.shift(); // Remove the oldest breadcrumb
       }
     }
-    
+
     lastBreadcrumbTime = currentTime;
   }
   // --------------------------------
