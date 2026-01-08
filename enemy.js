@@ -15,11 +15,11 @@ class Enemy {
     this.wallAvoidanceDistance = 0; // How far we've traveled in avoidance mode
     this.wallAvoidanceMaxDistance = 0; // Maximum distance to travel before checking
 
-    if (type == "zombie") {
-      this.type = "zombie";
+    if (type == "harpy") {
+      this.type = "harpy";
       this.health = 3;
       this.maxHealth = 3;
-      this.speed = 2;
+      this.speed = 1.5;
       this.acceleration = 0.15; // how quickly it changes direction
       this.image = BadGuy;
       this.width = 48;
@@ -501,7 +501,7 @@ function drawEnemies() {
     }
 
     if (enemy.hitsPlayer()) {
-      if (enemy.type == "zombie") {
+      if (enemy.type == "harpy") {
         players[activePlayer].health -= 2;
         healthPoints = players[activePlayer].health;
         healthPoints = constrain(healthPoints, 0, players[activePlayer].maxHealth);

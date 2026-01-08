@@ -320,11 +320,16 @@ function drawCreditsScreen() {
   text("MUSIC", width / 2, startY + spacing * 3);
   fill(255, 220, 100);
   text("'Mysterious' by Infrared Scale", width / 2, startY + spacing * 4);
+  textSize(14);
+  fill(200, 200, 200, 200);
+  text("Creative Commons Attribution license (reuse allowed)", width / 2, startY + spacing * 4.8);
+  text("Source: https://www.youtube.com/watch?v=neXbwN3zJ5Q", width / 2, startY + spacing * 5.4);
   
+  textSize(24);
   fill(255, 255, 255, 220);
-  text("ART ASSETS", width / 2, startY + spacing * 6);
+  text("ART ASSETS", width / 2, startY + spacing * 7);
   fill(255, 220, 100);
-  text("Reforge Asset Library", width / 2, startY + spacing * 7);
+  text("Reforge Asset Library", width / 2, startY + spacing * 8);
 
   // Back instruction
   textSize(18);
