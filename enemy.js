@@ -27,7 +27,14 @@ class Enemy {
       this.lootPool = [["consumable", "common cartridge", 1], ["material", "common wheel", 1]];
     }
     if (type == "cyclops") {
-      
+      this.type = "cyclops";
+      this.health = 10;
+      this.maxHealth = 10;
+      this.speed = 1;
+      this.acceleration = 0.15; // how quickly it changes direction
+      this.image = Cyclops;
+      this.width = 48;
+      this.height = 56;
     }
     if (type == "greg") {
       this.type = "greg";
