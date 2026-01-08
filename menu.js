@@ -264,25 +264,72 @@ function updateTransition() {
 }
 
 function drawCreditsScreen() {
-  background(20, 20, 30);
+  // Draw titlescreen background
+  if (titleScreenImg) {
+    push();
+    imageMode(CENTER);
+    const imgAspect = titleScreenImg.width / titleScreenImg.height;
+    const canvasAspect = width / height;
+    let drawWidth, drawHeight;
+    if (canvasAspect > imgAspect) {
+      drawWidth = width;
+      drawHeight = width / imgAspect;
+    } else {
+      drawHeight = height;
+      drawWidth = height * imgAspect;
+    }
+    image(titleScreenImg, width / 2, height / 2, drawWidth, drawHeight);
+    pop();
+  } else {
+    background(20, 20, 30);
+  }
+
+  // Dark overlay for readability
+  push();
+  fill(0, 0, 0, 150);
+  rect(0, 0, width, height);
+  pop();
 
   // Title
   push();
-  fill(100, 255, 255);
+  fill(255, 200, 80);
   textFont(Silkscreen);
   textSize(48);
   textAlign(CENTER, CENTER);
-  text("CREDITS", width / 2, 200);
+  // Glow effect for title
+  for (let i = 0; i < 3; i++) {
+    strokeWeight(8 - i * 2);
+    stroke(255, 180, 50, 50);
+    text("CREDITS", width / 2, 150);
+  }
+  noStroke();
+  text("CREDITS", width / 2, 150);
 
-  // Placeholder text
+  // Credits content
   textSize(24);
-  fill(255, 255, 255, 200);
-  text("Coming Soon", width / 2, height / 2);
+  fill(255, 255, 255, 220);
+  
+  let startY = 280;
+  let spacing = 40;
+  
+  text("GAME DESIGN & PROGRAMMING", width / 2, startY);
+  fill(255, 220, 100);
+  text("The Reforge Team", width / 2, startY + spacing);
+  
+  fill(255, 255, 255, 220);
+  text("MUSIC", width / 2, startY + spacing * 3);
+  fill(255, 220, 100);
+  text("'Mysterious' by Infrared Scale", width / 2, startY + spacing * 4);
+  
+  fill(255, 255, 255, 220);
+  text("ART ASSETS", width / 2, startY + spacing * 6);
+  fill(255, 220, 100);
+  text("Reforge Asset Library", width / 2, startY + spacing * 7);
 
   // Back instruction
   textSize(18);
-  fill(100, 255, 255, 180);
-  text("Press ESC to return to menu", width / 2, height - 100);
+  fill(255, 255, 255, 150);
+  text("Press ESC to return to menu", width / 2, height - 80);
   pop();
 
   // Handle ESC to return to menu
