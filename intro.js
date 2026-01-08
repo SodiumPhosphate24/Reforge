@@ -71,7 +71,7 @@ function initializeIntro() {
         console.log("Starting intro sequence...");
         if (themeSong) {
           themeSong.loop = true;
-          themeSong.play().catch(e => console.log("Audio play failed: " + e));
+          themeSong.play()//.catch(e => console.log("Audio play failed: " + e));
         }
       },
       onUpdate: function(timer) {

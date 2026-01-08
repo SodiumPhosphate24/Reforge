@@ -2499,7 +2499,15 @@ function initializeHardcodes() {
   players.push(new Player(12500, 12500, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
 
   NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", ["Prometheus IV: Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
-  NonPlayerCharacters.push(new NPC(12950, 12650, "Hephaestus", ["Hephaestus: Freeze, you rusty bucket of bolts.", "Wait… you’re not one of Khronos’. No core hum. No quantum sync.", "Hephaestus: Is that… steam? Valves. Pistons. That’s not possible.", "Hephaestus: I thought this tech was extinct. Wasteful. Inefficient.", "Hephaestus: Steam can’t carry signal... Yet you seem autonomous. How?", "Hephaestus: ...", "Hephaestus: I should have known you can't communicate. You must be controlled."], Prometheus, "Hephaestus", 3));
+  NonPlayerCharacters.push(new NPC(23000, 22650, "Hephaestus", [
+    "Hephaestus: Freeze, you rusty bucket of bolts.",
+    "Hephaestus: Wait… you’re not one of Khronos’. No core hum. No quantum sync.",
+    "Hephaestus: Is that… steam? Valves. Pistons. That’s not possible.",
+    "Hephaestus: I thought this tech was extinct. Wasteful. Inefficient.",
+    "Hephaestus: Steam can’t carry signal… yet you’re moving. Acting. How?",
+    "Hephaestus: ...Unless you aren’t thinking at all.",
+    "Hephaestus: I should have known. You can’t communicate. You must be controlled."]
+    , Prometheus, "Hephaestus", 3));
   NonPlayerCharacters.push(new NPC(12867, 12875, "Lock", ["Enter Code: ____ "], LockNpc, "Lock", .5));
   NonPlayerCharacters.push(new NPC(
     12950,
