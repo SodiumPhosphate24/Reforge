@@ -360,8 +360,7 @@ function preload() {
   ReforgeLogo = loadImage("REFORGE.png");
   titleScreenImg = loadImage("hud/titleScreen.png");
   WaypointImg = loadImage("Waypoint.png");
-  // themeSong = new Audio("music/themeSong.mp3"); // Removed Audio constructor
-  themeSong = loadSound("music/themeSong.mp3"); // Using p5.sound loadSound instead
+  themeSong = loadSound("music/themeSong.mp3"); // Restore loadSound
   // Intro sequence images
   BunkerImg = loadImage("Buschwick Industries.png");
   PrometheusIntroImg = loadImage("PrometheusIntro.png");
