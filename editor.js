@@ -210,7 +210,7 @@ function drawEditorUI() {
 
   text("Press T to spawn enemy", 930, 650);
   text("Current Enemy Type: " + enemyTypes[selectedEnemyIndex], 930, 670);
-  text("Press J/K to change enemy type", 930, 690);
+  text("J/K: change enemy type", 930, 690);
   
   textAlign(CENTER);
 

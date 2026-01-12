@@ -2,7 +2,7 @@ let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0,
 //music
 let themeSong;
 // Waypoint system
-var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875]];
+var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875], [23983, 21925]];
 var currentWaypointIndex = 0;
 var itemConstructors = [];
 // Example: Custom label for a special object
@@ -41,8 +41,8 @@ var lastBreadcrumbTime = 0;
 var breadcrumbInterval = 200; // Leave a breadcrumb every 0.2 seconds
 var maxBreadcrumbs = 15; // Keep maximum 15 breadcrumbs for most recent path
 var breadcrumbMinDistance = 2; // Minimum distance between breadcrumbs in pixels
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench"];
-var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench", "White Brick", "White Tile"];
+var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
@@ -87,7 +87,8 @@ var tileColors = [
   [[255, 255, 255]], // 35 - ChainLinkEnd
   [[255, 255, 255]], // 36 - Lampost
   [[255, 255, 255]]  // 37 - Bench
-
+  [[100, 100, 100]] // 38 White Brick
+  [[100, 100, 100]] // 39 White Tile
 ];
 
 // Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image
@@ -338,6 +339,8 @@ function preload() {
   tileImgs[35] = loadImage("Tiles/ChainLinkEnd.png");
   tileImgs[36] = null; // Lampost uses variants, loaded below
   tileImgs[37] = null; // Bench uses variants, loaded below
+  tileImgs[38] = loadImage("Tiles/WhiteBrick.png");
+  tileImgs[39] = loadImage("Tiles/WhiteTile.png");
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonCartridge.png");
@@ -2495,26 +2498,39 @@ function drawAlarmFlash() {
   pop();
 }
 
+function spawnEnemies() {
+  enemies.push(new Enemy("harpy", 16584.600000000013, 15523.471344803067));
+  enemies.push(new Enemy("harpy", 16768.600000000013, 15536.471344803067));
+  enemies.push(new Enemy("harpy", 16776.600000000013, 15785.471344803067));
+  enemies.push(new Enemy("harpy", 16586.600000000013, 15787.471344803067));
+
+  enemies.push(new Enemy("harpy", 15626.600000000144, 16880.619680000193));
+  enemies.push(new Enemy("greg", 15882.600000000144, 16877.619680000193));
+  enemies.push(new Enemy("harpy", 15878.600000000144, 17121.619680000193));
+  enemies.push(new Enemy("greg", 15631.600000000144, 17125.619680000193));
+}
+
 function initializeHardcodes() {
   players.push(new Player(12500, 12500, pWidth, pHeight, pSpeed, healthPoints, playerDamage, PlayerImage));
 
+  spawnEnemies();
+
   NonPlayerCharacters.push(new NPC(12950, 12650, "Prometheus IV", ["Prometheus IV: Ba-Bastiann... Welcome Back", "Prometheus IV: I am Prometheus IV", "Prometheus IV: I am the final robot unyeilding to Khronos' will.", "Prometheus IV: You are one of the last human engineers alive", "Prometheus IV: That cr...ate over there", "Prometheus IV: Take this, and break the crate to drop its contents"], Prometheus, "Prometheus", 3));
   NonPlayerCharacters.push(new NPC(23000, 22650, "Hephaestus", [
-                                     "Hephaestus: Freeze, you rusty bucket of bolts.",
-                                     "Hephaestus: Wait… you’re not one of Khronos’. No core hum. No quantum sync.",
-                                     "Hephaestus: Is that… steam? Valves. Pistons. That’s not possible.",
-                                     "Hephaestus: I thought this tech was extinct. Wasteful. Inefficient.",
-                                     "Hephaestus: Steam can’t carry signal… yet you’re moving. Acting. How?",
-                                     "Hephaestus: ...Unless you aren’t thinking at all.",
-                                     "Hephaestus: You can’t communicate. You must be controlled.",
-                                     "Hephaestus: A human. Another one.",
-                                     "Hephaestus: We haven’t seen one in years. Not like this.",
-                                     "Hephaestus: This changes everything.",
-                                     "Hephaestus: You need to meet the others. And then… we need to meet you."
-                                   ]
+    "Hephaestus: Freeze, you rusty bucket of bolts.",
+    "Hephaestus: Wait… you’re not one of Khronos’. No core hum. No quantum sync.",
+    "Hephaestus: Is that… steam? Valves. Pistons. That’s not possible.",
+    "Hephaestus: I thought this tech was extinct. Wasteful. Inefficient.",
+    "Hephaestus: Steam can’t carry signal… yet you’re moving. Acting. How?",
+    "Hephaestus: ...Unless you aren’t thinking at all.",
+    "Hephaestus: You can’t communicate. You must be controlled.",
+    "Hephaestus: A human. Another one.",
+    "Hephaestus: We haven’t seen one in years. Not like this.",
+    "Hephaestus: This changes everything.",
+    "Hephaestus: You need to meet the others. And then… we need to meet you."
+  ]
     , Prometheus, "Hephaestus", 3));
-  NonPlayerCharacters.push(new NPC(23200, 22650, "Daedalus", [], Prometheus, "Daedalus", 3));
-  NonPlayerCharacters.push(new NPC(23300, 22650, "Atlas", [], Prometheus, "Atlas", 3));
+  NonPlayerCharacters.push(new NPC(23200, 22650, "Atlas", [], Prometheus, "Atlas", 3));
   NonPlayerCharacters.push(new NPC(12867, 12875, "Lock", ["Enter Code: ____ "], LockNpc, "Lock", .5));
   NonPlayerCharacters.push(new NPC(
     12950,

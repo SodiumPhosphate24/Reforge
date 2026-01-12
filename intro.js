@@ -69,9 +69,8 @@ function initializeIntro() {
       backgroundImage: BunkerImg,
       onEnter: function() {
         console.log("Starting intro sequence...");
-        if (themeSong) {
-          themeSong.loop = true;
-          themeSong.play()//.catch(e => console.log("Audio play failed: " + e));
+        if (themeSong && !themeSong.isPlaying()) {
+          themeSong.loop();
         }
       },
       onUpdate: function(timer) {

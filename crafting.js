@@ -64,7 +64,10 @@ var craftingRecipes = [
     type: "item",
     unlocked : true,
     ingredients: [
-      { itemName: "rock", amount: 10 }
+      { itemName: "cog", amount: 5,
+        itemName: "pipe", amount: 2,
+        itemName: "common cartridge", amount: 1
+      }
     ],
     output: { type: "gun", name: "glock", amount: 1 }
   },

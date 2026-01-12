@@ -72,7 +72,8 @@ function handleTriggers(trigger) {
     }
     if (triggerList.Objective.fixBoiler == false) {
       triggerList.Objective.fixBoiler = true;
-      messages.push(new Message("dialogue", ["Prometheus IV: You did it!"], "Prometheus", true));
+      messages.push(new Message("dialogue", ["Prometheus IV: You did it!", "Prometheus IV: The boiler is running again. The bunker is safe for now.", "Prometheus IV: No time to celebrate. You might not be alone", "Prometheus IV: My systems are detecting human activity in a region to the southeast", "Prometheus IV: The last traces are in AEGIS, a worn out military bunker. Couldn't hurt to check it out", "Prometheus IV: I'll reroute you to the area"], "Prometheus", true));
+      currentWaypointIndex = 5;
       return;
     }
   }

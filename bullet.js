@@ -48,7 +48,9 @@ class Bullet {
   hitsPlayer(){
     for(let i = 0; i < players.length; i++){
       if (checkCollision(this.x, this.y, players[i].x+600, players[i].y+340, 18, 5, players[i].width, players[i].height+35)){
-        players[i].health -= this.damage * 10;
+        if (this.type == "enemy"){
+          players[i].health -= this.damage * 10;
+        }
         return true;
       }
     }
