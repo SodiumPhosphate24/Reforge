@@ -1,6 +1,7 @@
 let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, Book, Greg, LockNpc;
 //music
 let themeSong;
+let maxTileTypes = 0; // will be set in setup()
 // Waypoint system
 var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875], [23983, 21925]];
 var currentWaypointIndex = 0;
@@ -47,7 +48,7 @@ var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
 var tileColors = [
-  [[255, 255, 255]], // 0 - grass (white = no tint, shows base green color)
+  [[245, 245, 100]], // 0 - grass (white = no tint, shows base green color)
   [[255, 255, 255]], // 1 - asphalt
   [[255, 255, 255]], // 2 - lined asphalt
   [[255, 255, 255]], // 3 - Concrete
@@ -72,8 +73,8 @@ var tileColors = [
   [[255, 255, 255]], // 22 - Grave 2
   [[255, 255, 255]], // 23 - Grave 3
   [[255, 255, 255]], // 24 - Rail
-  [[255, 255, 255], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]],  // 25 - Stone Brick (default white, light sepia, medium-light sepia, medium sepia, darker sepia)
-  [[255, 255, 255], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]], // 26 - Stone Brick Wall
+  [[200, 200, 200], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]],  // 25 - Stone Brick (default white, light sepia, medium-light sepia, medium sepia, darker sepia)
+  [[200, 200, 200], [240, 210, 170], [220, 190, 150], [200, 170, 130], [180, 150, 110]], // 26 - Stone Brick Wall
   [[240, 210, 170]], // 27 - Pipe
   [[240, 210, 170]], // 28 - CopperTileGreen
 
@@ -86,8 +87,8 @@ var tileColors = [
   [[255, 255, 255]], // 34 - ChainLinkVertical
   [[255, 255, 255]], // 35 - ChainLinkEnd
   [[255, 255, 255]], // 36 - Lampost
-  [[255, 255, 255]]  // 37 - Bench
-  [[100, 100, 100]] // 38 White Brick
+  [[255, 255, 255]],  // 37 - Bench
+  [[100, 100, 100]], // 38 White Brick
   [[100, 100, 100]] // 39 White Tile
 ];
 
@@ -231,7 +232,6 @@ var multiTileConfig = {};
 
 var enemies = [], bullets = [], messages = [], droppedItems = [], NonPlayerCharacters = [];
 var inventoryList;
-let maxTileTypes = 0; // will be set in setup()
 var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
 
 // Reusable prompt system
@@ -2508,6 +2508,11 @@ function spawnEnemies() {
   enemies.push(new Enemy("greg", 15882.600000000144, 16877.619680000193));
   enemies.push(new Enemy("harpy", 15878.600000000144, 17121.619680000193));
   enemies.push(new Enemy("greg", 15631.600000000144, 17125.619680000193));
+
+  enemies.push(new Enemy("harpy", 20564.960000000327, 17815.700000000495));
+  enemies.push(new Enemy("harpy", 20440.960000000327, 17967.700000000495));
+  enemies.push(new Enemy("harpy", 20717.960000000327, 17982.700000000495));
+  enemies.push(new Enemy("harpy", 20576.960000000327, 18117.700000000495));
 }
 
 function initializeHardcodes() {
