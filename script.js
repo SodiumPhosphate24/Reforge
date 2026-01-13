@@ -1852,6 +1852,7 @@ function drawWorldLayer(world, layerIndex) {
             }
           }
           if (items.length > maxDisplayItems) {
+            //Buschy year
             fill(255);
             noStroke();
             textSize(10);
