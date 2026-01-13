@@ -48,7 +48,7 @@ var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
 var tileColors = [
-  [[245, 245, 100]], // 0 - grass (white = no tint, shows base green color)
+  [[20, 200, 0]], // 0 - grass (white = no tint, shows base green color)
   [[255, 255, 255]], // 1 - asphalt
   [[255, 255, 255]], // 2 - lined asphalt
   [[255, 255, 255]], // 3 - Concrete
@@ -2535,7 +2535,8 @@ function initializeHardcodes() {
     "Hephaestus: You need to meet the others. And then… we need to meet you."
   ]
     , Prometheus, "Hephaestus", 3));
-  NonPlayerCharacters.push(new NPC(23200, 22650, "Atlas", [], Prometheus, "Atlas", 3));
+  NonPlayerCharacters.push(new NPC(23200, 22650, "Atlas", ["I'm Atlas... Responsible for keeping tabs on the geography of the area post incident."], Prometheus, "Atlas", 3));
+  NonPlayerCharacters.push(new NPC(19900, 13600, "Crate", ["Help! I'm stuck in this crate!"], tileImgs[5], "Daedalus", 3));
   NonPlayerCharacters.push(new NPC(12867, 12875, "Lock", ["Enter Code: ____ "], LockNpc, "Lock", .5));
   NonPlayerCharacters.push(new NPC(
     12950,
