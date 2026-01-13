@@ -1545,6 +1545,34 @@ function getWorkbenchVariant(row, col, layer, tileType) {
   return { variant, rotation: 0, flipH: false, baseImg: config.variants[variant] };
 }
 
+// Get the appropriate tree variant based on position in 1x2 grid
+// Tree (41) uses variants: top, bottom
+function getTreeVariant(row, col, layer, tileType) {
+  if (tileType !== 36) return null;
+
+  // Check if this is part of a 1x2 tree cluster
+  const hasBottom = isSameTileType(row + 1, col, layer, tileType);
+  const hasTop = isSameTileType(row - 1, col, layer, tileType);
+
+  let variant = 'top'; // default
+
+  // Determine position in 1x2 grid based on which neighbors exist
+  if (hasBottom && !hasTop) {
+    variant = 'top';
+  } else if (hasTop && !hasBottom) {
+    variant = 'bottom';
+  }
+  // If it doesn't match a 1x2 pattern, just use top as fallback
+
+  const config = tileVariants[41];
+  if (!config || !config.variants || !config.variants[variant]) {
+    console.error("Tree variant missing:", variant);
+    return null;
+  }
+
+  return { variant, rotation: 0, flipH: false, baseImg: config.variants[variant] };
+}
+
 // Get the appropriate lampost variant based on position in 1x2 grid
 // Lampost (36) uses variants: top, bottom
 function getLampostVariant(row, col, layer, tileType) {
@@ -2546,20 +2574,20 @@ function drawAlarmFlash() {
 }
 
 function spawnEnemies() {
-  enemies.push(new Enemy("harpy", 16584.600000000013, 15523.471344803067));
-  enemies.push(new Enemy("harpy", 16768.600000000013, 15536.471344803067));
-  enemies.push(new Enemy("harpy", 16776.600000000013, 15785.471344803067));
-  enemies.push(new Enemy("harpy", 16586.600000000013, 15787.471344803067));
+  enemies.push(new Enemy("harpy", 16584, 15523));
+  enemies.push(new Enemy("harpy", 16768, 15536));
+  enemies.push(new Enemy("harpy", 16776, 15785));
+  enemies.push(new Enemy("harpy", 16586, 15787));
 
-  enemies.push(new Enemy("harpy", 15626.600000000144, 16880.619680000193));
-  enemies.push(new Enemy("greg", 15882.600000000144, 16877.619680000193));
-  enemies.push(new Enemy("harpy", 15878.600000000144, 17121.619680000193));
-  enemies.push(new Enemy("greg", 15631.600000000144, 17125.619680000193));
+  enemies.push(new Enemy("harpy", 15626, 16880));
+  enemies.push(new Enemy("greg", 15882, 16877));
+  enemies.push(new Enemy("harpy", 15878, 17121));
+  enemies.push(new Enemy("greg", 15631, 17125));
 
-  enemies.push(new Enemy("harpy", 20564.960000000327, 17815.700000000495));
-  enemies.push(new Enemy("harpy", 20440.960000000327, 17967.700000000495));
-  enemies.push(new Enemy("harpy", 20717.960000000327, 17982.700000000495));
-  enemies.push(new Enemy("harpy", 20576.960000000327, 18117.700000000495));
+  enemies.push(new Enemy("harpy", 20564, 17815));
+  enemies.push(new Enemy("harpy", 20440, 17967));
+  enemies.push(new Enemy("harpy", 20717, 17982));
+  enemies.push(new Enemy("harpy", 20576, 18117));
 }
 
 function initializeHardcodes() {
