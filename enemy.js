@@ -5,7 +5,7 @@ class Enemy {
     this.aggro = false;
     this.vx = 0; // velocity x
     this.vy = 0; // velocity y
-    this.aggroRange = 500;
+    this.aggroRange = 325;
     this.deaggroRange = 700; // de-aggro at longer distance
     this.currentBreadcrumbIndex = 0; // Which breadcrumb we're following
     this.raycastTarget = null; // For visualization in editor

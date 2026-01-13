@@ -22,7 +22,7 @@ var craftingRecipes = [
     category: "Robots",
     type: "player",
     unlocked : false,
-    playerConstructor: {width : 70, height : 50, speed : 1.3, health : 100, damage : 1},
+    playerConstructor: {width : 35, height : 35, speed : 1.3, health : 100, damage : 1},
     ingredients: [
       { itemName: "common wheel", amount: 2 },
       { itemName: "common cartridge", amount: 1 },
