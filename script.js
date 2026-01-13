@@ -1548,7 +1548,7 @@ function getWorkbenchVariant(row, col, layer, tileType) {
 // Get the appropriate tree variant based on position in 1x2 grid
 // Tree (41) uses variants: top, bottom
 function getTreeVariant(row, col, layer, tileType) {
-  if (tileType !== 36) return null;
+  if (tileType !== 41) return null;
 
   // Check if this is part of a 1x2 tree cluster
   const hasBottom = isSameTileType(row + 1, col, layer, tileType);
