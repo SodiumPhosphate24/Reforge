@@ -1841,6 +1841,14 @@ function drawWorldLayer(world, layerIndex) {
           finalRotation = workbenchInfo.rotation;
         }
       }
+      // Check if this is a tree tile (1x2 multi-tile using variants)
+      else if (tileType === 41) {
+        const treeInfo = getTreeVariant(i, j, layerIndex, tileType);
+        if (treeInfo && treeInfo.baseImg) {
+          imgToDraw = treeInfo.baseImg;
+          finalRotation = treeInfo.rotation;
+        }
+      }
       // Check if this is a lampost tile (1x2 multi-tile using variants)
       else if (tileType === 36) {
         const lampostInfo = getLampostVariant(i, j, layerIndex, tileType);
