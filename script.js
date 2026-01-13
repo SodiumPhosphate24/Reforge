@@ -42,13 +42,13 @@ var lastBreadcrumbTime = 0;
 var breadcrumbInterval = 200; // Leave a breadcrumb every 0.2 seconds
 var maxBreadcrumbs = 15; // Keep maximum 15 breadcrumbs for most recent path
 var breadcrumbMinDistance = 2; // Minimum distance between breadcrumbs in pixels
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench", "White Brick", "White Tile"];
-var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench", "White Brick", "White Tile", "Steel Crate"];
+var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
 var tileColors = [
-  [[20, 200, 0]], // 0 - grass (white = no tint, shows base green color)
+  [[200, 220, 10]], // 0 - grass (white = no tint, shows base green color)
   [[255, 255, 255]], // 1 - asphalt
   [[255, 255, 255]], // 2 - lined asphalt
   [[255, 255, 255]], // 3 - Concrete
@@ -89,7 +89,8 @@ var tileColors = [
   [[255, 255, 255]], // 36 - Lampost
   [[255, 255, 255]],  // 37 - Bench
   [[100, 100, 100]], // 38 White Brick
-  [[100, 100, 100]] // 39 White Tile
+  [[100, 100, 100]], // 39 White Tile
+  [[255, 255, 255]]
 ];
 
 // Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image
@@ -341,6 +342,7 @@ function preload() {
   tileImgs[37] = null; // Bench uses variants, loaded below
   tileImgs[38] = loadImage("Tiles/WhiteBrick.png");
   tileImgs[39] = loadImage("Tiles/WhiteTile.png");
+  tileImgs[40] = loadImage("Tiles/SteelCrate.png")
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonCartridge.png");
@@ -2536,7 +2538,7 @@ function initializeHardcodes() {
   ]
     , Prometheus, "Hephaestus", 3));
   NonPlayerCharacters.push(new NPC(23200, 22650, "Atlas", ["I'm Atlas... Responsible for keeping tabs on the geography of the area post incident."], Prometheus, "Atlas", 3));
-  NonPlayerCharacters.push(new NPC(19900, 13600, "Crate", ["Help! I'm stuck in this crate!"], tileImgs[5], "Daedalus", 3));
+  NonPlayerCharacters.push(new NPC(19900, 13600, "Crate", ["Crate: Help! I'm stuck in this crate!"], tileImgs[], "Daedalus", 3));
   NonPlayerCharacters.push(new NPC(12867, 12875, "Lock", ["Enter Code: ____ "], LockNpc, "Lock", .5));
   NonPlayerCharacters.push(new NPC(
     12950,
