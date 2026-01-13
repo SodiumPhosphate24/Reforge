@@ -2539,7 +2539,7 @@ function initializeHardcodes() {
   ]
     , Prometheus, "Hephaestus", 3));
   NonPlayerCharacters.push(new NPC(23200, 22650, "Atlas", ["I'm Atlas... Responsible for keeping tabs on the geography of the area post incident."], Prometheus, "Atlas", 3));
-  NonPlayerCharacters.push(new NPC(19900, 13600, "Crate", ["Crate: Help! I'm stuck in this crate!"], tileImgs[40], "Daedalus", 0));
+  NonPlayerCharacters.push(new NPC(19900, 13600, "Crate", ["Crate: Help! I'm stuck in this crate!"], tileImgs[40], "Daedalus", .001));
   NonPlayerCharacters.push(new NPC(12867, 12875, "Lock", ["Enter Code: ____ "], LockNpc, "Lock", .5));
   NonPlayerCharacters.push(new NPC(
     12950,
