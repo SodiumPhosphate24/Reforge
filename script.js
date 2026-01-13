@@ -42,8 +42,8 @@ var lastBreadcrumbTime = 0;
 var breadcrumbInterval = 200; // Leave a breadcrumb every 0.2 seconds
 var maxBreadcrumbs = 15; // Keep maximum 15 breadcrumbs for most recent path
 var breadcrumbMinDistance = 2; // Minimum distance between breadcrumbs in pixels
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench", "White Brick", "White Tile", "Steel Crate"];
-var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench", "White Brick", "White Tile", "Steel Crate", "Tree"];
+var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
@@ -90,6 +90,7 @@ var tileColors = [
   [[255, 255, 255]],  // 37 - Bench
   [[100, 100, 100]], // 38 White Brick
   [[100, 100, 100]], // 39 White Tile
+  [[255, 255, 255]], // 40 Steel Crate
   [[255, 255, 255]]
 ];
 
@@ -342,7 +343,8 @@ function preload() {
   tileImgs[37] = null; // Bench uses variants, loaded below
   tileImgs[38] = loadImage("Tiles/WhiteBrick.png");
   tileImgs[39] = loadImage("Tiles/WhiteTile.png");
-  tileImgs[40] = loadImage("Tiles/SteelCrate.png")
+  tileImgs[40] = loadImage("Tiles/SteelCrate.png");
+  tileImgs[41] = null; // Tree uses variants, loaded below
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonCartridge.png");
@@ -437,6 +439,16 @@ function preload() {
       'right': null   // Will be created from right half
     },
     fullImage: loadImage("Tiles/Bench.png") // Load the full bench image
+  }
+
+  // Tree variants - 1x2 multi-tile system
+  // The image will be split into top and bottom halves
+  tileVariants[41] = {
+    variants: {
+      'top': null,    // Will be created from top half
+      'bottom': null  // Will be created from bottom half
+    },
+    fullImage: loadImage("Tiles/Tree.png") // Load the full tree image
   }
 }
 
