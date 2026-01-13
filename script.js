@@ -525,6 +525,35 @@ function generateWorkbenchVariants() {
   console.log("Workbench variants generated: 4 quadrants from source image");
 }
 
+function generateTreeVariants() {
+  const treeConfig = tileVariants[41];
+  if (!treeConfig || !treeConfig.fullImage) {
+    console.error("tree config or image missing");
+    return;
+  }
+
+  const fullImg = treeConfig.fullImage;
+
+  // Split the image into 2 halves (top and bottom)
+  const fullWidth = fullImg.width;
+  const halfHeight = fullImg.height / 2;
+
+  console.log("Tree image dimensions:", fullImg.width, "x", fullImg.height);
+  console.log("Each half will be:", fullWidth, "x", halfHeight);
+
+  // Create top half
+  const top = createGraphics(fullWidth, halfHeight);
+  top.copy(fullImg, 0, 0, fullWidth, halfHeight, 0, 0, fullWidth, halfHeight);
+  treeConfig.variants.top = top;
+
+  // Create bottom half
+  const bottom = createGraphics(fullWidth, halfHeight);
+  bottom.copy(fullImg, 0, halfHeight, fullWidth, halfHeight, 0, 0, fullWidth, halfHeight);
+  treeConfig.variants.bottom = bottom;
+
+  console.log("Tree variants generated: 2 halves from source image");
+}
+
 // Generate lampost variants by splitting image into 2 halves (1x2 tiles - vertical)
 function generateLampostVariants() {
   const lampostConfig = tileVariants[36];
@@ -654,6 +683,9 @@ function setup() {
 
   // Generate workbench quadrants from the 32x32 image
   generateWorkbenchVariants();
+
+  // Generate tree halves from the image
+  generateTreeVariants();
 
   // Generate lampost halves from the image
   generateLampostVariants();
