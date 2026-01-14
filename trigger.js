@@ -1,5 +1,4 @@
 var triggerState = 0;
-var wayPointList = [[100, 100], [24900, 24900]];
 var triggerList = {
   Prometheus: {
     talkToPrometheus: false,
@@ -57,13 +56,15 @@ function handleTriggers(trigger) {
   if (trigger == "Hephaestus") {
     if (triggerList.Hephaestus.talkToHephaestus == false) {
       triggerList.Hephaestus.talkToHephaestus = true;
-      droppedItems.push(new DroppedItem(new Item("gun", "glock", 1), 23100, 22600));
+      droppedItems.push(new DroppedItem(new Item("gun", "glock", 1), 23075, 22675));
       messages.push(new Message("dialogue", ["Hephaestus: Take this. This is a steam gun. It takes some of your steam reserves to fire, but it's powerful", "Hephaestus: I hope it will help you survive out there"], "Hephaestus", true));
       return;
     }
     if (triggerList.Hephaestus.givenGun == false){
       triggerList.Hephaestus.givenGun = true;
       messages.push(new Message("dialogue", ["Prometheus IV: I can sense Daedalus' presence. I'll reroute you to his location"], "Prometheus", true));
+      currentWaypointIndex = 6;
+      return;
     }
   }
   if (trigger == "Crafting") {

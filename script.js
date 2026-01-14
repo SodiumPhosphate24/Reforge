@@ -1,9 +1,9 @@
-let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, Book, Greg, LockNpc;
+let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, Book, Greg, LockNpc, Hephaestus;
 //music
 let themeSong;
 let maxTileTypes = 0; // will be set in setup()
 // Waypoint system
-var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875], [23983, 21925]];
+var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875], [23983, 21925], [8475, 23275]];
 var currentWaypointIndex = 0;
 var itemConstructors = [];
 // Example: Custom label for a special object
@@ -304,6 +304,7 @@ function preload() {
   Buschy = loadImage("Characters/Buschy.png");
   SPUDImage = loadImage("Characters/SPUD.png");
   Prometheus = loadImage("Characters/Prometheus.png");
+  Hephaestus = loadImage("Characters/Hephaestus.png");
   LockNpc = loadImage("Characters/Lock.png");
   BadGuy = loadImage("Characters/Enemy.png");
   Greg = loadImage("Items/Consumables/CommonBattery.png");
@@ -2490,7 +2491,7 @@ function updateParticles() {
 let leakPrompt = null;
 function drawLeakPromptIfNeeded() {
   if (!leakPrompt) leakPrompt = createPrompt();
-  
+
   if (nearestLeak) {
     handleInteractionPrompt(
       leakPrompt,
@@ -2585,15 +2586,16 @@ function initializeHardcodes() {
     "Hephaestus: A human. Another one.",
     "Hephaestus: We haven’t seen one in years. Not like this.",
     "Hephaestus: This changes everything. You might be able to help us",
-    "Hephaestus: I am Hephaestus. I am responsible for the maintenance of the steam engines.",
+    "Hephaestus: I’m Hephaestus. Engineer. Circuits, alloys, precision—none of that steam stuff you’re running.",
     "Hephaestus: There used to be three of us, but Daedalus was taken",
     "Hephaestus: They came at night, precision units, and dragged him out. Completely ignored us. Went straight for him.",
     "Hephaestus: That means he knew something we didn’t.",
-    "Hephaestus: If you can help us find him, we might be able to reclaim this world."
+    "Hephaestus: If you can help us find him, we might be able to reclaim this world.",
+    "Hephaestus: They ran off to the west. Maybe start there."
   ]
-    , Prometheus, "Hephaestus", 3));
-  NonPlayerCharacters.push(new NPC(23200, 22650, "Atlas", ["I'm Atlas... Responsible for keeping tabs on the geography of the area post incident."], Prometheus, "Atlas", 3));
-  NonPlayerCharacters.push(new NPC(8475, 23275, "Crate", ["Crate: Help! I'm stuck in this crate!"], tileImgs[40], "Daedalus", .001));
+    , Hephaestus, "Hephaestus", 3));
+  NonPlayerCharacters.push(new NPC(23200, 22650, "Atlas", ["Atlas: I'm Atlas... Responsible for keeping tabs on the geography of the area post incident."], Prometheus, "Atlas", 3));
+  NonPlayerCharacters.push(new NPC(8467, 23200, "Crate", ["Crate: Help! Hey! I'm stuck in here! Let me out!", "Crate: I'm starving, at least try to slip some cheese in here? Get me out!"], tileImgs[40], "Daedalus", .001));
   NonPlayerCharacters.push(new NPC(12867, 12875, "Lock", ["Enter Code: ____ "], LockNpc, "Lock", .5));
   NonPlayerCharacters.push(new NPC(
     12950,
