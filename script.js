@@ -973,53 +973,26 @@ function drawGameplay() {
 
   // Draw waypoint arrow (screen-fixed at edge)
 
-  // Draw custom object prompt (call this after camera pop in drawGameplay)
+  // Draw custom object prompt
+  let specialObjectPrompt = null;
   function drawSpecialObjectPromptIfNeeded() {
+    if (!specialObjectPrompt) specialObjectPrompt = createPrompt();
+
     // Example: Check if player is near coordinates (13000, 13000)
     const playerCenterX = pX + 600 + pWidth / 2;
     const playerCenterY = pY + 375 + pHeight / 2;
     const distToObject = dist(playerCenterX, playerCenterY, 13000, 13000);
 
-    // Update nearestSpecialObject based on distance
-    if (distToObject < 100) { // Within 100 units
-      nearestSpecialObject = { x: 13000, y: 13000, distance: distToObject };
-    } else {
-      nearestSpecialObject = null;
-    }
-
-    // Fade in/out and scale based on whether object is near
-    if (nearestSpecialObject) {
-      specialObjectPromptAlpha = lerp(specialObjectPromptAlpha, 255, 0.2);
-      specialObjectPromptScale = lerp(specialObjectPromptScale, 1, 0.2);
-    } else {
-      specialObjectPromptAlpha = lerp(specialObjectPromptAlpha, 0, 0.15);
-      specialObjectPromptScale = lerp(specialObjectPromptScale, 0, 0.15);
-    }
-
-    if (specialObjectPromptAlpha > 5) {
-      push();
-      translate(600, 100); // Position on screen (change Y to avoid overlap)
-      scale(specialObjectPromptScale);
-      translate(-600, -100);
-
-      fill(255, 150, 0, specialObjectPromptAlpha * 0.78);
-      textSize(20);
-      textFont(Silkscreen);
-      textAlign(CENTER, CENTER);
-
-      const promptText = "Press E to Activate"; // Your custom message
-
-      // Background for text
-      const promptWidth = textWidth(promptText);
-      fill(0, 0, 0, specialObjectPromptAlpha * 0.6);
-      rect(600 - promptWidth / 2 - 10, 83, promptWidth + 20, 35, 5);
-
-      // Text
-      fill(255, 150, 0, specialObjectPromptAlpha);
-      text(promptText, 600, 100);
-
-      pop();
-    }
+    const isNear = distToObject < 100;
+    handleInteractionPrompt(
+      specialObjectPrompt,
+      13000,
+      13000,
+      100,
+      "Press E to Activate",
+      isNear,
+      [255, 150, 0]
+    );
   }
 
 
@@ -2514,41 +2487,23 @@ function updateParticles() {
 }
 
 // Draw leak repair prompt
+let leakPrompt = null;
 function drawLeakPromptIfNeeded() {
-  // Fade in/out and scale based on whether leak is near
+  if (!leakPrompt) leakPrompt = createPrompt();
+  
   if (nearestLeak) {
-    leakPromptAlpha = lerp(leakPromptAlpha, 255, 0.2);
-    leakPromptScale = lerp(leakPromptScale, 1, 0.2);
-    leakPromptGrowScale = lerp(leakPromptGrowScale, 1, 0.15);
+    handleInteractionPrompt(
+      leakPrompt,
+      nearestLeak.x,
+      nearestLeak.y,
+      120,
+      "Press E to Repair Leak",
+      true,
+      [255, 150, 0]
+    );
   } else {
-    leakPromptAlpha = lerp(leakPromptAlpha, 0, 0.15);
-    leakPromptScale = lerp(leakPromptScale, 0, 0.15);
-    leakPromptGrowScale = lerp(leakPromptGrowScale, 0.5, 0.15);
-  }
-
-  if (leakPromptAlpha > 5) {
-    push();
-    translate(600, 47);
-    scale(leakPromptScale * leakPromptGrowScale);
-    translate(-600, -47);
-
-    fill(255, 150, 0, leakPromptAlpha * 0.78); // Orange color for leak repair
-    textSize(20);
-    textFont(Silkscreen);
-    textAlign(CENTER, CENTER);
-
-    const promptText = "Press E to Repair Leak";
-
-    // Background for text
-    const promptWidth = textWidth(promptText);
-    fill(0, 0, 0, leakPromptAlpha * 0.6);
-    rect(600 - promptWidth / 2 - 10, 30, promptWidth + 20, 35, 5);
-
-    // Text
-    fill(255, 150, 0, leakPromptAlpha); // Orange color
-    text(promptText, 600, 47);
-
-    pop();
+    leakPrompt.update(false);
+    leakPrompt.draw("");
   }
 }
 
