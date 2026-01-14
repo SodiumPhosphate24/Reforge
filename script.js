@@ -2584,8 +2584,10 @@ function initializeHardcodes() {
     "Hephaestus: You can’t communicate. You must be controlled.",
     "Hephaestus: A human. Another one.",
     "Hephaestus: We haven’t seen one in years. Not like this.",
-    "Hephaestus: This changes everything.",
-    "Hephaestus: You need to meet the others. And then… we need to meet you."
+    "Hephaestus: This changes everything. You might be able to help us",
+    "Hephaestus: I am Hephaestus. I am responsible for the maintenance of the steam engines.",
+    "Hephaestus: There used to be three of us, but Daedalus was taken",
+    "Hephaestus: They came at night, precision units, and dragged him out. Completely ignored us, and went straight for him."
   ]
     , Prometheus, "Hephaestus", 3));
   NonPlayerCharacters.push(new NPC(23200, 22650, "Atlas", ["I'm Atlas... Responsible for keeping tabs on the geography of the area post incident."], Prometheus, "Atlas", 3));
