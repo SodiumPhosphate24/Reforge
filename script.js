@@ -725,7 +725,7 @@ function setup() {
     ["consumable", "legendary cartridge", 1, itemImgs[4]],
     ["projectile", "grenade", 1, projImgs[0]],
     ["projectile", "rock", 10, projImgs[1]],
-    ["projectile", "crowbar", 1, projImgs[2],
+    ["projectile", "crowbar", 1, projImgs[2]],
     ["material", "common wheel", 1, matImgs[0]],
     ["material", "rare wheel", 1, matImgs[1]],
     ["material", "legendary wheel", 1, matImgs[2]],
