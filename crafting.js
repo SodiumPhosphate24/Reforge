@@ -7,9 +7,7 @@ var craftingMenuSlideY = 50; // Slide up animation
 var craftingMenuScale = 0; // Scale animation
 
 // Crafting prompt animation
-var craftingPromptAlpha = 0;
-var craftingPromptScale = 0;
-var craftingPromptGrowScale = 0.5;
+let craftingPrompt = null;
 
 // Crafting tabs
 var craftingTabs = ["Robots", "Weapons", "Items"];
@@ -526,42 +524,21 @@ function drawCraftingMenu() {
 
 // Draw crafting prompt when near workbench
 function drawCraftingPromptIfNeeded() {
+  if (!craftingPrompt) craftingPrompt = createPrompt();
+  
   const nearWorkbench = isNearWorkbench();
 
-  // Fade in/out and scale based on whether workbench is near
   if (nearWorkbench && !craftingMenuOpen) {
-    craftingPromptAlpha = lerp(craftingPromptAlpha, 255, 0.2);
-    craftingPromptScale = lerp(craftingPromptScale, 1, 0.2);
-    craftingPromptGrowScale = lerp(craftingPromptGrowScale, 1, 0.15);
+    handleInteractionPrompt(
+      craftingPrompt,
+      pX + 600, // Workbench is wherever player is interacting, but typically we'd use workbench pos. 
+      pY + 340, // Here we use player center as proxy since isNearWorkbench() uses player pos
+      50,
+      "Press E to Craft"
+    );
   } else {
-    craftingPromptAlpha = lerp(craftingPromptAlpha, 0, 0.15);
-    craftingPromptScale = lerp(craftingPromptScale, 0, 0.15);
-    craftingPromptGrowScale = lerp(craftingPromptGrowScale, 0.5, 0.15);
-  }
-
-  if (craftingPromptAlpha > 5) {
-    push();
-    translate(600, 47);
-    scale(craftingPromptScale * craftingPromptGrowScale);
-    translate(-600, -47);
-
-    fill(255, 150, 0, craftingPromptAlpha * 0.78);
-    textSize(20);
-    textFont(Silkscreen);
-    textAlign(CENTER, CENTER);
-
-    const promptText = "Press E to Craft";
-
-    // Background for text
-    const promptWidth = textWidth(promptText);
-    fill(0, 0, 0, craftingPromptAlpha * 0.6);
-    rect(600 - promptWidth / 2 - 10, 30, promptWidth + 20, 35, 5);
-
-    // Text
-    fill(255, 150, 0, craftingPromptAlpha);
-    text(promptText, 600, 47);
-
-    pop();
+    craftingPrompt.update(false);
+    craftingPrompt.draw("");
   }
 }
 

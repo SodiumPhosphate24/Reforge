@@ -38,11 +38,11 @@ class NPC {
 }
 
 let nearestNPC = null; // Store for screen-fixed rendering
-let npcPromptAlpha = 0; // Fade animation
-let npcPromptScale = 0; // Scale animation
-let npcPromptGrowScale = 0.5; // Growing scale animation
+let interactionPrompt = null; // Reusable prompt object
 
 function drawNPCs() {
+  if (!interactionPrompt) interactionPrompt = createPrompt();
+  
   nearestNPC = null;
   let nearestDistance = Infinity;
 
@@ -67,12 +67,24 @@ function drawNPCs() {
       nearestDistance = distToPlayer;
       nearestNPC = NonPlayerCharacters[i];
     }
+  }
+}
 
-    // Close dialogue if player walks away from all NPCs (but only for NPC-initiated dialogue, not triggered dialogue)
-    const hasActiveDialogue = messages.some(msg => msg.type === "dialogue");
-    if (hasActiveDialogue) {
-      let nearAnyNPC = false;
-      for (let j = 0; j < NonPlayerCharacters.length; j++) {
+function drawNPCPromptIfNeeded() {
+  if (nearestNPC && !craftingMenuOpen) {
+    handleInteractionPrompt(
+      interactionPrompt, 
+      nearestNPC.x, 
+      nearestNPC.y, 
+      120, 
+      `Press E to talk to ${nearestNPC.name}`,
+      !messages.some(msg => msg.type === "dialogue")
+    );
+  } else if (interactionPrompt) {
+    interactionPrompt.update(false);
+    interactionPrompt.draw("");
+  }
+}
         const dist = distance(NonPlayerCharacters[j].x, NonPlayerCharacters[j].y, pX + 600, pY + 340);
         if (dist < 120) {
           nearAnyNPC = true;

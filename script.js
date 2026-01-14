@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, Book, Greg, LockNpc;
+let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, Book, Greg, LockNpc;
 //music
 let themeSong;
 let maxTileTypes = 0; // will be set in setup()
@@ -8,13 +8,8 @@ var currentWaypointIndex = 0;
 var itemConstructors = [];
 // Example: Custom label for a special object
 var nearestSpecialObject = null; // Store nearest object info
-var specialObjectPromptAlpha = 0; // Fade animation
-var specialObjectPromptScale = 0; // Scale animation
 // Leak repair system
 var nearestLeak = null; // Stores nearest repairable leak info
-var leakPromptAlpha = 0; // Fade animation for leak repair prompt
-var leakPromptScale = 0; // Scale animation for leak repair prompt
-var leakPromptGrowScale = 0.5; // Growing scale animation
 var totalLeaks = 5;
 
 // Boiler repair system
@@ -237,7 +232,7 @@ var inventoryList;
 var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
 
 // Reusable prompt system
-function createPrompt(config) {
+function createPrompt() {
   return {
     alpha: 0,
     scale: 0,
@@ -283,6 +278,24 @@ function createPrompt(config) {
       pop();
     }
   };
+}
+
+/**
+ * Consolidated interaction prompt handler
+ * @param {Object} promptObj - The prompt object from createPrompt()
+ * @param {Number} targetX - World X of the interactable
+ * @param {Number} targetY - World Y of the interactable
+ * @param {Number} proximity - Max distance for the prompt to show
+ * @param {String} message - The text to display
+ * @param {Boolean} condition - Additional condition for showing (default: true)
+ * @param {Array} color - RGB array for the prompt color
+ */
+function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message, condition = true, color = [255, 150, 0]) {
+  const distToPlayer = distance(targetX, targetY, pX + 600, pY + 340);
+  const shouldShow = distToPlayer < proximity && condition && gameState === "playing";
+  promptObj.update(shouldShow);
+  promptObj.draw(message, color);
+  return shouldShow;
 }
 
 function preload() {
@@ -350,6 +363,7 @@ function preload() {
   itemImgs[2] = loadImage("Items/Consumables/CommonCartridge.png");
   itemImgs[3] = loadImage("Items/Consumables/RareCartridge.png");
   itemImgs[4] = loadImage("Items/Consumables/LegendaryCartridge.png");
+  itemImgs[5] = loadImage("Items/Misc/Crowbar.png");
   matImgs[0] = loadImage("Items/Materials/CommonWheel.png");
   matImgs[1] = loadImage("Items/Materials/RareWheel.png");
   matImgs[2] = loadImage("Items/Materials/LegendaryWheel.png");
@@ -711,6 +725,7 @@ function setup() {
     ["consumable", "legendary cartridge", 1, itemImgs[4]],
     ["projectile", "grenade", 1, projImgs[0]],
     ["projectile", "rock", 10, projImgs[1]],
+    ["projectile", "crowbar", 1, projImgs[2],
     ["material", "common wheel", 1, matImgs[0]],
     ["material", "rare wheel", 1, matImgs[1]],
     ["material", "legendary wheel", 1, matImgs[2]],

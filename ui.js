@@ -215,6 +215,11 @@ class Item {
         this.image = projImgs[2];
         this.HtoW = 2.18;
       }
+      if (name == "crowbar") {
+        this.name = name;
+        this.image = itemImgs[5];
+        this.HtoW = 1.2;
+      }
     }
   }
 }
@@ -357,9 +362,7 @@ class DroppedItem {
 }
 
 let nearestPickupItem = null; // Store for screen-fixed rendering
-let pickupPromptAlpha = 0; // Fade animation
-let pickupPromptScale = 0; // Scale animation
-let pickupPromptGrowScale = 0.5; // Growing scale animation
+let pickupPrompt = null;
 
 function updateDroppedItems() {
   let count = 0;
@@ -401,46 +404,20 @@ function updateDroppedItems() {
 }
 
 function drawPickupPromptIfNeeded() {
-  // Fade in/out and scale based on whether item is near
+  if (!pickupPrompt) pickupPrompt = createPrompt();
+
   if (nearestPickupItem) {
-    pickupPromptAlpha = lerp(pickupPromptAlpha, 255, 0.2);
-    pickupPromptScale = lerp(pickupPromptScale, 1, 0.2);
-    pickupPromptGrowScale = lerp(pickupPromptGrowScale, 1, 0.15);
+    handleInteractionPrompt(
+      pickupPrompt,
+      nearestPickupItem.x,
+      nearestPickupItem.y,
+      100,
+      `Press E to pick up ${nearestPickupItem.item.name}`,
+      true,
+      [100, 255, 100]
+    );
   } else {
-    pickupPromptAlpha = lerp(pickupPromptAlpha, 0, 0.15);
-    pickupPromptScale = lerp(pickupPromptScale, 0, 0.15);
-    pickupPromptGrowScale = lerp(pickupPromptGrowScale, 0, 0.15);
+    pickupPrompt.update(false);
+    pickupPrompt.draw("");
   }
-
-  if (pickupPromptAlpha > 5) {
-    drawPickupPrompt(nearestPickupItem);
-  }
-}
-
-function drawPickupPrompt(item) {
-  if (!item) return;
-
-  push();
-  translate(600, 47);
-  scale(pickupPromptScale * pickupPromptGrowScale);
-  translate(-600, -47);
-
-  fill(255, 150, 0, pickupPromptAlpha * 0.78);
-  textSize(20);
-  textFont(Silkscreen);
-  textAlign(CENTER, CENTER);
-
-  // Display at top of screen
-  const promptText = "Press E to Pick Up " + item.item.name;
-
-  // Background for text
-  const promptWidth = textWidth(promptText);
-  fill(0, 0, 0, pickupPromptAlpha * 0.6);
-  rect(600 - promptWidth / 2 - 10, 30, promptWidth + 20, 35, 5);
-
-  // Text
-  fill(255, 150, 0, pickupPromptAlpha);
-  text(promptText, 600, 47);
-
-  pop();
 }
