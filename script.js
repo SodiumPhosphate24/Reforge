@@ -2567,6 +2567,15 @@ function spawnEnemies() {
   enemies.push(new Enemy("harpy", 20440, 17967));
   enemies.push(new Enemy("harpy", 20717, 17982));
   enemies.push(new Enemy("harpy", 20576, 18117));
+
+  enemies.push(new Enemy("greg", 8473, 23027));
+  enemies.push(new Enemy("greg", 8674, 23226));
+  enemies.push(new Enemy("greg", 8470, 23427));
+  enemies.push(new Enemy("greg", 8283, 23227));
+  enemies.push(new Enemy("harpy", 8229, 22998));
+  enemies.push(new Enemy("harpy", 8733, 22988));
+  enemies.push(new Enemy("harpy", 8712, 23483));
+  enemies.push(new Enemy("harpy", 8226, 23476));
 }
 
 function initializeHardcodes() {
