@@ -6,6 +6,10 @@ var triggerList = {
     dropppedStarterGun: false,
     openedFirstCrate: false,
   },
+  Hephaestus: {
+    talkToHephaestus: false,
+    givenGun: false
+  },
   Crafting: {
     craftedFirstRobot: false,
   },
@@ -48,6 +52,18 @@ function handleTriggers(trigger) {
       currentWaypointIndex = 1;
       unlockRecipe("SPUD");
       return;
+    }
+  }
+  if (trigger == "Hephaestus") {
+    if (triggerList.Hephaestus.talkToHephaestus == false) {
+      triggerList.Hephaestus.talkToHephaestus = true;
+      droppedItems.push(new DroppedItem(new Item("gun", "glock", 1), 23100, 22600));
+      messages.push(new Message("dialogue", ["Hephaestus: Take this. This is a steam gun. It takes some of your steam reserves to fire, but it's powerful", "Hephaestus: I hope it will help you survive out there"], "Hephaestus", true));
+      return;
+    }
+    if (triggerList.Hephaestus.givenGun == false){
+      triggerList.Hephaestus.givenGun = true;
+      messages.push(new Message("dialogue", ["Prometheus IV: I can sense Daedalus' presence. I'll reroute you to his location"], "Prometheus", true));
     }
   }
   if (trigger == "Crafting") {

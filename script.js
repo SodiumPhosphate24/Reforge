@@ -725,13 +725,13 @@ function setup() {
     ["consumable", "legendary cartridge", 1, itemImgs[4]],
     ["projectile", "grenade", 1, projImgs[0]],
     ["projectile", "rock", 10, projImgs[1]],
-    ["projectile", "crowbar", 1, projImgs[2]],
     ["material", "common wheel", 1, matImgs[0]],
     ["material", "rare wheel", 1, matImgs[1]],
     ["material", "legendary wheel", 1, matImgs[2]],
     ["material", "cog", 1, matImgs[3]],
     ["material", "pipe", 1, matImgs[4]],
-    ["material", "boiler cartridge", 1, matImgs[5]]
+    ["material", "boiler cartridge", 1, matImgs[5]],
+    ["projectile", "crowbar", 1, itemImgs[5]]
   ];
 
   // Now parse the world with itemConstructors available
@@ -2587,11 +2587,13 @@ function initializeHardcodes() {
     "Hephaestus: This changes everything. You might be able to help us",
     "Hephaestus: I am Hephaestus. I am responsible for the maintenance of the steam engines.",
     "Hephaestus: There used to be three of us, but Daedalus was taken",
-    "Hephaestus: They came at night, precision units, and dragged him out. Completely ignored us. Went straight for him."
+    "Hephaestus: They came at night, precision units, and dragged him out. Completely ignored us. Went straight for him.",
+    "Hephaestus: That means he knew something we didn’t.",
+    "Hephaestus: If you can help us find him, we might be able to reclaim this world."
   ]
     , Prometheus, "Hephaestus", 3));
   NonPlayerCharacters.push(new NPC(23200, 22650, "Atlas", ["I'm Atlas... Responsible for keeping tabs on the geography of the area post incident."], Prometheus, "Atlas", 3));
-  NonPlayerCharacters.push(new NPC(7875, 22850, "Crate", ["Crate: Help! I'm stuck in this crate!"], tileImgs[40], "Daedalus", .001));
+  NonPlayerCharacters.push(new NPC(8475, 23275, "Crate", ["Crate: Help! I'm stuck in this crate!"], tileImgs[40], "Daedalus", .001));
   NonPlayerCharacters.push(new NPC(12867, 12875, "Lock", ["Enter Code: ____ "], LockNpc, "Lock", .5));
   NonPlayerCharacters.push(new NPC(
     12950,
