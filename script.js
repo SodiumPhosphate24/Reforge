@@ -3,7 +3,7 @@ let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0,
 let themeSong;
 let maxTileTypes = 0; // will be set in setup()
 // Waypoint system
-var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875], [23983, 21925], [8475, 23275]];
+var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875], [23983, 21925], [8475, 23225]];
 var currentWaypointIndex = 0;
 var itemConstructors = [];
 // Example: Custom label for a special object
@@ -2593,7 +2593,7 @@ function initializeHardcodes() {
     "Hephaestus: If you can help us find him, we might be able to reclaim this world.",
     "Hephaestus: They ran off to the west. Maybe start there."
   ]
-    , Hephaestus, "Hephaestus", 1));
+    , Hephaestus, "Hephaestus", 2));
   NonPlayerCharacters.push(new NPC(23200, 22650, "Atlas", ["Atlas: I'm Atlas... Responsible for keeping tabs on the geography of the area post incident."], Prometheus, "Atlas", 3));
   NonPlayerCharacters.push(new NPC(8467, 23200, "Crate", ["Crate: Help! Hey! I'm stuck in here! Let me out!", "Crate: I'm starving, at least try to slip some cheese in here? Get me out!"], tileImgs[40], "Daedalus", .001));
   NonPlayerCharacters.push(new NPC(12867, 12875, "Lock", ["Enter Code: ____ "], LockNpc, "Lock", .5));
