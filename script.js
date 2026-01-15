@@ -253,13 +253,13 @@ function generateAllMultiTileSections() {
   for (let tileID in multiTileConfig) {
     const config = multiTileConfig[tileID];
     const fullImg = config.fullImage;
-    
+
     // Calculate tile dimensions
     const tileW = fullImg.width / config.width;
     const tileH = fullImg.height / config.height;
-    
+
     config.sections = [];
-    
+
     for (let row = 0; row < config.height; row++) {
       config.sections[row] = [];
       for (let col = 0; col < config.width; col++) {
@@ -431,7 +431,7 @@ function preload() {
   FrameImg = loadImage("hud/Frame.png");
   Fog = loadImage("hud/Fog.png");
   IndicatorImg = loadImage("Indicator.png");
-  Silkscreen = loadFont("Fonts/Silkscreen-Regular.ttf");
+  Silkscreen = loadFont("Silkscreen-Regular.ttf");
   ReforgeLogo = loadImage("REFORGE.png");
   titleScreenImg = loadImage("hud/titleScreen.png");
   WaypointImg = loadImage("Waypoint.png");
@@ -848,7 +848,7 @@ function draw() {
 function updateLeakDetection() {
   nearestLeak = null;
   let nearestDist = Infinity;
-  
+
   // Only check if holding wrench
   const currentItem = inventoryList[inventorySlot - 1];
   if (!currentItem || currentItem.name !== "old wrench") {
@@ -859,7 +859,7 @@ function updateLeakDetection() {
     const ps = particleSources[i];
     // Skip if leak is already fixed
     if (ps.spawnRate === 0) continue;
-    
+
     const d = distance(pX + 600, pY + 340, ps.x, ps.y);
     if (d < 120 && d < nearestDist) {
       nearestDist = d;
@@ -2456,7 +2456,7 @@ function drawGunDebugRect() {
 
       if (item.type === "bullet") {
         baseSize = 18;
-      } else if (item.name == "steam gun"){
+      } else if (item.name == "steam gun") {
         baseSize = 52;
       } else if (item.type === "gun" && item.name != "steam gun") {
         baseSize = 30;
