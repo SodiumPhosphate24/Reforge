@@ -565,7 +565,12 @@ function setup() {
     .then(response => response.text())
     .then(data => {
       worldString = data;
-      parseWorld(worldString);
+      
+      // Now parse the world with itemConstructors available
+      gameWorld = stringToWorld(worldString);
+      initializeHardcodes();
+      inventoryList = players[activePlayer].inventory;
+
       // Set maxTileTypes after world is loaded
       maxTileTypes = tileImgs.length;
     });
@@ -583,6 +588,7 @@ function setup() {
   boilerPrompt = createPrompt();
 
   generateAllMultiTileSections();
+  generateTintedTileCache();
 }
 
 // Generate cached tinted versions of all tiles
@@ -647,68 +653,6 @@ function generateTintedTileCache() {
   console.log("Tinted tile cache generated successfully!");
 }
 
-function setup() {
-  createCanvas(1200, 750);
-  maxTileTypes = tileImgs.length;
-  PlayerImage = Buschy;
-
-  // Generate workbench quadrants from the 32x32 image
-  generateWorkbenchVariants();
-
-  // Generate tree halves from the image
-  generateTreeVariants();
-
-  // Generate lampost halves from the image
-  generateLampostVariants();
-
-  // Generate bench halves from the image
-  generateBenchVariants();
-
-  // Generate multi-tile sections
-  generateMultiTileSections();
-
-  // Generate tinted tile cache after images are loaded
-  generateTintedTileCache();
-
-  // Initialize itemConstructors BEFORE parsing world so crate inventories can be loaded
-  itemConstructors = [
-    ["gun", "steam gun", 1, GunImgs[0]],
-    ["gun", "western", 1, GunImgs[1]],
-    ["gun", "rare pistol", 1, GunImgs[2]],
-    ["consumable", "cheese", 1, itemImgs[0]],
-    ["consumable", "soda", 1, itemImgs[1]],
-    ["consumable", "common cartridge", 1, itemImgs[2]],
-    ["consumable", "rare cartridge", 1, itemImgs[3]],
-    ["consumable", "legendary cartridge", 1, itemImgs[4]],
-    ["projectile", "grenade", 1, projImgs[0]],
-    ["projectile", "rock", 10, projImgs[1]],
-    ["material", "common wheel", 1, matImgs[0]],
-    ["material", "rare wheel", 1, matImgs[1]],
-    ["material", "legendary wheel", 1, matImgs[2]],
-    ["material", "cog", 1, matImgs[3]],
-    ["material", "pipe", 1, matImgs[4]],
-    ["material", "boiler cartridge", 1, matImgs[5]],
-    ["projectile", "crowbar", 1, itemImgs[5]]
-  ];
-
-  // Now parse the world with itemConstructors available
-  gameWorld = stringToWorld(worldString[0]);
-  console.log(worldString);
-  initializeHardcodes();
-  inventoryList = players[activePlayer].inventory;
-
-  // Initialize indicator position
-  indicatorCurrentX = pX + 600;
-  indicatorCurrentY = pY + 375;
-  indicatorTargetX = indicatorCurrentX;
-  indicatorTargetY = indicatorCurrentY;
-
-  // Initialize boiler prompt
-  boilerPrompt = createPrompt();
-
-  // Intro will be started from menu screen
-  // Roof fade will be initialized during intro sequence
-}
 
 function draw() {
   // Show menu screen if not playing
@@ -2296,7 +2240,7 @@ function drawGunDebugRect() {
 
   }
   pop();
-
+  
   pop(); // restore transforms
 }
 
@@ -2539,10 +2483,8 @@ function initializeHardcodes() {
       "Walden : nor did I wish to practise resignation, unless it was quite necessary. I wanted to live deep and suck out all the marrow of life, to live so sturdily and Spartan-like as to put to rout all that was not life",
       "Walden : to cut a broad swath and shave close, to drive life into a corner, and reduce it to its lowest terms, and, if it proved to be mean, why then to get the whole and genuine meanness of it, and publish its meanness to the world",
       "Walden : or if it were sublime, to know it by experience, and be able to give a true account of it in my next excursion",
-      "Walden :  For most men, it appears to me, are in a strange uncertainty about it, whether it is of the devil or of God, and have somewhat hastily concluded that it is the chief end of man here to \"glorify God and enjoy him forever.\"",
-
+      "Walden :  For most men, it appears to me, are in a strange uncertainty about it, whether it is of the devil or of God, and have somewhat hastily concluded that it is the chief end of man here to \"glorify God and enjoy him forever.\""
     ], Book, "Book"));
-
 
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
 }
