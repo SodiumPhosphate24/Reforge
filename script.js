@@ -404,6 +404,7 @@ function preload() {
   tileImgs[39] = loadImage("Tiles/WhiteTile.png");
   tileImgs[40] = loadImage("Tiles/SteelCrate.png");
   tileImgs[41] = null; // Tree uses variants, loaded below
+  tileImgs[42] = null; // Boiler uses variants, loaded below
 
   // Register multi-tile objects
   registerMultiTile(6, "Tiles/Crafting.png", 2, 2); // Workbench
@@ -568,6 +569,8 @@ function generateAllMultiTileSections() {
         } else if (config.width === 2 && config.height === 1) {
           const names = ['left', 'right'];
           tileVariants[tileID].variants[names[col]] = section;
+        } else if (config.width === 1 && config.height === 1) {
+          tileVariants[tileID].variants['full'] = section;
         }
       }
     }
