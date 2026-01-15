@@ -530,10 +530,21 @@ function generateAllMultiTileSections() {
     }
 
     const fullImg = config.fullImage;
+    // Wait for image to load if it hasn't yet (though p5 preload usually handles this)
+    if (fullImg.width <= 1) {
+        console.warn(`Image for multi-tile ${tileID} not loaded yet. Skipping section generation.`);
+        continue;
+    }
+
     const tileWidth = fullImg.width / config.width;
     const tileHeight = fullImg.height / config.height;
 
     config.sections = [];
+    
+    // Also ensure tileVariants is updated with the correct structure
+    if (!tileVariants[tileID]) {
+        tileVariants[tileID] = { variants: {}, fullImage: fullImg };
+    }
 
     // Split image into grid sections
     for (let row = 0; row < config.height; row++) {
@@ -546,10 +557,22 @@ function generateAllMultiTileSections() {
           0, 0, tileWidth, tileHeight
         );
         config.sections[row][col] = section;
+        
+        // Map to tileVariants for the rendering system
+        if (config.width === 2 && config.height === 2) {
+          const names = [['top_left', 'top_right'], ['bottom_left', 'bottom_right']];
+          tileVariants[tileID].variants[names[row][col]] = section;
+        } else if (config.width === 1 && config.height === 2) {
+          const names = ['top', 'bottom'];
+          tileVariants[tileID].variants[names[row]] = section;
+        } else if (config.width === 2 && config.height === 1) {
+          const names = ['left', 'right'];
+          tileVariants[tileID].variants[names[col]] = section;
+        }
       }
     }
 
-    console.log(`Multi-tile ${tileID}: generated ${config.width}x${config.height} sections`);
+    console.log(`Multi-tile ${tileID}: generated ${config.width}x${config.height} sections and mapped to variants`);
   }
 }
 
