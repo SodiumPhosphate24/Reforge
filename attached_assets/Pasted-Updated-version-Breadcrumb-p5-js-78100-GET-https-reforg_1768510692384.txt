@@ -1,0 +1,299 @@
+Updated version Breadcrumb
+p5.js:78100  GET https://reforge.replit.app/hud/Frame.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:382
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/hud/Inventory.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:381
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Items/Projectiles/Rock.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:379
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Indicator.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:384
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Tiles/concreteCorner.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:401
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Tiles/concreteEdge.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:400
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Tiles/DarkConcrete.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:406
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Tiles/WhiteConcreteCenter.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:415
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Tiles/WhiteConcreteEdge.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:416
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Tiles/WhiteConcreteCorner.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:417
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Tiles/WhiteConcrete.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:414
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Tiles/PipeCross.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:427
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Tiles/Crafting.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:440
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+ChainLink.png:1  GET https://reforge.replit.app/Tiles/ChainLink.png 429 (Too Many Requests)Understand this error
+ChainLinkVertical.png:1  GET https://reforge.replit.app/Tiles/ChainLinkVertical.png 429 (Too Many Requests)Understand this error
+Grenade.png:1  GET https://reforge.replit.app/Items/Projectiles/Grenade.png 429 (Too Many Requests)Understand this error
+LegendaryWheel.png:1  GET https://reforge.replit.app/Items/Materials/LegendaryWheel.png 429 (Too Many Requests)Understand this error
+OldWrench.png:1  GET https://reforge.replit.app/Items/Projectiles/OldWrench.png 429 (Too Many Requests)Understand this error
+DarkConcrete.png:1  GET https://reforge.replit.app/Tiles/DarkConcrete.png 429 (Too Many Requests)Understand this error
+DarkConcreteCorner.png:1  GET https://reforge.replit.app/Tiles/DarkConcreteCorner.png 429 (Too Many Requests)Understand this error
+DarkConcreteCenter.png:1  GET https://reforge.replit.app/Tiles/DarkConcreteCenter.png 429 (Too Many Requests)Understand this error
+PipeL.png:1  GET https://reforge.replit.app/Tiles/PipeL.png 429 (Too Many Requests)Understand this error
+WhiteConcrete.png:1  GET https://reforge.replit.app/Tiles/WhiteConcrete.png 429 (Too Many Requests)Understand this error
+WhiteConcreteCorner.png:1  GET https://reforge.replit.app/Tiles/WhiteConcreteCorner.png 429 (Too Many Requests)Understand this error
+p5.js:57365 
+🌸 p5.js says: It looks like there was a problem loading your image. Try checking if the file path (https://reforge.replit.app/Tiles/ChainLink.png) is correct, hosting the file online, or running a local server.
+
++ More info: https://github.com/processing/p5.js/wiki/Local-server
+p5.js:78141 Event {isTrusted: true, type: 'error', target: img, currentTarget: img, eventPhase: 2, …}
+313._main.default.loadImage.fetch.then.img.onerror @ p5.js:78141Understand this error
+p5.js:57365 
+🌸 p5.js says: It looks like there was a problem loading your image. Try checking if the file path (https://reforge.replit.app/Tiles/ChainLinkVertical.png) is correct, hosting the file online, or running a local server.
+
++ More info: https://github.com/processing/p5.js/wiki/Local-server
+p5.js:78141 Event {isTrusted: true, type: 'error', target: img, currentTarget: img, eventPhase: 2, …}
+313._main.default.loadImage.fetch.then.img.onerror @ p5.js:78141Understand this error
+p5.js:57365 
+🌸 p5.js says: It looks like there was a problem loading your image. Try checking if the file path (https://reforge.replit.app/Items/Projectiles/Grenade.png) is correct, hosting the file online, or running a local server.
+
++ More info: https://github.com/processing/p5.js/wiki/Local-server
+p5.js:78141 Event {isTrusted: true, type: 'error', target: img, currentTarget: img, eventPhase: 2, …}
+313._main.default.loadImage.fetch.then.img.onerror @ p5.js:78141Understand this error
+p5.js:57365 
+🌸 p5.js says: It looks like there was a problem loading your image. Try checking if the file path (https://reforge.replit.app/Items/Materials/LegendaryWheel.png) is correct, hosting the file online, or running a local server.
+
++ More info: https://github.com/processing/p5.js/wiki/Local-server
+p5.js:78141 Event {isTrusted: true, type: 'error', target: img, currentTarget: img, eventPhase: 2, …}
+313._main.default.loadImage.fetch.then.img.onerror @ p5.js:78141Understand this error
+p5.js:57365 
+🌸 p5.js says: It looks like there was a problem loading your image. Try checking if the file path (https://reforge.replit.app/Items/Projectiles/OldWrench.png) is correct, hosting the file online, or running a local server.
+
++ More info: https://github.com/processing/p5.js/wiki/Local-server
+p5.js:78141 Event {isTrusted: true, type: 'error', target: img, currentTarget: img, eventPhase: 2, …}
+313._main.default.loadImage.fetch.then.img.onerror @ p5.js:78141Understand this error
+p5.js:57365 
+🌸 p5.js says: It looks like there was a problem loading your image. Try checking if the file path (https://reforge.replit.app/Tiles/DarkConcrete.png) is correct, hosting the file online, or running a local server.
+
++ More info: https://github.com/processing/p5.js/wiki/Local-server
+p5.js:78141 Event {isTrusted: true, type: 'error', target: img, currentTarget: img, eventPhase: 2, …}
+313._main.default.loadImage.fetch.then.img.onerror @ p5.js:78141Understand this error
+p5.js:57365 
+🌸 p5.js says: It looks like there was a problem loading your image. Try checking if the file path (https://reforge.replit.app/Tiles/DarkConcreteCorner.png) is correct, hosting the file online, or running a local server.
+
++ More info: https://github.com/processing/p5.js/wiki/Local-server
+p5.js:78141 Event {isTrusted: true, type: 'error', target: img, currentTarget: img, eventPhase: 2, …}
+313._main.default.loadImage.fetch.then.img.onerror @ p5.js:78141Understand this error
+p5.js:57365 
+🌸 p5.js says: It looks like there was a problem loading your image. Try checking if the file path (https://reforge.replit.app/Tiles/DarkConcreteCenter.png) is correct, hosting the file online, or running a local server.
+
++ More info: https://github.com/processing/p5.js/wiki/Local-server
+p5.js:78141 Event {isTrusted: true, type: 'error', target: img, currentTarget: img, eventPhase: 2, …}
+313._main.default.loadImage.fetch.then.img.onerror @ p5.js:78141Understand this error
+p5.js:57365 
+🌸 p5.js says: It looks like there was a problem loading your image. Try checking if the file path (https://reforge.replit.app/Tiles/PipeL.png) is correct, hosting the file online, or running a local server.
+
++ More info: https://github.com/processing/p5.js/wiki/Local-server
+p5.js:78141 Event {isTrusted: true, type: 'error', target: img, currentTarget: img, eventPhase: 2, …}
+313._main.default.loadImage.fetch.then.img.onerror @ p5.js:78141Understand this error
+p5.js:57365 
+🌸 p5.js says: It looks like there was a problem loading your image. Try checking if the file path (https://reforge.replit.app/Tiles/WhiteConcrete.png) is correct, hosting the file online, or running a local server.
+
++ More info: https://github.com/processing/p5.js/wiki/Local-server
+p5.js:78141 Event {isTrusted: true, type: 'error', target: img, currentTarget: img, eventPhase: 2, …}
+313._main.default.loadImage.fetch.then.img.onerror @ p5.js:78141Understand this error
+p5.js:57365 
+🌸 p5.js says: It looks like there was a problem loading your image. Try checking if the file path (https://reforge.replit.app/Tiles/WhiteConcreteCorner.png) is correct, hosting the file online, or running a local server.
+
++ More info: https://github.com/processing/p5.js/wiki/Local-server
+p5.js:78141 Event {isTrusted: true, type: 'error', target: img, currentTarget: img, eventPhase: 2, …}
+313._main.default.loadImage.fetch.then.img.onerror @ p5.js:78141Understand this error

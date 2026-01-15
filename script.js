@@ -382,7 +382,7 @@ function preload() {
   FrameImg = loadImage("hud/Frame.png");
   Fog = loadImage("hud/Fog.png");
   IndicatorImg = loadImage("Indicator.png");
-  Silkscreen = loadFont("Silkscreen-Regular.ttf");
+  Silkscreen = loadFont("Fonts/Silkscreen-Regular.ttf");
   ReforgeLogo = loadImage("REFORGE.png");
   titleScreenImg = loadImage("hud/titleScreen.png");
   WaypointImg = loadImage("Waypoint.png");
@@ -391,6 +391,7 @@ function preload() {
   BunkerImg = loadImage("Buschwick Industries.png");
   PrometheusIntroImg = loadImage("PrometheusIntro.png");
   CryochamberImg = loadImage("Cryochamber.png");
+  Silkscreen = loadFont("Fonts/Silkscreen-Regular.ttf");
 
   // Load concrete tile variants
   tileVariants[3] = {
