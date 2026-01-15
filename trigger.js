@@ -56,7 +56,7 @@ function handleTriggers(trigger) {
   if (trigger == "Hephaestus") {
     if (triggerList.Hephaestus.talkToHephaestus == false) {
       triggerList.Hephaestus.talkToHephaestus = true;
-      droppedItems.push(new DroppedItem(new Item("gun", "glock", 1), 23075, 22675));
+      droppedItems.push(new DroppedItem(new Item("gun", "steam gun", 1), 23075, 22675));
       messages.push(new Message("dialogue", ["Hephaestus: Take this. This is a steam gun. It takes some of your steam reserves to fire, but it's powerful", "Hephaestus: I hope it will help you survive out there"], "Hephaestus", true));
       return;
     }

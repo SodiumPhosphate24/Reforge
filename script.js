@@ -315,7 +315,7 @@ function preload() {
   BulletImgs[2] = loadImage("Items/Bullets/RareBullet.png");
   BulletImgs[3] = loadImage("Items/Bullets/LegendaryBullet.png");
   BulletImgs[4] = loadImage("Items/Bullets/ExplosiveBullet.png");
-  GunImgs[0] = loadImage("Items/Guns/Glock.png");
+  GunImgs[0] = loadImage("Items/Guns/SteamGun.png");
   GunImgs[1] = loadImage("Items/Guns/WesternPistol.png");
   GunImgs[2] = loadImage("Items/Guns/RarePistol.png");
   tileImgs[0] = loadImage("Tiles/deadGrass.png");
@@ -717,7 +717,7 @@ function setup() {
 
   // Initialize itemConstructors BEFORE parsing world so crate inventories can be loaded
   itemConstructors = [
-    ["gun", "glock", 1, GunImgs[0]],
+    ["gun", "steam gun", 1, GunImgs[0]],
     ["gun", "western", 1, GunImgs[1]],
     ["gun", "rare pistol", 1, GunImgs[2]],
     ["consumable", "cheese", 1, itemImgs[0]],

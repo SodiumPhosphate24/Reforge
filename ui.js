@@ -105,14 +105,14 @@ class Item {
     if (type == "gun") {
       this.type = "gun";
       this.stackable = false;
-      if (name == "glock") {
+      if (name == "steam gun") {
         this.name = name;
         this.image = GunImgs[0];
         this.damage = 1;
         this.ammo = 100;
         this.ammoType = "common";
         this.fireRate = .33;
-        this.HtoW = 0.68;
+        this.HtoW = 0.43;
 
       }
       if (name == "western") {
