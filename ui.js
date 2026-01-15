@@ -251,9 +251,11 @@ class DroppedItem {
     // Determine base size based on item type
     let baseSize = 35; // Default
 
-    if (this.item.type === "gun" && this.item.name != "steam gun") {
+    if (this.item.name == "steam gun"){
+      baseSize = 60;
+    } else if (this.item.type === "gun" && this.item.name != "steam gun") {
       baseSize = 40; // Guns are moderately sized
-    } else if (this.item.type === "consumable" || this.item.type == "material" || this.item.name == "steam gun") {
+    } else if (this.item.type === "consumable" || this.item.type == "material") {
       baseSize = 30; // Consumables are medium
     } else if (this.item.type === "projectile") {
       baseSize = 28; // Projectiles are medium-small
