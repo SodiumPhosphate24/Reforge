@@ -248,12 +248,13 @@ function registerMultiTile(tileID, imagePath, gridW, gridH) {
     sections: []
   };
   
-  // Automatically clear tileImgs entry and prepare tileVariants
-  tileImgs[tileID] = null;
-  tileVariants[tileID] = {
-    variants: {},
-    fullImage: img
-  };
+  // Map to tileVariants for the rendering system
+  if (!tileVariants[tileID]) {
+    tileVariants[tileID] = {
+      variants: {},
+      fullImage: img
+    };
+  }
 }
 
 // Generate multi-tile sections by splitting source image into grid
@@ -406,9 +407,13 @@ function preload() {
   tileImgs[33] = loadImage("Tiles/ChainLinkCorner.png");
   tileImgs[34] = loadImage("Tiles/ChainLinkVertical.png");
   tileImgs[35] = loadImage("Tiles/ChainLinkEnd.png");
+  tileImgs[36] = null;
+  tileImgs[37] = null;
   tileImgs[38] = loadImage("Tiles/WhiteBrick.png");
   tileImgs[39] = loadImage("Tiles/WhiteTile.png");
   tileImgs[40] = loadImage("Tiles/SteelCrate.png");
+  tileImgs[41] = null;
+  tileImgs[42] = null;
 
   // Register multi-tile objects
   registerMultiTile(6, "Tiles/Crafting.png", 2, 2); // Workbench
@@ -494,8 +499,8 @@ function generateAllMultiTileSections() {
 
     const fullImg = config.fullImage;
     // Wait for image to load if it hasn't yet (though p5 preload usually handles this)
-    if (fullImg.width <= 1) {
-        console.warn(`Image for multi-tile ${tileID} not loaded yet. Skipping section generation.`);
+    if (!fullImg || fullImg.width <= 1) {
+        console.warn(`Image for multi-tile ${tileID} not loaded yet or invalid. Skipping section generation.`);
         continue;
     }
 
@@ -1380,7 +1385,7 @@ function isSameTileType(row, col, layer, tileType) {
 // Returns null if this tile is not the top-left of a multi-tile, or { section, isTopLeft }
 function getMultiTileSection(row, col, layer, tileType) {
   const config = multiTileConfig[tileType];
-  if (!config) return null;
+  if (!config || !config.sections || config.sections.length === 0) return null;
 
   // Check if this is the top-left corner of a multi-tile placement
   let isTopLeft = true;
@@ -1824,18 +1829,20 @@ function drawWorldLayer(world, layerIndex) {
 
       // Draw the tile (apply rotation, flips, and scale)
       const needsTransform = finalRotation > 0 || tileObj.flipH || tileObj.flipV || roofScaleValue < 1.0;
-      if (needsTransform) {
-        push();
-        translate(j * 50 + 25, i * 50 + 25);
-        rotate(radians(finalRotation));
-        scale(
-          (tileObj.flipH ? -1 : 1) * roofScaleValue,
-          (tileObj.flipV ? -1 : 1) * roofScaleValue
-        );
-        image(imgToDraw, -25, -25, 50, 50);
-        pop();
-      } else {
-        image(imgToDraw, j * 50, i * 50, 50, 50);
+      if (imgToDraw) {
+        if (needsTransform) {
+          push();
+          translate(j * 50 + 25, i * 50 + 25);
+          rotate(radians(finalRotation));
+          scale(
+            (tileObj.flipH ? -1 : 1) * roofScaleValue,
+            (tileObj.flipV ? -1 : 1) * roofScaleValue
+          );
+          image(imgToDraw, -25, -25, 50, 50);
+          pop();
+        } else {
+          image(imgToDraw, j * 50, i * 50, 50, 50);
+        }
       }
 
       // Draw crate inventory only when needed
