@@ -391,7 +391,6 @@ function preload() {
   BunkerImg = loadImage("Buschwick Industries.png");
   PrometheusIntroImg = loadImage("PrometheusIntro.png");
   CryochamberImg = loadImage("Cryochamber.png");
-  Silkscreen = loadFont("Fonts/Silkscreen-Regular.ttf");
 
   // Load concrete tile variants
   tileVariants[3] = {
