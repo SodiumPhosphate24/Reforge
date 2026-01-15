@@ -873,10 +873,6 @@ function drawGameplay() {
   drawEnemies();
   drawBullets();
 
-  // Check if player is holding old wrench
-  const holdingOldWrench = inventoryList[inventorySlot - 1] != null &&
-    inventoryList[inventorySlot - 1].name === "old wrench";
-
   // Calculate player center for distance checks
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
