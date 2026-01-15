@@ -428,167 +428,209 @@ function preload() {
     }
   };
 
-// System for adding multi-tile objects
-const multiTileRegistry = {};
+  // Workbench variants - 2x2 multi-tile system
+  // The 32x32 image will be split into 4 quadrants
+  tileVariants[6] = {
+    variants: {
+      'top_left': null,     // Will be created from quadrant
+      'top_right': null,    // Will be created from quadrant
+      'bottom_left': null,  // Will be created from quadrant
+      'bottom_right': null  // Will be created from quadrant
+    },
+    fullImage: loadImage("Tiles/Crafting.png") // Load the full 32x32 image
+  }
 
-/**
- * Registers a multi-tile object (e.g., Tree, Bench, Lampost)
- * @param {number} tileType - The ID of the tile
- * @param {string} imagePath - Path to the full image
- * @param {number} gridW - Number of tiles wide
- * @param {number} gridH - Number of tiles tall
- */
-function registerMultiTile(tileType, imagePath, gridW, gridH) {
-  multiTileRegistry[tileType] = {
-    tileType,
-    imagePath,
-    gridW,
-    gridH,
-    fullImage: loadImage(imagePath),
-    sections: {} // Map of 'row_col' to Graphics
-  };
-}
+  // Lampost variants - 1x2 multi-tile system (1 tile wide, 2 tiles tall)
+  // The image will be split into top and bottom halves
+  tileVariants[36] = {
+    variants: {
+      'top': null,    // Will be created from top half
+      'bottom': null  // Will be created from bottom half
+    },
+    fullImage: loadImage("Tiles/Lampost.png") // Load the full lampost image
+  }
 
-// Generate sections for all registered multi-tiles
-function generateAllMultiTileSections() {
-  for (let type in multiTileRegistry) {
-    const config = multiTileRegistry[type];
-    if (!config.fullImage) continue;
+  // Bench variants - 2x1 multi-tile system (2 tiles wide, 1 tile tall)
+  // The image will be split into left and right halves
+  tileVariants[37] = {
+    variants: {
+      'left': null,   // Will be created from left half
+      'right': null   // Will be created from right half
+    },
+    fullImage: loadImage("Tiles/Bench.png") // Load the full bench image
+  }
 
-    const sW = config.fullImage.width / config.gridW;
-    const sH = config.fullImage.height / config.gridH;
-
-    for (let r = 0; r < config.gridH; r++) {
-      for (let c = 0; c < config.gridW; c++) {
-        const section = createGraphics(sW, sH);
-        section.copy(config.fullImage, c * sW, r * sH, sW, sH, 0, 0, sW, sH);
-        config.sections[`${r}_${c}`] = section;
-      }
-    }
+  // Tree variants - 1x2 multi-tile system
+  // The image will be split into top and bottom halves
+  tileVariants[41] = {
+    variants: {
+      'top': null,    // Will be created from top half
+      'bottom': null  // Will be created from bottom half
+    },
+    fullImage: loadImage("Tiles/Tree.png") // Load the full tree image
   }
 }
 
-// Generic variant resolver for registry-based multi-tiles
-function getGenericMultiTileVariant(row, col, layer, tileType) {
-  const config = multiTileRegistry[tileType];
-  if (!config) return null;
+// Generate multi-tile sections by splitting source image into grid
+function generateMultiTileSections() {
+  for (let tileType in multiTileConfig) {
+    const config = multiTileConfig[tileType];
+    if (!config || !config.fullImage) {
+      console.error("Multi-tile config or image missing for tile", tileType);
+      continue;
+    }
 
-  // Find the top-left of this cluster
-  let rootRow = row;
-  let rootCol = col;
+    const fullImg = config.fullImage;
+    const tileWidth = fullImg.width / config.width;
+    const tileHeight = fullImg.height / config.height;
 
-  // Search upwards and leftwards for the start of the pattern
-  while (isSameTileType(rootRow - 1, rootCol, layer, tileType)) rootRow--;
-  while (isSameTileType(rootRow, rootCol - 1, layer, tileType)) rootCol--;
+    config.sections = [];
 
-  const relativeRow = row - rootRow;
-  const relativeCol = col - rootCol;
+    // Split image into grid sections
+    for (let row = 0; row < config.height; row++) {
+      config.sections[row] = [];
+      for (let col = 0; col < config.width; col++) {
+        const section = createGraphics(tileWidth, tileHeight);
+        section.copy(
+          fullImg,
+          col * tileWidth, row * tileHeight, tileWidth, tileHeight,
+          0, 0, tileWidth, tileHeight
+        );
+        config.sections[row][col] = section;
+      }
+    }
 
-  // If outside the registered bounds, it's not a valid part of this multi-tile
-  if (relativeRow >= config.gridH || relativeCol >= config.gridW) return null;
-
-  const section = config.sections[`${relativeRow}_${relativeCol}`];
-  if (!section) return null;
-
-  return { variant: `${relativeRow}_${relativeCol}`, rotation: 0, flipH: false, baseImg: section };
+    console.log(`Multi-tile ${tileType}: generated ${config.width}x${config.height} sections`);
+  }
 }
 
-function preload() {
-  Buschy = loadImage("Character/Buschy.png");
-  InventoryImg = loadImage("UI/Inventory.png");
-  FrameImg = loadImage("UI/Frame.png");
-  Fog = loadImage("UI/Fog.png");
-  IndicatorImg = loadImage("UI/Indicator.png");
-  WaypointImg = loadImage("UI/Waypoint.png");
-  titleScreenImg = loadImage("UI/TitleScreen.png");
-  BunkerImg = loadImage("UI/Bunker.png");
-  PrometheusIntroImg = loadImage("UI/PrometheusIntro.png");
-  CryochamberImg = loadImage("UI/Cryochamber.png");
-  
-  // Bullets
-  BulletImgs[0] = loadImage("Items/BulletCommon.png");
-  BulletImgs[1] = loadImage("Items/BulletUncommon.png");
-  BulletImgs[2] = loadImage("Items/BulletRare.png");
-  BulletImgs[3] = loadImage("Items/BulletLegendary.png");
-  BulletImgs[4] = loadImage("Items/BulletExplosive.png");
+// Generate workbench variants by splitting 32x32 image into 4 quadrants
+function generateWorkbenchVariants() {
+  const workbenchConfig = tileVariants[6];
+  if (!workbenchConfig || !workbenchConfig.fullImage) {
+    console.error("Workbench config or image missing");
+    return;
+  }
 
-  // Guns
-  GunImgs[0] = loadImage("Items/GunCommon.png");
-  GunImgs[1] = loadImage("Items/GunRare.png");
-  GunImgs[2] = loadImage("Items/GunLegendary.png");
+  const fullImg = workbenchConfig.fullImage;
 
-  // Materials/Items
-  itemImgs[0] = loadImage("Items/Battery.png");
-  itemImgs[1] = loadImage("Items/CPU.png");
-  itemImgs[2] = loadImage("Items/CopperPipe.png");
-  itemImgs[3] = loadImage("Items/Rock.png");
-  itemImgs[4] = loadImage("Items/OldWrench.png");
-  itemImgs[5] = loadImage("Items/BoilerCartridge.png");
+  // The image is 32x32 pixels - split it into 4 quadrants of 16x16 each
+  const halfWidth = fullImg.width / 2;
+  const halfHeight = fullImg.height / 2;
 
-  // Projectiles
-  projImgs[0] = loadImage("Items/CartridgeCommon.png");
-  projImgs[1] = loadImage("Items/CartridgeRare.png");
-  projImgs[2] = loadImage("Items/CartridgeLegendary.png");
+  console.log("Workbench image dimensions:", fullImg.width, "x", fullImg.height);
+  console.log("Each quadrant will be:", halfWidth, "x", halfHeight);
 
-  // Materials
-  matImgs[0] = loadImage("Items/Rock.png");
-  matImgs[1] = loadImage("Items/Cheese.png");
-  matImgs[2] = loadImage("Items/Soda.png");
+  // Create top-left quadrant
+  const topLeft = createGraphics(halfWidth, halfHeight);
+  topLeft.copy(fullImg, 0, 0, halfWidth, halfHeight, 0, 0, halfWidth, halfHeight);
+  workbenchConfig.variants.top_left = topLeft;
 
-  Silkscreen = loadFont("Fonts/Silkscreen-Regular.ttf");
-  
-  // NPCs
-  Prometheus = loadImage("NPC/Prometheus.png");
-  SPUDImage = loadImage("NPC/SPUD.png");
-  Book = loadImage("NPC/Book.png");
-  Greg = loadImage("NPC/Greg.png");
-  LockNpc = loadImage("NPC/Lock.png");
-  Hephaestus = loadImage("NPC/Hephaestus.png");
+  // Create top-right quadrant
+  const topRight = createGraphics(halfWidth, halfHeight);
+  topRight.copy(fullImg, halfWidth, 0, halfWidth, halfHeight, 0, 0, halfWidth, halfHeight);
+  workbenchConfig.variants.top_right = topRight;
 
-  // Register multi-tile objects
-  registerMultiTile(6, "Tiles/Crafting.png", 2, 2); // Workbench
-  registerMultiTile(36, "Tiles/Lampost.png", 1, 2); // Lampost
-  registerMultiTile(37, "Tiles/Bench.png", 2, 1);   // Bench
-  registerMultiTile(41, "Tiles/Tree.png", 1, 2);    // Tree
+  // Create bottom-left quadrant
+  const bottomLeft = createGraphics(halfWidth, halfHeight);
+  bottomLeft.copy(fullImg, 0, halfHeight, halfWidth, halfHeight, 0, 0, halfWidth, halfHeight);
+  workbenchConfig.variants.bottom_left = bottomLeft;
+
+  // Create bottom-right quadrant
+  const bottomRight = createGraphics(halfWidth, halfHeight);
+  bottomRight.copy(fullImg, halfWidth, halfHeight, halfWidth, halfHeight, 0, 0, halfWidth, halfHeight);
+  workbenchConfig.variants.bottom_right = bottomRight;
+
+  console.log("Workbench variants generated: 4 quadrants from source image");
 }
 
-function setup() {
-  createCanvas(1200, 750);
-  noSmooth();
-  textFont(Silkscreen);
+function generateTreeVariants() {
+  const treeConfig = tileVariants[41];
+  if (!treeConfig || !treeConfig.fullImage) {
+    console.error("tree config or image missing");
+    return;
+  }
 
-  // Initialize player data
-  initPlayers();
+  const fullImg = treeConfig.fullImage;
 
-  // Load world from file
-  fetch('world.txt')
-    .then(response => response.text())
-    .then(data => {
-      worldString = data;
-      
-      // Now parse the world with itemConstructors available
-      gameWorld = stringToWorld(worldString);
-      initializeHardcodes();
-      inventoryList = players[activePlayer].inventory;
+  // Split the image into 2 halves (top and bottom)
+  const fullWidth = fullImg.width;
+  const halfHeight = fullImg.height / 2;
 
-      // Set maxTileTypes after world is loaded
-      maxTileTypes = tileImgs.length;
-    });
+  console.log("Tree image dimensions:", fullImg.width, "x", fullImg.height);
+  console.log("Each half will be:", fullWidth, "x", halfHeight);
 
-  // Load item constructors
-  initItemConstructors();
+  // Create top half
+  const top = createGraphics(fullWidth, halfHeight);
+  top.copy(fullImg, 0, 0, fullWidth, halfHeight, 0, 0, fullWidth, halfHeight);
+  treeConfig.variants.top = top;
 
-  // Initialize indicators
-  indicatorCurrentX = pX + 600;
-  indicatorCurrentY = pY + 375;
-  indicatorTargetX = indicatorCurrentX;
-  indicatorTargetY = indicatorCurrentY;
+  // Create bottom half
+  const bottom = createGraphics(fullWidth, halfHeight);
+  bottom.copy(fullImg, 0, halfHeight, fullWidth, halfHeight, 0, 0, fullWidth, halfHeight);
+  treeConfig.variants.bottom = bottom;
 
-  // Initialize boiler prompt
-  boilerPrompt = createPrompt();
+  console.log("Tree variants generated: 2 halves from source image");
+}
 
-  generateAllMultiTileSections();
-  generateTintedTileCache();
+// Generate lampost variants by splitting image into 2 halves (1x2 tiles - vertical)
+function generateLampostVariants() {
+  const lampostConfig = tileVariants[36];
+  if (!lampostConfig || !lampostConfig.fullImage) {
+    console.error("Lampost config or image missing");
+    return;
+  }
+
+  const fullImg = lampostConfig.fullImage;
+
+  // Split the image into 2 halves (top and bottom)
+  const fullWidth = fullImg.width;
+  const halfHeight = fullImg.height / 2;
+
+  console.log("Lampost image dimensions:", fullImg.width, "x", fullImg.height);
+  console.log("Each half will be:", fullWidth, "x", halfHeight);
+
+  // Create top half
+  const top = createGraphics(fullWidth, halfHeight);
+  top.copy(fullImg, 0, 0, fullWidth, halfHeight, 0, 0, fullWidth, halfHeight);
+  lampostConfig.variants.top = top;
+
+  // Create bottom half
+  const bottom = createGraphics(fullWidth, halfHeight);
+  bottom.copy(fullImg, 0, halfHeight, fullWidth, halfHeight, 0, 0, fullWidth, halfHeight);
+  lampostConfig.variants.bottom = bottom;
+
+  console.log("Lampost variants generated: 2 halves from source image");
+}
+
+// Generate bench variants by splitting image into 2 halves (2x1 tiles)
+function generateBenchVariants() {
+  const benchConfig = tileVariants[37];
+  if (!benchConfig || !benchConfig.fullImage) {
+    console.error("Bench config or image missing");
+    return;
+  }
+
+  const fullImg = benchConfig.fullImage;
+
+  // Split the image into 2 halves (left and right)
+  const halfWidth = fullImg.width / 2;
+  const fullHeight = fullImg.height;
+
+  console.log("Bench image dimensions:", fullImg.width, "x", fullImg.height);
+  console.log("Each half will be:", halfWidth, "x", fullHeight);
+
+  // Create left half
+  const left = createGraphics(halfWidth, fullHeight);
+  left.copy(fullImg, 0, 0, halfWidth, fullHeight, 0, 0, halfWidth, fullHeight);
+  benchConfig.variants.left = left;
+
+  // Create right half
+  const right = createGraphics(halfWidth, fullHeight);
+  right.copy(fullImg, halfWidth, 0, halfWidth, fullHeight, 0, 0, halfWidth, fullHeight);
+  benchConfig.variants.right = right;
+
+  console.log("Bench variants generated: 2 halves from source image");
 }
 
 // Generate cached tinted versions of all tiles
@@ -653,6 +695,68 @@ function generateTintedTileCache() {
   console.log("Tinted tile cache generated successfully!");
 }
 
+function setup() {
+  createCanvas(1200, 750);
+  maxTileTypes = tileImgs.length;
+  PlayerImage = Buschy;
+
+  // Generate workbench quadrants from the 32x32 image
+  generateWorkbenchVariants();
+
+  // Generate tree halves from the image
+  generateTreeVariants();
+
+  // Generate lampost halves from the image
+  generateLampostVariants();
+
+  // Generate bench halves from the image
+  generateBenchVariants();
+
+  // Generate multi-tile sections
+  generateMultiTileSections();
+
+  // Generate tinted tile cache after images are loaded
+  generateTintedTileCache();
+
+  // Initialize itemConstructors BEFORE parsing world so crate inventories can be loaded
+  itemConstructors = [
+    ["gun", "steam gun", 1, GunImgs[0]],
+    ["gun", "western", 1, GunImgs[1]],
+    ["gun", "rare pistol", 1, GunImgs[2]],
+    ["consumable", "cheese", 1, itemImgs[0]],
+    ["consumable", "soda", 1, itemImgs[1]],
+    ["consumable", "common cartridge", 1, itemImgs[2]],
+    ["consumable", "rare cartridge", 1, itemImgs[3]],
+    ["consumable", "legendary cartridge", 1, itemImgs[4]],
+    ["projectile", "grenade", 1, projImgs[0]],
+    ["projectile", "rock", 10, projImgs[1]],
+    ["material", "common wheel", 1, matImgs[0]],
+    ["material", "rare wheel", 1, matImgs[1]],
+    ["material", "legendary wheel", 1, matImgs[2]],
+    ["material", "cog", 1, matImgs[3]],
+    ["material", "pipe", 1, matImgs[4]],
+    ["material", "boiler cartridge", 1, matImgs[5]],
+    ["projectile", "crowbar", 1, itemImgs[5]]
+  ];
+
+  // Now parse the world with itemConstructors available
+  gameWorld = stringToWorld(worldString[0]);
+  console.log(worldString);
+  initializeHardcodes();
+  inventoryList = players[activePlayer].inventory;
+
+  // Initialize indicator position
+  indicatorCurrentX = pX + 600;
+  indicatorCurrentY = pY + 375;
+  indicatorTargetX = indicatorCurrentX;
+  indicatorTargetY = indicatorCurrentY;
+
+  // Initialize boiler prompt
+  boilerPrompt = createPrompt();
+
+  // Intro will be started from menu screen
+  // Roof fade will be initialized during intro sequence
+}
 
 function draw() {
   // Show menu screen if not playing
@@ -1432,19 +1536,119 @@ function getMultiTileSection(row, col, layer, tileType) {
 // Get the appropriate workbench variant based on position in 2x2 grid
 // Workbench (6) uses variants: top_left, top_right, bottom_left, bottom_right
 function getWorkbenchVariant(row, col, layer, tileType) {
-  return getGenericMultiTileVariant(row, col, layer, tileType);
+  if (tileType !== 6) return null;
+
+  // Check if this is part of a 2x2 workbench cluster
+  const hasRight = isSameTileType(row, col + 1, layer, tileType);
+  const hasBottom = isSameTileType(row + 1, col, layer, tileType);
+  const hasLeft = isSameTileType(row, col - 1, layer, tileType);
+  const hasTop = isSameTileType(row - 1, col, layer, tileType);
+
+  let variant = 'top_left'; // default
+
+  // Determine position in 2x2 grid based on which neighbors exist
+  if (hasRight && hasBottom && !hasLeft && !hasTop) {
+    variant = 'top_left';
+  } else if (hasLeft && hasBottom && !hasRight && !hasTop) {
+    variant = 'top_right';
+  } else if (hasRight && hasTop && !hasLeft && !hasBottom) {
+    variant = 'bottom_left';
+  } else if (hasLeft && hasTop && !hasRight && !hasBottom) {
+    variant = 'bottom_right';
+  }
+  // If it doesn't match a 2x2 pattern, just use top_left as fallback
+
+  const config = tileVariants[6];
+  if (!config || !config.variants || !config.variants[variant]) {
+    console.error("Workbench variant missing:", variant);
+    return null;
+  }
+
+  return { variant, rotation: 0, flipH: false, baseImg: config.variants[variant] };
 }
 
+// Get the appropriate tree variant based on position in 1x2 grid
+// Tree (41) uses variants: top, bottom
 function getTreeVariant(row, col, layer, tileType) {
-  return getGenericMultiTileVariant(row, col, layer, tileType);
+  if (tileType !== 41) return null;
+
+  // Check if this is part of a 1x2 tree cluster
+  const hasBottom = isSameTileType(row + 1, col, layer, tileType);
+  const hasTop = isSameTileType(row - 1, col, layer, tileType);
+
+  let variant = 'top'; // default
+
+  // Determine position in 1x2 grid based on which neighbors exist
+  if (hasBottom && !hasTop) {
+    variant = 'top';
+  } else if (hasTop && !hasBottom) {
+    variant = 'bottom';
+  }
+  // If it doesn't match a 1x2 pattern, just use top as fallback
+
+  const config = tileVariants[41];
+  if (!config || !config.variants || !config.variants[variant]) {
+    console.error("Tree variant missing:", variant);
+    return null;
+  }
+
+  return { variant, rotation: 0, flipH: false, baseImg: config.variants[variant] };
 }
 
+// Get the appropriate lampost variant based on position in 1x2 grid
+// Lampost (36) uses variants: top, bottom
 function getLampostVariant(row, col, layer, tileType) {
-  return getGenericMultiTileVariant(row, col, layer, tileType);
+  if (tileType !== 36) return null;
+
+  // Check if this is part of a 1x2 lampost cluster
+  const hasBottom = isSameTileType(row + 1, col, layer, tileType);
+  const hasTop = isSameTileType(row - 1, col, layer, tileType);
+
+  let variant = 'top'; // default
+
+  // Determine position in 1x2 grid based on which neighbors exist
+  if (hasBottom && !hasTop) {
+    variant = 'top';
+  } else if (hasTop && !hasBottom) {
+    variant = 'bottom';
+  }
+  // If it doesn't match a 1x2 pattern, just use top as fallback
+
+  const config = tileVariants[36];
+  if (!config || !config.variants || !config.variants[variant]) {
+    console.error("Lampost variant missing:", variant);
+    return null;
+  }
+
+  return { variant, rotation: 0, flipH: false, baseImg: config.variants[variant] };
 }
 
+// Get the appropriate bench variant based on position in 2x1 grid
+// Bench (37) uses variants: left, right
 function getBenchVariant(row, col, layer, tileType) {
-  return getGenericMultiTileVariant(row, col, layer, tileType);
+  if (tileType !== 37) return null;
+
+  // Check if this is part of a 2x1 bench cluster
+  const hasRight = isSameTileType(row, col + 1, layer, tileType);
+  const hasLeft = isSameTileType(row, col - 1, layer, tileType);
+
+  let variant = 'left'; // default
+
+  // Determine position in 2x1 grid based on which neighbors exist
+  if (hasRight && !hasLeft) {
+    variant = 'left';
+  } else if (hasLeft && !hasRight) {
+    variant = 'right';
+  }
+  // If it doesn't match a 2x1 pattern, just use left as fallback
+
+  const config = tileVariants[37];
+  if (!config || !config.variants || !config.variants[variant]) {
+    console.error("Bench variant missing:", variant);
+    return null;
+  }
+
+  return { variant, rotation: 0, flipH: false, baseImg: config.variants[variant] };
 }
 
 // Get the appropriate pipe variant and rotation based on neighbors
@@ -2203,10 +2407,8 @@ function drawGunDebugRect() {
 
       if (item.type === "bullet") {
         baseSize = 18;
-      } else if (item.type === "gun" && item.name != "steam gun") {
+      } else if (item.type === "gun") {
         baseSize = 30;
-      }  else if (item.name == "steam gun") {
-        baseSize = 52;
       } else if (item.type === "consumable") {
         baseSize = 25;
       } else if (item.type === "projectile") {
@@ -2240,7 +2442,7 @@ function drawGunDebugRect() {
 
   }
   pop();
-  
+
   pop(); // restore transforms
 }
 
@@ -2483,8 +2685,10 @@ function initializeHardcodes() {
       "Walden : nor did I wish to practise resignation, unless it was quite necessary. I wanted to live deep and suck out all the marrow of life, to live so sturdily and Spartan-like as to put to rout all that was not life",
       "Walden : to cut a broad swath and shave close, to drive life into a corner, and reduce it to its lowest terms, and, if it proved to be mean, why then to get the whole and genuine meanness of it, and publish its meanness to the world",
       "Walden : or if it were sublime, to know it by experience, and be able to give a true account of it in my next excursion",
-      "Walden :  For most men, it appears to me, are in a strange uncertainty about it, whether it is of the devil or of God, and have somewhat hastily concluded that it is the chief end of man here to \"glorify God and enjoy him forever.\""
+      "Walden :  For most men, it appears to me, are in a strange uncertainty about it, whether it is of the devil or of God, and have somewhat hastily concluded that it is the chief end of man here to \"glorify God and enjoy him forever.\"",
+
     ], Book, "Book"));
+
 
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
 }
