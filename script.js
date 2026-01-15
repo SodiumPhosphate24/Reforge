@@ -2407,7 +2407,9 @@ function drawGunDebugRect() {
 
       if (item.type === "bullet") {
         baseSize = 18;
-      } else if (item.type === "gun") {
+      } else if (item.name == "steam gun"){
+        baseSize = 52;
+      } else if (item.type === "gun" && item.name != "steam gun") {
         baseSize = 30;
       } else if (item.type === "consumable") {
         baseSize = 25;
