@@ -240,11 +240,19 @@ var multiTileConfig = {};
  * @param {Number} gridH - Height in grid cells
  */
 function registerMultiTile(tileID, imagePath, gridW, gridH) {
+  const img = loadImage(imagePath);
   multiTileConfig[tileID] = {
     width: gridW,
     height: gridH,
-    fullImage: loadImage(imagePath),
+    fullImage: img,
     sections: []
+  };
+  
+  // Automatically clear tileImgs entry and prepare tileVariants
+  tileImgs[tileID] = null;
+  tileVariants[tileID] = {
+    variants: {},
+    fullImage: img
   };
 }
 
@@ -398,13 +406,9 @@ function preload() {
   tileImgs[33] = loadImage("Tiles/ChainLinkCorner.png");
   tileImgs[34] = loadImage("Tiles/ChainLinkVertical.png");
   tileImgs[35] = loadImage("Tiles/ChainLinkEnd.png");
-  tileImgs[36] = null; // Lampost uses variants, loaded below
-  tileImgs[37] = null; // Bench uses variants, loaded below
   tileImgs[38] = loadImage("Tiles/WhiteBrick.png");
   tileImgs[39] = loadImage("Tiles/WhiteTile.png");
   tileImgs[40] = loadImage("Tiles/SteelCrate.png");
-  tileImgs[41] = null; // Tree uses variants, loaded below
-  tileImgs[42] = null; // Boiler uses variants, loaded below
 
   // Register multi-tile objects
   registerMultiTile(6, "Tiles/Crafting.png", 2, 2); // Workbench
@@ -477,48 +481,6 @@ function preload() {
       'cross': loadImage("Tiles/PipeCross.png")
     }
   };
-
-  // Workbench variants - 2x2 multi-tile system
-  // The 32x32 image will be split into 4 quadrants
-  tileVariants[6] = {
-    variants: {
-      'top_left': null,     // Will be created from quadrant
-      'top_right': null,    // Will be created from quadrant
-      'bottom_left': null,  // Will be created from quadrant
-      'bottom_right': null  // Will be created from quadrant
-    },
-    fullImage: loadImage("Tiles/Crafting.png") // Load the full 32x32 image
-  }
-
-  // Lampost variants - 1x2 multi-tile system (1 tile wide, 2 tiles tall)
-  // The image will be split into top and bottom halves
-  tileVariants[36] = {
-    variants: {
-      'top': null,    // Will be created from top half
-      'bottom': null  // Will be created from bottom half
-    },
-    fullImage: loadImage("Tiles/Lampost.png") // Load the full lampost image
-  }
-
-  // Bench variants - 2x1 multi-tile system (2 tiles wide, 1 tile tall)
-  // The image will be split into left and right halves
-  tileVariants[37] = {
-    variants: {
-      'left': null,   // Will be created from left half
-      'right': null   // Will be created from right half
-    },
-    fullImage: loadImage("Tiles/Bench.png") // Load the full bench image
-  }
-
-  // Tree variants - 1x2 multi-tile system
-  // The image will be split into top and bottom halves
-  tileVariants[41] = {
-    variants: {
-      'top': null,    // Will be created from top half
-      'bottom': null  // Will be created from bottom half
-    },
-    fullImage: loadImage("Tiles/Tree.png") // Load the full tree image
-  }
 }
 
 // Generate multi-tile sections by splitting source image into grid
