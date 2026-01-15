@@ -199,7 +199,7 @@ function keyPressed() {
     lockCodeInput = lockCodeInput.slice(0, -1);
   }
 
-  // Enter to submit code
+  // Enter to submit code or dismiss if already open
   if (lockCodeActive && keyCode == 13) {
     if (lockCodeInput === "1855") {
       // Correct code!
@@ -224,9 +224,26 @@ function keyPressed() {
         }
       }
       // Trigger objective
-    } else if (lockCodeInput.length === 4) {
-      // Wrong code, reset
+    } else {
+      // Wrong code or just dismissing
+      lockCodeActive = false;
       lockCodeInput = "";
+      for (let k = messages.length - 1; k >= 0; k--) {
+        if (messages[k].id === "Lock") {
+          messages[k].closing = true;
+        }
+      }
+    }
+  }
+
+  // Z key to dismiss lock dialogue
+  if (lockCodeActive && keyCode == 90) {
+    lockCodeActive = false;
+    lockCodeInput = "";
+    for (let k = messages.length - 1; k >= 0; k--) {
+      if (messages[k].id === "Lock") {
+        messages[k].closing = true;
+      }
     }
   }
 
