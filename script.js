@@ -149,6 +149,9 @@ function drawFadeToGame() {
   // Draw NPC prompt after camera pop (screen-fixed)
   drawNPCPromptIfNeeded();
 
+  // Draw leak repair prompt after camera pop (screen-fixed)
+  drawLeakPromptIfNeeded();
+
   // Draw UI elements
 
   messageDisplay();
@@ -882,6 +885,10 @@ function drawGameplay() {
   nearestLeak = null;
   let nearestLeakDistance = Infinity;
 
+  // Only check if holding wrench
+  const holdingOldWrench = inventoryList[inventorySlot - 1] != null &&
+    inventoryList[inventorySlot - 1].name === "old wrench";
+
   // Spawn particles from sources
   if (typeof particleSources !== 'undefined') {
     for (let sourceIndex = 0; sourceIndex < particleSources.length; sourceIndex++) {
@@ -892,11 +899,11 @@ function drawGameplay() {
         const distToPlayer = dist(playerCenterX, playerCenterY, ps.x, ps.y);
 
         // Check if player is near and holding wrench
-        if (holdingOldWrench && distToPlayer < 150) {
+        if (holdingOldWrench && distToPlayer < 120) {
           // Track nearest leak for prompt
           if (distToPlayer < nearestLeakDistance) {
             nearestLeakDistance = distToPlayer;
-            nearestLeak = { source: ps, index: sourceIndex, distance: distToPlayer };
+            nearestLeak = { x: ps.x, y: ps.y, index: sourceIndex };
           }
         }
       }
