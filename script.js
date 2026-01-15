@@ -431,7 +431,7 @@ function preload() {
   FrameImg = loadImage("hud/Frame.png");
   Fog = loadImage("hud/Fog.png");
   IndicatorImg = loadImage("Indicator.png");
-  Silkscreen = loadFont("Fonts/Silkscreen-Regular.ttf");
+  Silkscreen = loadFont("Silkscreen-Regular.ttf");
   ReforgeLogo = loadImage("REFORGE.png");
   titleScreenImg = loadImage("hud/titleScreen.png");
   WaypointImg = loadImage("Waypoint.png");
