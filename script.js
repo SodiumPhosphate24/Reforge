@@ -562,8 +562,8 @@ function generateTintedTileCache() {
     tintedTileCache[tileIndex] = [];
     const baseImg = tileImgs[tileIndex];
 
-    // Skip if no image for this tile
-    if (!baseImg) {
+    // Skip if no image or if image is a string for this tile
+    if (!baseImg || typeof baseImg === 'string') {
       tintedTileCache[tileIndex] = [null];
       continue;
     }
@@ -598,7 +598,7 @@ function generateTintedTileCache() {
 
       for (let variantName in config.variants) {
         const baseImg = config.variants[variantName];
-        if (!baseImg) continue;
+        if (!baseImg || typeof baseImg === 'string') continue;
 
         const tintedImg = createGraphics(50, 50);
         tintedImg.tint(r, g, b);
