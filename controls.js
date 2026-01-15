@@ -93,7 +93,7 @@ function keyPressed() {
         }
       }
       else{
-        if(generateCooldown == 0){
+        if(generateCooldown <= 0){
           for(let i = 0; i < inventoryList.length; i++){
             if (inventoryList[i] != null){
               if(inventoryList[i].name == "common cartridge"){

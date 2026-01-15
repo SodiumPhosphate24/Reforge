@@ -889,7 +889,7 @@ function drawGameplay() {
 
   controls();
   resolveCollisions();
-  if (triggerList.Objective.fixBoiler && generateCooldown){
+  if (triggerList.Objective.fixBoiler && generateCooldown > 0){
     generateCooldown--;
   }
 
