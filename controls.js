@@ -95,6 +95,9 @@ function keyPressed() {
       else{
         if(generateCooldown == 0){
           generateCooldown = 1000;
+          for(let i = 0; i < inventoryList.length; i++){
+            if (inventoryList[i
+          }
         }
       }
     }

@@ -231,6 +231,46 @@ var tileVariants = {};
 // Format: tileType -> { width, height, fullImage, sections: [] }
 var multiTileConfig = {};
 
+/**
+ * Registers a multi-tile object (e.g., workbench, lampost)
+ * @param {Number} tileID - The tile ID in the world data
+ * @param {String} imagePath - Path to the full source image
+ * @param {Number} gridW - Width in grid cells
+ * @param {Number} gridH - Height in grid cells
+ */
+function registerMultiTile(tileID, imagePath, gridW, gridH) {
+  multiTileConfig[tileID] = {
+    width: gridW,
+    height: gridH,
+    fullImage: loadImage(imagePath),
+    sections: []
+  };
+}
+
+// Generate multi-tile sections by splitting source image into grid
+function generateAllMultiTileSections() {
+  for (let tileID in multiTileConfig) {
+    const config = multiTileConfig[tileID];
+    const fullImg = config.fullImage;
+    
+    // Calculate tile dimensions
+    const tileW = fullImg.width / config.width;
+    const tileH = fullImg.height / config.height;
+    
+    config.sections = [];
+    
+    for (let row = 0; row < config.height; row++) {
+      config.sections[row] = [];
+      for (let col = 0; col < config.width; col++) {
+        const section = createGraphics(tileW, tileH);
+        section.copy(fullImg, col * tileW, row * tileH, tileW, tileH, 0, 0, tileW, tileH);
+        config.sections[row][col] = section;
+      }
+    }
+    console.log(`Generated sections for multi-tile ${tileID}: ${config.width}x${config.height}`);
+  }
+}
+
 var enemies = [], bullets = [], messages = [], droppedItems = [], NonPlayerCharacters = [];
 var inventoryList;
 var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
@@ -363,6 +403,13 @@ function preload() {
   tileImgs[39] = loadImage("Tiles/WhiteTile.png");
   tileImgs[40] = loadImage("Tiles/SteelCrate.png");
   tileImgs[41] = null; // Tree uses variants, loaded below
+
+  // Register multi-tile objects
+  registerMultiTile(6, "Tiles/Crafting.png", 2, 2); // Workbench
+  registerMultiTile(36, "Tiles/Lampost.png", 1, 2); // Lampost
+  registerMultiTile(37, "Tiles/Bench.png", 2, 1);   // Bench
+  registerMultiTile(41, "Tiles/Tree.png", 1, 2);    // Tree
+
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
   itemImgs[2] = loadImage("Items/Consumables/CommonCartridge.png");
