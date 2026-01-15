@@ -790,6 +790,34 @@ function draw() {
 
   // Normal gameplay
   drawGameplay();
+  updateLeakDetection();
+}
+
+function updateLeakDetection() {
+  nearestLeak = null;
+  let nearestDist = Infinity;
+  
+  // Only check if holding wrench
+  const currentItem = inventoryList[inventorySlot - 1];
+  if (!currentItem || currentItem.name !== "old wrench") {
+    return;
+  }
+
+  for (let i = 0; i < particleSources.length; i++) {
+    const ps = particleSources[i];
+    // Skip if leak is already fixed
+    if (ps.spawnRate === 0) continue;
+    
+    const d = distance(pX + 600, pY + 340, ps.x, ps.y);
+    if (d < 120 && d < nearestDist) {
+      nearestDist = d;
+      nearestLeak = {
+        x: ps.x,
+        y: ps.y,
+        index: i
+      };
+    }
+  }
 }
 
 function mouseReleased() {
