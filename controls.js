@@ -83,8 +83,24 @@ function keyPressed() {
       return;
     }
     // Check for boiler repair next (if holding boiler cartridge)
+    if (distance(pX, pY, 12000, 12500) < 75) {
+      if (triggerList.Objective.fixBoiler == false){
+        if (inventoryList[inventorySlot - 1] != null){
+          if (inventoryList[inventorySlot - 1].name == "boiler cartridge"){
+            useItem();
+            handleTriggers("Objective");    
+          }
+        }
+      }
+      else{
+        if(generateCooldown == 0){
+          generateCooldown = 1000;
+        }
+      }
+    }
+    
     if (inventoryList[inventorySlot - 1] != null){
-      if (inventoryList[inventorySlot - 1].name == "boiler cartridge" && (distance(pX, pY, 12000, 12500) < 75)){
+      if (inventoryList[inventorySlot - 1].name == "boiler cartridge"){
         useItem();
         handleTriggers("Objective");    
       }

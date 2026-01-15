@@ -252,7 +252,7 @@ class DroppedItem {
     let baseSize = 35; // Default
 
     if (this.item.name == "steam gun"){
-      baseSize = 60;
+      baseSize = 52;
     } else if (this.item.type === "gun" && this.item.name != "steam gun") {
       baseSize = 40; // Guns are moderately sized
     } else if (this.item.type === "consumable" || this.item.type == "material") {
