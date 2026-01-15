@@ -94,9 +94,19 @@ function keyPressed() {
       }
       else{
         if(generateCooldown == 0){
-          generateCooldown = 1000;
           for(let i = 0; i < inventoryList.length; i++){
-            if (inventoryList[i
+            if (inventoryList[i] != null){
+              if(inventoryList[i].name == "common cartridge"){
+                inventoryList[i].amount++;
+                generateCooldown = 1000;
+                return;
+              }
+            }
+            else{
+              inventoryList[i] = new Item("consumable", "common cartridge", 1);
+              generateCooldown = 1000;
+              return;
+            }
           }
         }
       }
