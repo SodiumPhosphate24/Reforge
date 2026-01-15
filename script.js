@@ -889,7 +889,9 @@ function drawGameplay() {
 
   controls();
   resolveCollisions();
-  generateCooldown--;
+  if (triggerList.Objective.fixBoiler && generateCooldown){
+    generateCooldown--;
+  }
 
   // LAYER 4 on top of player
   drawWorldLayer(gameWorld, 4);
