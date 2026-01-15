@@ -608,3 +608,14 @@ function handleCraftingInput() {
     }
   }
 }
+
+function generateCartridges(){
+  if(triggerList.Objective.fixBoiler){
+    generateCooldown--;
+    if(generateCooldown == 0) {
+      droppedItems.push(new DroppedItem(new Item("consumable", "legendary cartridge", 1), 12650, 12875));
+      generateCooldown = 1000;
+    }
+  }
+  return;
+}

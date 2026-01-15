@@ -72,12 +72,23 @@ function drawNPCs() {
 
 function drawNPCPromptIfNeeded() {
   if (nearestNPC && !craftingMenuOpen) {
+    const nameLower = nearestNPC.name.toLowerCase();
+    const isReadable = nameLower.includes("book") || nameLower.includes("journal") || nameLower.includes("sign");
+    const isLock = nameLower.includes("lock");
+    
+    let promptText = `Press E to talk to ${nearestNPC.name}`;
+    if (isReadable) {
+      promptText = `Press E to read ${nearestNPC.name}`;
+    } else if (isLock) {
+      promptText = `Press E to open ${nearestNPC.name}`;
+    }
+
     handleInteractionPrompt(
       interactionPrompt, 
       nearestNPC.x, 
       nearestNPC.y, 
       120, 
-      `Press E to talk to ${nearestNPC.name}`,
+      promptText,
       !messages.some(msg => msg.type === "dialogue")
     );
   } else if (interactionPrompt) {
