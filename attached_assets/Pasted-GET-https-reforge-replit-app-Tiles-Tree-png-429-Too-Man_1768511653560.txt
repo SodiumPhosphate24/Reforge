@@ -1,0 +1,171 @@
+GET https://reforge.replit.app/Tiles/Tree.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+registerMultiTile @ script.js:246
+preload @ script.js:412
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Items/Consumables/RareCartridge.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:418
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Items/Consumables/CommonCartridge.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:417
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Items/Misc/Crowbar.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:420
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:48628  GET https://reforge.replit.app/Fonts/Silkscreen-Regular.ttf 404 (Not Found)
+loadFromUrl @ p5.js:48628
+load @ p5.js:48919
+(anonymous) @ p5.js:90856
+(anonymous) @ p5.js:60964
+preload @ script.js:434
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Tiles/concreteCorner.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:450
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Tiles/Crafting.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:489
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:78100  GET https://reforge.replit.app/Tiles/Tree.png 429 (Too Many Requests)
+(anonymous) @ p5.js:78100
+(anonymous) @ p5.js:60964
+preload @ script.js:519
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error
+p5.js:57365 
+🌸 p5.js says: It looks like there was a problem loading your font. Try checking if the file path (Fonts/Silkscreen-Regular.ttf) is correct, hosting the file online, or running a local server.
+
++ More info: https://github.com/processing/p5.js/wiki/Local-server
+p5.js:90862 RangeError: Offset is outside the bounds of the DataView
+    at DataView.prototype.getInt8 (<anonymous>)
+    at Object.getTag (p5.js:36352:53)
+    at parseBuffer (p5.js:48740:37)
+    at p5.js:48925:26
+    at XMLHttpRequest.<anonymous> (p5.js:48620:26) 'Fonts/Silkscreen-Regular.ttf'
+(anonymous) @ p5.js:90862
+(anonymous) @ p5.js:48927
+(anonymous) @ p5.js:48620
+XMLHttpRequest.send
+loadFromUrl @ p5.js:48628
+load @ p5.js:48919
+(anonymous) @ p5.js:90856
+(anonymous) @ p5.js:60964
+preload @ script.js:434
+(anonymous) @ p5.js:60923
+p5 @ p5.js:61231
+_globalInit @ p5.js:60202
+Promise.then
+(anonymous) @ p5.js:60219
+o @ p5.js:40
+(anonymous) @ p5.js:42
+(anonymous) @ p5.js:52407
+o @ p5.js:40
+r @ p5.js:47
+(anonymous) @ p5.js:51
+(anonymous) @ p5.js:18
+(anonymous) @ p5.js:20Understand this error

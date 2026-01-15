@@ -410,7 +410,7 @@ function preload() {
   registerMultiTile(36, "Tiles/Lampost.png", 1, 2); // Lampost
   registerMultiTile(37, "Tiles/Bench.png", 2, 1);   // Bench
   registerMultiTile(41, "Tiles/Tree.png", 1, 2);    // Tree
-  registerMultiTile(42, "Tiles/Boiler.png", 1, 2)
+  registerMultiTile(42, "Tiles/Boiler.png", 1, 2);
 
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
@@ -431,7 +431,7 @@ function preload() {
   FrameImg = loadImage("hud/Frame.png");
   Fog = loadImage("hud/Fog.png");
   IndicatorImg = loadImage("Indicator.png");
-  Silkscreen = loadFont("Silkscreen-Regular.ttf");
+  Silkscreen = loadFont("Fonts/Silkscreen-Regular.ttf");
   ReforgeLogo = loadImage("REFORGE.png");
   titleScreenImg = loadImage("hud/titleScreen.png");
   WaypointImg = loadImage("Waypoint.png");
@@ -521,11 +521,11 @@ function preload() {
 }
 
 // Generate multi-tile sections by splitting source image into grid
-function generateMultiTileSections() {
-  for (let tileType in multiTileConfig) {
-    const config = multiTileConfig[tileType];
+function generateAllMultiTileSections() {
+  for (let tileID in multiTileConfig) {
+    const config = multiTileConfig[tileID];
     if (!config || !config.fullImage) {
-      console.error("Multi-tile config or image missing for tile", tileType);
+      console.error("Multi-tile config or image missing for tile", tileID);
       continue;
     }
 
@@ -549,137 +549,8 @@ function generateMultiTileSections() {
       }
     }
 
-    console.log(`Multi-tile ${tileType}: generated ${config.width}x${config.height} sections`);
+    console.log(`Multi-tile ${tileID}: generated ${config.width}x${config.height} sections`);
   }
-}
-
-// Generate workbench variants by splitting 32x32 image into 4 quadrants
-function generateWorkbenchVariants() {
-  const workbenchConfig = tileVariants[6];
-  if (!workbenchConfig || !workbenchConfig.fullImage) {
-    console.error("Workbench config or image missing");
-    return;
-  }
-
-  const fullImg = workbenchConfig.fullImage;
-
-  // The image is 32x32 pixels - split it into 4 quadrants of 16x16 each
-  const halfWidth = fullImg.width / 2;
-  const halfHeight = fullImg.height / 2;
-
-  console.log("Workbench image dimensions:", fullImg.width, "x", fullImg.height);
-  console.log("Each quadrant will be:", halfWidth, "x", halfHeight);
-
-  // Create top-left quadrant
-  const topLeft = createGraphics(halfWidth, halfHeight);
-  topLeft.copy(fullImg, 0, 0, halfWidth, halfHeight, 0, 0, halfWidth, halfHeight);
-  workbenchConfig.variants.top_left = topLeft;
-
-  // Create top-right quadrant
-  const topRight = createGraphics(halfWidth, halfHeight);
-  topRight.copy(fullImg, halfWidth, 0, halfWidth, halfHeight, 0, 0, halfWidth, halfHeight);
-  workbenchConfig.variants.top_right = topRight;
-
-  // Create bottom-left quadrant
-  const bottomLeft = createGraphics(halfWidth, halfHeight);
-  bottomLeft.copy(fullImg, 0, halfHeight, halfWidth, halfHeight, 0, 0, halfWidth, halfHeight);
-  workbenchConfig.variants.bottom_left = bottomLeft;
-
-  // Create bottom-right quadrant
-  const bottomRight = createGraphics(halfWidth, halfHeight);
-  bottomRight.copy(fullImg, halfWidth, halfHeight, halfWidth, halfHeight, 0, 0, halfWidth, halfHeight);
-  workbenchConfig.variants.bottom_right = bottomRight;
-
-  console.log("Workbench variants generated: 4 quadrants from source image");
-}
-
-function generateTreeVariants() {
-  const treeConfig = tileVariants[41];
-  if (!treeConfig || !treeConfig.fullImage) {
-    console.error("tree config or image missing");
-    return;
-  }
-
-  const fullImg = treeConfig.fullImage;
-
-  // Split the image into 2 halves (top and bottom)
-  const fullWidth = fullImg.width;
-  const halfHeight = fullImg.height / 2;
-
-  console.log("Tree image dimensions:", fullImg.width, "x", fullImg.height);
-  console.log("Each half will be:", fullWidth, "x", halfHeight);
-
-  // Create top half
-  const top = createGraphics(fullWidth, halfHeight);
-  top.copy(fullImg, 0, 0, fullWidth, halfHeight, 0, 0, fullWidth, halfHeight);
-  treeConfig.variants.top = top;
-
-  // Create bottom half
-  const bottom = createGraphics(fullWidth, halfHeight);
-  bottom.copy(fullImg, 0, halfHeight, fullWidth, halfHeight, 0, 0, fullWidth, halfHeight);
-  treeConfig.variants.bottom = bottom;
-
-  console.log("Tree variants generated: 2 halves from source image");
-}
-
-// Generate lampost variants by splitting image into 2 halves (1x2 tiles - vertical)
-function generateLampostVariants() {
-  const lampostConfig = tileVariants[36];
-  if (!lampostConfig || !lampostConfig.fullImage) {
-    console.error("Lampost config or image missing");
-    return;
-  }
-
-  const fullImg = lampostConfig.fullImage;
-
-  // Split the image into 2 halves (top and bottom)
-  const fullWidth = fullImg.width;
-  const halfHeight = fullImg.height / 2;
-
-  console.log("Lampost image dimensions:", fullImg.width, "x", fullImg.height);
-  console.log("Each half will be:", fullWidth, "x", halfHeight);
-
-  // Create top half
-  const top = createGraphics(fullWidth, halfHeight);
-  top.copy(fullImg, 0, 0, fullWidth, halfHeight, 0, 0, fullWidth, halfHeight);
-  lampostConfig.variants.top = top;
-
-  // Create bottom half
-  const bottom = createGraphics(fullWidth, halfHeight);
-  bottom.copy(fullImg, 0, halfHeight, fullWidth, halfHeight, 0, 0, fullWidth, halfHeight);
-  lampostConfig.variants.bottom = bottom;
-
-  console.log("Lampost variants generated: 2 halves from source image");
-}
-
-// Generate bench variants by splitting image into 2 halves (2x1 tiles)
-function generateBenchVariants() {
-  const benchConfig = tileVariants[37];
-  if (!benchConfig || !benchConfig.fullImage) {
-    console.error("Bench config or image missing");
-    return;
-  }
-
-  const fullImg = benchConfig.fullImage;
-
-  // Split the image into 2 halves (left and right)
-  const halfWidth = fullImg.width / 2;
-  const fullHeight = fullImg.height;
-
-  console.log("Bench image dimensions:", fullImg.width, "x", fullImg.height);
-  console.log("Each half will be:", halfWidth, "x", fullHeight);
-
-  // Create left half
-  const left = createGraphics(halfWidth, fullHeight);
-  left.copy(fullImg, 0, 0, halfWidth, fullHeight, 0, 0, halfWidth, fullHeight);
-  benchConfig.variants.left = left;
-
-  // Create right half
-  const right = createGraphics(halfWidth, fullHeight);
-  right.copy(fullImg, halfWidth, 0, halfWidth, fullHeight, 0, 0, halfWidth, fullHeight);
-  benchConfig.variants.right = right;
-
-  console.log("Bench variants generated: 2 halves from source image");
 }
 
 // Generate cached tinted versions of all tiles
@@ -749,20 +620,8 @@ function setup() {
   maxTileTypes = tileImgs.length;
   PlayerImage = Buschy;
 
-  // Generate workbench quadrants from the 32x32 image
-  generateWorkbenchVariants();
-
-  // Generate tree halves from the image
-  generateTreeVariants();
-
-  // Generate lampost halves from the image
-  generateLampostVariants();
-
-  // Generate bench halves from the image
-  generateBenchVariants();
-
-  // Generate multi-tile sections
-  generateMultiTileSections();
+  // Multi-tile system handles generating sections for registered objects
+  generateAllMultiTileSections();
 
   // Generate tinted tile cache after images are loaded
   generateTintedTileCache();
