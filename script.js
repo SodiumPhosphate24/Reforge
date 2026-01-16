@@ -858,6 +858,7 @@ function drawGameplay() {
   // --------------------------------
 
   controls();
+  softlockPrevention();
   resolveCollisions();
   if (triggerList.Objective.fixBoiler && generateCooldown > 0){
     generateCooldown--;
