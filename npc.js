@@ -42,7 +42,7 @@ let interactionPrompt = null; // Reusable prompt object
 
 function drawNPCs() {
   if (!interactionPrompt) interactionPrompt = createPrompt();
-  
+
   nearestNPC = null;
   let nearestDistance = Infinity;
 
@@ -52,10 +52,10 @@ function drawNPCs() {
     // Draw NPC image if available, otherwise draw yellow rectangle
     if (NonPlayerCharacters[i].image) {
       image(NonPlayerCharacters[i].image,
-            NonPlayerCharacters[i].x,
-            NonPlayerCharacters[i].y,
-            NonPlayerCharacters[i].width,
-            NonPlayerCharacters[i].height);
+        NonPlayerCharacters[i].x,
+        NonPlayerCharacters[i].y,
+        NonPlayerCharacters[i].width,
+        NonPlayerCharacters[i].height);
     } else {
       fill(255, 255, 0);
       rect(NonPlayerCharacters[i].x, NonPlayerCharacters[i].y, 20, 20);
@@ -75,26 +75,22 @@ function drawNPCPromptIfNeeded() {
     const nameLower = nearestNPC.name.toLowerCase();
     const isReadable = nameLower.includes("book") || nameLower.includes("journal") || nameLower.includes("sign");
     const isLock = nameLower.includes("lock");
-    
+
     // Example: Check if player is holding a specific item (e.g., "wrench")
     const heldItem = inventoryList[inventorySlot - 1];
-    const isHoldingWrench = heldItem && heldItem.name.toLowerCase().includes("wrench");
-    
+    const isHoldingCrowbar = heldItem && heldItem.name.toLowerCase().includes("crowbar");
+
     let promptText = `Press E to talk to ${nearestNPC.name}`;
-    
-    if (isHoldingWrench && nameLower.includes("engineer")) {
-      promptText = `Press E to repair ${nearestNPC.name}'s robot`;
-    } else if (isReadable) {
-      promptText = `Press E to read ${nearestNPC.name}`;
-    } else if (isLock) {
-      promptText = `Press E to open ${nearestNPC.name}`;
+
+    if (isHoldingCrowbar && nameLower == "crate") {
+      promptText = `Press E to open crate`;
     }
 
     handleInteractionPrompt(
-      interactionPrompt, 
-      nearestNPC.x, 
-      nearestNPC.y, 
-      120, 
+      interactionPrompt,
+      nearestNPC.x,
+      nearestNPC.y,
+      120,
       promptText,
       !messages.some(msg => msg.type === "dialogue")
     );
