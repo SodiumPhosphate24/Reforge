@@ -44,11 +44,11 @@ class Player {
   }
   takeDamage(damage) {
     // Human is invulnerable and has no health depletion
-    if (this.name === "Buschwick") return;
+    if (this.name === "Buschwick" || this.name === "Buschwick Industries") return;
     this.health -= damage;
   }
   isDead() {
-    if (this.name === "Buschwick") {
+    if (this.name === "Buschwick" || this.name === "Buschwick Industries") {
       this.frozen = false;
       return;
     }

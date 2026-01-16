@@ -70,8 +70,8 @@ function drawInventory() {
 }
 
 function drawHealth() {
-  // Hide health bar for the human character (Buschwick Industries)
-  if (players[activePlayer] && players[activePlayer].name === "Buschwick") {
+  // Hide health bar for the human character (Buschwick)
+  if (players[activePlayer] && (players[activePlayer].name === "Buschwick" || players[activePlayer].name === "Buschwick Industries")) {
     return;
   }
   
