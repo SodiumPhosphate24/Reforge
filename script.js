@@ -31,6 +31,7 @@ var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
 var generateCooldown = 1000;
+var softlockPreventionOn = false;
 
 // Breadcrumb system variables
 var breadcrumbs = [];

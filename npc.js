@@ -76,8 +76,15 @@ function drawNPCPromptIfNeeded() {
     const isReadable = nameLower.includes("book") || nameLower.includes("journal") || nameLower.includes("sign");
     const isLock = nameLower.includes("lock");
     
+    // Example: Check if player is holding a specific item (e.g., "wrench")
+    const heldItem = inventoryList[inventorySlot - 1];
+    const isHoldingWrench = heldItem && heldItem.name.toLowerCase().includes("wrench");
+    
     let promptText = `Press E to talk to ${nearestNPC.name}`;
-    if (isReadable) {
+    
+    if (isHoldingWrench && nameLower.includes("engineer")) {
+      promptText = `Press E to repair ${nearestNPC.name}'s robot`;
+    } else if (isReadable) {
       promptText = `Press E to read ${nearestNPC.name}`;
     } else if (isLock) {
       promptText = `Press E to open ${nearestNPC.name}`;

@@ -21,6 +21,9 @@ var triggerList = {
   },
   Pickup: {
     pickedUpWrench: false
+  },
+  Softlock: {
+    softlockPreventionOn: false
   }
 };
 
@@ -102,10 +105,11 @@ function handleTriggers(trigger) {
       return;
     }
   }
+  if
 }
 
 function softlockPrevention(){
-  if(!searchInventory("common cartridge") && !searchInventory("rare cartridge") && !searchInventory("legendary cartridge") && healthPoints < 5){
-    messages.push(new Message("dialogue", ["Prometheus IV: You're running low on steam. You need steam to function", "Prometheus IV: You can find steam cartridges in crates, or by defeating enemies", "Prometheus IV: Now that you've fixed the boiler, it will produce a cartridge every so often", "Prometheus IV: Why don't you go grab one and pass it to yourself"], "Prometheus", true));
+  if(!searchInventory("common cartridge") && !searchInventory("rare cartridge") && !searchInventory("legendary cartridge") && healthPoints < 5 && !softlockPreventionOn){
+    messages.push(new Message("dialogue", ["Prometheus IV: You're running low on steam. You need steam to function", "Prometheus IV: You can find steam cartridges in crates, or by defeating enemies", "Prometheus IV: Now that you've fixed the boiler, it will produce a cartridge every so often", "Prometheus IV: Why don't you go grab one and pass it to yourself"], "Softlock", true));
   }
 }
