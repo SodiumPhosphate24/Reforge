@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, Book, Greg, LockNpc, Hephaestus;
+let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, Book, Greg, LockNpc, Hephaestus, Atlas;
 //music
 let themeSong;
 let maxTileTypes = 0; // will be set in setup()
@@ -247,7 +247,7 @@ function registerMultiTile(tileID, imagePath, gridW, gridH) {
     fullImage: img,
     sections: []
   };
-  
+
   // Map to tileVariants for the rendering system
   if (!tileVariants[tileID]) {
     tileVariants[tileID] = {
@@ -359,6 +359,7 @@ function preload() {
   SPUDImage = loadImage("Characters/SPUD.png");
   Prometheus = loadImage("Characters/Prometheus.png");
   Hephaestus = loadImage("Characters/Hephaestus.png");
+  Atlas = loadImage("Characters/Atlas.png");
   LockNpc = loadImage("Characters/Lock.png");
   BadGuy = loadImage("Characters/Enemy.png");
   Greg = loadImage("Items/Consumables/CommonBattery.png");
@@ -500,18 +501,18 @@ function generateAllMultiTileSections() {
     const fullImg = config.fullImage;
     // Wait for image to load if it hasn't yet (though p5 preload usually handles this)
     if (!fullImg || fullImg.width <= 1) {
-        console.warn(`Image for multi-tile ${tileID} not loaded yet or invalid. Skipping section generation.`);
-        continue;
+      console.warn(`Image for multi-tile ${tileID} not loaded yet or invalid. Skipping section generation.`);
+      continue;
     }
 
     const tileWidth = fullImg.width / config.width;
     const tileHeight = fullImg.height / config.height;
 
     config.sections = [];
-    
+
     // Also ensure tileVariants is updated with the correct structure
     if (!tileVariants[tileID]) {
-        tileVariants[tileID] = { variants: {}, fullImage: fullImg };
+      tileVariants[tileID] = { variants: {}, fullImage: fullImg };
     }
 
     // Split image into grid sections
@@ -525,7 +526,7 @@ function generateAllMultiTileSections() {
           0, 0, tileWidth, tileHeight
         );
         config.sections[row][col] = section;
-        
+
         // Map to tileVariants for the rendering system
         if (config.width === 2 && config.height === 2) {
           const names = [['top_left', 'top_right'], ['bottom_left', 'bottom_right']];
@@ -860,7 +861,7 @@ function drawGameplay() {
   controls();
   softlockPrevention();
   resolveCollisions();
-  if (triggerList.Objective.fixBoiler && generateCooldown > 0){
+  if (triggerList.Objective.fixBoiler && generateCooldown > 0) {
     generateCooldown--;
   }
 
@@ -2544,7 +2545,7 @@ function initializeHardcodes() {
     "Hephaestus: They ran off to the west. Maybe start there."
   ]
     , Hephaestus, "Hephaestus", 2));
-  NonPlayerCharacters.push(new NPC(23200, 22650, "Atlas", ["Atlas: I'm Atlas... Responsible for keeping tabs on the geography of the area post incident."], Prometheus, "Atlas", 3));
+  NonPlayerCharacters.push(new NPC(23200, 22650, "Atlas", ["Atlas: I'm Atlas... Responsible for keeping tabs on the geography of the area post incident."], Atlas, "Atlas", 3));
   NonPlayerCharacters.push(new NPC(8467, 23200, "Crate", ["Crate: Help! Hey! I'm stuck in here! Let me out!", "Crate: I'm starving, at least try to slip some cheese in here? Get me out!", "PROMETHEUS IV: That crate is sealed tight... We need a tool to pry it open."], tileImgs[40], "Daedalus", .001));
   NonPlayerCharacters.push(new NPC(12867, 12875, "Lock", ["Enter Code: ____ "], LockNpc, "Lock", .5));
   NonPlayerCharacters.push(new NPC(
