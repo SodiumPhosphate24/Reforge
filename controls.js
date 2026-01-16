@@ -74,6 +74,9 @@ function keyPressed() {
   }
   
   if (keyCode == 69) {
+    if(canFreeDaedalus){
+      clearTile(464, 169, 1);
+    }
     // Check for leak repair first (highest priority when holding wrench)
     if (nearestLeak) {
       // Permanently repair the leak by setting spawn rate to 0

@@ -1,3 +1,4 @@
+var canFreeDaedalus = false;
 class NPC {
   constructor(x, y, name, message, image = null, triggerID, scale = 1) {
     this.x = x;
@@ -84,6 +85,7 @@ function drawNPCPromptIfNeeded() {
 
     if (isHoldingCrowbar && nameLower == "crate") {
       promptText = `Press E to open crate`;
+      canFreeDaedalus = true;
     }
 
     handleInteractionPrompt(

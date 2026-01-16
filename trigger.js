@@ -108,7 +108,11 @@ function handleTriggers(trigger) {
   if (trigger == "Softlock") {
     if (triggerList.Softlock.softlockMessage == false) {
       triggerList.Softlock.softlockMessage = true;
+      softlockPreventionOn = false;
     }
+  }
+  if (trigger == "Softlock Message") {
+    softlockPreventionOn = false;
   }
 }
 
@@ -121,7 +125,7 @@ function softlockPrevention(){
       }
       else {
         softlockPreventionOn = true;
-        messages.push(new Message("dialogue", ["Prometheus IV: You're running low on steam. You need steam to function", "Prometheus IV: You can find steam cartridges in "], "Prometheus", true));
+        messages.push(new Message("dialogue", ["Prometheus IV: You're running low on steam. You need steam to function", "Prometheus IV: I'll send you a cartridge to save you"], "Prometheus", true));
       }
     }
   }
