@@ -43,12 +43,14 @@ class Player {
     return this.image;
   }
   takeDamage(damage) {
-    // Human is invulnerable and has no health depletion
-    if (this.name === "Buschwick" || this.name === "Buschwick Industries") return;
+    // Human (index 0) is invulnerable and has no health depletion
+    const isHuman = players.indexOf(this) === 0;
+    if (isHuman) return;
     this.health -= damage;
   }
   isDead() {
-    if (this.name === "Buschwick" || this.name === "Buschwick Industries") {
+    const isHuman = players.indexOf(this) === 0;
+    if (isHuman) {
       this.frozen = false;
       return;
     }

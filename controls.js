@@ -44,8 +44,8 @@ function controls() {
   players[activePlayer].x = pX;
   players[activePlayer].y = pY;
   if(Math.abs(pXVel) > 0.2 || Math.abs(pYVel) > 0.2){
-    // No health depletion for Buschwick
-    if (players[activePlayer] && players[activePlayer].name !== "Buschwick" && players[activePlayer].name !== "Buschwick Industries") {
+    // No health depletion for human (activePlayer 0)
+    if (activePlayer !== 0) {
       players[activePlayer].health -= .025;
     }
   }
@@ -364,7 +364,7 @@ function mouseClicked() {
       if (currentItem.type == "gun") {
         if (recoil >= 10) {
           // Only humans or healthy robots can shoot, and only robots consume battery
-          if (players[activePlayer].name === "Buschwick" || players[activePlayer].name === "Buschwick Industries") {
+          if (activePlayer === 0) {
             bullets.push(new Bullet("common", currentItem.damage));
           } else if (players[activePlayer].health > 10) {
             players[activePlayer].health -= 3;
