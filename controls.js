@@ -7,7 +7,7 @@ function controls() {
   if (gameState !== "playing") {
     return;
   }
-  
+
   // Handle Q key hold for player selection menu
   if (keyIsDown(81) && players.length > 1) {
     qKeyHeldFrames++;
@@ -22,7 +22,7 @@ function controls() {
       frozen = false;
     }
   }
-  
+
   if (players[activePlayer].frozen == false && !playerSelectionMenuOpen) {
     if (keyIsDown(65)) {
       pXVel -= players[activePlayer].speed;
@@ -43,7 +43,7 @@ function controls() {
   pY += pYVel;
   players[activePlayer].x = pX;
   players[activePlayer].y = pY;
-  if(Math.abs(pXVel) > 0.2 || Math.abs(pYVel) > 0.2){
+  if (Math.abs(pXVel) > 0.2 || Math.abs(pYVel) > 0.2) {
     // No health depletion for human (activePlayer 0)
     if (activePlayer !== 0) {
       players[activePlayer].health -= .025;
@@ -72,9 +72,9 @@ function keyPressed() {
       inventorySlot = keyCode - 48;
     }
   }
-  
+
   if (keyCode == 69) {
-    if(canFreeDaedalus){
+    if (canFreeDaedalus) {
       clearTile(464, 169, 1);
     }
     // Check for leak repair first (highest priority when holding wrench)
@@ -83,32 +83,32 @@ function keyPressed() {
       particleSources[nearestLeak.index].spawnRate = 0;
       nearestLeak = null; // Clear the nearest leak
       totalLeaks--;
-      if (totalLeaks == 0){
+      if (totalLeaks == 0) {
         handleTriggers("Objective");
       }
       return;
     }
     // Check for boiler repair next (if holding boiler cartridge)
     if (distance(pX, pY, 12000, 12500) < 75) {
-      if (triggerList.Objective.fixBoiler == false){
-        if (inventoryList[inventorySlot - 1] != null){
-          if (inventoryList[inventorySlot - 1].name == "boiler cartridge"){
+      if (triggerList.Objective.fixBoiler == false) {
+        if (inventoryList[inventorySlot - 1] != null) {
+          if (inventoryList[inventorySlot - 1].name == "boiler cartridge") {
             useItem();
-            handleTriggers("Objective");    
+            handleTriggers("Objective");
           }
         }
       }
-      else{
-        if(generateCooldown <= 0){
-          for(let i = 0; i < inventoryList.length; i++){
-            if (inventoryList[i] != null){
-              if(inventoryList[i].name == "common cartridge"){
+      else {
+        if (generateCooldown <= 0) {
+          for (let i = 0; i < inventoryList.length; i++) {
+            if (inventoryList[i] != null) {
+              if (inventoryList[i].name == "common cartridge") {
                 inventoryList[i].amount++;
                 generateCooldown = 1000;
                 return;
               }
             }
-            else{
+            else {
               inventoryList[i] = new Item("consumable", "common cartridge", 1);
               generateCooldown = 1000;
               return;
@@ -117,11 +117,11 @@ function keyPressed() {
         }
       }
     }
-    
-    if (inventoryList[inventorySlot - 1] != null){
-      if (inventoryList[inventorySlot - 1].name == "boiler cartridge"){
+
+    if (inventoryList[inventorySlot - 1] != null) {
+      if (inventoryList[inventorySlot - 1].name == "boiler cartridge") {
         useItem();
-        handleTriggers("Objective");    
+        handleTriggers("Objective");
       }
     }
 
@@ -131,7 +131,7 @@ function keyPressed() {
       if (itemIndex === -1) return; // Item was removed, shouldn't happen
 
       const item = droppedItems[itemIndex];
-      
+
       if (item.item.stackable) {
         let stacked = false;
         for (let j = 0; j < inventoryList.length; j++) {
@@ -330,13 +330,13 @@ function keyReleased() {
     }
     qKeyHeldFrames = 0;
   }
-  
+
   // R key release - complete transfer
   if (keyCode == 82) {
     if (playerTransferMenuOpen) {
       const itemToTransfer = inventoryList[inventorySlot - 1];
       const targetPlayer = players[selectedTransferPlayerIndex];
-      
+
       // Find empty slot in target player's inventory
       let transferred = false;
       for (let i = 0; i < targetPlayer.inventory.length; i++) {
@@ -347,7 +347,7 @@ function keyReleased() {
           break;
         }
       }
-      
+
       playerTransferMenuOpen = false;
       frozen = false;
     }
@@ -359,7 +359,7 @@ function mouseClicked() {
   if (gameState !== "playing") {
     return;
   }
-  
+
   if (!editorMode) {
     if (inventoryList[inventorySlot - 1] != null) {
       var currentItem = inventoryList[inventorySlot - 1];
@@ -403,7 +403,7 @@ function mouseClicked() {
   }
 }
 
-function useItem(){
+function useItem() {
   inventoryList[inventorySlot - 1].amount -= 1;
   if (inventoryList[inventorySlot - 1].amount <= 0) {
     inventoryList[inventorySlot - 1] = null;
