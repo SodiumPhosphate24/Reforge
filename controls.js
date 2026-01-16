@@ -44,7 +44,10 @@ function controls() {
   players[activePlayer].x = pX;
   players[activePlayer].y = pY;
   if(Math.abs(pXVel) > 0.2 || Math.abs(pYVel) > 0.2){
-    players[activePlayer].health -= .025;
+    // No health depletion for Buschwick
+    if (players[activePlayer] && players[activePlayer].name !== "Buschwick") {
+      players[activePlayer].health -= .025;
+    }
   }
   // Guard if world failed to load
   if (!gameWorld.length || !gameWorld[0]?.length) return;
@@ -359,9 +362,14 @@ function mouseClicked() {
       var currentItem = inventoryList[inventorySlot - 1];
 
       if (currentItem.type == "gun") {
-        if (players[activePlayer].health > 10 && recoil >= 10) {
-          players[activePlayer].health -= 3;
-          bullets.push(new Bullet("common", currentItem.damage));
+        if (recoil >= 10) {
+          // Only humans or healthy robots can shoot, and only robots consume battery
+          if (players[activePlayer].name === "Buschwick") {
+            bullets.push(new Bullet("common", currentItem.damage));
+          } else if (players[activePlayer].health > 10) {
+            players[activePlayer].health -= 3;
+            bullets.push(new Bullet("common", currentItem.damage));
+          }
         }
       }
       if (currentItem.type == "consumable" && currentWaypointIndex > 1) {
