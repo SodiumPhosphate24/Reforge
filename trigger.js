@@ -104,7 +104,6 @@ function handleTriggers(trigger) {
   }
 }
 
-function wayPoints() {
-  var currentWayPoint = wayPointList[triggerState];
-  var rotation = atan2(currentWayPoint[1] - pY, currentWayPoint[0] - pX);
+function softlockPrevention(){
+  if(!searchInventory("common cartridge") && !searchInventory("rare cartridge") && !searchInventory("legendary cartridge") && healthPoints)
 }

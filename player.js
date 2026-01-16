@@ -43,9 +43,15 @@ class Player {
     return this.image;
   }
   takeDamage(damage) {
+    // Human is invulnerable and has no health depletion
+    if (this.name === "Buschwick") return;
     this.health -= damage;
   }
   isDead() {
+    if (this.name === "Buschwick") {
+      this.frozen = false;
+      return;
+    }
     if (this.health <= 0) {
       this.frozen = true;
     }

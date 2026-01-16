@@ -70,6 +70,11 @@ function drawInventory() {
 }
 
 function drawHealth() {
+  // Hide health bar for the human character (Buschwick Industries)
+  if (players[activePlayer] && players[activePlayer].name === "Buschwick") {
+    return;
+  }
+  
   // draws health
   players[activePlayer].health = constrain(players[activePlayer].health, 0, players[activePlayer].maxHealth);
   healthPoints = players[activePlayer].health;
