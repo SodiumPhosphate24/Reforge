@@ -22,9 +22,6 @@ var triggerList = {
   Pickup: {
     pickedUpWrench: false
   },
-  Softlock: {
-    softlockPreventionOn: false
-  }
 };
 
 function handleTriggers(trigger) {
@@ -105,7 +102,9 @@ function handleTriggers(trigger) {
       return;
     }
   }
-  if
+  if (trigger == "Softlock") {
+    softlockPreventionOn = false;
+  }
 }
 
 function softlockPrevention(){
