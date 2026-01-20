@@ -126,6 +126,17 @@ function softlockPrevention(){
       else {
         softlockPreventionOn = true;
         messages.push(new Message("dialogue", ["Prometheus IV: You're running low on steam. You need steam to function", "Prometheus IV: I'll send you a cartridge to save you"], "Prometheus", true));
+        for (let j = 0; j < 8; j++) {
+          if(inventoryList[j] == null){
+            inventoryList[j] = new Item("consumable", "common cartridge", 1);
+            itemLabelAlpha = 1.5;
+            return;
+          }
+        }
+        const dropX = pX + 600 + pWidth / 2 - 15;
+        const dropY = pY + 375 + pHeight / 2 - 15;
+        droppedItems.push(new DroppedItem(new Item("consumable", "common cartridge", 1), dropX, dropY))
+        return;
       }
     }
   }
