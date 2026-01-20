@@ -123,9 +123,9 @@ class Enemy {
     }
 
     // Aggro/De-aggro logic based on distance to closest breadcrumb
-    if ((!this.aggro && closestDist < this.aggroRange) || this.health < this.) {
+    if ((!this.aggro && closestDist < this.aggroRange) || this.health < this.maxHealth) {
       this.aggro = true;
-    } else if (this.aggro && closestDist > this.deaggroRange) {
+    } else if (this.aggro && closestDist > this.deaggroRange && this.health == this.maxHealth) {
       this.aggro = false;
       // Gradually slow down when de-aggroing
       this.vx *= 0.9;
