@@ -32,8 +32,6 @@ function drawMenuScreen() {
 
   background(20, 20, 30);
 
-  background(20, 20, 30);
-
   // Draw titlescreen background
   if (titleScreenImg) {
     push();
