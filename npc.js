@@ -28,9 +28,19 @@ class NPC {
       const isHoldingCrowbar = heldItem && heldItem.name.toLowerCase().includes("crowbar");
       if (isHoldingCrowbar && this.name.toLowerCase() === "crate") {
         if (typeof clearTile === 'function') {
-          // coordinate grid 464 169
+          // The user specified coordinate grid 464 169
+          // Attempt clearing both orderings to be absolutely safe
+          if (gameWorld[169] && gameWorld[169][464]) {
+             gameWorld[169][464].layers[1] = null;
+          }
+          if (gameWorld[464] && gameWorld[464][169]) {
+             gameWorld[464][169].layers[1] = null;
+          }
+          
+          clearTile(169, 464, 1);
           clearTile(464, 169, 1);
-          console.log("Crate Opened at 464, 169 layer 1");
+          
+          console.log("FORCE CLEARED Crate at grid 464 169 layer 1");
           return; // Prevent dialogue
         }
       }
