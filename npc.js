@@ -23,6 +23,15 @@ class NPC {
   update() {
     const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
     if (distToPlayer < 120 && keyPressedOnce(69)) {
+      // Check for special crowbar interaction with "Crate" NPC
+      const heldItem = inventoryList[inventorySlot - 1];
+      const isHoldingCrowbar = heldItem && heldItem.name.toLowerCase().includes("crowbar");
+      if (isHoldingCrowbar && this.name.toLowerCase() === "crate") {
+        clearTile(464, 169, 1);
+        console.log("Crate Opened");
+        return;
+      }
+
       // Check if there's already a dialogue message active
       const hasActiveDialogue = messages.some(msg => msg.type === "dialogue");
       if (!hasActiveDialogue) {
