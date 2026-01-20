@@ -147,6 +147,10 @@ function keyPressed() {
           }
         }
         if (!stacked) {
+          let space = false;
+          for (let j = 0; j < inventoryList.length; j++) {
+            
+          }
           if (inventoryList[inventorySlot - 1] == null) {
             inventoryList[inventorySlot - 1] = item.item;
             droppedItems.splice(itemIndex, 1);
@@ -186,6 +190,40 @@ function keyPressed() {
     if (typeof isNearWorkbench === 'function' && isNearWorkbench()) {
       toggleCraftingMenu();
       return;
+    }
+
+    // Crowbar/Crate interaction
+    const heldItem = inventoryList[inventorySlot - 1];
+    if (heldItem && heldItem.name.toLowerCase().includes("crowbar")) {
+      const checkRange = 60;
+      const gridX = Math.floor((pX + 600 + pWidth / 2) / 50);
+      const gridY = Math.floor((pY + 375 + pHeight / 2) / 50);
+
+      for (let r = gridY - 2; r <= gridY + 2; r++) {
+        for (let c = gridX - 2; c <= gridX + 2; c++) {
+          if (r >= 0 && r < gameWorld.length && c >= 0 && c < gameWorld[0].length) {
+            for (let L = 0; L < 4; L++) {
+              if (gameWorld[r][c].layers[L] && (gameWorld[r][c].layers[L].type === 5 || gameWorld[r][c].layers[L].type === 40)) {
+                let centerX = c * 50 + 25;
+                let centerY = r * 50 + 25;
+                if (distance(pX + 600 + pWidth / 2, pY + 375 + pHeight / 2, centerX, centerY) < checkRange) {
+                  const crateKey = r + "," + c;
+                  const storedItems = crateInventories.get(crateKey);
+                  if (storedItems && storedItems.length > 0) {
+                    for (let item of storedItems) {
+                      droppedItems.push(new DroppedItem(new Item(item[0], item[1], item[2]), centerX - 15, centerY - 15));
+                    }
+                    crateInventories.delete(crateKey);
+                  }
+                  clearTile(c, r, L);
+                  console.log("Crate Opened");
+                  return;
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 
