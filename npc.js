@@ -99,6 +99,8 @@ function drawNPCPromptIfNeeded() {
       canFreeDaedalus = true;
     } else if (isReadable) {
       promptText = `Press E to read ${nearestNPC.name}`;
+    } else if (isLock) {
+      promptText = `Press E to open ${nearestNPC.name}`;
     }
 
     handleInteractionPrompt(
