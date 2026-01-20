@@ -152,6 +152,7 @@ function keyPressed() {
               inventoryList[j] = item.item;
               droppedItems.splice(itemIndex, 1);
               itemLabelAlpha = 1.5;
+              handleTriggers("Pickup");
               return;
             }
           }
