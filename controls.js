@@ -153,6 +153,7 @@ function keyPressed() {
               space = true;
               inventoryList[j] = item.item;
               droppedItems.splice(itemIndex, 1);
+              itemLabelAlpha = 1.5;
               return;
             }
           }
