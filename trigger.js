@@ -82,10 +82,10 @@ function handleTriggers(trigger) {
     if (triggerList.Objective.fixLeaks == false) {
       triggerList.Objective.fixLeaks = true;
       if(triggerList.LockOpened.unlockedBoilerRoom){
-        messages.push(new Message("dialogue", ["Prometheus IV: Head to the boiler room to fix the boiler"], "Prometheus", true));
+        messages.push(new Message("dialogue", ["Prometheus IV: Head to the boiler room to fix the boiler", "Prometheus IV: You will need to find a special cartridge to power it again"], "Prometheus", true));
       }
       else{
-        messages.push(new Message("dialogue", ["Prometheus IV: Now you need to fix the boiler", "Prometheus IV: The door is locked, try looking around the code"], "Prometheus", true));
+        messages.push(new Message("dialogue", ["Prometheus IV: Now you need to fix the boiler. You'll need to find a special cartridge to power it again", "Prometheus IV: The door is locked, try looking around the code"], "Prometheus", true));
       }
       currentWaypointIndex = 4;
       return;

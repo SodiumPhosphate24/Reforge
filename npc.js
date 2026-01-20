@@ -27,9 +27,11 @@ class NPC {
       const heldItem = inventoryList[inventorySlot - 1];
       const isHoldingCrowbar = heldItem && heldItem.name.toLowerCase().includes("crowbar");
       if (isHoldingCrowbar && this.name.toLowerCase() === "crate") {
-        clearTile(464, 169, 1);
-        console.log("Crate Opened");
-        return;
+        if (typeof clearTile === 'function') {
+          clearTile(464, 169, 1);
+          console.log("Crate Opened at 464, 169 layer 1");
+          return; // Prevent dialogue
+        }
       }
 
       // Check if there's already a dialogue message active
@@ -95,6 +97,8 @@ function drawNPCPromptIfNeeded() {
     if (isHoldingCrowbar && nameLower == "crate") {
       promptText = `Press E to open crate`;
       canFreeDaedalus = true;
+    } else if (isReadable) {
+      promptText = `Press E to read ${nearestNPC.name}`;
     }
 
     handleInteractionPrompt(

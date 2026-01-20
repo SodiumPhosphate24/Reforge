@@ -218,11 +218,13 @@ class Item {
       }
       if (name == "old wrench") {
         this.name = name;
+        this.stackable = false;
         this.image = projImgs[2];
         this.HtoW = 2.18;
       }
       if (name == "crowbar") {
         this.name = name;
+        this.stackable = false;
         this.image = itemImgs[5];
         this.HtoW = .8;
       }

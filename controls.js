@@ -189,6 +189,32 @@ function keyPressed() {
       toggleCraftingMenu();
       return;
     }
+
+    // Crowbar/Crate interaction (Steel crate only - Type 40)
+    const heldItem = inventoryList[inventorySlot - 1];
+    if (heldItem && heldItem.name.toLowerCase().includes("crowbar")) {
+      const checkRange = 60;
+      const gridX = Math.floor((pX + 600 + pWidth / 2) / 50);
+      const gridY = Math.floor((pY + 375 + pHeight / 2) / 50);
+
+      for (let r = gridY - 2; r <= gridY + 2; r++) {
+        for (let c = gridX - 2; c <= gridX + 2; c++) {
+          if (r >= 0 && r < gameWorld.length && c >= 0 && c < gameWorld[0].length) {
+            for (let L = 0; L < 4; L++) {
+              if (gameWorld[r][c].layers[L] && gameWorld[r][c].layers[L].type === 40) {
+                let centerX = c * 50 + 25;
+                let centerY = r * 50 + 25;
+                if (distance(pX + 600 + pWidth / 2, pY + 375 + pHeight / 2, centerX, centerY) < checkRange) {
+                  clearTile(c, r, L);
+                  console.log("Crate Opened");
+                  return;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   if (keyCode == 88) {
@@ -377,7 +403,7 @@ function mouseClicked() {
           }
         }
       }
-      if (currentItem.type == "consumable" && players[activePlayer].name != "Bastian") {
+      if (currentItem.type == "consumable" && activePlayer != 0) {
         if (healthPoints < players[activePlayer].maxHealth) {
           switch (currentItem.name) {
             case "cheese":
