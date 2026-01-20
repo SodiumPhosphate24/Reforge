@@ -28,6 +28,7 @@ class NPC {
       const isHoldingCrowbar = heldItem && heldItem.name.toLowerCase().includes("crowbar");
       if (isHoldingCrowbar && this.name.toLowerCase() === "crate") {
         if (typeof clearTile === 'function') {
+          // coordinate grid 464 169
           clearTile(464, 169, 1);
           console.log("Crate Opened at 464, 169 layer 1");
           return; // Prevent dialogue

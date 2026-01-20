@@ -1034,6 +1034,8 @@ function setTile(row, col, layer, type, rotation = 0, flipH = false, flipV = fal
 
 function clearTile(row, col, layer) {
   setTile(row, col, layer, null);
+  // Re-calculate collisions/fading if necessary
+  if (typeof updateTileWalls === 'function') updateTileWalls();
 }
 
 // --- Serializer / Parser (with backward compatibility) ---
