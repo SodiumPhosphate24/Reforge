@@ -7,23 +7,30 @@ let menuAnimationTime = 0;
 let ReforgeLogo;
 
 // Menu options
-let menuOptions = ["Play", "Continue", "Credits", "Settings"];
+let menuOptions = ["Play", "Credits", "Settings"];
 let selectedMenuOption = 0;
-let menuOptionHoverAlpha = [0, 0, 0, 0];
+let menuOptionHoverAlpha = [0, 0, 0];
 let lastMenuKeyPress = 0;
 let menuKeyDelay = 150; // Delay between key presses in ms
 
 // New variables for menu animation
-let menuOptionSlideProgress = [0, 0, 0, 0];
-let menuOptionTargetSlide = [0, 0, 0, 0]; // 0 for off-screen right, 1 for on-screen
+let menuOptionSlideProgress = [0, 0, 0];
+let menuOptionTargetSlide = [0, 0, 0]; // 0 for off-screen right, 1 for on-screen
 let menuOptionXOffset = 500; // Starting X offset for animation
 let menuAnimationDelay = 10; // Frames delay between each option
 let menuAnimationTimer = 0; // Timer for staggered animation
 let pendingStateChange = null; // Store next state to transition to after animation
 
+// Selection effect variables
+let selectionPulse = 0;
+let selectionFlash = 0;
+let selectionParticles = [];
+
 function drawMenuScreen() {
   // Handle keyboard navigation
   handleMenuKeyboard();
+
+  background(20, 20, 30);
 
   background(20, 20, 30);
 
@@ -92,8 +99,8 @@ function drawMenuScreen() {
 
     // Once all options are off-screen, change state
     if (allOptionsOut) {
-      // Handle Play and Continue by starting game transition
-      if (pendingStateChange === "play" || pendingStateChange === "continue") {
+      // Handle Play by starting game transition
+      if (pendingStateChange === "play") {
         startGameTransition();
       } else {
         gameState = pendingStateChange;
@@ -121,7 +128,7 @@ function drawMenuScreen() {
       }
     }
 
-    menuOptionSlideProgress[i] = lerp(menuOptionSlideProgress[i], menuOptionTargetSlide[i], 0.15);
+    menuOptionSlideProgress[i] = lerp(menuOptionSlideProgress[i], menuOptionTargetSlide[i], 0.1);
 
     // Calculate current X position with slide animation
     const currentMenuX = lerp(menuX + menuOptionXOffset, menuX, menuOptionSlideProgress[i]);
@@ -135,32 +142,69 @@ function drawMenuScreen() {
 
     // Smooth hover animation - animate selected option
     if (selectedMenuOption === i) {
-      menuOptionHoverAlpha[i] = lerp(menuOptionHoverAlpha[i], 255, 0.15);
+      menuOptionHoverAlpha[i] = lerp(menuOptionHoverAlpha[i], 255, 0.2);
     } else {
-      menuOptionHoverAlpha[i] = lerp(menuOptionHoverAlpha[i], 0, 0.1);
+      menuOptionHoverAlpha[i] = lerp(menuOptionHoverAlpha[i], 0, 0.15);
     }
 
-    // Draw faint white selection background (fit to text width)
+    // Draw selection effect for selected option
     if (selectedMenuOption === i) {
-      fill(255, 255, 255, 30 + menuOptionHoverAlpha[i] * 0.2);
+      selectionPulse = sin(frameCount / 10) * 5;
+      
+      // Outer glow
+      fill(255, 200, 50, 20 + menuOptionHoverAlpha[i] * 0.1);
+      rect(currentMenuX - arrowWidth - 15 - selectionPulse/2, optionY - 25 - selectionPulse/2, totalWidth + 30 + selectionPulse, 50 + selectionPulse, 8);
+      
+      // Main background
+      fill(255, 255, 255, 40 + menuOptionHoverAlpha[i] * 0.2);
       noStroke();
       rect(currentMenuX - arrowWidth - 10, optionY - 25, totalWidth + 20, 50, 5);
+      
+      // Selection particles effect
+      if (frameCount % 10 === 0) {
+        selectionParticles.push({
+          x: currentMenuX - arrowWidth + random(totalWidth),
+          y: optionY + random(-20, 20),
+          vx: random(-0.5, 0.5),
+          vy: random(-1, -2),
+          life: 255
+        });
+      }
     }
 
-    // Draw arrow indicator on the left side for selected option
+    // Update and draw selection particles
+    for (let p = selectionParticles.length - 1; p >= 0; p--) {
+      let part = selectionParticles[p];
+      part.x += part.vx;
+      part.y += part.vy;
+      part.life -= 10;
+      if (part.life <= 0) {
+        selectionParticles.splice(p, 1);
+        continue;
+      }
+      fill(255, 255, 200, part.life);
+      noStroke();
+      ellipse(part.x, part.y, 3, 3);
+    }
+
+    // Draw arrow indicator with bounce
     if (selectedMenuOption === i) {
       push();
-      fill(255, 255, 255, 150 + menuOptionHoverAlpha[i] * 0.4);
+      let arrowBounce = sin(frameCount / 8) * 5;
+      fill(255, 255, 255, 180 + menuOptionHoverAlpha[i] * 0.3);
       textSize(28);
       textAlign(LEFT, CENTER);
-      text(">", currentMenuX - arrowWidth, optionY);
+      text(">", currentMenuX - arrowWidth + arrowBounce, optionY);
       pop();
     }
 
-    // Draw option text
-    textSize(28);
+    // Draw option text with slight scale if selected
+    push();
+    textSize(28 + (selectedMenuOption === i ? 2 : 0));
     fill(255, 255, 255, 200 + menuOptionHoverAlpha[i] * 0.2);
+    if (selectedMenuOption === i) fill(255, 255, 200, 255);
     text(menuOptions[i], currentMenuX, optionY);
+    pop();
   }
 
   // Draw navigation instructions at the bottom
@@ -207,16 +251,7 @@ function handleMenuClick(optionIndex) {
     for (let i = 0; i < menuOptions.length; i++) {
       menuOptionTargetSlide[i] = 0;
     }
-  } else if (optionIndex === 1) { // Continue
-    // TODO: Implement continue functionality
-    // Start exit animation, will change state once complete
-    pendingStateChange = "continue";
-    menuAnimationTimer = 0;
-    // Set all targets to slide off-screen
-    for (let i = 0; i < menuOptions.length; i++) {
-      menuOptionTargetSlide[i] = 0;
-    }
-  } else if (optionIndex === 2) { // Credits
+  } else if (optionIndex === 1) { // Credits
     // Start exit animation, will change state once complete
     pendingStateChange = "credits";
     menuAnimationTimer = 0;
@@ -224,7 +259,7 @@ function handleMenuClick(optionIndex) {
     for (let i = 0; i < menuOptions.length; i++) {
       menuOptionTargetSlide[i] = 0;
     }
-  } else if (optionIndex === 3) { // Settings
+  } else if (optionIndex === 2) { // Settings
     // Start exit animation, will change state once complete
     pendingStateChange = "settings";
     menuAnimationTimer = 0;
