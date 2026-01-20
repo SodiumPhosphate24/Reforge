@@ -67,6 +67,7 @@ function drawInventory() {
     }
     imageMode(CORNER);
   }
+  noStroke();
 }
 
 function drawHealth() {
@@ -74,7 +75,7 @@ function drawHealth() {
   if (activePlayer === 0) {
     return;
   }
-  
+
   // draws health
   players[activePlayer].health = constrain(players[activePlayer].health, 0, players[activePlayer].maxHealth);
   healthPoints = players[activePlayer].health;
@@ -106,7 +107,7 @@ class Item {
   constructor(type, name, amount, scaleFactor = 1.0) {
     this.amount = amount;
     this.scaleFactor = scaleFactor; // Default scale is 1.0 (no scaling)
-    
+
     if (type == "gun") {
       this.type = "gun";
       this.stackable = false;
@@ -195,7 +196,7 @@ class Item {
         this.image = matImgs[4];
         this.HtoW = 1;
       }
-      if (name == "boiler cartridge"){
+      if (name == "boiler cartridge") {
         this.name = name;
         this.image = matImgs[5];
         this.HtoW = 1;
@@ -256,7 +257,7 @@ class DroppedItem {
     // Determine base size based on item type
     let baseSize = 35; // Default
 
-    if (this.item.name == "steam gun"){
+    if (this.item.name == "steam gun") {
       baseSize = 52;
     } else if (this.item.type === "gun" && this.item.name != "steam gun") {
       baseSize = 40; // Guns are moderately sized
@@ -380,7 +381,7 @@ function updateDroppedItems() {
 
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
-  
+
   // Calculate viewport bounds for culling
   const viewLeft = -camX - 100;
   const viewRight = -camX + width + 100;
@@ -389,13 +390,13 @@ function updateDroppedItems() {
 
   for (let i = 0; i < droppedItems.length; i++) {
     let item = droppedItems[count];
-    
+
     // Only update and draw items within extended viewport
     const itemX = item.x + item.itemWidth / 2;
     const itemY = item.y + item.itemHeight / 2;
-    
+
     if (itemX >= viewLeft && itemX <= viewRight &&
-        itemY >= viewTop && itemY <= viewBottom) {
+      itemY >= viewTop && itemY <= viewBottom) {
       item.draw();
 
       // Check if this is the nearest pickup-able item

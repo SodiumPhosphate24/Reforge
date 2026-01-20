@@ -147,50 +147,42 @@ function keyPressed() {
           }
         }
         if (!stacked) {
-          let space = false;
           for (let j = 0; j < 9; j++) {
             if(inventoryList[j] == null){
-              space = true;
               inventoryList[j] = item.item;
               droppedItems.splice(itemIndex, 1);
               itemLabelAlpha = 1.5;
               return;
             }
           }
-          if (inventoryList[inventorySlot - 1] == null) {
-            inventoryList[inventorySlot - 1] = item.item;
-            droppedItems.splice(itemIndex, 1);
-            itemLabelAlpha = 1.5;
-          }
-          else {
-            const dropX = pX + 600 + pWidth / 2 - 15;
-            const dropY = pY + 375 + pHeight / 2 - 15;
-            droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], dropX, dropY))
-            inventoryList[inventorySlot - 1] = item.item;
-            droppedItems.splice(itemIndex, 1);
-            itemLabelAlpha = 1.5;
-          }
-          handleTriggers("Pickup");
-          return;
-        }
-      }
-      else {
-        if (inventoryList[inventorySlot - 1] == null) {
-          inventoryList[inventorySlot - 1] = item.item;
-          droppedItems.splice(itemIndex, 1);
-          itemLabelAlpha = 1.5;
-        }
-        else {
           const dropX = pX + 600 + pWidth / 2 - 15;
           const dropY = pY + 375 + pHeight / 2 - 15;
           droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], dropX, dropY))
           inventoryList[inventorySlot - 1] = item.item;
           droppedItems.splice(itemIndex, 1);
           itemLabelAlpha = 1.5;
+          handleTriggers("Pickup");
+          return;
         }
-        handleTriggers("Pickup");
-        return;
       }
+      else {
+        for (let j = 0; j < 9; j++) {
+            if(inventoryList[j] == null){
+              inventoryList[j] = item.item;
+              droppedItems.splice(itemIndex, 1);
+              itemLabelAlpha = 1.5;
+              return;
+            }
+          }
+          const dropX = pX + 600 + pWidth / 2 - 15;
+          const dropY = pY + 375 + pHeight / 2 - 15;
+          droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], dropX, dropY))
+          inventoryList[inventorySlot - 1] = item.item;
+          droppedItems.splice(itemIndex, 1);
+          itemLabelAlpha = 1.5;
+          handleTriggers("Pickup");
+          return;
+        }
     }
 
     if (typeof isNearWorkbench === 'function' && isNearWorkbench()) {
