@@ -49,6 +49,56 @@ class Enemy {
       this.shootRange = 300;
       this.shootCooldown = 25;
     }
+    if (type == "boss") {
+      this.type = "boss";
+      this.name = "The Rogue Automaton";
+      this.health = 150;
+      this.maxHealth = 150;
+      this.speed = 1.5;
+      this.acceleration = 0.08;
+      this.image = OGBuschy;
+      this.width = 80;
+      this.height = 100;
+      this.lootPool = [["gun", "rare pistol", 1], ["material", "legendary wheel", 2], ["consumable", "legendary cartridge", 5]];
+      this.aggroRange = 600;
+      this.deaggroRange = 1200;
+      
+      // Boss-specific properties
+      this.isBoss = true;
+      this.phase = 1; // Current combat phase (1, 2, or 3)
+      this.phaseTransitioning = false;
+      this.phaseTransitionTimer = 0;
+      this.phaseTransitionDuration = 120; // 2 seconds at 60fps
+      
+      // Phase thresholds (percentage of health)
+      this.phase2Threshold = 0.66; // Enter phase 2 at 66% health
+      this.phase3Threshold = 0.33; // Enter phase 3 at 33% health
+      
+      // Attack patterns
+      this.attackCooldown = 0;
+      this.attackPattern = 0;
+      this.chargeSpeed = 0;
+      this.isCharging = false;
+      this.chargeTargetX = 0;
+      this.chargeTargetY = 0;
+      this.shootCooldown = 0;
+      this.shootRange = 400;
+      this.burstCount = 0;
+      this.burstCooldown = 0;
+      
+      // Spawn minions
+      this.minionSpawnCooldown = 0;
+      this.minionsSpawned = 0;
+      
+      // Visual effects
+      this.flashTimer = 0;
+      this.shakeIntensity = 0;
+      this.auraRadius = 0;
+      this.auraAngle = 0;
+      
+      // Set as active boss
+      activeBoss = this;
+    }
   }
 
   // Raycast from enemy to target position to check for walls
@@ -105,7 +155,183 @@ class Enemy {
     }
   }
 
+  // Boss-specific methods
+  bossUpdate() {
+    if (!this.isBoss) return;
+    
+    // Update visual effects
+    this.auraAngle += 0.02;
+    this.auraRadius = 60 + sin(this.auraAngle * 3) * 10;
+    if (this.flashTimer > 0) this.flashTimer--;
+    if (this.shakeIntensity > 0) this.shakeIntensity *= 0.95;
+    
+    // Check for phase transitions
+    const healthPercent = this.health / this.maxHealth;
+    
+    if (!this.phaseTransitioning) {
+      if (this.phase === 1 && healthPercent <= this.phase2Threshold) {
+        this.startPhaseTransition(2);
+      } else if (this.phase === 2 && healthPercent <= this.phase3Threshold) {
+        this.startPhaseTransition(3);
+      }
+    }
+    
+    // Handle phase transition
+    if (this.phaseTransitioning) {
+      this.phaseTransitionTimer++;
+      this.shakeIntensity = 5;
+      
+      if (this.phaseTransitionTimer >= this.phaseTransitionDuration) {
+        this.phaseTransitioning = false;
+        this.phaseTransitionTimer = 0;
+        this.onPhaseComplete();
+      }
+      return; // Don't attack during transition
+    }
+    
+    // Phase-specific attack patterns
+    this.executePhaseAttacks();
+  }
+  
+  startPhaseTransition(newPhase) {
+    this.phase = newPhase;
+    this.phaseTransitioning = true;
+    this.phaseTransitionTimer = 0;
+    this.flashTimer = 60;
+    this.shakeIntensity = 8;
+    
+    // Speed increase per phase
+    this.speed += 0.5;
+    this.acceleration += 0.02;
+  }
+  
+  onPhaseComplete() {
+    // Spawn minions on phase change
+    if (this.phase === 2) {
+      this.spawnMinions(2);
+    } else if (this.phase === 3) {
+      this.spawnMinions(3);
+    }
+  }
+  
+  spawnMinions(count) {
+    for (let i = 0; i < count; i++) {
+      const angle = (TWO_PI / count) * i;
+      const spawnX = this.x + cos(angle) * 100;
+      const spawnY = this.y + sin(angle) * 100;
+      enemies.push(new Enemy("harpy", spawnX, spawnY));
+    }
+  }
+  
+  executePhaseAttacks() {
+    if (this.attackCooldown > 0) {
+      this.attackCooldown--;
+    }
+    
+    const distToPlayer = distance(this.x + this.width/2, this.y + this.height/2, pX + 600, pY + 340);
+    
+    // Handle charging attack
+    if (this.isCharging) {
+      const dx = this.chargeTargetX - this.x;
+      const dy = this.chargeTargetY - this.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      
+      if (dist < 30 || this.checkWallCollision()) {
+        this.isCharging = false;
+        this.shakeIntensity = 3;
+        this.attackCooldown = 60;
+      } else {
+        this.x += (dx / dist) * this.chargeSpeed;
+        this.y += (dy / dist) * this.chargeSpeed;
+      }
+      return;
+    }
+    
+    // Execute attacks based on phase
+    if (this.attackCooldown <= 0 && distToPlayer < this.shootRange * 1.5) {
+      const attackRoll = Math.random();
+      
+      if (this.phase === 1) {
+        // Phase 1: Single shots and occasional charge
+        if (attackRoll < 0.7) {
+          this.bossShoot(1);
+          this.attackCooldown = 40;
+        } else {
+          this.startCharge();
+        }
+      } else if (this.phase === 2) {
+        // Phase 2: Burst fire and faster charges
+        if (attackRoll < 0.5) {
+          this.bossShoot(3); // 3-shot burst
+          this.attackCooldown = 50;
+        } else if (attackRoll < 0.8) {
+          this.startCharge();
+        } else {
+          this.sprayAttack();
+        }
+      } else if (this.phase === 3) {
+        // Phase 3: Rapid fire, charges, and minion spawns
+        if (attackRoll < 0.4) {
+          this.bossShoot(5); // 5-shot burst
+          this.attackCooldown = 40;
+        } else if (attackRoll < 0.6) {
+          this.startCharge();
+        } else if (attackRoll < 0.8) {
+          this.sprayAttack();
+        } else {
+          if (this.minionsSpawned < 6) {
+            this.spawnMinions(1);
+            this.minionsSpawned++;
+          }
+          this.attackCooldown = 90;
+        }
+      }
+    }
+    
+    // Handle burst shooting
+    if (this.burstCount > 0) {
+      if (this.burstCooldown <= 0) {
+        const angle = atan2(pY + 340 - (this.y + this.height/2), pX + 600 - (this.x + this.width/2));
+        bullets.push(new Bullet("enemy", 2, angle, this.x + this.width/2, this.y + this.height/2));
+        this.burstCount--;
+        this.burstCooldown = 8;
+      } else {
+        this.burstCooldown--;
+      }
+    }
+  }
+  
+  bossShoot(burstSize) {
+    this.burstCount = burstSize;
+    this.burstCooldown = 0;
+  }
+  
+  startCharge() {
+    this.isCharging = true;
+    this.chargeTargetX = pX + 600;
+    this.chargeTargetY = pY + 340;
+    this.chargeSpeed = 6 + this.phase * 2; // Faster each phase
+    this.attackCooldown = 90;
+  }
+  
+  sprayAttack() {
+    const centerAngle = atan2(pY + 340 - (this.y + this.height/2), pX + 600 - (this.x + this.width/2));
+    const spreadCount = 3 + this.phase * 2;
+    const spreadAngle = PI / 6;
+    
+    for (let i = 0; i < spreadCount; i++) {
+      const angle = centerAngle - spreadAngle/2 + (spreadAngle / (spreadCount - 1)) * i;
+      bullets.push(new Bullet("enemy", 2, angle, this.x + this.width/2, this.y + this.height/2));
+    }
+    this.attackCooldown = 80;
+  }
+
   update() {
+    // Boss-specific update
+    if (this.isBoss) {
+      this.bossUpdate();
+    }
+    
     // Find distance to closest breadcrumb (or player if no breadcrumbs)
     let closestDist = Infinity;
     
@@ -494,19 +720,64 @@ function drawEnemies() {
                    enemy.y >= viewTop && enemy.y <= viewBottom;
 
     if (inView) {
-      // Visual indicator for aggro state
-      if (enemy.aggro) {
-        fill(255, 0, 0);
+      // Boss-specific rendering
+      if (enemy.isBoss) {
+        push();
+        
+        // Apply shake effect
+        let drawX = enemy.x;
+        let drawY = enemy.y;
+        if (enemy.shakeIntensity > 0.1) {
+          drawX += random(-enemy.shakeIntensity, enemy.shakeIntensity);
+          drawY += random(-enemy.shakeIntensity, enemy.shakeIntensity);
+        }
+        
+        // Draw aura effect based on phase
+        noStroke();
+        let auraColor;
+        if (enemy.phase === 1) {
+          auraColor = color(255, 100, 0, 50); // Orange
+        } else if (enemy.phase === 2) {
+          auraColor = color(255, 50, 50, 70); // Red
+        } else {
+          auraColor = color(150, 0, 255, 90); // Purple
+        }
+        
+        // Pulsing aura
+        for (let r = enemy.auraRadius; r > 0; r -= 15) {
+          fill(red(auraColor), green(auraColor), blue(auraColor), alpha(auraColor) * (r / enemy.auraRadius));
+          ellipse(drawX + enemy.width/2, drawY + enemy.height/2, r * 2, r * 2);
+        }
+        
+        // Phase transition flash effect
+        if (enemy.flashTimer > 0) {
+          tint(255, 255, 255, 150 + sin(enemy.flashTimer * 0.5) * 100);
+        } else if (enemy.phaseTransitioning) {
+          // Flicker during transition
+          tint(255, 100 + sin(frameCount * 0.3) * 100, 100 + sin(frameCount * 0.3) * 100);
+        }
+        
+        image(enemy.image, drawX, drawY, enemy.width, enemy.height);
+        
+        noTint();
+        pop();
+        
+        // Don't draw regular health bar for boss (use boss bar instead)
       } else {
-        fill(150, 0, 0);
-      }
+        // Regular enemy rendering
+        if (enemy.aggro) {
+          fill(255, 0, 0);
+        } else {
+          fill(150, 0, 0);
+        }
 
-      image(enemy.image, enemy.x, enemy.y, enemy.width, enemy.height);
-      if(enemy.health < enemy.maxHealth){
-        fill(255, 0, 0);
-        rect(enemy.x, enemy.y - 10, enemy.width, 5);
-        fill(0, 255, 0);
-        rect(enemy.x, enemy.y - 10, enemy.width * (enemy.health / enemy.maxHealth), 5);
+        image(enemy.image, enemy.x, enemy.y, enemy.width, enemy.height);
+        if(enemy.health < enemy.maxHealth){
+          fill(255, 0, 0);
+          rect(enemy.x, enemy.y - 10, enemy.width, 5);
+          fill(0, 255, 0);
+          rect(enemy.x, enemy.y - 10, enemy.width * (enemy.health / enemy.maxHealth), 5);
+        }
       }
     }
 
@@ -515,9 +786,19 @@ function drawEnemies() {
         players[activePlayer].health -= 2;
         healthPoints = players[activePlayer].health;
         healthPoints = constrain(healthPoints, 0, players[activePlayer].maxHealth);
+      } else if (enemy.type == "boss") {
+        // Boss deals more damage
+        players[activePlayer].health -= 5;
+        healthPoints = players[activePlayer].health;
+        healthPoints = constrain(healthPoints, 0, players[activePlayer].maxHealth);
       }
     }
     if (enemy.isDead()) {
+      // Clear active boss reference if boss dies
+      if (enemy.isBoss) {
+        activeBoss = null;
+      }
+      
       let r = Math.floor(Math.random() * (enemy.lootPool.length + 2));
       if (r < enemy.lootPool.length) {
         droppedItems.push(new DroppedItem(new Item(enemy.lootPool[r][0], enemy.lootPool[r][1], enemy.lootPool[r][2]), enemy.x, enemy.y));
@@ -527,6 +808,110 @@ function drawEnemies() {
     }
     count++;
   }
+}
+
+// Draw boss health bar at top of screen
+function drawBossBar() {
+  if (!activeBoss || activeBoss.isDead()) return;
+  
+  push();
+  
+  const barWidth = 500;
+  const barHeight = 30;
+  const barX = (width - barWidth) / 2;
+  const barY = 80;
+  
+  // Background
+  fill(30, 30, 30, 220);
+  stroke(60, 60, 60);
+  strokeWeight(3);
+  rect(barX - 10, barY - 15, barWidth + 20, barHeight + 50, 8);
+  
+  // Boss name
+  noStroke();
+  textFont(Silkscreen);
+  textSize(16);
+  textAlign(CENTER, CENTER);
+  
+  // Phase indicator colors
+  let nameColor;
+  if (activeBoss.phase === 1) {
+    nameColor = color(255, 200, 100);
+  } else if (activeBoss.phase === 2) {
+    nameColor = color(255, 100, 100);
+  } else {
+    nameColor = color(200, 100, 255);
+  }
+  
+  fill(nameColor);
+  text(activeBoss.name || "BOSS", width / 2, barY - 2);
+  
+  // Health bar background
+  fill(80, 0, 0);
+  noStroke();
+  rect(barX, barY + 15, barWidth, barHeight, 4);
+  
+  // Health bar fill with gradient effect based on phase
+  const healthPercent = activeBoss.health / activeBoss.maxHealth;
+  let healthColor;
+  
+  if (activeBoss.phase === 1) {
+    healthColor = lerpColor(color(255, 150, 0), color(255, 200, 50), sin(frameCount * 0.05) * 0.5 + 0.5);
+  } else if (activeBoss.phase === 2) {
+    healthColor = lerpColor(color(255, 50, 50), color(255, 100, 100), sin(frameCount * 0.08) * 0.5 + 0.5);
+  } else {
+    healthColor = lerpColor(color(150, 50, 255), color(200, 100, 255), sin(frameCount * 0.1) * 0.5 + 0.5);
+  }
+  
+  fill(healthColor);
+  rect(barX, barY + 15, barWidth * healthPercent, barHeight, 4);
+  
+  // Health bar shine effect
+  for (let i = 0; i < 3; i++) {
+    fill(255, 255, 255, 30 - i * 10);
+    rect(barX, barY + 15 + i * 2, barWidth * healthPercent, 4, 2);
+  }
+  
+  // Phase transition effect
+  if (activeBoss.phaseTransitioning) {
+    const progress = activeBoss.phaseTransitionTimer / activeBoss.phaseTransitionDuration;
+    fill(255, 255, 255, 150 * (1 - progress));
+    rect(barX, barY + 15, barWidth, barHeight, 4);
+    
+    // "PHASE X" text
+    fill(255, 255, 255, 255 * sin(progress * PI));
+    textSize(24);
+    text("PHASE " + activeBoss.phase, width / 2, barY + 30);
+  }
+  
+  // Phase indicators (small circles)
+  const indicatorY = barY + 55;
+  for (let i = 1; i <= 3; i++) {
+    const indicatorX = barX + (barWidth / 4) * i;
+    
+    if (i <= activeBoss.phase) {
+      // Active phase
+      fill(nameColor);
+      stroke(255, 255, 255, 150);
+      strokeWeight(2);
+    } else {
+      // Inactive phase
+      fill(60, 60, 60);
+      stroke(100, 100, 100);
+      strokeWeight(1);
+    }
+    ellipse(indicatorX, indicatorY, 12, 12);
+  }
+  
+  // Phase labels
+  noStroke();
+  textSize(10);
+  fill(180, 180, 180);
+  text("I", barX + barWidth / 4, indicatorY);
+  text("II", barX + barWidth / 2, indicatorY);
+  text("III", barX + barWidth * 3 / 4, indicatorY);
+  
+  pop();
 }
 // Draw breadcrumbs for editor mode
 function drawBreadcrumbs() {

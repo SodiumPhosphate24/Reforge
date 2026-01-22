@@ -1,4 +1,7 @@
-let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, Book, Greg, LockNpc, Hephaestus, Atlas;
+let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, Book, Greg, LockNpc, Hephaestus, Atlas, OGBuschy;
+
+// Boss system variables
+var activeBoss = null; // Currently active boss enemy
 //music
 let themeSong;
 let maxTileTypes = 0; // will be set in setup()
@@ -364,6 +367,7 @@ function preload() {
   LockNpc = loadImage("Characters/Lock.png");
   BadGuy = loadImage("Characters/Enemy.png");
   Greg = loadImage("Items/Consumables/CommonBattery.png");
+  OGBuschy = loadImage("Characters/OGBuschy.png");
   Book = loadImage("Characters/Book.png");
   BulletImgs[0] = loadImage("Items/Bullets/CommonBullet.png");
   BulletImgs[1] = loadImage("Items/Bullets/UncommonBullet.png");
@@ -975,6 +979,7 @@ function drawGameplay() {
   image(Fog, fogX, fogY, fogSize, fogSize);
   imageMode(CORNER);
   drawHealth();
+  drawBossBar();
   noTint();
   doRecoil();
   if (editorMode) {

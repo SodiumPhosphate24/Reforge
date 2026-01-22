@@ -55,7 +55,7 @@ var selectedItemIndex = 0;   // Currently selected item from itemConstructors
 var selectedCrateItems = []; // Array to store selected item constructors for this crate
 var crateInventories = new Map(); // Map to store items for each crate: key = "row,col", value = array of item constructors
 var selectedEnemyIndex = 0;
-var enemyTypes = ["harpy", "cyclops", "greg"]
+var enemyTypes = ["harpy", "cyclops", "greg", "boss"]
 
 // Particle source system
 var particleSources = []; // Array of particle source objects
