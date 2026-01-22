@@ -159,6 +159,9 @@ class Enemy {
   bossUpdate() {
     if (!this.isBoss) return;
     
+    // Only run boss attacks when aggro
+    if (!this.aggro) return;
+    
     // Update visual effects
     this.auraAngle += 0.02;
     this.auraRadius = 60 + sin(this.auraAngle * 3) * 10;
