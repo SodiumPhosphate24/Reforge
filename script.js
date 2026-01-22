@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, Book, Greg, LockNpc, Hephaestus, Atlas, OGBuschy;
+let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, Book, Greg, LockNpc, Hephaestus, Atlas, OGBuschy, Daedalus;
 
 // Boss system variables
 var activeBoss = null; // Currently active boss enemy
@@ -364,6 +364,7 @@ function preload() {
   Prometheus = loadImage("Characters/Prometheus.png");
   Hephaestus = loadImage("Characters/Hephaestus.png");
   Atlas = loadImage("Characters/Atlas.png");
+  Daedalus = loadImage("Characters/Daedalus.png");
   LockNpc = loadImage("Characters/Lock.png");
   BadGuy = loadImage("Characters/Enemy.png");
   Greg = loadImage("Items/Consumables/CommonBattery.png");
@@ -2504,7 +2505,7 @@ function drawAlarmFlash() {
 
 function spawnEnemies() {
   enemies.push(new Enemy("boss", 1900, 2700));
-  
+
   enemies.push(new Enemy("harpy", 16584, 15523));
   enemies.push(new Enemy("harpy", 16768, 15536));
   enemies.push(new Enemy("harpy", 16776, 15785));
@@ -2556,7 +2557,7 @@ function initializeHardcodes() {
   ]
     , Hephaestus, "Hephaestus", 2));
   NonPlayerCharacters.push(new NPC(23200, 22650, "Atlas", ["Atlas: I'm Atlas... Responsible for keeping tabs on the geography of the area post incident."], Atlas, "Atlas", 2));
-  NonPlayerCharacters.push(new NPC(8467, 23200, "Crate", ["Crate: Help! Hey! I'm stuck in here! Let me out!", "Crate: I'm starving, at least try to slip some cheese in here? Get me out!", "PROMETHEUS IV: That crate is sealed tight... We need a tool to pry it open."], tileImgs[40], "Daedalus", .001));
+  NonPlayerCharacters.push(new NPC(8467, 23200, "Crate", ["Crate: Help! Hey! I'm stuck in here! Let me out!", "Crate: I'm starving, at least try to slip some cheese in here? Get me out!", "PROMETHEUS IV: That crate is sealed tight... We need a tool to pry it open."], Daedalus, "Daedalus", .001));
   NonPlayerCharacters.push(new NPC(12867, 12875, "Lock", ["Enter Code: ____ "], LockNpc, "Lock", .5));
   NonPlayerCharacters.push(new NPC(
     12950,
