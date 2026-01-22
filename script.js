@@ -2503,6 +2503,8 @@ function drawAlarmFlash() {
 }
 
 function spawnEnemies() {
+  enemies.push(new Enemy("boss", 1900, 2700));
+  
   enemies.push(new Enemy("harpy", 16584, 15523));
   enemies.push(new Enemy("harpy", 16768, 15536));
   enemies.push(new Enemy("harpy", 16776, 15785));

@@ -24,6 +24,12 @@ var triggerList = {
   },
   Softlock: {
     softlockMessage: false
+  },
+  Labyrinth: {
+    puzzle1: false,
+    puzzle2: false,
+    puzzle3: false,
+    puzzle4: false
   }
 };
 
