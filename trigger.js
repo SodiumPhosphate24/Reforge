@@ -30,7 +30,7 @@ var triggerList = {
     puzzle2: false,
     puzzle3: false,
     puzzle4: false,
-    isFightingBoss: false;
+    isFightingBoss: false
   }
 };
 
