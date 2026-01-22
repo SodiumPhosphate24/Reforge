@@ -148,7 +148,7 @@ function keyPressed() {
         }
         if (!stacked) {
           for (let j = 0; j < 8; j++) {
-            if(inventoryList[j] == null){
+            if (inventoryList[j] == null) {
               inventoryList[j] = item.item;
               droppedItems.splice(itemIndex, 1);
               itemLabelAlpha = 1.5;
@@ -168,23 +168,23 @@ function keyPressed() {
       }
       else {
         for (let j = 0; j < 8; j++) {
-            if(inventoryList[j] == null){
-              inventoryList[j] = item.item;
-              droppedItems.splice(itemIndex, 1);
-              itemLabelAlpha = 1.5;
-              handleTriggers("Pickup");
-              return;
-            }
+          if (inventoryList[j] == null) {
+            inventoryList[j] = item.item;
+            droppedItems.splice(itemIndex, 1);
+            itemLabelAlpha = 1.5;
+            handleTriggers("Pickup");
+            return;
           }
-          const dropX = pX + 600 + pWidth / 2 - 15;
-          const dropY = pY + 375 + pHeight / 2 - 15;
-          droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], dropX, dropY))
-          inventoryList[inventorySlot - 1] = item.item;
-          droppedItems.splice(itemIndex, 1);
-          itemLabelAlpha = 1.5;
-          handleTriggers("Pickup");
-          return;
         }
+        const dropX = pX + 600 + pWidth / 2 - 15;
+        const dropY = pY + 375 + pHeight / 2 - 15;
+        droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], dropX, dropY))
+        inventoryList[inventorySlot - 1] = item.item;
+        droppedItems.splice(itemIndex, 1);
+        itemLabelAlpha = 1.5;
+        handleTriggers("Pickup");
+        return;
+      }
     }
 
     if (typeof isNearWorkbench === 'function' && isNearWorkbench()) {
@@ -195,26 +195,8 @@ function keyPressed() {
     // Crowbar/Crate interaction (Steel crate only - Type 40)
     const heldItem = inventoryList[inventorySlot - 1];
     if (heldItem && heldItem.name.toLowerCase().includes("crowbar")) {
-      const checkRange = 60;
-      const gridX = Math.floor((pX + 600 + pWidth / 2) / 50);
-      const gridY = Math.floor((pY + 375 + pHeight / 2) / 50);
-
-      for (let r = gridY - 2; r <= gridY + 2; r++) {
-        for (let c = gridX - 2; c <= gridX + 2; c++) {
-          if (r >= 0 && r < gameWorld.length && c >= 0 && c < gameWorld[0].length) {
-            for (let L = 0; L < 4; L++) {
-              if (gameWorld[r][c].layers[L] && gameWorld[r][c].layers[L].type === 40) {
-                let centerX = c * 50 + 25;
-                let centerY = r * 50 + 25;
-                if (distance(pX + 600 + pWidth / 2, pY + 375 + pHeight / 2, centerX, centerY) < checkRange) {
-                  clearTile(c, r, L);
-                  console.log("Crate Opened");
-                  return;
-                }
-              }
-            }
-          }
-        }
+      if (isNearCrate(40)) {
+        clearTile(464, 169, 1);
       }
     }
   }
