@@ -48,6 +48,18 @@ Preferred communication style: Simple, everyday language.
 - **Pathfinding**: A* pathfinding algorithm recalculated every 15-30 frames depending on distance
 - **Deaggro Logic**: Enemies stop chasing at longer distance (700 units) with smooth deceleration
 - **Velocity-Based Movement**: Acceleration/deceleration for realistic movement
+- **Enemy Types**: harpy (melee), cyclops (tank), greg (ranged), boss (multi-phase)
+
+**Boss System**:
+- **Boss Enemy Type**: Special enemy with "boss" type using OGBuschy.png image
+- **Multi-Phase Combat**: 3 combat phases triggered at health thresholds (66% and 33%)
+- **Phase-Specific Attacks**: 
+  - Phase 1: Single shots, occasional charge attacks
+  - Phase 2: Burst fire (3 shots), faster charges, spray attacks, spawns 2 minions
+  - Phase 3: Rapid burst fire (5 shots), frequent charges, spray attacks, spawns up to 6 minions
+- **Boss Bar UI**: Dedicated health bar at top of screen with phase indicators (I, II, III)
+- **Visual Effects**: Pulsing aura (orange/red/purple based on phase), shake effects, flash transitions
+- **activeBoss Variable**: Global reference to current boss enemy for UI rendering
 
 **Crafting System**:
 - **Recipe-Based**: Recipes define required ingredients and output items
