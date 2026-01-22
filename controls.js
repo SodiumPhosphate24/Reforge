@@ -195,7 +195,7 @@ function keyPressed() {
     // Crowbar/Crate interaction (Steel crate only - Type 40)
     const heldItem = inventoryList[inventorySlot - 1];
     if (heldItem && heldItem.name.toLowerCase().includes("crowbar")) {
-      if (isNearCrate(40)) {
+      if (canFreeDaedalus) {
         clearTile(464, 169, 1);
       }
     }
