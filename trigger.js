@@ -29,7 +29,8 @@ var triggerList = {
     puzzle1: false,
     puzzle2: false,
     puzzle3: false,
-    puzzle4: false
+    puzzle4: false,
+    isFightingBoss: false;
   }
 };
 
@@ -66,6 +67,7 @@ function handleTriggers(trigger) {
     if (triggerList.Hephaestus.talkToHephaestus == false) {
       triggerList.Hephaestus.talkToHephaestus = true;
       droppedItems.push(new DroppedItem(new Item("gun", "steam gun", 1), 23075, 22675));
+      NonPlayerCharacters[1].message = ["Hephaestus: ..."];
       messages.push(new Message("dialogue", ["Hephaestus: Take this. This is a steam gun. It takes some of your steam reserves to fire, but it's powerful", "Hephaestus: I hope it will help you survive out there"], "Hephaestus", true));
       return;
     }
