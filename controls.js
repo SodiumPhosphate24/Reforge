@@ -197,6 +197,7 @@ function keyPressed() {
     if (heldItem && heldItem.name.toLowerCase().includes("crowbar")) {
       if (canFreeDaedalus) {
         clearTile(464, 169, 1);
+        NonPlayerCharacters[3].scale = 1;
       }
     }
   }
