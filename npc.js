@@ -28,34 +28,8 @@ class NPC {
       const isHoldingCrowbar = heldItem && heldItem.name.toLowerCase().includes("crowbar");
       if (isHoldingCrowbar && this.name.toLowerCase() === "crate") {
         if (typeof clearTile === 'function') {
-          // Attempt to find the crate by type in the vicinity of the NPC
-          const searchRange = 3; // 3x3 grid around the NPC
-          const npcGridX = Math.floor(this.x / 50);
-          const npcGridY = Math.floor(this.y / 50);
-          
-          let found = false;
-          for (let r = npcGridY - searchRange; r <= npcGridY + searchRange; r++) {
-            for (let c = npcGridX - searchRange; c <= npcGridX + searchRange; c++) {
-              if (gameWorld[r] && gameWorld[r][c]) {
-                for (let L = 0; L < 4; L++) {
-                  // Type 40 is Steel Crate, Type 5 is regular Crate
-                  if (gameWorld[r][c].layers[L] && (gameWorld[r][c].layers[L].type === 40 || gameWorld[r][c].layers[L].type === 5)) {
-                    clearTile(r, c, L);
-                    console.log(`Crate Found and Cleared at grid ${c} ${r} layer ${L}`);
-                    found = true;
-                  }
-                }
-              }
-            }
-          }
-
-          // Fallback to absolute coordinates provided by user
-          if (!found) {
-            clearTile(169, 464, 1);
-            clearTile(464, 169, 1);
-            console.log("Fallback clearing crate at grid 464 169 layer 1");
-          }
-          
+          clearTile(169, 464, 1);
+          console.log("Cleared crate at 169, 464 layer 1");
           return; // Prevent dialogue
         }
       }
