@@ -21,6 +21,15 @@ class NPC {
   }
 
   update() {
+    // Recalculate dimensions in real-time to allow live scaling
+    this.width = this.baseWidth * this.scale;
+    if (this.image) {
+      const aspectRatio = this.image.height / this.image.width;
+      this.height = this.width * aspectRatio;
+    } else {
+      this.height = 25 * this.scale;
+    }
+
     const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
     if (distToPlayer < 120 && keyPressedOnce(69)) {
       // Check for special crowbar interaction with "Crate" NPC
