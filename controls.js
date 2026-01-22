@@ -196,7 +196,7 @@ function keyPressed() {
     const heldItem = inventoryList[inventorySlot - 1];
     if (heldItem && heldItem.name.toLowerCase().includes("crowbar")) {
       if (canFreeDaedalus) {
-        clearTile(464, 169, 0);
+        clearTile(464, 169, 1);
       }
     }
   }
