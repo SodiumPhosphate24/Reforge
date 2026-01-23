@@ -8,7 +8,7 @@ let maxTileTypes = 0; // will be set in setup()
 // Waypoint system
 var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875], [23983, 21925], [8475, 23225]];
 var currentWaypointIndex = 0;
-var interactionCoordinates = [[425, 625], [13375, 12875], [16500, 14250]];
+var puzzleCoordinates = [[425, 625], [225, 4275], [3175, 4275], [3475,225]];
 var itemConstructors = [];
 // Example: Custom label for a special object
 var nearestSpecialObject = null; // Store nearest object info
@@ -18,6 +18,7 @@ var totalLeaks = 5;
 
 // Boiler repair system
 var boilerPrompt = null; // Will be initialized in setup()
+var puzzlePrompt = null;
 
 // Alarm system
 var alarmFlashAlpha = 0;
@@ -662,6 +663,7 @@ function setup() {
 
   // Initialize boiler prompt
   boilerPrompt = createPrompt();
+  puzzlePrompt = createPrompt();
 
   // Intro will be started from menu screen
   // Roof fade will be initialized during intro sequence
@@ -912,14 +914,23 @@ function drawGameplay() {
   boilerPrompt.update(shouldShowBoilerPrompt);
   boilerPrompt.draw("Press E to Restore Boiler", [255, 200, 0], 90);
 
+  // Check for puzzle repair condition and update prompt
+  var nearPuzzle;
+  for (let i = 0; i < puzzleCoordinates.length; i++){
+    if (distance(pX, pY, puzzleCoordinates[i][0], puzzleCoordinates[i][1]) < 75){
+      nearPuzzle = true;
+    }
+  }
+  const shouldShowPuzzlePrompt = nearPuzzle;
+  puzzlePrompt.update(shouldShowPuzzlePrompt);
+  puzzlePrompt.draw("Press E to Solve Puzzle", [255, 200, 0], 90);
+  
   // Draw crafting prompt after camera pop (screen-fixed)
   if (typeof drawCraftingPromptIfNeeded === 'function') {
     drawCraftingPromptIfNeeded();
   }
 
   // Draw waypoint arrow (screen-fixed at edge)
-
-  // Draw custom object prompt
 
 
   drawWaypoint();

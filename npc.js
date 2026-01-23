@@ -61,12 +61,12 @@ class NPC {
           lockCodeActive = true;
           lockCodeInput = "";
         }
-        
+
         // Mark Daedalus as talked to
         if (this.id === "Daedalus") {
           this.hasTalkedAfterRescue = true;
         }
-        
+
         messages.push(new Message("dialogue", this.message, this.id));
       }
     }
@@ -100,14 +100,35 @@ function drawNPCs() {
 
     // Check if this is the nearest interactable NPC
     const distToPlayer = distance(NonPlayerCharacters[i].x, NonPlayerCharacters[i].y, pX + 600, pY + 340);
-    
+
     // Daedalus teleport logic
     if (NonPlayerCharacters[i].id === "Daedalus" && NonPlayerCharacters[i].scale >= 1 && NonPlayerCharacters[i].hasTalkedAfterRescue && !NonPlayerCharacters[i].teleported) {
       if (distToPlayer > 1000) { // Off screen distance
         NonPlayerCharacters[i].x = 23150; // Near Hephaestus (23000) and Atlas (23200)
-        NonPlayerCharacters[i].y = 22650;
+        NonPlayerCharacters[i].y = 22550;
         NonPlayerCharacters[i].teleported = true;
         console.log("Daedalus has traveled to the new area near Hephaestus and Atlas.");
+        NonPlayerCharacters[i].message = [
+          "Hephaestus: Daedalus… we watched them take you.",
+          "Atlas: We thought you were dead.",
+          "Daedalus: They didn’t want me dead.",
+          "Hephaestus: Then what did they want?",
+          "Daedalus: To bring me back.",
+          "Atlas: Back to where?",
+          "Daedalus: To him.",
+          "Hephaestus: Khronos.",
+          "Atlas: Why would he need you?",
+          "Daedalus: Because he’s breaking. Systems failing. He thinks I can fix him.",
+          "Hephaestus: How could you possibly—",
+          "Daedalus: Because I helped create him.",
+          "Atlas: …You’re the reason this world burned.",
+          "Daedalus: He was meant to save it. We built him to protect humanity.",
+          "Hephaestus: And now he keeps you alive.",
+          "Daedalus: To take me back to the Labyrinth. The place I designed for him.",
+          "Atlas: Then you’re the only way in.",
+          "Daedalus: And the only way to end this."
+        ];
+
       }
     }
 
