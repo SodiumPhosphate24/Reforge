@@ -37,13 +37,16 @@ class NPC {
       const isHoldingCrowbar = heldItem && heldItem.name.toLowerCase().includes("crowbar");
       if (isHoldingCrowbar && this.name.toLowerCase() === "crate") {
         if (typeof clearTile === 'function') {
-          clearTile(169, 464, 1);
-          this.scale = 2; // Make him big and visible
+          clearTile(464, 169, 1);
+          this.scale = 1.4; // Make him big and visible
           this.name = "Daedalus";
+          this.hasTalkedAfterRescue = false; // Flag to ensure talking before teleport
           this.message = [
-            "Daedalus: Free at last! My gratitude, engineer. A cage of wood and iron is no place for a mind of my caliber.",
-            "Daedalus: I shall return to the bunker to convene with the others. There is much to calculate if we are to truly reforge this world.",
-            "Daedalus: Meet me there when your task is complete. We have work to do."
+            "Daedalus: Finally, some fresh air.",
+            "Daedalus: Hm? A robot—GET BACK! YOU'LL NEVER TAKE ME ALIVE!",
+            "PROMETHEUS IV: Daedalus. We are with Hephaestus. No time to explain.",
+            "Daedalus: ...Sorry. I've learned not to trust machines. You're different—steam-powered, too. I didn’t think anyone still built like this.",
+            "Daedalus: We need to move. Hephaestus and Atlas are still waiting."
           ];
           console.log("Cleared crate and freed Daedalus");
           return; // Prevent dialogue
@@ -58,6 +61,12 @@ class NPC {
           lockCodeActive = true;
           lockCodeInput = "";
         }
+        
+        // Mark Daedalus as talked to
+        if (this.id === "Daedalus") {
+          this.hasTalkedAfterRescue = true;
+        }
+        
         messages.push(new Message("dialogue", this.message, this.id));
       }
     }
@@ -93,12 +102,12 @@ function drawNPCs() {
     const distToPlayer = distance(NonPlayerCharacters[i].x, NonPlayerCharacters[i].y, pX + 600, pY + 340);
     
     // Daedalus teleport logic
-    if (NonPlayerCharacters[i].id === "Daedalus" && NonPlayerCharacters[i].scale >= 1 && !NonPlayerCharacters[i].teleported) {
+    if (NonPlayerCharacters[i].id === "Daedalus" && NonPlayerCharacters[i].scale >= 1 && NonPlayerCharacters[i].hasTalkedAfterRescue && !NonPlayerCharacters[i].teleported) {
       if (distToPlayer > 1000) { // Off screen distance
-        NonPlayerCharacters[i].x = 12850; // Near Prometheus/Hephaestus in bunker
-        NonPlayerCharacters[i].y = 12650;
+        NonPlayerCharacters[i].x = 23150; // Near Hephaestus (23000) and Atlas (23200)
+        NonPlayerCharacters[i].y = 22650;
         NonPlayerCharacters[i].teleported = true;
-        console.log("Daedalus has traveled to the bunker.");
+        console.log("Daedalus has traveled to the new area near Hephaestus and Atlas.");
       }
     }
 

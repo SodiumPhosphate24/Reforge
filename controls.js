@@ -196,15 +196,6 @@ function keyPressed() {
       toggleCraftingMenu();
       return;
     }
-
-    // Crowbar/Crate interaction (Steel crate only - Type 40)
-    const heldItem = inventoryList[inventorySlot - 1];
-    if (heldItem && heldItem.name.toLowerCase().includes("crowbar")) {
-      if (canFreeDaedalus) {
-        clearTile(464, 169, 1);
-        NonPlayerCharacters[3].scale = 2;
-      }
-    }
   }
 
   if (keyCode == 88) {

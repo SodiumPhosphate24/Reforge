@@ -122,6 +122,24 @@ function handleTriggers(trigger) {
   if (trigger == "Softlock Message") {
     softlockPreventionOn = false;
   }
+  if (trigger == "Labyrinth") {
+    if (triggerList.Labyrinth.puzzle1 == false) {
+      triggerList.Labyrinth.puzzle1 = true;
+      return;
+    }
+    if (triggerList.Labyrinth.puzzle2 == false) {
+      triggerList.Labyrinth.puzzle2 = true;
+      return;
+    }
+    if (triggerList.Labyrinth.puzzle3 == false) {
+      triggerList.Labyrinth.puzzle3 = true;
+      return;
+    }
+    if (triggerList.Labyrinth.puzzle4 == false) {
+      triggerList.Labyrinth.puzzle4 = true;
+      enemies.push(new Enemy("boss", 1900, 2700));
+    }
+  }
 }
 
 function softlockPrevention(){

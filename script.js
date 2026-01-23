@@ -8,6 +8,7 @@ let maxTileTypes = 0; // will be set in setup()
 // Waypoint system
 var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875], [23983, 21925], [8475, 23225]];
 var currentWaypointIndex = 0;
+var interactionCoordinates = [[425, 625], [13375, 12875], [16500, 14250]];
 var itemConstructors = [];
 // Example: Custom label for a special object
 var nearestSpecialObject = null; // Store nearest object info
@@ -2504,8 +2505,6 @@ function drawAlarmFlash() {
 }
 
 function spawnEnemies() {
-  enemies.push(new Enemy("boss", 1900, 2700));
-
   enemies.push(new Enemy("harpy", 16584, 15523));
   enemies.push(new Enemy("harpy", 16768, 15536));
   enemies.push(new Enemy("harpy", 16776, 15785));
