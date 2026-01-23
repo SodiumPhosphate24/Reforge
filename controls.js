@@ -91,7 +91,7 @@ function keyPressed() {
     // Check for boiler repair next (if holding boiler cartridge)
     if (distance(pX, pY, 12000, 12500) < 75) {
       if (triggerList.Objective.fixBoiler == false) {
-        if(triggerList.Objective.fixLeaks){
+        if (triggerList.Objective.fixLeaks) {
           if (inventoryList[inventorySlot - 1] != null) {
             if (inventoryList[inventorySlot - 1].name == "boiler cartridge") {
               useItem();
@@ -99,7 +99,7 @@ function keyPressed() {
             }
           }
         }
-        else{
+        else {
           messages.push(new Message("dialogue", ["Prometheus IV: You need to fix the leaks before you can fix the boiler"]));
         }
       }
@@ -202,7 +202,7 @@ function keyPressed() {
     if (heldItem && heldItem.name.toLowerCase().includes("crowbar")) {
       if (canFreeDaedalus) {
         clearTile(464, 169, 1);
-        NonPlayerCharacters[3].scale = 1;
+        NonPlayerCharacters[3].scale = 2;
       }
     }
   }

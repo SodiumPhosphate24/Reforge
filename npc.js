@@ -38,7 +38,14 @@ class NPC {
       if (isHoldingCrowbar && this.name.toLowerCase() === "crate") {
         if (typeof clearTile === 'function') {
           clearTile(169, 464, 1);
-          console.log("Cleared crate at 169, 464 layer 1");
+          this.scale = 2; // Make him big and visible
+          this.name = "Daedalus";
+          this.message = [
+            "Daedalus: Free at last! My gratitude, engineer. A cage of wood and iron is no place for a mind of my caliber.",
+            "Daedalus: I shall return to the bunker to convene with the others. There is much to calculate if we are to truly reforge this world.",
+            "Daedalus: Meet me there when your task is complete. We have work to do."
+          ];
+          console.log("Cleared crate and freed Daedalus");
           return; // Prevent dialogue
         }
       }
@@ -84,6 +91,17 @@ function drawNPCs() {
 
     // Check if this is the nearest interactable NPC
     const distToPlayer = distance(NonPlayerCharacters[i].x, NonPlayerCharacters[i].y, pX + 600, pY + 340);
+    
+    // Daedalus teleport logic
+    if (NonPlayerCharacters[i].id === "Daedalus" && NonPlayerCharacters[i].scale >= 1 && !NonPlayerCharacters[i].teleported) {
+      if (distToPlayer > 1000) { // Off screen distance
+        NonPlayerCharacters[i].x = 12850; // Near Prometheus/Hephaestus in bunker
+        NonPlayerCharacters[i].y = 12650;
+        NonPlayerCharacters[i].teleported = true;
+        console.log("Daedalus has traveled to the bunker.");
+      }
+    }
+
     if (distToPlayer < 120 && distToPlayer < nearestDistance) {
       nearestDistance = distToPlayer;
       nearestNPC = NonPlayerCharacters[i];
