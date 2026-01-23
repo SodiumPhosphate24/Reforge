@@ -920,26 +920,6 @@ function drawGameplay() {
   // Draw waypoint arrow (screen-fixed at edge)
 
   // Draw custom object prompt
-  let specialObjectPrompt = null;
-  function drawSpecialObjectPromptIfNeeded() {
-    if (!specialObjectPrompt) specialObjectPrompt = createPrompt();
-
-    // Example: Check if player is near coordinates (13000, 13000)
-    const playerCenterX = pX + 600 + pWidth / 2;
-    const playerCenterY = pY + 375 + pHeight / 2;
-    const distToObject = dist(playerCenterX, playerCenterY, 13000, 13000);
-
-    const isNear = distToObject < 100;
-    handleInteractionPrompt(
-      specialObjectPrompt,
-      13000,
-      13000,
-      100,
-      "Press E to Activate",
-      isNear,
-      [255, 150, 0]
-    );
-  }
 
 
   drawWaypoint();
