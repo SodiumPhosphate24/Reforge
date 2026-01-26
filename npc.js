@@ -1,4 +1,7 @@
 var canFreeDaedalus = false;
+var groupDiscussionComplete = false;
+var groupHasRelocated = false;
+
 class NPC {
   constructor(x, y, name, message, image = null, triggerID, scale = 1) {
     this.x = x;
@@ -11,17 +14,15 @@ class NPC {
     this.width = this.baseWidth * this.scale;
     this.id = triggerID;
 
-    // Calculate height based on image aspect ratio
     if (this.image) {
       const aspectRatio = this.image.height / this.image.width;
       this.height = this.width * aspectRatio;
     } else {
-      this.height = 25 * this.scale; // Default square for NPCs without images
+      this.height = 25 * this.scale;
     }
   }
 
   update() {
-    // Recalculate dimensions in real-time to allow live scaling
     this.width = this.baseWidth * this.scale;
     if (this.image) {
       const aspectRatio = this.image.height / this.image.width;
@@ -32,50 +33,46 @@ class NPC {
 
     const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
     if (distToPlayer < 120 && keyPressedOnce(69)) {
-      // Check for special crowbar interaction with "Crate" NPC
       const heldItem = inventoryList[inventorySlot - 1];
       const isHoldingCrowbar = heldItem && heldItem.name.toLowerCase().includes("crowbar");
       if (isHoldingCrowbar && this.name.toLowerCase() === "crate") {
         if (typeof clearTile === 'function') {
           clearTile(464, 169, 1);
-          this.scale = 1.4; // Make him big and visible
+          this.scale = 1.4;
           this.name = "Daedalus";
-          this.hasTalkedAfterRescue = false; // Flag to ensure talking before teleport
+          this.hasTalkedAfterRescue = false;
           this.message = [
             "Daedalus: Finally, some fresh air.",
             "Daedalus: Hm? A robot—GET BACK! YOU'LL NEVER TAKE ME ALIVE!",
             "PROMETHEUS IV: Daedalus. We are with Hephaestus. No time to explain.",
-            "Daedalus: ...Sorry. I've learned not to trust machines. You're different—steam-powered, too. I didn’t think anyone still built like this.",
+            "Daedalus: ...Sorry. I've learned not to trust machines. You're different—steam-powered, too. I didn't think anyone still built like this.",
             "Daedalus: We need to move. Hephaestus and Atlas are still waiting."
           ];
           console.log("Cleared crate and freed Daedalus");
-          return; // Prevent dialogue
+          return;
         }
       }
 
-      // Check if there's already a dialogue message active
       const hasActiveDialogue = messages.some(msg => msg.type === "dialogue");
       if (!hasActiveDialogue) {
-        // Special handling for Lock NPC
         if (this.id === "Lock") {
           lockCodeActive = true;
           lockCodeInput = "";
         }
 
-        // Mark Daedalus as talked to
-        if (this.id === "Daedalus") {
+        if (this.id === "Daedalus" && !this.hasTalkedAfterRescue) {
           this.hasTalkedAfterRescue = true;
+          currentWaypointIndex = 5;
         }
 
         messages.push(new Message("dialogue", this.message, this.id));
       }
     }
   }
-
 }
 
-let nearestNPC = null; // Store for screen-fixed rendering
-let interactionPrompt = null; // Reusable prompt object
+let nearestNPC = null;
+let interactionPrompt = null;
 
 function drawNPCs() {
   if (!interactionPrompt) interactionPrompt = createPrompt();
@@ -86,7 +83,6 @@ function drawNPCs() {
   for (let i = 0; i < NonPlayerCharacters.length; i++) {
     NonPlayerCharacters[i].update();
 
-    // Draw NPC image if available, otherwise draw yellow rectangle
     if (NonPlayerCharacters[i].image) {
       image(NonPlayerCharacters[i].image,
         NonPlayerCharacters[i].x,
@@ -98,16 +94,15 @@ function drawNPCs() {
       rect(NonPlayerCharacters[i].x, NonPlayerCharacters[i].y, 20, 20);
     }
 
-    // Check if this is the nearest interactable NPC
     const distToPlayer = distance(NonPlayerCharacters[i].x, NonPlayerCharacters[i].y, pX + 600, pY + 340);
 
-    // Daedalus teleport logic
     if (NonPlayerCharacters[i].id === "Daedalus" && NonPlayerCharacters[i].scale >= 1 && NonPlayerCharacters[i].hasTalkedAfterRescue && !NonPlayerCharacters[i].teleported) {
-      if (distToPlayer > 1000) { // Off screen distance
-        NonPlayerCharacters[i].x = 23150; // Near Hephaestus (23000) and Atlas (23200)
-        NonPlayerCharacters[i].y = 22550;
+      if (distToPlayer > 1000) {
+        NonPlayerCharacters[i].x = 23100;
+        NonPlayerCharacters[i].y = 22650;
         NonPlayerCharacters[i].teleported = true;
         console.log("Daedalus has traveled to the new area near Hephaestus and Atlas.");
+        
         var groupTalk = [
           "Hephaestus: Daedalus, we saw them take you.",
           "Atlas: We thought you died.",
@@ -116,26 +111,58 @@ function drawNPCs() {
           "Daedalus: To bring me back to him.",
           "Atlas: Khronos.",
           "Hephaestus: Why would he need you?",
-          "Daedalus: Because he’s breaking. Systems collapsing. He believes I can fix him.",
+          "Daedalus: Because he's breaking. Systems collapsing. He believes I can fix him.",
           "Atlas: Fix the thing that burned the world?",
           "Daedalus: He was meant to save it. We built him to protect humanity.",
           "Hephaestus: And now he keeps you alive.",
-          "Daedalus: He’s trying to take me to the Labyrinth. The compact I designed for him.",
-          "Atlas: Then you’re the only one who knows the way in.",
+          "Daedalus: He's trying to take me to the Labyrinth. The compact I designed for him.",
+          "Atlas: Then you're the only one who knows the way in.",
           "Daedalus: I know what I made. Not what it is now.",
           "Hephaestus: The defenses could be anything.",
           "Atlas: We can't go in blind.",
           "Hephaestus: We need to scout the Labyrinth first.",
-          "Atlas: And we don’t go alone.",
+          "Atlas: And we don't go alone.",
           "Hephaestus: Stranger— guiding the machine...",
           "Atlas: You've survived a lot. Alone.",
           "Hephaestus: Come with us. See what waits in the Labyrinth.",
           "Daedalus: Meet us there. We'll be ready."
         ];
-        NonPlayerCharacters[3].message = groupTalk;
-        NonPlayerCharacters[2].message = groupTalk;
-        NonPlayerCharacters[1].message = groupTalk;
-
+        
+        const hephaestusNPC = NonPlayerCharacters.find(npc => npc.id === "Hephaestus");
+        const atlasNPC = NonPlayerCharacters.find(npc => npc.id === "Atlas");
+        const daedalusNPC = NonPlayerCharacters.find(npc => npc.id === "Daedalus");
+        if (hephaestusNPC) hephaestusNPC.message = groupTalk;
+        if (atlasNPC) atlasNPC.message = groupTalk;
+        if (daedalusNPC) daedalusNPC.message = groupTalk;
+      }
+    }
+    
+    if (!groupHasRelocated && groupDiscussionComplete) {
+      const hephaestus = NonPlayerCharacters.find(npc => npc.id === "Hephaestus");
+      const atlas = NonPlayerCharacters.find(npc => npc.id === "Atlas");
+      const daedalus = NonPlayerCharacters.find(npc => npc.id === "Daedalus");
+      
+      if (hephaestus && atlas && daedalus) {
+        const distToHephaestus = distance(hephaestus.x, hephaestus.y, pX + 600, pY + 340);
+        const distToAtlas = distance(atlas.x, atlas.y, pX + 600, pY + 340);
+        const distToDaedalus = distance(daedalus.x, daedalus.y, pX + 600, pY + 340);
+        
+        if (distToHephaestus > 1000 && distToAtlas > 1000 && distToDaedalus > 1000) {
+          hephaestus.x = 25000;
+          hephaestus.y = 24000;
+          atlas.x = 25100;
+          atlas.y = 24000;
+          daedalus.x = 25050;
+          daedalus.y = 23900;
+          
+          groupHasRelocated = true;
+          console.log("Hephaestus, Atlas, and Daedalus have moved to the Labyrinth entrance.");
+          
+          const labyrinthDialogue = ["We're at the Labyrinth entrance. Be careful in there."];
+          hephaestus.message = labyrinthDialogue;
+          atlas.message = labyrinthDialogue;
+          daedalus.message = labyrinthDialogue;
+        }
       }
     }
 
@@ -152,7 +179,6 @@ function drawNPCPromptIfNeeded() {
     const isReadable = nameLower.includes("book") || nameLower.includes("journal") || nameLower.includes("sign");
     const isLock = nameLower.includes("lock");
 
-    // Example: Check if player is holding a specific item (e.g., "wrench")
     const heldItem = inventoryList[inventorySlot - 1];
     const isHoldingCrowbar = heldItem && heldItem.name.toLowerCase().includes("crowbar");
 

@@ -119,6 +119,16 @@ function handleTriggers(trigger, ID = -1) {
   if (trigger == "Softlock Message") {
     softlockPreventionOn = false;
   }
+  
+  // Group discussion completion - when any of the three NPCs finish the reunion dialogue
+  if ((trigger == "Hephaestus" || trigger == "Atlas" || trigger == "Daedalus") && triggerList.Hephaestus.givenGun) {
+    const daedalus = NonPlayerCharacters.find(npc => npc.id === "Daedalus");
+    if (daedalus && daedalus.teleported && !groupDiscussionComplete) {
+      groupDiscussionComplete = true;
+      console.log("Group discussion completed. The trio will relocate when the player leaves.");
+    }
+  }
+  
   if (trigger == "Labyrinth") {
     if(triggerList.Labyrinth.puzzles != [true, true, true, true]){
       triggerList.Labyrinth.puzzles[ID] = true;
