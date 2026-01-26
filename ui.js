@@ -201,6 +201,11 @@ class Item {
         this.image = matImgs[5];
         this.HtoW = 1;
       }
+      if(name == "train blueprint"){
+        this.name = name;
+        this.image = matImgs[6];
+        this.HtoW = 1;
+      }
     }
 
     if (type == "projectile") {

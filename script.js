@@ -8,7 +8,7 @@ let maxTileTypes = 0; // will be set in setup()
 // Waypoint system
 var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875], [23983, 21925], [8475, 23225]];
 var currentWaypointIndex = 0;
-var puzzleCoordinates = [[425, 625], [225, 4275], [3175, 4275], [3475,225]];
+var puzzleCoordinates = [[425, 625], [225, 4275], [3175, 4275], [3475, 225]];
 var itemConstructors = [];
 // Example: Custom label for a special object
 var nearestSpecialObject = null; // Store nearest object info
@@ -443,6 +443,7 @@ function preload() {
   matImgs[3] = loadImage("Items/Materials/Cog.png");
   matImgs[4] = loadImage("Tiles/Pipe.png");
   matImgs[5] = loadImage("Items/Consumables/LegendaryCartridge.png");
+  matImgs[6] = loadImage("Items/Misc/Blueprint.png");
   projImgs[0] = loadImage("Items/Projectiles/Grenade.png");
   projImgs[1] = loadImage("Items/Projectiles/Rock.png");
   projImgs[2] = loadImage("Items/Projectiles/OldWrench.png");
@@ -646,7 +647,8 @@ function setup() {
     ["material", "cog", 1, matImgs[3]],
     ["material", "pipe", 1, matImgs[4]],
     ["material", "boiler cartridge", 1, matImgs[5]],
-    ["projectile", "crowbar", 1, itemImgs[5]]
+    ["projectile", "crowbar", 1, itemImgs[5]],
+    ["material", "train blueprint", 1, matImgs[6]]
   ];
 
   // Now parse the world with itemConstructors available
@@ -916,15 +918,15 @@ function drawGameplay() {
 
   // Check for puzzle repair condition and update prompt
   var nearPuzzle;
-  for (let i = 0; i < puzzleCoordinates.length; i++){
-    if (distance(pX+600, pY+340, puzzleCoordinates[i][0], puzzleCoordinates[i][1]) < 75){
+  for (let i = 0; i < puzzleCoordinates.length; i++) {
+    if (distance(pX + 600, pY + 340, puzzleCoordinates[i][0], puzzleCoordinates[i][1]) < 75) {
       nearPuzzle = true;
     }
   }
   const shouldShowPuzzlePrompt = nearPuzzle;
   puzzlePrompt.update(shouldShowPuzzlePrompt);
   puzzlePrompt.draw("Press E to Solve Puzzle", [255, 200, 0], 90);
-  
+
   // Draw crafting prompt after camera pop (screen-fixed)
   if (typeof drawCraftingPromptIfNeeded === 'function') {
     drawCraftingPromptIfNeeded();

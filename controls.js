@@ -137,6 +137,7 @@ function keyPressed() {
     }
     if(nearPuzzle >= 0){
       handleTriggers("Labyrinth", nearPuzzle);
+      console.log("Solved Puzzle " + nearPuzzle);
     }
 
     // Use nearestPickupItem instead of looping
