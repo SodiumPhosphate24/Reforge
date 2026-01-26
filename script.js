@@ -8,7 +8,7 @@ let maxTileTypes = 0; // will be set in setup()
 // Waypoint system
 var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875], [23983, 21925], [8475, 23225]];
 var currentWaypointIndex = 0;
-var puzzleCoordinates = [[425, 625], [225, 4275], [3175, 4275], [3475, 225]];
+var puzzleCoordinates = [[400, 600], [200, 4250], [3150, 4250], [3450, 200]];
 var itemConstructors = [];
 // Example: Custom label for a special object
 var nearestSpecialObject = null; // Store nearest object info

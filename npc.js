@@ -148,12 +148,12 @@ function drawNPCs() {
         const distToDaedalus = distance(daedalus.x, daedalus.y, pX + 600, pY + 340);
         
         if (distToHephaestus > 1000 && distToAtlas > 1000 && distToDaedalus > 1000) {
-          hephaestus.x = 25000;
-          hephaestus.y = 24000;
-          atlas.x = 25100;
-          atlas.y = 24000;
-          daedalus.x = 25050;
-          daedalus.y = 23900;
+          hephaestus.x = 4370;
+          hephaestus.y = 1015;
+          atlas.x = 4470;
+          atlas.y = 1015;
+          daedalus.x = 4420;
+          daedalus.y = 915;
           
           groupHasRelocated = true;
           console.log("Hephaestus, Atlas, and Daedalus have moved to the Labyrinth entrance.");
