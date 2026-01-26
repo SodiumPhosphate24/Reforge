@@ -131,10 +131,11 @@ function keyPressed() {
     }
     var nearPuzzle = -1;
     for (let i = 0; i < puzzleCoordinates.length; i++){
-      if (distance(pX, pY, puzzleCoordinates[i][0], puzzleCoordinates[i][1]) < 75){
+      if (distance(pX+600, pY+340, puzzleCoordinates[i][0], puzzleCoordinates[i][1]) < 75){
         nearPuzzle = i;
       }
     }
+    console.log(nearPuzzle);
     if(nearPuzzle >= 0){
       handleTriggers("Labyrinth", nearPuzzle);
       console.log("Solved Puzzle " + nearPuzzle);
