@@ -815,7 +815,7 @@ function drawEnemies() {
 
 // Draw boss health bar at top of screen
 function drawBossBar() {
-  if (!activeBoss || activeBoss.isDead()) return;
+  if (!activeBoss || activeBoss.isDead() || !activeBoss.aggro) return;
   
   push();
   
