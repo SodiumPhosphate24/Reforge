@@ -108,26 +108,33 @@ function drawNPCs() {
         NonPlayerCharacters[i].y = 22550;
         NonPlayerCharacters[i].teleported = true;
         console.log("Daedalus has traveled to the new area near Hephaestus and Atlas.");
-        NonPlayerCharacters[i].message = [
-          "Hephaestus: Daedalus… we watched them take you.",
-          "Atlas: We thought you were dead.",
-          "Daedalus: They didn’t want me dead.",
-          "Hephaestus: Then what did they want?",
-          "Daedalus: To bring me back.",
-          "Atlas: Back to where?",
-          "Daedalus: To him.",
-          "Hephaestus: Khronos.",
-          "Atlas: Why would he need you?",
-          "Daedalus: Because he’s breaking. Systems failing. He thinks I can fix him.",
-          "Hephaestus: How could you possibly—",
-          "Daedalus: Because I helped create him.",
-          "Atlas: …You’re the reason this world burned.",
+        var groupTalk = [
+          "Hephaestus: Daedalus, we saw them take you.",
+          "Atlas: We thought you died.",
+          "Daedalus: I thought I was dead. But they need me alive.",
+          "Hephaestus: For what?",
+          "Daedalus: To bring me back to him.",
+          "Atlas: Khronos.",
+          "Hephaestus: Why would he need you?",
+          "Daedalus: Because he’s breaking. Systems collapsing. He believes I can fix him.",
+          "Atlas: Fix the thing that burned the world?",
           "Daedalus: He was meant to save it. We built him to protect humanity.",
           "Hephaestus: And now he keeps you alive.",
-          "Daedalus: To take me back to the Labyrinth. The place I designed for him.",
-          "Atlas: Then you’re the only way in.",
-          "Daedalus: And the only way to end this."
+          "Daedalus: He’s trying to take me to the Labyrinth. The compact I designed for him.",
+          "Atlas: Then you’re the only one who knows the way in.",
+          "Daedalus: I know what I made. Not what it is now.",
+          "Hephaestus: The defenses could be anything.",
+          "Atlas: We can't go in blind.",
+          "Hephaestus: We need to scout the Labyrinth first.",
+          "Atlas: And we don’t go alone.",
+          "Hephaestus: Stranger— guiding the machine...",
+          "Atlas: You've survived a lot. Alone.",
+          "Hephaestus: Come with us. See what waits in the Labyrinth.",
+          "Daedalus: Meet us there. We'll be ready."
         ];
+        NonPlayerCharacters[3].message = groupTalk;
+        NonPlayerCharacters[2].message = groupTalk;
+        NonPlayerCharacters[1].message = groupTalk;
 
       }
     }

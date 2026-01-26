@@ -26,15 +26,12 @@ var triggerList = {
     softlockMessage: false
   },
   Labyrinth: {
-    puzzle1: false,
-    puzzle2: false,
-    puzzle3: false,
-    puzzle4: false,
+    puzzles : [false, false, false, false],
     isFightingBoss: false
   }
 };
 
-function handleTriggers(trigger) {
+function handleTriggers(trigger, ID = -1) {
   if (trigger == "LockOpened") {
     triggerList.LockOpened.unlockedBoilerRoom = true;
     messages.push(new Message("quest", "Boiler Room Unlocked!"));
@@ -123,21 +120,12 @@ function handleTriggers(trigger) {
     softlockPreventionOn = false;
   }
   if (trigger == "Labyrinth") {
-    if (triggerList.Labyrinth.puzzle1 == false) {
-      triggerList.Labyrinth.puzzle1 = true;
-      return;
-    }
-    if (triggerList.Labyrinth.puzzle2 == false) {
-      triggerList.Labyrinth.puzzle2 = true;
-      return;
-    }
-    if (triggerList.Labyrinth.puzzle3 == false) {
-      triggerList.Labyrinth.puzzle3 = true;
-      return;
-    }
-    if (triggerList.Labyrinth.puzzle4 == false) {
-      triggerList.Labyrinth.puzzle4 = true;
-      enemies.push(new Enemy("boss", 1900, 2700));
+    if(triggerList.Labyrinth.puzzles != [true, true, true, true]){
+      triggerList.Labyrinth.puzzles[ID] = true;
+      if(triggerList.Labyrinth.puzzles == [true, true, true, true]){
+        enemies.push(new Enemy("boss", 1900, 2700));
+        console.log("Spawned Boss");
+      }
     }
   }
 }

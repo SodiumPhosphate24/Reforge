@@ -129,6 +129,15 @@ function keyPressed() {
         handleTriggers("Objective");
       }
     }
+    var nearPuzzle = -1;
+    for (let i = 0; i < puzzleCoordinates.length; i++){
+      if (distance(pX, pY, puzzleCoordinates[i][0], puzzleCoordinates[i][1]) < 75){
+        nearPuzzle = i;
+      }
+    }
+    if(nearPuzzle >= 0){
+      handleTriggers("Labyrinth", nearPuzzle);
+    }
 
     // Use nearestPickupItem instead of looping
     if (nearestPickupItem) {

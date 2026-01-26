@@ -917,7 +917,7 @@ function drawGameplay() {
   // Check for puzzle repair condition and update prompt
   var nearPuzzle;
   for (let i = 0; i < puzzleCoordinates.length; i++){
-    if (distance(pX, pY, puzzleCoordinates[i][0], puzzleCoordinates[i][1]) < 75){
+    if (distance(pX+600, pY+340, puzzleCoordinates[i][0], puzzleCoordinates[i][1]) < 75){
       nearPuzzle = true;
     }
   }
