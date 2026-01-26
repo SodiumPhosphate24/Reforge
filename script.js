@@ -44,8 +44,8 @@ var lastBreadcrumbTime = 0;
 var breadcrumbInterval = 200; // Leave a breadcrumb every 0.2 seconds
 var maxBreadcrumbs = 15; // Keep maximum 15 breadcrumbs for most recent path
 var breadcrumbMinDistance = 2; // Minimum distance between breadcrumbs in pixels
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench", "White Brick", "White Tile", "Steel Crate", "Tree", "Boiler"];
-var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench", "White Brick", "White Tile", "Steel Crate", "Tree", "Boiler", "Water"];
+var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
@@ -93,8 +93,9 @@ var tileColors = [
   [[100, 100, 100]], // 38 White Brick
   [[100, 100, 100]], // 39 White Tile
   [[255, 255, 255]], // 40 Steel Crate
-  [[255, 255, 255]],
-  [[255, 255, 255]]
+  [[255, 255, 255]], // 41 Tree
+  [[255, 255, 255]], // 42 Boiler
+  [[255, 255, 255]] // 43 Water
 ];
 
 // Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image
@@ -423,6 +424,7 @@ function preload() {
   tileImgs[40] = loadImage("Tiles/SteelCrate.png");
   tileImgs[41] = null;
   tileImgs[42] = null;
+  tileImgs[43] = null;
 
   // Register multi-tile objects
   registerMultiTile(6, "Tiles/Crafting.png", 2, 2); // Workbench
@@ -496,6 +498,15 @@ function preload() {
       'cross': loadImage("Tiles/PipeCross.png")
     }
   };
+
+  tileVariants[43] = {
+    variants: {
+      'full': loadImage("Tiles/WaterFull.png"),
+      'center': loadImage("Tiles/WaterFull.png"),
+      'edge': loadImage("Tiles/WaterEdge.png"),
+      'corner': loadImage("Tiles/WaterCorner.png")
+    }
+  }
 }
 
 // Generate multi-tile sections by splitting source image into grid

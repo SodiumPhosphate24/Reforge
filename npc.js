@@ -167,7 +167,7 @@ function drawNPCs() {
         groupHasRelocated = true;
         console.log("Hephaestus, Atlas, and Daedalus have moved to the Labyrinth entrance.");
 
-        const labyrinthDialogue = ["We're at the Labyrinth entrance. Be careful in there."];
+        const labyrinthDialogue = ["Hephaestus: Here it is... the Labyrinth.", "Atlas: Well, we knew it wouldn't be as easy as walking in.", "Daedalus: He built a wall around it. Defending the entrance. The only way in is through "];
         hephaestus.message = labyrinthDialogue;
         atlas.message = labyrinthDialogue;
         daedalus.message = labyrinthDialogue;
