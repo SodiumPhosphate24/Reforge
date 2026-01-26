@@ -96,79 +96,82 @@ function drawNPCs() {
 
     const distToPlayer = distance(NonPlayerCharacters[i].x, NonPlayerCharacters[i].y, pX + 600, pY + 340);
 
-    if (NonPlayerCharacters[i].id === "Daedalus" && NonPlayerCharacters[i].scale >= 1 && NonPlayerCharacters[i].hasTalkedAfterRescue && !NonPlayerCharacters[i].teleported) {
-      if (distToPlayer > 1000) {
-        NonPlayerCharacters[i].x = 23100;
-        NonPlayerCharacters[i].y = 22650;
-        NonPlayerCharacters[i].teleported = true;
-        console.log("Daedalus has traveled to the new area near Hephaestus and Atlas.");
-        
-        var groupTalk = [
-          "Hephaestus: Daedalus, we saw them take you.",
-          "Atlas: We thought you died.",
-          "Daedalus: I thought I was dead. But they need me alive.",
-          "Hephaestus: For what?",
-          "Daedalus: To bring me back to him.",
-          "Atlas: Khronos.",
-          "Hephaestus: Why would he need you?",
-          "Daedalus: Because he's breaking. Systems collapsing. He believes I can fix him.",
-          "Atlas: Fix the thing that burned the world?",
-          "Daedalus: He was meant to save it. We built him to protect humanity.",
-          "Hephaestus: And now he keeps you alive.",
-          "Daedalus: He's trying to take me to the Labyrinth. The compact I designed for him.",
-          "Atlas: Then you're the only one who knows the way in.",
-          "Daedalus: I know what I made. Not what it is now.",
-          "Hephaestus: The defenses could be anything.",
-          "Atlas: We can't go in blind.",
-          "Hephaestus: We need to scout the Labyrinth first.",
-          "Atlas: And we don't go alone.",
-          "Hephaestus: Stranger— guiding the machine...",
-          "Atlas: You've survived a lot. Alone.",
-          "Hephaestus: Come with us. See what waits in the Labyrinth.",
-          "Daedalus: Meet us there. We'll be ready."
-        ];
-        
-        const hephaestusNPC = NonPlayerCharacters.find(npc => npc.id === "Hephaestus");
-        const atlasNPC = NonPlayerCharacters.find(npc => npc.id === "Atlas");
-        const daedalusNPC = NonPlayerCharacters.find(npc => npc.id === "Daedalus");
-        if (hephaestusNPC) hephaestusNPC.message = groupTalk;
-        if (atlasNPC) atlasNPC.message = groupTalk;
-        if (daedalusNPC) daedalusNPC.message = groupTalk;
-      }
-    }
-    
-    if (!groupHasRelocated && groupDiscussionComplete) {
-      const hephaestus = NonPlayerCharacters.find(npc => npc.id === "Hephaestus");
-      const atlas = NonPlayerCharacters.find(npc => npc.id === "Atlas");
-      const daedalus = NonPlayerCharacters.find(npc => npc.id === "Daedalus");
-      
-      if (hephaestus && atlas && daedalus) {
-        const distToHephaestus = distance(hephaestus.x, hephaestus.y, pX + 600, pY + 340);
-        const distToAtlas = distance(atlas.x, atlas.y, pX + 600, pY + 340);
-        const distToDaedalus = distance(daedalus.x, daedalus.y, pX + 600, pY + 340);
-        
-        if (distToHephaestus > 1000 && distToAtlas > 1000 && distToDaedalus > 1000) {
-          hephaestus.x = 4370;
-          hephaestus.y = 1015;
-          atlas.x = 4470;
-          atlas.y = 1015;
-          daedalus.x = 4420;
-          daedalus.y = 915;
-          
-          groupHasRelocated = true;
-          console.log("Hephaestus, Atlas, and Daedalus have moved to the Labyrinth entrance.");
-          
-          const labyrinthDialogue = ["We're at the Labyrinth entrance. Be careful in there."];
-          hephaestus.message = labyrinthDialogue;
-          atlas.message = labyrinthDialogue;
-          daedalus.message = labyrinthDialogue;
-        }
-      }
-    }
-
     if (distToPlayer < 120 && distToPlayer < nearestDistance) {
       nearestDistance = distToPlayer;
       nearestNPC = NonPlayerCharacters[i];
+    }
+  }
+
+  // Handle Daedalus teleporting to Hephaestus/Atlas
+  const daedalus = NonPlayerCharacters.find(npc => npc.id === "Daedalus");
+  if (daedalus && daedalus.scale >= 1 && daedalus.hasTalkedAfterRescue && !daedalus.teleported) {
+    const distToPlayer = distance(daedalus.x, daedalus.y, pX + 600, pY + 340);
+    if (distToPlayer > 1000) {
+      daedalus.x = 23100;
+      daedalus.y = 22650;
+      daedalus.teleported = true;
+      console.log("Daedalus has traveled to the new area near Hephaestus and Atlas.");
+
+      var groupTalk = [
+        "Hephaestus: Daedalus, we saw them take you.",
+        "Atlas: We thought you died.",
+        "Daedalus: I thought I was dead. But they need me alive.",
+        "Hephaestus: For what?",
+        "Daedalus: To bring me back to him.",
+        "Atlas: Khronos.",
+        "Hephaestus: Why would he need you?",
+        "Daedalus: Because he's breaking. Systems collapsing. He believes I can fix him.",
+        "Atlas: Fix the thing that burned the world?",
+        "Daedalus: He was meant to save it. We built him to protect humanity.",
+        "Hephaestus: And now he keeps you alive.",
+        "Daedalus: He's trying to take me to the Labyrinth. The compact I designed for him.",
+        "Atlas: Then you're the only one who knows the way in.",
+        "Daedalus: I know what I made. Not what it is now.",
+        "Hephaestus: The defenses could be anything.",
+        "Atlas: We can't go in blind.",
+        "Hephaestus: We need to scout the Labyrinth first.",
+        "Atlas: And we don't go alone.",
+        "Hephaestus: Stranger— guiding the machine...",
+        "Atlas: You've survived a lot. Alone.",
+        "Hephaestus: Come with us. See what waits in the Labyrinth.",
+        "Daedalus: Meet us there. We'll be ready."
+      ];
+
+      const hephaestusNPC = NonPlayerCharacters.find(npc => npc.id === "Hephaestus");
+      const atlasNPC = NonPlayerCharacters.find(npc => npc.id === "Atlas");
+      if (hephaestusNPC) hephaestusNPC.message = groupTalk;
+      if (atlasNPC) atlasNPC.message = groupTalk;
+      if (daedalus) daedalus.message = groupTalk;
+    }
+  }
+
+  // Handle final group relocation to Labyrinth
+  if (!groupHasRelocated && groupDiscussionComplete) {
+    const hephaestus = NonPlayerCharacters.find(npc => npc.id === "Hephaestus");
+    const atlas = NonPlayerCharacters.find(npc => npc.id === "Atlas");
+    const daedalus = NonPlayerCharacters.find(npc => npc.id === "Daedalus");
+
+    if (hephaestus && atlas && daedalus) {
+      const distToHephaestus = distance(hephaestus.x, hephaestus.y, pX + 600, pY + 340);
+      const distToAtlas = distance(atlas.x, atlas.y, pX + 600, pY + 340);
+      const distToDaedalus = distance(daedalus.x, daedalus.y, pX + 600, pY + 340);
+
+      if (distToHephaestus > 1000 && distToAtlas > 1000 && distToDaedalus > 1000) {
+        hephaestus.x = 4370;
+        hephaestus.y = 1015;
+        atlas.x = 4470;
+        atlas.y = 1015;
+        daedalus.x = 4420;
+        daedalus.y = 915;
+
+        groupHasRelocated = true;
+        console.log("Hephaestus, Atlas, and Daedalus have moved to the Labyrinth entrance.");
+
+        const labyrinthDialogue = ["We're at the Labyrinth entrance. Be careful in there."];
+        hephaestus.message = labyrinthDialogue;
+        atlas.message = labyrinthDialogue;
+        daedalus.message = labyrinthDialogue;
+      }
     }
   }
 }
