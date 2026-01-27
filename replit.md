@@ -71,8 +71,15 @@ Preferred communication style: Simple, everyday language.
 - **Multi-Layer Editing**: 4-layer tile placement (2 behind player, 2 in front)
 - **Tile Rotation**: 0/90/180/270 degree rotation support
 - **Crate Inventory System**: Place crates and assign custom item contents
+- **Sewer Linking Mode**: Press L to toggle sewer linking mode, click two sewer caps (tile 44) to link them
 - **Minimap**: Cached minimap view for world navigation
 - **Export/Import**: Clipboard-based world string for saving/loading levels
+
+**Sewer System** (sewer.js):
+- **Linked Sewer Caps**: Pairs of sewer cap tiles (index 44) can be linked together in editor mode
+- **Sewer Room**: 24x15 tile room with stone brick walls (tile 26) and white tile floor (tile 39)
+- **Entry/Exit**: Press E near a linked sewer to enter; exit from either side to teleport to entry or linked sewer
+- **World Save/Load**: Sewer links are saved with the world data using ~ separator
 
 **Collision Detection**:
 - **Tile-Based**: Wall types (walkable, solid, roof/walkthrough)

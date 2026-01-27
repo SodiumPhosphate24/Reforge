@@ -786,6 +786,11 @@ function drawGameplay() {
   fill(255);
   drawNPCs();
 
+  // Check sewer exits (still within world coordinates for distance checks)
+  if (typeof checkSewerExits === 'function') {
+    checkSewerExits();
+  }
+
   // LAYERS 2, 3 over items but under player
   drawWorldLayer(gameWorld, 2);
   updateParticlesForLayer(2);
@@ -920,6 +925,11 @@ function drawGameplay() {
   // Draw NPC prompt after camera pop (screen-fixed)
   drawNPCPromptIfNeeded();
 
+  // Draw sewer prompt after camera pop (screen-fixed)
+  if (typeof drawSewerPrompt === 'function') {
+    drawSewerPrompt();
+  }
+
   // Draw leak repair prompt after camera pop (screen-fixed)
   drawLeakPromptIfNeeded();
 
@@ -1006,6 +1016,13 @@ function drawGameplay() {
     drawEditorUI();
     if (mouseIsPressed) {
       handleEditorClick();
+    }
+    // Sewer editor mode
+    if (typeof handleSewerEditorMode === 'function') {
+      handleSewerEditorMode();
+    }
+    if (typeof drawSewerEditorUI === 'function') {
+      drawSewerEditorUI();
     }
   }
 }
@@ -1145,6 +1162,14 @@ function worldToString(world) {
     out += psData.join(";");
   }
 
+  // Add sewer links with ~ separator
+  if (typeof sewerLinksToString === 'function') {
+    const sewerData = sewerLinksToString();
+    if (sewerData) {
+      out += "~" + sewerData;
+    }
+  }
+
   return out;
 }
 
@@ -1156,10 +1181,20 @@ function stringToWorld(s) {
 
   crateInventories.clear(); // Clear before parsing
 
+  // Check for sewer links (after ~ separator)
+  let mainData = s;
+  if (s.includes("~")) {
+    const sewerParts = s.split("~");
+    mainData = sewerParts[0];
+    if (typeof stringToSewerLinks === 'function' && sewerParts[1]) {
+      stringToSewerLinks(sewerParts[1]);
+    }
+  }
+
   // Check for particle sources (after & separator)
-  let worldData = s;
-  if (s.includes("&")) {
-    const parts = s.split("&");
+  let worldData = mainData;
+  if (mainData.includes("&")) {
+    const parts = mainData.split("&");
     worldData = parts[0];
     const psData = parts[1];
 
