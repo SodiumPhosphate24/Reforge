@@ -1,6 +1,5 @@
 var sewerLinks = new Map();
-var linkingSewerMode = false;
-var firstSewerCoord = null;
+var pendingSewerLink = null;
 var inSewer = false;
 var sewerRoom = null;
 var sewerEntryPoint = null;
@@ -106,7 +105,7 @@ function getLinkedSewer(row, col) {
   return null;
 }
 
-function findNearbySewerCap(playerX, playerY, range = 80) {
+function findNearbySewerCap(playerX, playerY, range = 80, requireLinked = true) {
   const playerCenterX = playerX + 600 + pWidth / 2;
   const playerCenterY = playerY + 375 + pHeight / 2;
   
@@ -124,8 +123,10 @@ function findNearbySewerCap(playerX, playerY, range = 80) {
             const tileX = c * 50 + 25;
             const tileY = r * 50 + 25;
             const dist = distance(playerCenterX, playerCenterY, tileX, tileY);
-            if (dist < range && isSewerLinked(r, c)) {
-              return { row: r, col: c, x: tileX, y: tileY };
+            if (dist < range) {
+              if (!requireLinked || isSewerLinked(r, c)) {
+                return { row: r, col: c, x: tileX, y: tileY, linked: isSewerLinked(r, c) };
+              }
             }
           }
         }
@@ -240,60 +241,39 @@ function handleSewerEditorMode() {
   if (!editorMode) return;
   
   if (keyPressedOnce(76)) {
-    linkingSewerMode = !linkingSewerMode;
-    if (!linkingSewerMode) {
-      firstSewerCoord = null;
-    }
-    console.log("Sewer linking mode:", linkingSewerMode ? "ON" : "OFF");
-  }
-  
-  if (linkingSewerMode && mouseIsPressed && mouseButton === LEFT) {
-    const worldX = mouseX - camX;
-    const worldY = mouseY - camY;
-    const col = Math.floor(worldX / 50);
-    const row = Math.floor(worldY / 50);
+    const nearbySewer = findNearbySewerCap(pX, pY, 80, false);
     
-    if (row >= 0 && row < gameWorld.length && col >= 0 && col < gameWorld[0].length) {
-      const cell = gameWorld[row][col];
-      if (cell && cell.layers) {
-        let isSewerTile = false;
-        for (let layer of cell.layers) {
-          if (layer && layer.type === 44) {
-            isSewerTile = true;
-            break;
-          }
-        }
-        
-        if (isSewerTile) {
-          if (!firstSewerCoord) {
-            firstSewerCoord = { row, col };
-            console.log(`First sewer selected at (${row}, ${col})`);
-          } else if (firstSewerCoord.row !== row || firstSewerCoord.col !== col) {
-            linkSewers(firstSewerCoord.row, firstSewerCoord.col, row, col);
-            firstSewerCoord = null;
-            linkingSewerMode = false;
-          }
-        }
+    if (nearbySewer && !nearbySewer.linked) {
+      if (!pendingSewerLink) {
+        pendingSewerLink = { row: nearbySewer.row, col: nearbySewer.col };
+        console.log(`First sewer marked at (${nearbySewer.row}, ${nearbySewer.col}) - go to another sewer and press L`);
+      } else if (pendingSewerLink.row !== nearbySewer.row || pendingSewerLink.col !== nearbySewer.col) {
+        linkSewers(pendingSewerLink.row, pendingSewerLink.col, nearbySewer.row, nearbySewer.col);
+        pendingSewerLink = null;
+      }
+    } else if (!nearbySewer) {
+      if (pendingSewerLink) {
+        pendingSewerLink = null;
+        console.log("Sewer linking cancelled");
       }
     }
   }
 }
 
 function drawSewerEditorUI() {
-  if (!editorMode || !linkingSewerMode) return;
+  if (!editorMode) return;
   
   push();
-  fill(0, 200, 255);
-  noStroke();
-  textSize(16);
-  textAlign(CENTER);
-  text("SEWER LINKING MODE - Click two sewer caps to link them", width / 2, 70);
   
-  if (firstSewerCoord) {
-    text(`First sewer selected at (${firstSewerCoord.row}, ${firstSewerCoord.col}) - Click another sewer to link`, width / 2, 90);
+  if (pendingSewerLink) {
+    fill(0, 200, 255);
+    noStroke();
+    textSize(16);
+    textAlign(CENTER);
+    text(`Sewer at (${pendingSewerLink.row}, ${pendingSewerLink.col}) marked - Press L near another sewer to link`, width / 2, 70);
     
-    const sewerX = firstSewerCoord.col * 50 + camX;
-    const sewerY = firstSewerCoord.row * 50 + camY;
+    const sewerX = pendingSewerLink.col * 50 + camX;
+    const sewerY = pendingSewerLink.row * 50 + camY;
     stroke(0, 255, 255);
     strokeWeight(3);
     noFill();

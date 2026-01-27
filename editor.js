@@ -541,8 +541,6 @@ function handleEditorClick() {
   if (!(editorMode && gameWorld && gameWorld.length > 0)) return;
   if (cratePlacementPaused) return; // Don't allow clicks when paused
   
-  // Suppress normal clicks when in sewer linking mode
-  if (typeof linkingSewerMode !== 'undefined' && linkingSewerMode) return;
 
   var worldX = mouseX - camX;
   var worldY = mouseY - camY;
