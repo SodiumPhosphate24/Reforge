@@ -363,7 +363,7 @@ function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message
 }
 
 function preload() {
-  console.log("Updated version crowbar 5.12");
+  console.log("Updated version crowbar 5.62");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   SPUDImage = loadImage("Characters/SPUD.png");
@@ -946,7 +946,7 @@ function drawGameplay() {
   fixBoilerPrompt.draw("Press E to Restore Boiler", [255, 200, 0], 90);
 
   boilerCartridgeCooldownPrompt.update(cartridgeCooldown);
-  boilerCartridgeCooldownPrompt.draw("Cartridge ready in " + Math.floor(generateCooldown/10), [255, 200, 0], 90);
+  boilerCartridgeCooldownPrompt.draw("Cartridge ready in " + Math.floor(generateCooldown / 10), [255, 200, 0], 90);
 
   pickupCartridgePrompt.update(pickupCartridge);
   pickupCartridgePrompt.draw("Press E to Pickup Cartridge", [255, 200, 0], 90);
