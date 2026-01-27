@@ -17,7 +17,9 @@ var nearestLeak = null; // Stores nearest repairable leak info
 var totalLeaks = 5;
 
 // Boiler repair system
-var boilerPrompt = null; // Will be initialized in setup()
+var fixBoilerPrompt = null;
+var boilerCartridgeCooldownPrompt = null;
+var pickupCartridgePrompt = null;
 var puzzlePrompt = null;
 
 // Alarm system
@@ -677,7 +679,9 @@ function setup() {
   indicatorTargetY = indicatorCurrentY;
 
   // Initialize boiler prompt
-  boilerPrompt = createPrompt();
+  fixBoilerPrompt = createPrompt();
+  boilerCartridgeCooldownPrompt = createPrompt();
+  pickupCartridgePrompt = createPrompt();
   puzzlePrompt = createPrompt();
 
   // Intro will be started from menu screen
@@ -925,17 +929,17 @@ function drawGameplay() {
   const nearBoiler = distance(pX, pY, 12000, 12500) < 75;
   const atRightWaypoint = currentWaypointIndex >= 4; // Adjust this based on when you want the prompt to appear
 
-  const repairBoilerPrompt = holdingBoilerCartridge && nearBoiler && atRightWaypoint;
-  const cartridgeCooldownPrompt = nearBoiler && triggerList.Objective.fixBoiler && generateCooldown > 0;
-  const pickupCartridgePrompt = nearBoiler && triggerList.Objective.fixBoiler && generateCooldown <= 0;
-  boilerPrompt.update(repairBoilerPrompt);
-  boilerPrompt.draw("Press E to Restore Boiler", [255, 200, 0], 90);
+  const repairBoiler = holdingBoilerCartridge && nearBoiler && atRightWaypoint;
+  const cartridgeCooldown = nearBoiler && triggerList.Objective.fixBoiler && generateCooldown > 0;
+  const pickupCartridge = nearBoiler && triggerList.Objective.fixBoiler && generateCooldown <= 0;
+  fixBoilerPrompt.update(repairBoiler);
+  fixBoilerPrompt.draw("Press E to Restore Boiler", [255, 200, 0], 90);
 
-  boilerPrompt.update(cartridgeCooldownPrompt);
-  boilerPrompt.draw("Cartridge ready in " + Math.floor(generateCooldown/10), [255, 200, 0], 90);
+  boilerCartridgeCooldownPrompt.update(cartridgeCooldown);
+  boilerCartridgeCooldownPrompt.draw("Cartridge ready in " + Math.floor(generateCooldown/10), [255, 200, 0], 90);
 
-  boilerPrompt.update(pickupCartridgePrompt);
-  boilerPrompt.draw("Press E to Pickup Cartridge", [255, 200, 0], 90);
+  pickupCartridgePrompt.update(pickupCartridge);
+  pickupCartridgePrompt.draw("Press E to Pickup Cartridge", [255, 200, 0], 90);
 
   // Check for puzzle repair condition and update prompt
   var nearPuzzle;
