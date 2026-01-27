@@ -126,7 +126,7 @@ function handleTriggers(trigger, ID = -1) {
     if (daedalus && daedalus.teleported && !groupDiscussionComplete) {
       groupDiscussionComplete = true;
       console.log("Group discussion completed. The trio will relocate when the player leaves.");
-      messages.push(new Message("quest", "The group is moving to the Labyrinth entrance."));
+      return;
     }
   }
 

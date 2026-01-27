@@ -55,6 +55,21 @@ var craftingRecipes = [
     ],
     output: { type: "player", name: "STUR-D", amount: 1 }
   },
+  {
+    name : "ARGO",
+    category : "Robots",
+    type : "player",
+    unlocked : false,
+    playerConstructor: {width : 35, height : 35, speed : 1.3, health : 100, damage : 1},
+    ingredients: [
+      { itemName: "pipe", amount: 25 },
+      { itemName: "cog", amount: 25 },
+      { itemName: "rare cartridge", amount: 4 },
+      { itemName: "legendary wheel", amount: 4 },
+      { itemName: "train blueprint", amount: 1 }
+    ],
+    output: { type: "player", name: "ARGO", amount: 1 }
+  },
   // WEAPONS
   {
     name: "Glock",

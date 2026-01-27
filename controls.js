@@ -366,6 +366,12 @@ function keyReleased() {
           transferred = true;
           break;
         }
+        if (targetPlayer.inventory[i].name == itemToTransfer.name && itemToTransfer.stackable) {
+          targetPlayer.inventory[i].amount += itemToTransfer.amount;
+          inventoryList[inventorySlot - 1] = null;
+          transferred = true;
+          break;
+        }
       }
 
       playerTransferMenuOpen = false;
