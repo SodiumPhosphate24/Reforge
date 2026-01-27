@@ -128,6 +128,9 @@ function handleTriggers(trigger, ID = -1) {
       console.log("Group discussion completed. The trio will relocate when the player leaves.");
       return;
     }
+    if (groupDiscussionComplete){
+      craftingRecipes[3].unlocked = true;
+    }
   }
 
   if (trigger == "Labyrinth") {

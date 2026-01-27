@@ -167,7 +167,7 @@ function drawNPCs() {
         groupHasRelocated = true;
         console.log("Hephaestus, Atlas, and Daedalus have moved to the Labyrinth entrance.");
 
-        const labyrinthDialogue = ["Hephaestus: Here it is... the Labyrinth.", "Atlas: Well, we knew it wouldn't be as easy as walking in.", "Daedalus: He built a wall around it. Defending the entrance. The only way in is through "];
+        const labyrinthDialogue = ["Hephaestus: Here it is... the Labyrinth.", "Atlas: Well, we knew it wouldn't be as easy as walking in.", "Daedalus: He built a wall around it. Defending the entrance. We need to breach it somehow.", "Hephaestus: The old rail system runs through here, maybe we can redirect a train to collapse the wall.", "Daedalus: But the train station has been abandoned for years, and locomotive technology is long gone. We'd have to build a new train", "Hephaestus: It's our best chance. We should head over to the old train station in the city to the east. There should be parts we can use to build a new train."];
         hephaestus.message = labyrinthDialogue;
         atlas.message = labyrinthDialogue;
         daedalus.message = labyrinthDialogue;

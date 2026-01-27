@@ -925,9 +925,17 @@ function drawGameplay() {
   const nearBoiler = distance(pX, pY, 12000, 12500) < 75;
   const atRightWaypoint = currentWaypointIndex >= 4; // Adjust this based on when you want the prompt to appear
 
-  const shouldShowBoilerPrompt = holdingBoilerCartridge && nearBoiler && atRightWaypoint;
-  boilerPrompt.update(shouldShowBoilerPrompt);
+  const repairBoilerPrompt = holdingBoilerCartridge && nearBoiler && atRightWaypoint;
+  const cartridgeCooldownPrompt = nearBoiler && triggerList.Objective.fixBoiler && generateCooldown > 0;
+  const pickupCartridgePrompt = nearBoiler && triggerList.Objective.fixBoiler && generateCooldown <= 0;
+  boilerPrompt.update(repairBoilerPrompt);
   boilerPrompt.draw("Press E to Restore Boiler", [255, 200, 0], 90);
+
+  boilerPrompt.update(cartridgeCooldownPrompt);
+  boilerPrompt.draw("Cartridge ready in " + Math.floor(generateCooldown/10), [255, 200, 0], 90);
+
+  boilerPrompt.update(pickupCartridgePrompt);
+  boilerPrompt.draw("Press E to Pickup Cartridge", [255, 200, 0], 90);
 
   // Check for puzzle repair condition and update prompt
   var nearPuzzle;
