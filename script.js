@@ -1541,7 +1541,7 @@ function getWorkbenchVariant(row, col, layer, tileType) {
 // Get the appropriate tree variant based on position in 1x2 grid
 // Tree (41) uses variants: top, bottom
 function getTreeVariant(row, col, layer, tileType) {
-  if (tileType !== 41) return null;
+  if (tileType !== 41 && tileType !== 45) return null;
 
   // Check if this is part of a 1x2 tree cluster
   const hasBottom = isSameTileType(row + 1, col, layer, tileType);
@@ -1558,7 +1558,8 @@ function getTreeVariant(row, col, layer, tileType) {
   // If it doesn't match a 1x2 pattern, just use top as fallback
 
   const config = tileVariants[41];
-  if (!config || !config.variants || !config.variants[variant]) {
+  const config2 = tileVariants[45];
+  if ((!config || !config.variants || !config.variants[variant]) || (!config2 || !config2.variants || !config2.variants[variant])) {
     console.error("Tree variant missing:", variant);
     return null;
   }
