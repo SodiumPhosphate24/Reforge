@@ -121,9 +121,9 @@ function updateSewerPuzzle() {
   if (typeof players !== 'undefined') {
     for (let i = 0; i < players.length; i++) {
       const player = players[i];
-      // Use world coordinates for distance check within sewer
-      const playerCenterX = player.pX + 600 + (player.pWidth || 35) / 2;
-      const playerCenterY = player.pY + 375 + (player.pHeight || 21.4) / 2;
+      // Use x and y directly as requested
+      const playerCenterX = player.x + 600 + (player.width || 35) / 2;
+      const playerCenterY = player.y + 375 + (player.height || 21.4) / 2;
 
       for (let j = 0; j < puzzlePressurePlates.length; j++) {
         const pp = puzzlePressurePlates[j];
