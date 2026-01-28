@@ -122,13 +122,6 @@ function keyPressed() {
         }
       }
     }
-
-    if (inventoryList[inventorySlot - 1] != null) {
-      if (inventoryList[inventorySlot - 1].name == "boiler cartridge") {
-        useItem();
-        handleTriggers("Objective");
-      }
-    }
     var nearPuzzle = -1;
     for (let i = 0; i < puzzleCoordinates.length; i++){
       if (distance(pX+600, pY+340, puzzleCoordinates[i][0], puzzleCoordinates[i][1]) < 75){
