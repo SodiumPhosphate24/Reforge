@@ -604,6 +604,18 @@ function generateTintedTileCache() {
       // Store the tinted image
       tintedTileCache[tileIndex][colorIndex] = tintedImg;
     }
+    // Add missing variants for tile 39 if they don't exist in tileColors
+    if (tileIndex === 39 && colors.length < 3) {
+      const extraColors = [[50, 50, 50], [0, 255, 0]]; // Pressed variant
+      for (let i = 0; i < extraColors.length; i++) {
+        const [r, g, b] = extraColors[i];
+        const tintedImg = createGraphics(50, 50);
+        tintedImg.tint(r, g, b);
+        tintedImg.image(baseImg, 0, 0, 50, 50);
+        tintedImg.noTint();
+        tintedTileCache[tileIndex][colors.length + i] = tintedImg;
+      }
+    }
   }
 
   // Also generate tinted variants for auto-tiling tiles

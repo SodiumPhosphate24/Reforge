@@ -121,12 +121,13 @@ function updateSewerPuzzle() {
   if (typeof players !== 'undefined') {
     for (let i = 0; i < players.length; i++) {
       const player = players[i];
-      const playerCenterX = player.x + 600 + (player.width || pWidth) / 2;
-      const playerCenterY = player.y + 375 + (player.height || pHeight) / 2;
+      // Use world coordinates for distance check within sewer
+      const playerCenterX = player.pX + 600 + (player.pWidth || 35) / 2;
+      const playerCenterY = player.pY + 375 + (player.pHeight || 21.4) / 2;
 
       for (let j = 0; j < puzzlePressurePlates.length; j++) {
         const pp = puzzlePressurePlates[j];
-        if (dist(playerCenterX, playerCenterY, pp.x, pp.y) < 30) {
+        if (dist(playerCenterX, playerCenterY, pp.x, pp.y) < 40) {
           pp.active = true;
           playersOnPlates.add(i);
         }
@@ -139,6 +140,7 @@ function updateSewerPuzzle() {
     const col = Math.floor(pp.x / 50);
     const row = Math.floor(pp.y / 50);
     if (sewerRoom[row] && sewerRoom[row][col]) {
+      // Force immediate layer update
       sewerRoom[row][col].layers[0].colorIndex = pp.active ? 2 : 1;
     }
   }
@@ -149,6 +151,7 @@ function updateSewerPuzzle() {
     for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
       if (sewerRoom[r][midCol].layers[0].type === SEWER_BORDER_TILE && r > 0 && r < SEWER_ROOM_HEIGHT - 1) {
         // Only replace tiles that are part of the middle divider, not the room boundary
+        const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
         const isOpeningY = r === midRow || r === midRow - 1 || r === midRow + 1;
         if (!isOpeningY) {
            sewerRoom[r][midCol].layers[0].type = SEWER_CENTER_TILE;
