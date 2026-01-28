@@ -368,7 +368,7 @@ function preload() {
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   SPUDImage = loadImage("Characters/SPUD.png");
-  ARGOImage = loadImage("Characters/ARGO.png")
+  ARGOImage = loadImage("Characters/Argo.png")
   Prometheus = loadImage("Characters/Prometheus.png");
   Hephaestus = loadImage("Characters/Hephaestus.png");
   Atlas = loadImage("Characters/Atlas.png");
