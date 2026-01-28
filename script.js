@@ -963,7 +963,6 @@ function drawGameplay() {
   }
   const shouldShowPuzzlePrompt = nearPuzzle;
   puzzlePrompt.update(shouldShowPuzzlePrompt);
-  puzzlePrompt.draw("Press E to Solve Puzzle", [255, 200, 0], 90);
 
   // Draw crafting prompt after camera pop (screen-fixed)
   if (typeof drawCraftingPromptIfNeeded === 'function') {

@@ -217,6 +217,10 @@ function exitSewer(exitSide) {
   pX = exitCoords.col * 50 - 600 + 25 - pWidth / 2;
   pY = exitCoords.row * 50 - 375 + 25 - pHeight / 2;
   
+  // Snap camera instantly
+  camX = -pX;
+  camY = -pY;
+  
   inSewer = false;
   currentSewerLink = null;
   savedWorldState = null;
