@@ -136,12 +136,12 @@ function handleTriggers(trigger, ID = -1) {
       const atlas = NonPlayerCharacters.find(npc => npc.id === "Atlas");
       const daedalus = NonPlayerCharacters.find(npc => npc.id === "Daedalus");
 
-      hephaestus.x = 4370;
-      hephaestus.y = 1015;
+      hephaestus.x = 13750;
+      hephaestus.y = 825;
       atlas.x = 4470;
-      atlas.y = 1015;
+      atlas.y = 925;
       daedalus.x = 4420;
-      daedalus.y = 915;
+      daedalus.y = 925;
       return;
     }
   }

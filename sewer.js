@@ -1,6 +1,7 @@
 var sewerLinks = new Map();
 var sewerFirstInPair = new Map(); // Tracks which sewer is "first" (left exit) in each pair
 var pendingSewerLink = null;
+var puzzleSolved = [false, false]; // [0] for left opening, [1] for right opening
 var inSewer = false;
 var sewerRoom = null;
 var sewerEntryPoint = null;
@@ -50,8 +51,10 @@ function initSewerRoom() {
       const isRightOpening = c === SEWER_ROOM_WIDTH - 1 && (r === midRow || r === midRow - 1 || r === midRow + 1);
       
       let tileType;
-      if (isLeftOpening || isRightOpening) {
-        tileType = SEWER_CENTER_TILE; // Opening uses floor tile
+      if (isLeftOpening) {
+        tileType = puzzleSolved[0] ? SEWER_CENTER_TILE : SEWER_BORDER_TILE;
+      } else if (isRightOpening) {
+        tileType = puzzleSolved[1] ? SEWER_CENTER_TILE : SEWER_BORDER_TILE;
       } else if (isBorder) {
         tileType = SEWER_BORDER_TILE;
       } else {
@@ -191,9 +194,13 @@ function enterSewer(sewerRow, sewerCol) {
   if (enteredFromFirst) {
     pX = sewerExitA.x - 600 - pWidth / 2;
     pY = sewerExitA.y - 375 - pHeight / 2;
+    puzzleSolved[0] = true; // Way you entered is open
+    puzzleSolved[1] = false; // Other side closed
   } else {
     pX = sewerExitB.x - 600 - pWidth / 2;
     pY = sewerExitB.y - 375 - pHeight / 2;
+    puzzleSolved[1] = true; // Way you entered is open
+    puzzleSolved[0] = false; // Other side closed
   }
   
   inSewer = true;
