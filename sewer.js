@@ -230,33 +230,19 @@ function checkSewerExits() {
   if (!inSewer) return;
   
   const playerCenterX = pX + 600 + pWidth / 2;
-  const playerCenterY = pY + 375 + pHeight / 2;
   
-  const distToA = distance(playerCenterX, playerCenterY, sewerExitA.x, sewerExitA.y);
-  const distToB = distance(playerCenterX, playerCenterY, sewerExitB.x, sewerExitB.y);
-  
-  if (distToA < 60 && keyPressedOnce(69)) {
-    exitSewer('A');
-  } else if (distToB < 60 && keyPressedOnce(69)) {
-    exitSewer('B');
+  // Exit automatically when walking through the openings (out of bounds)
+  if (playerCenterX < 0) {
+    exitSewer('A'); // Left opening = first sewer
+  } else if (playerCenterX > SEWER_ROOM_WIDTH * 50) {
+    exitSewer('B'); // Right opening = second sewer
   }
 }
 
 function drawSewerPrompt() {
   if (inSewer) {
-    if (!sewerPrompt) sewerPrompt = createPrompt();
-    
-    const playerCenterX = pX + 600 + pWidth / 2;
-    const playerCenterY = pY + 375 + pHeight / 2;
-    
-    const distToA = distance(playerCenterX, playerCenterY, sewerExitA.x, sewerExitA.y);
-    const distToB = distance(playerCenterX, playerCenterY, sewerExitB.x, sewerExitB.y);
-    
-    if (distToA < 60) {
-      handleInteractionPrompt(sewerPrompt, sewerExitA.x, sewerExitA.y, 60, "Press E to exit sewer (Entry)", true);
-    } else if (distToB < 60) {
-      handleInteractionPrompt(sewerPrompt, sewerExitB.x, sewerExitB.y, 60, "Press E to exit sewer (Linked)", true);
-    } else {
+    // No prompt needed - just walk through the openings to exit
+    if (sewerPrompt) {
       sewerPrompt.update(false);
       sewerPrompt.draw("");
     }
