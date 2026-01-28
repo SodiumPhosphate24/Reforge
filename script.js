@@ -6,7 +6,7 @@ var activeBoss = null; // Currently active boss enemy
 let themeSong;
 let maxTileTypes = 0; // will be set in setup()
 // Waypoint system
-var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875], [23983, 21925], [8475, 23225]];
+var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875], [23983, 21925], [8475, 23225], [4425, 950], [13850, 850]];
 var currentWaypointIndex = 0;
 var puzzleCoordinates = [[400, 600], [200, 4250], [3150, 4250], [3450, 200]];
 var itemConstructors = [];
@@ -963,6 +963,7 @@ function drawGameplay() {
   }
   const shouldShowPuzzlePrompt = nearPuzzle;
   puzzlePrompt.update(shouldShowPuzzlePrompt);
+  puzzlePrompt.draw("Press E to Solve Puzzle", [255, 200, 0], 90);
 
   // Draw crafting prompt after camera pop (screen-fixed)
   if (typeof drawCraftingPromptIfNeeded === 'function') {

@@ -125,11 +125,24 @@ function handleTriggers(trigger, ID = -1) {
     const daedalus = NonPlayerCharacters.find(npc => npc.id === "Daedalus");
     if (daedalus && daedalus.teleported && !groupDiscussionComplete) {
       groupDiscussionComplete = true;
+      currentWaypointIndex = 7;
       console.log("Group discussion completed. The trio will relocate when the player leaves.");
       return;
     }
     if (groupDiscussionComplete){
       craftingRecipes[3].unlocked = true;
+      currentwaypointIndex = 8;
+      const hephaestus = NonPlayerCharacters.find(npc => npc.id === "Hephaestus");
+      const atlas = NonPlayerCharacters.find(npc => npc.id === "Atlas");
+      const daedalus = NonPlayerCharacters.find(npc => npc.id === "Daedalus");
+
+      hephaestus.x = 4370;
+      hephaestus.y = 1015;
+      atlas.x = 4470;
+      atlas.y = 1015;
+      daedalus.x = 4420;
+      daedalus.y = 915;
+      return;
     }
   }
 
