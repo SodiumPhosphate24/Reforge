@@ -736,7 +736,7 @@ function updateLeakDetection() {
     return;
   }
 
-  for (let i = 0; i < particleSources.length; i++) {
+  for (let i = 0; i < 5; i++) {
     const ps = particleSources[i];
     // Skip if leak is already fixed
     if (ps.spawnRate === 0) continue;

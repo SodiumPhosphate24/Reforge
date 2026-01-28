@@ -1,4 +1,5 @@
 var sewerLinks = new Map();
+var sewerFirstInPair = new Map(); // Tracks which sewer is "first" (left exit) in each pair
 var pendingSewerLink = null;
 var inSewer = false;
 var sewerRoom = null;
@@ -37,11 +38,26 @@ function generateSewerRoom() {
 
 function initSewerRoom() {
   sewerRoom = [];
+  const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
+  
   for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
     const row = [];
     for (let c = 0; c < SEWER_ROOM_WIDTH; c++) {
       const isBorder = r === 0 || r === SEWER_ROOM_HEIGHT - 1 || c === 0 || c === SEWER_ROOM_WIDTH - 1;
-      const tileType = isBorder ? SEWER_BORDER_TILE : SEWER_CENTER_TILE;
+      
+      // Create openings on left and right walls at the middle row
+      const isLeftOpening = c === 0 && (r === midRow || r === midRow - 1 || r === midRow + 1);
+      const isRightOpening = c === SEWER_ROOM_WIDTH - 1 && (r === midRow || r === midRow - 1 || r === midRow + 1);
+      
+      let tileType;
+      if (isLeftOpening || isRightOpening) {
+        tileType = SEWER_CENTER_TILE; // Opening uses floor tile
+      } else if (isBorder) {
+        tileType = SEWER_BORDER_TILE;
+      } else {
+        tileType = SEWER_CENTER_TILE;
+      }
+      
       row.push({
         layers: [
           { type: tileType, rotation: 0, flipH: false, flipV: false, colorIndex: 0 },
@@ -55,8 +71,9 @@ function initSewerRoom() {
     sewerRoom.push(row);
   }
   
-  sewerExitA = { x: 1 * 50 + 25, y: Math.floor(SEWER_ROOM_HEIGHT / 2) * 50 };
-  sewerExitB = { x: (SEWER_ROOM_WIDTH - 2) * 50 + 25, y: Math.floor(SEWER_ROOM_HEIGHT / 2) * 50 };
+  // Exit positions are in the openings
+  sewerExitA = { x: 1 * 50 + 25, y: midRow * 50 + 25 };
+  sewerExitB = { x: (SEWER_ROOM_WIDTH - 2) * 50 + 25, y: midRow * 50 + 25 };
 }
 
 function getSewerLinkKey(row, col) {
@@ -67,18 +84,28 @@ function linkSewers(row1, col1, row2, col2) {
   const key1 = getSewerLinkKey(row1, col1);
   const key2 = getSewerLinkKey(row2, col2);
   
+  // Remove old links if they exist
   if (sewerLinks.has(key1)) {
     const oldPartner = sewerLinks.get(key1);
     sewerLinks.delete(oldPartner);
+    sewerFirstInPair.delete(key1);
+    sewerFirstInPair.delete(oldPartner);
   }
   if (sewerLinks.has(key2)) {
     const oldPartner = sewerLinks.get(key2);
     sewerLinks.delete(oldPartner);
+    sewerFirstInPair.delete(key2);
+    sewerFirstInPair.delete(oldPartner);
   }
   
   sewerLinks.set(key1, key2);
   sewerLinks.set(key2, key1);
-  console.log(`Linked sewers: (${row1},${col1}) <-> (${row2},${col2})`);
+  
+  // key1 is "first" (left exit), key2 is "second" (right exit)
+  sewerFirstInPair.set(key1, true);
+  sewerFirstInPair.set(key2, false);
+  
+  console.log(`Linked sewers: (${row1},${col1}) [LEFT] <-> (${row2},${col2}) [RIGHT]`);
 }
 
 function unlinkSewer(row, col) {
@@ -140,9 +167,14 @@ function enterSewer(sewerRow, sewerCol) {
   const linkedSewer = getLinkedSewer(sewerRow, sewerCol);
   if (!linkedSewer) return false;
   
+  const entryKey = getSewerLinkKey(sewerRow, sewerCol);
+  const enteredFromFirst = sewerFirstInPair.get(entryKey) === true;
+  
+  // Store first and second sewers for consistent exit behavior
   currentSewerLink = {
-    entry: { row: sewerRow, col: sewerCol },
-    exit: linkedSewer
+    first: enteredFromFirst ? { row: sewerRow, col: sewerCol } : linkedSewer,
+    second: enteredFromFirst ? linkedSewer : { row: sewerRow, col: sewerCol },
+    enteredFromFirst: enteredFromFirst
   };
   
   initSewerRoom();
@@ -155,11 +187,17 @@ function enterSewer(sewerRow, sewerCol) {
   
   gameWorld = sewerRoom;
   
-  pX = sewerExitA.x - 600 - pWidth / 2;
-  pY = sewerExitA.y - 375 - pHeight / 2;
+  // Spawn on left if entered from first sewer, right if entered from second
+  if (enteredFromFirst) {
+    pX = sewerExitA.x - 600 - pWidth / 2;
+    pY = sewerExitA.y - 375 - pHeight / 2;
+  } else {
+    pX = sewerExitB.x - 600 - pWidth / 2;
+    pY = sewerExitB.y - 375 - pHeight / 2;
+  }
   
   inSewer = true;
-  console.log("Entered sewer system");
+  console.log("Entered sewer system from", enteredFromFirst ? "first (left)" : "second (right)");
   return true;
 }
 
@@ -168,11 +206,12 @@ function exitSewer(exitSide) {
   
   gameWorld = savedWorldState.world;
   
+  // Left exit (A) always goes to first sewer, right exit (B) always goes to second sewer
   let exitCoords;
   if (exitSide === 'A') {
-    exitCoords = currentSewerLink.entry;
+    exitCoords = currentSewerLink.first;
   } else {
-    exitCoords = currentSewerLink.exit;
+    exitCoords = currentSewerLink.second;
   }
   
   pX = exitCoords.col * 50 - 600 + 25 - pWidth / 2;
@@ -307,7 +346,13 @@ function sewerLinksToString() {
   
   for (let [key, partnerKey] of sewerLinks) {
     if (!processed.has(key) && !processed.has(partnerKey)) {
-      pairs.push(`${key}:${partnerKey}`);
+      // Always put the "first" key before the colon
+      const isFirst = sewerFirstInPair.get(key) === true;
+      if (isFirst) {
+        pairs.push(`${key}:${partnerKey}`);
+      } else {
+        pairs.push(`${partnerKey}:${key}`);
+      }
       processed.add(key);
       processed.add(partnerKey);
     }
@@ -318,6 +363,7 @@ function sewerLinksToString() {
 
 function stringToSewerLinks(str) {
   sewerLinks.clear();
+  sewerFirstInPair.clear();
   if (!str || str.trim() === '') return;
   
   const pairs = str.split(';');
@@ -326,6 +372,9 @@ function stringToSewerLinks(str) {
       const [key1, key2] = pair.split(':');
       sewerLinks.set(key1, key2);
       sewerLinks.set(key2, key1);
+      // key1 is first (left), key2 is second (right)
+      sewerFirstInPair.set(key1, true);
+      sewerFirstInPair.set(key2, false);
     }
   }
   console.log(`Loaded ${sewerLinks.size / 2} sewer link pairs`);
