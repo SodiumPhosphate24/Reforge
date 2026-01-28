@@ -364,7 +364,7 @@ function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message
 }
 
 function preload() {
-  console.log("Updated version crowbar 5.62");
+  console.log("Updated version crowbar 5.88");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   SPUDImage = loadImage("Characters/SPUD.png");
@@ -793,11 +793,6 @@ function drawGameplay() {
   // Check sewer exits (still within world coordinates for distance checks)
   if (typeof checkSewerExits === 'function') {
     checkSewerExits();
-  }
-  
-  // Update sewer puzzle logic
-  if (typeof updateSewerPuzzle === 'function') {
-    updateSewerPuzzle();
   }
 
   // LAYERS 2, 3 over items but under player
