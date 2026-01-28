@@ -138,9 +138,9 @@ function handleTriggers(trigger, ID = -1) {
 
       hephaestus.x = 13750;
       hephaestus.y = 825;
-      atlas.x = 4470;
+      atlas.x = 13700;
       atlas.y = 925;
-      daedalus.x = 4420;
+      daedalus.x = 13800;
       daedalus.y = 925;
       return;
     }

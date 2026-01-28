@@ -2,6 +2,7 @@ var sewerLinks = new Map();
 var sewerFirstInPair = new Map(); // Tracks which sewer is "first" (left exit) in each pair
 var pendingSewerLink = null;
 var puzzleSolved = [false, false]; // [0] for left opening, [1] for right opening
+var puzzlePressurePlates = []; // [{x, y, active}]
 var inSewer = false;
 var sewerRoom = null;
 var sewerEntryPoint = null;
@@ -14,6 +15,7 @@ const SEWER_ROOM_WIDTH = 24;
 const SEWER_ROOM_HEIGHT = 15;
 const SEWER_BORDER_TILE = 26;
 const SEWER_CENTER_TILE = 39;
+const SEWER_FENCE_TILE = 34;
 
 function generateSewerRoom() {
   const room = [];
@@ -40,7 +42,15 @@ function generateSewerRoom() {
 function initSewerRoom() {
   sewerRoom = [];
   const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
+  const midCol = Math.floor(SEWER_ROOM_WIDTH / 2);
   
+  // Initialize pressure plates for the puzzle
+  puzzlePressurePlates = [
+    { x: (midCol - 4) * 50 + 25, y: (midRow - 2) * 50 + 25, active: false },
+    { x: midCol * 50 + 25, y: (midRow - 2) * 50 + 25, active: false },
+    { x: (midCol + 4) * 50 + 25, y: (midRow - 2) * 50 + 25, active: false }
+  ];
+
   for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
     const row = [];
     for (let c = 0; c < SEWER_ROOM_WIDTH; c++) {
@@ -50,11 +60,30 @@ function initSewerRoom() {
       const isLeftOpening = c === 0 && (r === midRow || r === midRow - 1 || r === midRow + 1);
       const isRightOpening = c === SEWER_ROOM_WIDTH - 1 && (r === midRow || r === midRow - 1 || r === midRow + 1);
       
+      // Chain link fence down the middle
+      const isMiddleFence = c === midCol && !isBorder && !isLeftOpening && !isRightOpening;
+      
+      // Pressure plate locations
+      let isPressurePlate = false;
+      for(let pp of puzzlePressurePlates) {
+        if(Math.floor(pp.x/50) === c && Math.floor(pp.y/50) === r) {
+          isPressurePlate = true;
+          break;
+        }
+      }
+
       let tileType;
+      let colorIndex = 0;
+      
       if (isLeftOpening) {
         tileType = puzzleSolved[0] ? SEWER_CENTER_TILE : SEWER_BORDER_TILE;
       } else if (isRightOpening) {
         tileType = puzzleSolved[1] ? SEWER_CENTER_TILE : SEWER_BORDER_TILE;
+      } else if (isMiddleFence) {
+        tileType = SEWER_FENCE_TILE;
+      } else if (isPressurePlate) {
+        tileType = SEWER_CENTER_TILE;
+        colorIndex = 1; // Pressure plate variant
       } else if (isBorder) {
         tileType = SEWER_BORDER_TILE;
       } else {
@@ -63,7 +92,7 @@ function initSewerRoom() {
       
       row.push({
         layers: [
-          { type: tileType, rotation: 0, flipH: false, flipV: false, colorIndex: 0 },
+          { type: tileType, rotation: 0, flipH: false, flipV: false, colorIndex: colorIndex },
           null,
           null,
           null,
@@ -77,6 +106,53 @@ function initSewerRoom() {
   // Exit positions are in the openings
   sewerExitA = { x: 1 * 50 + 25, y: midRow * 50 + 25 };
   sewerExitB = { x: (SEWER_ROOM_WIDTH - 2) * 50 + 25, y: midRow * 50 + 25 };
+}
+
+function updateSewerPuzzle() {
+  if (!inSewer || !sewerRoom) return;
+
+  // Reset pressure plate states
+  for (let pp of puzzlePressurePlates) pp.active = false;
+
+  const playersOnPlates = new Set();
+  const midCol = Math.floor(SEWER_ROOM_WIDTH / 2);
+
+  // Check each player's position against pressure plates
+  if (typeof players !== 'undefined') {
+    for (let i = 0; i < players.length; i++) {
+      const player = players[i];
+      const playerCenterX = player.x + 600 + (player.width || pWidth) / 2;
+      const playerCenterY = player.y + 375 + (player.height || pHeight) / 2;
+
+      for (let j = 0; j < puzzlePressurePlates.length; j++) {
+        const pp = puzzlePressurePlates[j];
+        if (dist(playerCenterX, playerCenterY, pp.x, pp.y) < 30) {
+          pp.active = true;
+          playersOnPlates.add(i);
+        }
+      }
+    }
+  }
+
+  // If 3 different players are on plates, solve the puzzle
+  if (playersOnPlates.size >= 3) {
+    // Remove the fence
+    for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
+      if (sewerRoom[r][midCol].layers[0].type === SEWER_FENCE_TILE) {
+        sewerRoom[r][midCol].layers[0].type = SEWER_CENTER_TILE;
+      }
+    }
+    // Open the other exit too
+    puzzleSolved[0] = true;
+    puzzleSolved[1] = true;
+    
+    // Update the visual openings in case they were closed
+    const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
+    for (let r = midRow - 1; r <= midRow + 1; r++) {
+      sewerRoom[r][0].layers[0].type = SEWER_CENTER_TILE;
+      sewerRoom[r][SEWER_ROOM_WIDTH - 1].layers[0].type = SEWER_CENTER_TILE;
+    }
+  }
 }
 
 function getSewerLinkKey(row, col) {

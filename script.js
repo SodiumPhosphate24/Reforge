@@ -93,7 +93,7 @@ var tileColors = [
   [[255, 255, 255]], // 36 - Lampost
   [[255, 255, 255]],  // 37 - Bench
   [[100, 100, 100]], // 38 White Brick
-  [[100, 100, 100]], // 39 White Tile
+  [[100, 100, 100], [50, 50, 50]], // 39 White Tile
   [[255, 255, 255]], // 40 Steel Crate
   [[255, 255, 255]], // 41 Tree
   [[255, 255, 255]], // 42 Boiler
@@ -368,6 +368,7 @@ function preload() {
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   SPUDImage = loadImage("Characters/SPUD.png");
+  ARGOImage = loadImage("Characters/ARGO.png")
   Prometheus = loadImage("Characters/Prometheus.png");
   Hephaestus = loadImage("Characters/Hephaestus.png");
   Atlas = loadImage("Characters/Atlas.png");
@@ -792,6 +793,11 @@ function drawGameplay() {
   // Check sewer exits (still within world coordinates for distance checks)
   if (typeof checkSewerExits === 'function') {
     checkSewerExits();
+  }
+  
+  // Update sewer puzzle logic
+  if (typeof updateSewerPuzzle === 'function') {
+    updateSewerPuzzle();
   }
 
   // LAYERS 2, 3 over items but under player

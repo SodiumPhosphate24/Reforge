@@ -269,6 +269,9 @@ function craftItem(recipe) {
     if (recipe.name === "SPUD") {
       robotImage = SPUDImage;
     }
+    if (recipe.name === "ARGO") {
+      robotImage = ARGOImage;
+    }
 
     // Find nearest workbench position (bottom-right corner of 2x2 workbench)
     const playerCenterX = pX + 600 + pWidth / 2;
@@ -327,7 +330,12 @@ function craftItem(recipe) {
       foundWorkbench = true;
     }
 
-    players.push(new Player(workbenchBottomRightX, workbenchBottomRightY + 15, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
+    if(recipe.name === "ARGO"){
+      players.push(new Player(workbenchBottomRightX-200, workbenchBottomRightY + 15, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
+    }
+    else {
+      players.push(new Player(workbenchBottomRightX, workbenchBottomRightY + 15, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
+    }
 
     // Trigger particle system #5 for 1 second
     if (typeof particleSources !== 'undefined' && particleSources.length > 5) {
