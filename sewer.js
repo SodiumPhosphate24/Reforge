@@ -44,11 +44,11 @@ function initSewerRoom() {
   const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
   const midCol = Math.floor(SEWER_ROOM_WIDTH / 2);
   
-  // Initialize pressure plates for the puzzle
+  // Initialize pressure plates for the puzzle - vertically on the left
   puzzlePressurePlates = [
-    { x: (midCol - 4) * 50 + 25, y: (midRow - 2) * 50 + 25, active: false },
-    { x: midCol * 50 + 25, y: (midRow - 2) * 50 + 25, active: false },
-    { x: (midCol + 4) * 50 + 25, y: (midRow - 2) * 50 + 25, active: false }
+    { x: 3 * 50 + 25, y: (midRow - 2) * 50 + 25, active: false },
+    { x: 3 * 50 + 25, y: midRow * 50 + 25, active: false },
+    { x: 3 * 50 + 25, y: (midRow + 2) * 50 + 25, active: false }
   ];
 
   for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
@@ -60,8 +60,8 @@ function initSewerRoom() {
       const isLeftOpening = c === 0 && (r === midRow || r === midRow - 1 || r === midRow + 1);
       const isRightOpening = c === SEWER_ROOM_WIDTH - 1 && (r === midRow || r === midRow - 1 || r === midRow + 1);
       
-      // Chain link fence down the middle
-      const isMiddleFence = c === midCol && !isBorder && !isLeftOpening && !isRightOpening;
+      // Perimeter block wall down the middle
+      const isMiddleWall = c === midCol && !isBorder && !isLeftOpening && !isRightOpening;
       
       // Pressure plate locations
       let isPressurePlate = false;
@@ -79,11 +79,11 @@ function initSewerRoom() {
         tileType = puzzleSolved[0] ? SEWER_CENTER_TILE : SEWER_BORDER_TILE;
       } else if (isRightOpening) {
         tileType = puzzleSolved[1] ? SEWER_CENTER_TILE : SEWER_BORDER_TILE;
-      } else if (isMiddleFence) {
-        tileType = SEWER_FENCE_TILE;
+      } else if (isMiddleWall) {
+        tileType = SEWER_BORDER_TILE;
       } else if (isPressurePlate) {
         tileType = SEWER_CENTER_TILE;
-        colorIndex = 1; // Pressure plate variant
+        colorIndex = 1; // Unpressed variant
       } else if (isBorder) {
         tileType = SEWER_BORDER_TILE;
       } else {
@@ -134,12 +134,25 @@ function updateSewerPuzzle() {
     }
   }
 
+  // Update tile visuals for pressure plates
+  for (let pp of puzzlePressurePlates) {
+    const col = Math.floor(pp.x / 50);
+    const row = Math.floor(pp.y / 50);
+    if (sewerRoom[row] && sewerRoom[row][col]) {
+      sewerRoom[row][col].layers[0].colorIndex = pp.active ? 2 : 1;
+    }
+  }
+
   // If 3 different players are on plates, solve the puzzle
   if (playersOnPlates.size >= 3) {
-    // Remove the fence
+    // Remove the wall
     for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
-      if (sewerRoom[r][midCol].layers[0].type === SEWER_FENCE_TILE) {
-        sewerRoom[r][midCol].layers[0].type = SEWER_CENTER_TILE;
+      if (sewerRoom[r][midCol].layers[0].type === SEWER_BORDER_TILE && r > 0 && r < SEWER_ROOM_HEIGHT - 1) {
+        // Only replace tiles that are part of the middle divider, not the room boundary
+        const isOpeningY = r === midRow || r === midRow - 1 || r === midRow + 1;
+        if (!isOpeningY) {
+           sewerRoom[r][midCol].layers[0].type = SEWER_CENTER_TILE;
+        }
       }
     }
     // Open the other exit too
