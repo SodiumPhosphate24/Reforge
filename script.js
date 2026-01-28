@@ -46,8 +46,8 @@ var lastBreadcrumbTime = 0;
 var breadcrumbInterval = 200; // Leave a breadcrumb every 0.2 seconds
 var maxBreadcrumbs = 15; // Keep maximum 15 breadcrumbs for most recent path
 var breadcrumbMinDistance = 2; // Minimum distance between breadcrumbs in pixels
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench", "White Brick", "White Tile", "Steel Crate", "Tree", "Boiler", "Water", "Sewer"];
-var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 0]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench", "White Brick", "White Tile", "Steel Crate", "Tree", "Boiler", "Water", "Sewer", "Tree2"];
+var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 0, 1]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
@@ -98,7 +98,8 @@ var tileColors = [
   [[255, 255, 255]], // 41 Tree
   [[255, 255, 255]], // 42 Boiler
   [[255, 255, 255]], // 43 Water
-  [[255, 255, 255]]
+  [[255, 255, 255]], // 44 Sewer
+  [[255, 255, 255]] // 45 Tree2
 ];
 
 // Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image
@@ -429,6 +430,7 @@ function preload() {
   tileImgs[42] = null;
   tileImgs[43] = null;
   tileImgs[44] = loadImage("Tiles/sewer.png");
+  tileImgs[45] = null;
 
   // Register multi-tile objects
   registerMultiTile(6, "Tiles/Crafting.png", 2, 2); // Workbench
@@ -436,6 +438,7 @@ function preload() {
   registerMultiTile(37, "Tiles/Bench.png", 2, 1);   // Bench
   registerMultiTile(41, "Tiles/Tree.png", 1, 2);    // Tree
   registerMultiTile(42, "Tiles/Boiler.png", 1, 2);
+  registerMultiTile(45, "Tiles/pineTree.png", 1, 2);
 
   itemImgs[0] = loadImage("Items/Consumables/Cheese.png");
   itemImgs[1] = loadImage("Items/Consumables/Soda.png");
@@ -2582,7 +2585,40 @@ function spawnEnemies() {
   enemies.push(new Enemy("harpy", 8712, 23483));
   enemies.push(new Enemy("harpy", 8226, 23476));
 
-  
+  enemies.push(new Enemy("harpy", 18979, 15578.));
+  enemies.push(new Enemy("harpy", 19115, 15437.));
+  enemies.push(new Enemy("harpy", 18979, 15294.));
+  enemies.push(new Enemy("harpy", 18835, 15414.));
+  enemies.push(new Enemy("greg", 18072, 13972));
+  enemies.push(new Enemy("harpy", 17775, 13833));
+  enemies.push(new Enemy("harpy", 18059, 13837));
+  enemies.push(new Enemy("harpy", 18357, 13847));
+  enemies.push(new Enemy("harpy", 18379, 14142));
+  enemies.push(new Enemy("harpy", 18085, 14127));
+  enemies.push(new Enemy("harpy", 17790, 14127));
+  enemies.push(new Enemy("greg", 19022, 11726));
+  enemies.push(new Enemy("greg", 19024, 12025));
+  enemies.push(new Enemy("greg", 18873, 11887));
+  enemies.push(new Enemy("greg", 19170, 11873));
+  enemies.push(new Enemy("harpy", 15972, 9676));
+  enemies.push(new Enemy("harpy", 16176, 9675));
+  enemies.push(new Enemy("harpy", 16174, 9474));
+  enemies.push(new Enemy("harpy", 15973, 9476));
+  enemies.push(new Enemy("harpy", 19257, 1647));
+  enemies.push(new Enemy("harpy", 19364, 16234));
+  enemies.push(new Enemy("harpy", 19493, 1649));
+  enemies.push(new Enemy("greg", 20834, 1683));
+  enemies.push(new Enemy("greg", 20927, 1713));
+  enemies.push(new Enemy("harpy", 21019, 1693));
+  enemies.push(new Enemy("harpy", 20713, 1702));
+  enemies.push(new Enemy("harpy", 16475, 19471));
+  enemies.push(new Enemy("harpy", 16672, 19578));
+  enemies.push(new Enemy("harpy", 16576, 19776));
+  enemies.push(new Enemy("harpy", 16374, 19679));
+  enemies.push(new Enemy("greg", 12977, 19727));
+  enemies.push(new Enemy("greg", 12676, 19725));
+  enemies.push(new Enemy("greg", 12672, 19424));
+  enemies.push(new Enemy("greg", 12972, 19425));
 }
 
 function initializeHardcodes() {
