@@ -230,12 +230,17 @@ function checkSewerExits() {
   if (!inSewer) return;
   
   const playerCenterX = pX + 600 + pWidth / 2;
+  const playerCenterY = pY + 375 + pHeight / 2;
+  const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
+  const midY = midRow * 50 + 25;
   
-  // Exit automatically when walking through the openings (out of bounds)
-  if (playerCenterX < 0) {
-    exitSewer('A'); // Left opening = first sewer
-  } else if (playerCenterX > SEWER_ROOM_WIDTH * 50) {
-    exitSewer('B'); // Right opening = second sewer
+  // Exit when player reaches the doorway tiles (first/last column, near middle row)
+  const nearMiddleY = Math.abs(playerCenterY - midY) < 75;
+  
+  if (playerCenterX < 50 && nearMiddleY) {
+    exitSewer('A'); // Left doorway = first sewer
+  } else if (playerCenterX > (SEWER_ROOM_WIDTH - 1) * 50 && nearMiddleY) {
+    exitSewer('B'); // Right doorway = second sewer
   }
 }
 
