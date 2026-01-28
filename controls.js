@@ -30,11 +30,13 @@ function controls() {
     if (keyIsDown(68)) {
       pXVel += players[activePlayer].speed;
     }
-    if (keyIsDown(87)) {
-      pYVel -= players[activePlayer].speed;
-    }
-    if (keyIsDown(83)) {
-      pYVel += players[activePlayer].speed;
+    if(players[activePlayer].name != "ARGO"){
+      if (keyIsDown(87)) {
+        pYVel -= players[activePlayer].speed;
+      }
+      if (keyIsDown(83)) {
+        pYVel += players[activePlayer].speed;
+      }
     }
   }
   pYVel *= 0.8;

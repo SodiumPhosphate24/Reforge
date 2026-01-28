@@ -60,7 +60,7 @@ var craftingRecipes = [
     category : "Robots",
     type : "player",
     unlocked : false,
-    playerConstructor: {width : 35, height : 35, speed : 1.3, health : 100, damage : 1},
+    playerConstructor: {width : 225, height : 95, speed : 1.3, health : 100, damage : 1},
     ingredients: [
       { itemName: "pipe", amount: 25 },
       { itemName: "cog", amount: 25 },
@@ -331,7 +331,7 @@ function craftItem(recipe) {
     }
 
     if(recipe.name === "ARGO"){
-      players.push(new Player(workbenchBottomRightX-200, workbenchBottomRightY + 15, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
+      players.push(new Player(workbenchBottomRightX-600, workbenchBottomRightY + 15, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
     }
     else {
       players.push(new Player(workbenchBottomRightX, workbenchBottomRightY + 15, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
