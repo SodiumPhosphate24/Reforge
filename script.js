@@ -2581,6 +2581,8 @@ function spawnEnemies() {
   enemies.push(new Enemy("harpy", 8733, 22988));
   enemies.push(new Enemy("harpy", 8712, 23483));
   enemies.push(new Enemy("harpy", 8226, 23476));
+
+  
 }
 
 function initializeHardcodes() {
