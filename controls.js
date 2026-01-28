@@ -135,7 +135,6 @@ function keyPressed() {
         nearPuzzle = i;
       }
     }
-    console.log(nearPuzzle);
     if(nearPuzzle >= 0){
       handleTriggers("Labyrinth", nearPuzzle);
       console.log("Solved Puzzle " + nearPuzzle);
