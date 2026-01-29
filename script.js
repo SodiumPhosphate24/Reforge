@@ -140,7 +140,7 @@ function drawFadeToGame() {
   drawNPCs();
 
   // Draw idle players before roofs so they appear "inside" buildings
-  drawPlayers(false); 
+  drawPlayers(false);
 
   drawWorldLayer(gameWorld, 2);
   drawWorldLayer(gameWorld, 3);
@@ -157,7 +157,7 @@ function drawFadeToGame() {
   updateParticlesForLayer(4);
 
   // Draw indicators and active player on top of everything
-  drawPlayers(true); 
+  drawPlayers(true);
 
   pop();
 
@@ -370,7 +370,7 @@ function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message
 }
 
 function preload() {
-  console.log("We are not going to nhs pictures maybe");
+  console.log("test version invisibility patch");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   SPUDImage = loadImage("Characters/SPUD.png");
