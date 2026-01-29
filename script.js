@@ -818,14 +818,15 @@ function drawGameplay() {
     updateSewerPuzzle();
   }
 
+  // Draw idle players BEFORE layer 2 so they appear "inside" buildings under roofs
+  fill(255);
+  drawPlayers(false);
+
   // LAYERS 2, 3 over items but under player
   drawWorldLayer(gameWorld, 2);
   updateParticlesForLayer(2);
   drawWorldLayer(gameWorld, 3);
   updateParticlesForLayer(3);
-
-  fill(255);
-  drawPlayers();
 
   // --- Only the gun rotates (isolated) ---
   drawGunDebugRect(); // uses calculateAim()
@@ -928,6 +929,10 @@ function drawGameplay() {
   // LAYER 4 on top of player
   drawWorldLayer(gameWorld, 4);
   updateParticlesForLayer(4);
+
+  // Draw active player AFTER all world layers so they appear on top
+  fill(255);
+  drawPlayers(true);
 
   // Draw particle sources in editor mode
   if (typeof drawParticleSources === 'function') {
