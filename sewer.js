@@ -142,6 +142,8 @@ function updateSewerPuzzle() {
   }
 
   // Update visuals for plates in the sewer room
+  let allFilled = platesOccupied.every(v => v === true);
+  
   for (let j = 0; j < puzzlePressurePlates.length; j++) {
     const pp = puzzlePressurePlates[j];
     const col = Math.floor(pp.x / 50);
@@ -149,10 +151,7 @@ function updateSewerPuzzle() {
     if (sewerRoom[row] && sewerRoom[row][col]) {
       sewerRoom[row][col].layers[0].colorIndex = pp.active ? 2 : 1;
     }
-    if (!platesOccupied[j]) allFilled = false;
   }
-
-  let allFilled = platesOccupied.every(v => v === true);
 
   if (allFilled) {
     for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
