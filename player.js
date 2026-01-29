@@ -113,7 +113,7 @@ function updatePlayerFlip() {
 function drawPlayers(onlyActive = false) {
   updatePlayerFlip();
 
-  if (!onlyActive) {
+  if (onlyActive === false) {
     // Draw idle players at their world positions
     for (let i = 0; i < players.length; i++) {
       if (!players[i]) continue;
@@ -152,47 +152,48 @@ function drawPlayers(onlyActive = false) {
       const drawHeight = drawWidth / aspectRatio;
       image(img, players[i].x + 600, players[i].y + 375 - (drawHeight - players[i].height), drawWidth, drawHeight);
     }
-    return; // Stop here if we only wanted idle players
   }
 
-  // Draw active player shadow
-  fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
-  ellipse(pX + 600 + pWidth / 2, pY + 375 + pHeight, pWidth, pHeight * 0.6);
+  if (onlyActive === true) {
+    // Draw active player shadow
+    fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
+    ellipse(pX + 600 + pWidth / 2, pY + 375 + pHeight, pWidth, pHeight * 0.6);
 
-  if (players[activePlayer] && players[activePlayer].name === "SPUD") {
-    const headX = pX + 600 + pWidth / 2;
-    const headY = pY + 375;
-    for (let s = 0; s < 3; s++) {
-      if (random() < 0.5) {
-        const offsetRadius = random(0, 8);
-        const offsetAngle = random(0, TWO_PI);
-        const spawnX = headX + cos(offsetAngle) * offsetRadius;
-        const spawnY = headY + sin(offsetAngle) * offsetRadius;
-        const steamParticle = new Particle(spawnX, spawnY, [220, 220, 230], 50, 1.2, 3);
-        steamParticle.angle = radians(-90 + random(-30, 30));
-        steamParticle.vx = cos(steamParticle.angle) * 1.2;
-        steamParticle.vy = sin(steamParticle.angle) * 1.2;
-        steamParticle.size = random(2, 6);
-        particles.push(steamParticle);
+    if (players[activePlayer] && players[activePlayer].name === "SPUD") {
+      const headX = pX + 600 + pWidth / 2;
+      const headY = pY + 375;
+      for (let s = 0; s < 3; s++) {
+        if (random() < 0.5) {
+          const offsetRadius = random(0, 8);
+          const offsetAngle = random(0, TWO_PI);
+          const spawnX = headX + cos(offsetAngle) * offsetRadius;
+          const spawnY = headY + sin(offsetAngle) * offsetRadius;
+          const steamParticle = new Particle(spawnX, spawnY, [220, 220, 230], 50, 1.2, 3);
+          steamParticle.angle = radians(-90 + random(-30, 30));
+          steamParticle.vx = cos(steamParticle.angle) * 1.2;
+          steamParticle.vy = sin(steamParticle.angle) * 1.2;
+          steamParticle.size = random(2, 6);
+          particles.push(steamParticle);
+        }
       }
     }
-  }
 
-  push();
-  const img = PlayerImage;
-  const aspectRatio = img.width / img.height;
-  const drawWidth = pWidth;
-  const drawHeight = drawWidth / aspectRatio;
-  translate(pX + 600 + pWidth / 2, pY + 375 - (drawHeight - pHeight) / 2 + pHeight / 2);
-  if(players[activePlayer].name != "ARGO"){
-    scale(playerFlipScale, 1);
-  }
-  imageMode(CENTER);
-  image(PlayerImage, 0, 0, drawWidth, drawHeight);
-  imageMode(CORNER);
-  pop();
+    push();
+    const img = PlayerImage;
+    const aspectRatio = img.width / img.height;
+    const drawWidth = pWidth;
+    const drawHeight = drawWidth / aspectRatio;
+    translate(pX + 600 + pWidth / 2, pY + 375 - (drawHeight - pHeight) / 2 + pHeight / 2);
+    if(players[activePlayer].name != "ARGO"){
+      scale(playerFlipScale, 1);
+    }
+    imageMode(CENTER);
+    image(PlayerImage, 0, 0, drawWidth, drawHeight);
+    imageMode(CORNER);
+    pop();
 
-  drawIndicator();
+    drawIndicator();
+  }
 }
 
 function drawIndicator() {

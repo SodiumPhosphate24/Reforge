@@ -139,11 +139,14 @@ function drawFadeToGame() {
   fill(255);
   drawNPCs();
 
+  // Draw idle players before roofs so they appear "inside" buildings
+  drawPlayers(false); 
+
   drawWorldLayer(gameWorld, 2);
   drawWorldLayer(gameWorld, 3);
 
   fill(255);
-  drawPlayers();
+  // ACTIVE player is no longer drawn here (moved to after layer 4)
 
   drawGunDebugRect();
   drawEnemies();
@@ -152,6 +155,9 @@ function drawFadeToGame() {
   // LAYER 4 on top of everything
   drawWorldLayer(gameWorld, 4);
   updateParticlesForLayer(4);
+
+  // Draw indicators and active player on top of everything
+  drawPlayers(true); 
 
   pop();
 
