@@ -38,6 +38,7 @@ class Player {
     this.image = image;
     this.name = name;
     this.frozen = false;
+    this.inSewer = false; // Track if this specific robot is in the sewer
   }
   getImage() {
     return this.image;
@@ -63,6 +64,10 @@ class Player {
   }
 }
 function switchPlayer(newPlayer) {
+  // Sync current player position before switching
+  players[activePlayer].x = pX;
+  players[activePlayer].y = pY;
+
   activePlayer = newPlayer;
   pX = players[activePlayer].x;
   pY = players[activePlayer].y;
@@ -73,19 +78,25 @@ function switchPlayer(newPlayer) {
   pWidth = players[activePlayer].width;
   pHeight = players[activePlayer].height;
   inventoryList = players[activePlayer].inventory;
-  // Reset velocity to prevent collision errors
+  
+  // Update inSewer global based on the NEW player's location
+  inSewer = players[activePlayer].inSewer;
+  if (inSewer) {
+    gameWorld = sewerRoom;
+  } else if (savedWorldState) {
+    gameWorld = savedWorldState.world;
+  }
+
+  // Reset velocity
   pXVel = 0;
   pYVel = 0;
 
-  // Update indicator target position
+  // Update indicator target
   indicatorTargetX = pX + 600 + pWidth / 2;
-  indicatorTargetY = pY + 375 - 50; // 50px above player
+  indicatorTargetY = pY + 375 - 50;
 
-  // Start transition mode for slower lerp
   isTransitioning = true;
   transitionFrames = 0;
-
-  // Camera will smoothly pan to new player via controlCamera()
 }
 // Update player flip based on velocity
 function updatePlayerFlip() {
@@ -100,37 +111,30 @@ function updatePlayerFlip() {
 }
 
 function drawPlayers() {
-  // Update flip direction
   updatePlayerFlip();
 
-  // Draw other players at their world positions with same visual buffer
   for (let i = 0; i < players.length; i++) {
-    // Safety check for undefined players during initialization
     if (!players[i]) continue;
     
+    // Only draw players that are in the same environment (sewer vs world)
+    if (players[i].inSewer !== inSewer) continue;
+
     players[i].isDead();
     if (i !== activePlayer) {
-      // Draw shadow for this player
       fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
       ellipse(players[i].x + 600 + players[i].width / 2, players[i].y + 375 + players[i].height, players[i].width, players[i].height * 0.6);
 
-      // Emit steam particles for SPUD robots
       if (players[i].name === "SPUD") {
         const headX = players[i].x + 600 + players[i].width / 2;
-        const headY = players[i].y + 375; // Top of robot
-        
-        // Spawn multiple steam particles per frame for density
+        const headY = players[i].y + 375;
         for (let s = 0; s < 3; s++) {
-          if (random() < 0.5) { // 50% chance per particle slot
-            // Random offset from head center for spread
+          if (random() < 0.5) {
             const offsetRadius = random(0, 8);
             const offsetAngle = random(0, TWO_PI);
             const spawnX = headX + cos(offsetAngle) * offsetRadius;
             const spawnY = (headY + sin(offsetAngle) * offsetRadius)-10;
-            
-            // Create upward steam particle with wider arc spread
             const steamParticle = new Particle(spawnX, spawnY, [220, 220, 230], 50, 1.2, 3);
-            steamParticle.angle = radians(-90 + random(-30, 30)); // Wider spread (60° total)
+            steamParticle.angle = radians(-90 + random(-30, 30));
             steamParticle.vx = cos(steamParticle.angle) * 1.2;
             steamParticle.vy = sin(steamParticle.angle) * 1.2;
             steamParticle.size = random(2, 6);
@@ -139,7 +143,6 @@ function drawPlayers() {
         }
       }
 
-      // Draw player image with preserved aspect ratio
       const img = players[i].image;
       const aspectRatio = img.width / img.height;
       const drawWidth = players[i].width;
@@ -148,29 +151,20 @@ function drawPlayers() {
     }
   }
 
-
-
-  // Draw active player shadow
   fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
   ellipse(pX + 600 + pWidth / 2, pY + 375 + pHeight, pWidth, pHeight * 0.6);
 
-  // Emit steam particles for SPUD active player
   if (players[activePlayer] && players[activePlayer].name === "SPUD") {
     const headX = pX + 600 + pWidth / 2;
-    const headY = pY + 375; // Top of robot
-    
-    // Spawn multiple steam particles per frame for density
+    const headY = pY + 375;
     for (let s = 0; s < 3; s++) {
-      if (random() < 0.5) { // 50% chance per particle slot
-        // Random offset from head center for spread
+      if (random() < 0.5) {
         const offsetRadius = random(0, 8);
         const offsetAngle = random(0, TWO_PI);
         const spawnX = headX + cos(offsetAngle) * offsetRadius;
         const spawnY = headY + sin(offsetAngle) * offsetRadius;
-        
-        // Create upward steam particle with wider arc spread
         const steamParticle = new Particle(spawnX, spawnY, [220, 220, 230], 50, 1.2, 3);
-        steamParticle.angle = radians(-90 + random(-30, 30)); // Wider spread (60° total)
+        steamParticle.angle = radians(-90 + random(-30, 30));
         steamParticle.vx = cos(steamParticle.angle) * 1.2;
         steamParticle.vy = sin(steamParticle.angle) * 1.2;
         steamParticle.size = random(2, 6);
@@ -179,13 +173,11 @@ function drawPlayers() {
     }
   }
 
-  // Draw active player with flip and preserved aspect ratio
   push();
   const img = PlayerImage;
   const aspectRatio = img.width / img.height;
   const drawWidth = pWidth;
   const drawHeight = drawWidth / aspectRatio;
-  
   translate(pX + 600 + pWidth / 2, pY + 375 - (drawHeight - pHeight) / 2 + pHeight / 2);
   if(players[activePlayer].name != "ARGO"){
     scale(playerFlipScale, 1);
@@ -195,7 +187,6 @@ function drawPlayers() {
   imageMode(CORNER);
   pop();
 
-  // Draw indicator above active player
   drawIndicator();
 }
 

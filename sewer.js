@@ -109,7 +109,7 @@ function initSewerRoom() {
 }
 
 function updateSewerPuzzle() {
-  if (!inSewer || !sewerRoom) return;
+  if (!sewerRoom) return;
 
   // Reset pressure plate states
   for (let pp of puzzlePressurePlates) pp.active = false;
@@ -117,26 +117,21 @@ function updateSewerPuzzle() {
   const platesOccupied = [false, false, false];
   const midCol = Math.floor(SEWER_ROOM_WIDTH / 2);
 
-  // Check each player's position against pressure plates
-  // Important: players[i].x/y are the stored positions. The ACTIVE player's position
-  // is actually in global pX/pY, so we need to sync it first.
   if (typeof players !== 'undefined' && typeof activePlayer !== 'undefined') {
-    // Sync active player's current position
+    // Sync active player's position to their object
     players[activePlayer].x = pX;
     players[activePlayer].y = pY;
     
     for (let i = 0; i < players.length; i++) {
       const p = players[i];
+      // Only check players that are actually in the sewer
+      if (!p.inSewer) continue;
       
-      // Convert player position to world coordinates
-      // pX/pY are screen-centered coordinates where (0,0) puts player at screen center
-      // Adding 600 and 375 converts to world tile coordinates
       const playerWorldX = p.x + 600 + (p.width || 35) / 2;
       const playerWorldY = p.y + 375 + (p.height || 21) / 2;
 
       for (let j = 0; j < puzzlePressurePlates.length; j++) {
         const pp = puzzlePressurePlates[j];
-        // Check if player center is within the pressure plate tile
         const d = dist(playerWorldX, playerWorldY, pp.x, pp.y);
         if (d < 40) {
           pp.active = true;
@@ -146,22 +141,20 @@ function updateSewerPuzzle() {
     }
   }
 
-  // Update tile visuals and check if ALL plates are filled
-  let allFilled = true;
+  // Update visuals for plates in the sewer room
   for (let j = 0; j < puzzlePressurePlates.length; j++) {
     const pp = puzzlePressurePlates[j];
     const col = Math.floor(pp.x / 50);
     const row = Math.floor(pp.y / 50);
     if (sewerRoom[row] && sewerRoom[row][col]) {
-      // colorIndex 1 = inactive (grey), colorIndex 2 = active (green)
       sewerRoom[row][col].layers[0].colorIndex = pp.active ? 2 : 1;
     }
     if (!platesOccupied[j]) allFilled = false;
   }
 
-  // If every spot is filled with a player, release the wall
+  let allFilled = platesOccupied.every(v => v === true);
+
   if (allFilled) {
-    // Remove the center wall divider
     for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
       if (r > 0 && r < SEWER_ROOM_HEIGHT - 1) {
          sewerRoom[r][midCol].layers[0].type = SEWER_CENTER_TILE;
@@ -170,7 +163,6 @@ function updateSewerPuzzle() {
     puzzleSolved[0] = true;
     puzzleSolved[1] = true;
     
-    // Clear exits
     const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
     for (let r = midRow - 1; r <= midRow + 1; r++) {
       sewerRoom[r][0].layers[0].type = SEWER_CENTER_TILE;
@@ -280,67 +272,46 @@ function enterSewer(sewerRow, sewerCol) {
     enteredFromFirst: enteredFromFirst
   };
   
-  initSewerRoom();
+  if (!sewerRoom) initSewerRoom();
   
-  // Save all player positions before entering sewer
-  savedWorldState = {
-    world: gameWorld,
-    playerX: pX,
-    playerY: pY,
-    playerPositions: []
-  };
-  
-  // Save each player's world position
-  if (typeof players !== 'undefined') {
-    for (let i = 0; i < players.length; i++) {
-      savedWorldState.playerPositions.push({
-        x: players[i].x,
-        y: players[i].y
-      });
-    }
+  // Save world state if first time entering (global state)
+  if (!savedWorldState) {
+    savedWorldState = {
+      world: gameWorld
+    };
   }
   
   gameWorld = sewerRoom;
   
-  // Calculate spawn position based on entry side
+  // Calculate spawn position
   let spawnX, spawnY;
   if (enteredFromFirst) {
     spawnX = sewerExitA.x - 600 - pWidth / 2;
     spawnY = sewerExitA.y - 375 - pHeight / 2;
-    puzzleSolved[0] = true; // Way you entered is open
-    puzzleSolved[1] = false; // Other side closed
+    puzzleSolved[0] = true; 
   } else {
     spawnX = sewerExitB.x - 600 - pWidth / 2;
     spawnY = sewerExitB.y - 375 - pHeight / 2;
-    puzzleSolved[1] = true; // Way you entered is open
-    puzzleSolved[0] = false; // Other side closed
+    puzzleSolved[1] = true;
   }
   
-  // Set active player position
+  // Only the current robot enters the sewer
   pX = spawnX;
   pY = spawnY;
-  
-  // Move ALL players into the sewer room near the entry point
-  // They spawn in a small group near the entrance
-  if (typeof players !== 'undefined') {
-    for (let i = 0; i < players.length; i++) {
-      // Spread players out slightly so they don't overlap
-      players[i].x = spawnX + (i * 30);
-      players[i].y = spawnY;
-    }
-  }
+  players[activePlayer].x = pX;
+  players[activePlayer].y = pY;
+  players[activePlayer].inSewer = true;
   
   inSewer = true;
-  console.log("Entered sewer system from", enteredFromFirst ? "first (left)" : "second (right)");
+  console.log("Player entered sewer system");
   return true;
 }
 
 function exitSewer(exitSide) {
-  if (!inSewer || !savedWorldState || !currentSewerLink) return false;
+  if (!savedWorldState || !currentSewerLink) return false;
   
   gameWorld = savedWorldState.world;
   
-  // Left exit (A) always goes to first sewer, right exit (B) always goes to second sewer
   let exitCoords;
   if (exitSide === 'A') {
     exitCoords = currentSewerLink.first;
@@ -351,27 +322,17 @@ function exitSewer(exitSide) {
   pX = exitCoords.col * 50 - 600 + 25 - pWidth / 2;
   pY = exitCoords.row * 50 - 375 + 25 - pHeight / 2;
   
-  // Restore all player positions to their saved world positions
-  if (typeof players !== 'undefined' && savedWorldState.playerPositions) {
-    for (let i = 0; i < players.length; i++) {
-      if (savedWorldState.playerPositions[i]) {
-        players[i].x = savedWorldState.playerPositions[i].x;
-        players[i].y = savedWorldState.playerPositions[i].y;
-      }
-    }
-    // Update active player to exit position
-    players[activePlayer].x = pX;
-    players[activePlayer].y = pY;
-  }
+  // Current robot leaves the sewer
+  players[activePlayer].x = pX;
+  players[activePlayer].y = pY;
+  players[activePlayer].inSewer = false;
   
-  // Snap camera instantly
+  // Snap camera
   camX = -pX;
   camY = -pY;
   
   inSewer = false;
-  currentSewerLink = null;
-  savedWorldState = null;
-  console.log("Exited sewer system");
+  console.log("Player exited sewer system");
   return true;
 }
 
