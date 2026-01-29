@@ -139,11 +139,15 @@ function drawFadeToGame() {
   fill(255);
   drawNPCs();
 
+  // Draw idle players before roofs so they appear "inside" buildings
+  drawPlayers(false); 
+
   drawWorldLayer(gameWorld, 2);
   drawWorldLayer(gameWorld, 3);
 
   fill(255);
-  drawPlayers();
+  // Draw active player after roofs so they appear "on top" or under fading roof
+  drawPlayers(true); 
 
   drawGunDebugRect();
   drawEnemies();

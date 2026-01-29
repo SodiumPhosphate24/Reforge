@@ -110,17 +110,20 @@ function updatePlayerFlip() {
   playerFlipScale = lerp(playerFlipScale, targetFlipScale, 0.2);
 }
 
-function drawPlayers() {
+function drawPlayers(onlyActive = false) {
   updatePlayerFlip();
 
-  for (let i = 0; i < players.length; i++) {
-    if (!players[i]) continue;
-    
-    // Only draw players that are in the same environment (sewer vs world)
-    if (players[i].inSewer !== inSewer) continue;
+  if (!onlyActive) {
+    // Draw idle players at their world positions
+    for (let i = 0; i < players.length; i++) {
+      if (!players[i]) continue;
+      
+      // Only draw players that are in the same environment (sewer vs world)
+      if (players[i].inSewer !== inSewer) continue;
+      if (i === activePlayer) continue;
 
-    players[i].isDead();
-    if (i !== activePlayer) {
+      players[i].isDead();
+      
       fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
       ellipse(players[i].x + 600 + players[i].width / 2, players[i].y + 375 + players[i].height, players[i].width, players[i].height * 0.6);
 
@@ -149,8 +152,10 @@ function drawPlayers() {
       const drawHeight = drawWidth / aspectRatio;
       image(img, players[i].x + 600, players[i].y + 375 - (drawHeight - players[i].height), drawWidth, drawHeight);
     }
+    return; // Stop here if we only wanted idle players
   }
 
+  // Draw active player shadow
   fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
   ellipse(pX + 600 + pWidth / 2, pY + 375 + pHeight, pWidth, pHeight * 0.6);
 
