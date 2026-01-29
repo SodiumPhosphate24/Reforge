@@ -114,53 +114,55 @@ function updateSewerPuzzle() {
   // Reset pressure plate states
   for (let pp of puzzlePressurePlates) pp.active = false;
 
-  const playersOnPlates = new Set();
+  const platesOccupied = [false, false, false];
   const midCol = Math.floor(SEWER_ROOM_WIDTH / 2);
 
   // Check each player's position against pressure plates
   if (typeof players !== 'undefined') {
     for (let i = 0; i < players.length; i++) {
-      const player = players[i];
-      // Use x and y directly which are the screen-relative positions
-      // We need to check them against the plate positions which are also room-relative (0-50 per tile)
-      const playerCenterX = player.x + 600 + (player.width || 35) / 2;
-      const playerCenterY = player.y + 375 + (player.height || 21.4) / 2;
+      const p = players[i];
+      // World coordinates in sewer: p.x/y are local to the room
+      // The sewer room is rendered at (0,0) in the game's internal camera space when inSewer is true
+      // Each tile is 50x50.
+      
+      const px = p.x + 600 + (p.width || 35) / 2;
+      const py = p.y + 375 + (p.height || 21) / 2;
 
       for (let j = 0; j < puzzlePressurePlates.length; j++) {
         const pp = puzzlePressurePlates[j];
-        // Increased detection radius and simplified check
-        const d = dist(playerCenterX, playerCenterY, pp.x, pp.y);
-        if (d < 50) {
+        // If player is on the tile (distance check)
+        if (dist(px, py, pp.x, pp.y) < 35) {
           pp.active = true;
-          playersOnPlates.add(i);
+          platesOccupied[j] = true;
         }
       }
     }
   }
 
-  // Update tile visuals for pressure plates
-  for (let pp of puzzlePressurePlates) {
+  // Update tile visuals and check if ALL are filled
+  let allFilled = true;
+  for (let j = 0; j < puzzlePressurePlates.length; j++) {
+    const pp = puzzlePressurePlates[j];
     const col = Math.floor(pp.x / 50);
     const row = Math.floor(pp.y / 50);
     if (sewerRoom[row] && sewerRoom[row][col]) {
-      // Force immediate layer update for visuals
       sewerRoom[row][col].layers[0].colorIndex = pp.active ? 2 : 1;
     }
+    if (!platesOccupied[j]) allFilled = false;
   }
 
-  // Check if at least 3 players are on plates (any player type)
-  if (playersOnPlates.size >= 3) {
-    // Remove the wall divider
+  // If every spot is filled, release the wall
+  if (allFilled) {
+    // Remove the center wall divider
     for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
       if (r > 0 && r < SEWER_ROOM_HEIGHT - 1) {
          sewerRoom[r][midCol].layers[0].type = SEWER_CENTER_TILE;
       }
     }
-    // Solve the puzzle and open both exits
     puzzleSolved[0] = true;
     puzzleSolved[1] = true;
     
-    // Ensure exit openings are cleared
+    // Clear exits
     const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
     for (let r = midRow - 1; r <= midRow + 1; r++) {
       sewerRoom[r][0].layers[0].type = SEWER_CENTER_TILE;
