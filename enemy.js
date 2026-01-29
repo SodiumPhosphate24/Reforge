@@ -17,8 +17,8 @@ class Enemy {
 
     if (type == "harpy") {//Basic Melee Damage, Medium Speed, Low Health
       this.type = "harpy";
-      this.health = 3;
-      this.maxHealth = 3;
+      this.health = 2;
+      this.maxHealth = 2;
       this.speed = 2;
       this.acceleration = 0.15; // how quickly it changes direction
       this.image = BadGuy;
@@ -28,7 +28,7 @@ class Enemy {
     }
     if (type == "cyclops") {//High Melee Damage, Low Speed, High Health
       this.type = "cyclops";
-      this.health = ;
+      this.health = 6;
       this.maxHealth = 6;
       this.speed = 1;
       this.acceleration = 0.15; // how quickly it changes direction
