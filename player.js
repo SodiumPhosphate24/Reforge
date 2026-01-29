@@ -112,6 +112,12 @@ function updatePlayerFlip() {
 
 function drawPlayers(onlyActive = false) {
   updatePlayerFlip();
+  if(players[activePlayer].name == "ARGO"){
+    console.log(pXVel);
+  }
+  if(players[activePlayer].name == "ARGO" && (distance(pX, pY, 3450, 125) < 10) && pXVel <= -3){
+    handleTriggers("Crash");
+  }
 
   if (onlyActive === false) {
     // Draw idle players at their world positions

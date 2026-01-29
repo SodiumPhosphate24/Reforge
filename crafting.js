@@ -62,7 +62,7 @@ var craftingRecipes = [
     category : "Robots",
     type : "player",
     unlocked : false,
-    playerConstructor: {width : 225, height : 95, speed : 1.3, health : 100, damage : 1},
+    playerConstructor: {width : 225, height : 95, speed : 5, health : 100, damage : 1},
     ingredients: [
       { itemName: "pipe", amount: 25 },
       { itemName: "cog", amount: 25 },

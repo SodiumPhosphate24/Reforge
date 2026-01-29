@@ -110,6 +110,9 @@ function handleTriggers(trigger, ID = -1) {
       return;
     }
   }
+  if (trigger == "Crash"){
+    console.log("Train Crash");
+  }
   if (trigger == "Softlock") {
     if (triggerList.Softlock.softlockMessage == false) {
       triggerList.Softlock.softlockMessage = true;
