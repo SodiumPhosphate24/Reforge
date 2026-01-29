@@ -364,7 +364,7 @@ function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message
 }
 
 function preload() {
-  console.log("Updated version crowbar 5.88");
+  console.log("NHS picture update");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   SPUDImage = loadImage("Characters/SPUD.png");
