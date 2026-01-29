@@ -364,7 +364,7 @@ function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message
 }
 
 function preload() {
-  console.log("NHS picture update");
+  console.log("NHS picture updatee 1141");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   SPUDImage = loadImage("Characters/SPUD.png");
@@ -806,7 +806,7 @@ function drawGameplay() {
   if (typeof checkSewerExits === 'function') {
     checkSewerExits();
   }
-  
+
   // Update sewer puzzle (pressure plates)
   if (typeof updateSewerPuzzle === 'function') {
     updateSewerPuzzle();
@@ -2604,10 +2604,10 @@ function spawnEnemies() {
   enemies.push(new Enemy("harpy", 8712, 23483));
   enemies.push(new Enemy("harpy", 8226, 23476));
 
-  enemies.push(new Enemy("harpy", 18979, 15578.));
-  enemies.push(new Enemy("harpy", 19115, 15437.));
-  enemies.push(new Enemy("harpy", 18979, 15294.));
-  enemies.push(new Enemy("harpy", 18835, 15414.));
+  enemies.push(new Enemy("harpy", 18979, 15578));
+  enemies.push(new Enemy("harpy", 19115, 15437));
+  enemies.push(new Enemy("harpy", 18979, 15294));
+  enemies.push(new Enemy("harpy", 18835, 15414));
   enemies.push(new Enemy("greg", 18072, 13972));
   enemies.push(new Enemy("harpy", 17775, 13833));
   enemies.push(new Enemy("harpy", 18059, 13837));
@@ -2623,13 +2623,13 @@ function spawnEnemies() {
   enemies.push(new Enemy("harpy", 16176, 9675));
   enemies.push(new Enemy("harpy", 16174, 9474));
   enemies.push(new Enemy("harpy", 15973, 9476));
-  enemies.push(new Enemy("harpy", 19257, 1647));
+  enemies.push(new Enemy("harpy", 19257, 16475));
   enemies.push(new Enemy("harpy", 19364, 16234));
-  enemies.push(new Enemy("harpy", 19493, 1649));
-  enemies.push(new Enemy("greg", 20834, 1683));
-  enemies.push(new Enemy("greg", 20927, 1713));
-  enemies.push(new Enemy("harpy", 21019, 1693));
-  enemies.push(new Enemy("harpy", 20713, 1702));
+  enemies.push(new Enemy("harpy", 19493, 16492));
+  enemies.push(new Enemy("greg", 20834, 16834));
+  enemies.push(new Enemy("greg", 20927, 17133));
+  enemies.push(new Enemy("harpy", 21019, 16931));
+  enemies.push(new Enemy("harpy", 20713, 17028));
   enemies.push(new Enemy("harpy", 16475, 19471));
   enemies.push(new Enemy("harpy", 16672, 19578));
   enemies.push(new Enemy("harpy", 16576, 19776));

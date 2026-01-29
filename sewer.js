@@ -56,11 +56,11 @@ function initSewerRoom() {
     for (let c = 0; c < SEWER_ROOM_WIDTH; c++) {
       const isBorder = r === 0 || r === SEWER_ROOM_HEIGHT - 1 || c === 0 || c === SEWER_ROOM_WIDTH - 1;
       
-      // Create openings on left and right walls at the middle row
+      // Create openings on left and right walls at the middle row - always open
       const isLeftOpening = c === 0 && (r === midRow || r === midRow - 1 || r === midRow + 1);
       const isRightOpening = c === SEWER_ROOM_WIDTH - 1 && (r === midRow || r === midRow - 1 || r === midRow + 1);
       
-      // Perimeter block wall down the middle
+      // Perimeter block wall down the middle - starts closed
       const isMiddleWall = c === midCol && !isBorder && !isLeftOpening && !isRightOpening;
       
       // Pressure plate locations
@@ -75,10 +75,8 @@ function initSewerRoom() {
       let tileType;
       let colorIndex = 0;
       
-      if (isLeftOpening) {
-        tileType = puzzleSolved[0] ? SEWER_CENTER_TILE : SEWER_BORDER_TILE;
-      } else if (isRightOpening) {
-        tileType = puzzleSolved[1] ? SEWER_CENTER_TILE : SEWER_BORDER_TILE;
+      if (isLeftOpening || isRightOpening) {
+        tileType = SEWER_CENTER_TILE; // Always open floor
       } else if (isMiddleWall) {
         tileType = SEWER_BORDER_TILE;
       } else if (isPressurePlate) {
@@ -154,6 +152,7 @@ function updateSewerPuzzle() {
   }
 
   if (allFilled) {
+    // Remove the center wall divider
     for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
       if (r > 0 && r < SEWER_ROOM_HEIGHT - 1) {
          sewerRoom[r][midCol].layers[0].type = SEWER_CENTER_TILE;
@@ -161,12 +160,6 @@ function updateSewerPuzzle() {
     }
     puzzleSolved[0] = true;
     puzzleSolved[1] = true;
-    
-    const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
-    for (let r = midRow - 1; r <= midRow + 1; r++) {
-      sewerRoom[r][0].layers[0].type = SEWER_CENTER_TILE;
-      sewerRoom[r][SEWER_ROOM_WIDTH - 1].layers[0].type = SEWER_CENTER_TILE;
-    }
   }
 }
 

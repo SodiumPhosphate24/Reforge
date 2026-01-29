@@ -36,9 +36,10 @@ var craftingRecipes = [
     unlocked : false,
     playerConstructor: {width : 35, height : 25, speed : 5, health : 50, damage : 1},
     ingredients: [
-      { itemName: "rock", amount: 5 },
-      { itemName: "cheese", amount: 1 },
-      { itemName: "soda", amount: 1 }
+      { itemName: "rare wheel", amount: 2 },
+      { itemName: "rare cartridge", amount: 2 },
+      { itemName: "cog", amount: 5 },
+      { itemName: "pipe", amount: 5}
     ],
     output: { type: "player", name: "SCAMPER", amount: 1 }
   },
@@ -49,9 +50,10 @@ var craftingRecipes = [
     unlocked : false,
     playerConstructor: {width : 105, height : 75, speed : .5, health : 350, damage : 1},
     ingredients: [
-      { itemName: "soda", amount: 5 },
-      { itemName: "cheese", amount: 5 },
-      { itemName: "legendary CPU", amount: 1 }
+      { itemName: "rare wheel", amount: 4 },
+      { itemName: "legendary cartridge", amount: 2 },
+      { itemName: "cog", amount: 10},
+      { itemName: "pipe", amount: 10}
     ],
     output: { type: "player", name: "STUR-D", amount: 1 }
   },
@@ -72,7 +74,7 @@ var craftingRecipes = [
   },
   // WEAPONS
   {
-    name: "Glock",
+    name: "steam gun",
     category: "Weapons",
     type: "item",
     unlocked : true,
@@ -82,7 +84,31 @@ var craftingRecipes = [
         itemName: "common cartridge", amount: 1
       }
     ],
-    output: { type: "gun", name: "glock", amount: 1 }
+    output: { type: "gun", name: "steam gun", amount: 1 }
+  },
+  {
+    name: "steam shotgun",
+    category: "Weapons",
+    type: "item",
+    unlocked : true,
+    ingredients: [
+      { itemName: "cog", amount: 5},
+      { itemName: "pipe", amount: 5},
+      {itemName: "rare cartridge", amount: 2}
+    ],
+    output: { type: "gun", name: "steam shotgun", amount: 1 }
+  },
+  {
+    name: "SMG (Steam Machine Gun)",
+    category: "Weapons",
+    type: "item",
+    unlocked : true,
+    ingredients: [
+      { itemName: "cog", amount: 10},
+      { itemName: "pipe", amount: 10},
+      { itemName: "legendary cartridge", amount: 1}
+    ],
+    output: { type: "gun", name: "steam machine gun", amount: 1 }
   },
   {
     name: "Grenade",
