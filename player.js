@@ -187,7 +187,9 @@ function drawPlayers() {
   const drawHeight = drawWidth / aspectRatio;
   
   translate(pX + 600 + pWidth / 2, pY + 375 - (drawHeight - pHeight) / 2 + pHeight / 2);
-  scale(playerFlipScale, 1);
+  if(players[activePlayer].name != "ARGO"){
+    scale(playerFlipScale, 1);
+  }
   imageMode(CENTER);
   image(PlayerImage, 0, 0, drawWidth, drawHeight);
   imageMode(CORNER);

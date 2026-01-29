@@ -118,20 +118,27 @@ function updateSewerPuzzle() {
   const midCol = Math.floor(SEWER_ROOM_WIDTH / 2);
 
   // Check each player's position against pressure plates
-  if (typeof players !== 'undefined') {
+  // Important: players[i].x/y are the stored positions. The ACTIVE player's position
+  // is actually in global pX/pY, so we need to sync it first.
+  if (typeof players !== 'undefined' && typeof activePlayer !== 'undefined') {
+    // Sync active player's current position
+    players[activePlayer].x = pX;
+    players[activePlayer].y = pY;
+    
     for (let i = 0; i < players.length; i++) {
       const p = players[i];
-      // World coordinates in sewer: p.x/y are local to the room
-      // The sewer room is rendered at (0,0) in the game's internal camera space when inSewer is true
-      // Each tile is 50x50.
       
-      const px = p.x + 600 + (p.width || 35) / 2;
-      const py = p.y + 375 + (p.height || 21) / 2;
+      // Convert player position to world coordinates
+      // pX/pY are screen-centered coordinates where (0,0) puts player at screen center
+      // Adding 600 and 375 converts to world tile coordinates
+      const playerWorldX = p.x + 600 + (p.width || 35) / 2;
+      const playerWorldY = p.y + 375 + (p.height || 21) / 2;
 
       for (let j = 0; j < puzzlePressurePlates.length; j++) {
         const pp = puzzlePressurePlates[j];
-        // If player is on the tile (distance check)
-        if (dist(px, py, pp.x, pp.y) < 35) {
+        // Check if player center is within the pressure plate tile
+        const d = dist(playerWorldX, playerWorldY, pp.x, pp.y);
+        if (d < 40) {
           pp.active = true;
           platesOccupied[j] = true;
         }
@@ -139,19 +146,20 @@ function updateSewerPuzzle() {
     }
   }
 
-  // Update tile visuals and check if ALL are filled
+  // Update tile visuals and check if ALL plates are filled
   let allFilled = true;
   for (let j = 0; j < puzzlePressurePlates.length; j++) {
     const pp = puzzlePressurePlates[j];
     const col = Math.floor(pp.x / 50);
     const row = Math.floor(pp.y / 50);
     if (sewerRoom[row] && sewerRoom[row][col]) {
+      // colorIndex 1 = inactive (grey), colorIndex 2 = active (green)
       sewerRoom[row][col].layers[0].colorIndex = pp.active ? 2 : 1;
     }
     if (!platesOccupied[j]) allFilled = false;
   }
 
-  // If every spot is filled, release the wall
+  // If every spot is filled with a player, release the wall
   if (allFilled) {
     // Remove the center wall divider
     for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
@@ -274,25 +282,52 @@ function enterSewer(sewerRow, sewerCol) {
   
   initSewerRoom();
   
+  // Save all player positions before entering sewer
   savedWorldState = {
     world: gameWorld,
     playerX: pX,
-    playerY: pY
+    playerY: pY,
+    playerPositions: []
   };
+  
+  // Save each player's world position
+  if (typeof players !== 'undefined') {
+    for (let i = 0; i < players.length; i++) {
+      savedWorldState.playerPositions.push({
+        x: players[i].x,
+        y: players[i].y
+      });
+    }
+  }
   
   gameWorld = sewerRoom;
   
-  // Spawn on left if entered from first sewer, right if entered from second
+  // Calculate spawn position based on entry side
+  let spawnX, spawnY;
   if (enteredFromFirst) {
-    pX = sewerExitA.x - 600 - pWidth / 2;
-    pY = sewerExitA.y - 375 - pHeight / 2;
+    spawnX = sewerExitA.x - 600 - pWidth / 2;
+    spawnY = sewerExitA.y - 375 - pHeight / 2;
     puzzleSolved[0] = true; // Way you entered is open
     puzzleSolved[1] = false; // Other side closed
   } else {
-    pX = sewerExitB.x - 600 - pWidth / 2;
-    pY = sewerExitB.y - 375 - pHeight / 2;
+    spawnX = sewerExitB.x - 600 - pWidth / 2;
+    spawnY = sewerExitB.y - 375 - pHeight / 2;
     puzzleSolved[1] = true; // Way you entered is open
     puzzleSolved[0] = false; // Other side closed
+  }
+  
+  // Set active player position
+  pX = spawnX;
+  pY = spawnY;
+  
+  // Move ALL players into the sewer room near the entry point
+  // They spawn in a small group near the entrance
+  if (typeof players !== 'undefined') {
+    for (let i = 0; i < players.length; i++) {
+      // Spread players out slightly so they don't overlap
+      players[i].x = spawnX + (i * 30);
+      players[i].y = spawnY;
+    }
   }
   
   inSewer = true;
@@ -315,6 +350,19 @@ function exitSewer(exitSide) {
   
   pX = exitCoords.col * 50 - 600 + 25 - pWidth / 2;
   pY = exitCoords.row * 50 - 375 + 25 - pHeight / 2;
+  
+  // Restore all player positions to their saved world positions
+  if (typeof players !== 'undefined' && savedWorldState.playerPositions) {
+    for (let i = 0; i < players.length; i++) {
+      if (savedWorldState.playerPositions[i]) {
+        players[i].x = savedWorldState.playerPositions[i].x;
+        players[i].y = savedWorldState.playerPositions[i].y;
+      }
+    }
+    // Update active player to exit position
+    players[activePlayer].x = pX;
+    players[activePlayer].y = pY;
+  }
   
   // Snap camera instantly
   camX = -pX;

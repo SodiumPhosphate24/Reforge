@@ -93,7 +93,7 @@ var tileColors = [
   [[255, 255, 255]], // 36 - Lampost
   [[255, 255, 255]],  // 37 - Bench
   [[100, 100, 100]], // 38 White Brick
-  [[100, 100, 100], [50, 50, 50], [75, 75, 75]], // 39 White Tile
+  [[100, 100, 100], [80, 80, 80], [50, 255, 50]], // 39 White Tile (grey, inactive plate, active plate green)
   [[255, 255, 255]], // 40 Steel Crate
   [[255, 255, 255]], // 41 Tree
   [[255, 255, 255]], // 42 Boiler
@@ -805,6 +805,11 @@ function drawGameplay() {
   // Check sewer exits (still within world coordinates for distance checks)
   if (typeof checkSewerExits === 'function') {
     checkSewerExits();
+  }
+  
+  // Update sewer puzzle (pressure plates)
+  if (typeof updateSewerPuzzle === 'function') {
+    updateSewerPuzzle();
   }
 
   // LAYERS 2, 3 over items but under player
