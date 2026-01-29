@@ -119,20 +119,20 @@ function updateSewerPuzzle() {
 
   // Check each player's position against pressure plates
   if (typeof players !== 'undefined') {
-    // We check EVERY player in the players array
     for (let i = 0; i < players.length; i++) {
       const player = players[i];
-      // When in sewer, player.x/y are relative to the sewer room center
-      // The sewer room is rendered with an offset of (600, 375) in world coordinates
+      // Use x and y directly which are the screen-relative positions
+      // We need to check them against the plate positions which are also room-relative (0-50 per tile)
       const playerCenterX = player.x + 600 + (player.width || 35) / 2;
       const playerCenterY = player.y + 375 + (player.height || 21.4) / 2;
 
       for (let j = 0; j < puzzlePressurePlates.length; j++) {
         const pp = puzzlePressurePlates[j];
-        // Check if this specific player is within 40 pixels of this specific plate
-        if (dist(playerCenterX, playerCenterY, pp.x, pp.y) < 40) {
+        // Increased detection radius and simplified check
+        const d = dist(playerCenterX, playerCenterY, pp.x, pp.y);
+        if (d < 50) {
           pp.active = true;
-          playersOnPlates.add(i); // Mark that player 'i' is occupying a plate
+          playersOnPlates.add(i);
         }
       }
     }
@@ -143,27 +143,24 @@ function updateSewerPuzzle() {
     const col = Math.floor(pp.x / 50);
     const row = Math.floor(pp.y / 50);
     if (sewerRoom[row] && sewerRoom[row][col]) {
-      // Set colorIndex 2 for active (green), 1 for inactive (grey/default)
+      // Force immediate layer update for visuals
       sewerRoom[row][col].layers[0].colorIndex = pp.active ? 2 : 1;
     }
   }
 
-  // If at least 3 unique players are standing on plates
+  // Check if at least 3 players are on plates (any player type)
   if (playersOnPlates.size >= 3) {
-    // Remove the wall
+    // Remove the wall divider
     for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
-      if (sewerRoom[r][midCol].layers[0].type === SEWER_BORDER_TILE && r > 0 && r < SEWER_ROOM_HEIGHT - 1) {
-        const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
-        const isOpeningY = r === midRow || r === midRow - 1 || r === midRow + 1;
-        if (!isOpeningY) {
-           sewerRoom[r][midCol].layers[0].type = SEWER_CENTER_TILE;
-        }
+      if (r > 0 && r < SEWER_ROOM_HEIGHT - 1) {
+         sewerRoom[r][midCol].layers[0].type = SEWER_CENTER_TILE;
       }
     }
     // Solve the puzzle and open both exits
     puzzleSolved[0] = true;
     puzzleSolved[1] = true;
     
+    // Ensure exit openings are cleared
     const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
     for (let r = midRow - 1; r <= midRow + 1; r++) {
       sewerRoom[r][0].layers[0].type = SEWER_CENTER_TILE;
