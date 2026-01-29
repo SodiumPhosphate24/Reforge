@@ -139,15 +139,11 @@ function drawFadeToGame() {
   fill(255);
   drawNPCs();
 
-  // Draw idle players before roofs so they appear "inside" buildings
-  drawPlayers(false); 
-
   drawWorldLayer(gameWorld, 2);
   drawWorldLayer(gameWorld, 3);
 
   fill(255);
-  // Draw active player after roofs so they appear "on top" or under fading roof
-  drawPlayers(true); 
+  drawPlayers();
 
   drawGunDebugRect();
   drawEnemies();
@@ -368,7 +364,7 @@ function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message
 }
 
 function preload() {
-  console.log("NHS picture updatee 1141");
+  console.log("We are not going to nhs pictures maybe");
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   SPUDImage = loadImage("Characters/SPUD.png");

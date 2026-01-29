@@ -357,7 +357,7 @@ function craftItem(recipe) {
     }
 
     if(recipe.name === "ARGO"){
-      players.push(new Player(workbenchBottomRightX-400, workbenchBottomRightY - 50, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
+      players.push(new Player(workbenchBottomRightX-400, workbenchBottomRightY + 60, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
     }
     else {
       players.push(new Player(workbenchBottomRightX, workbenchBottomRightY + 15, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
