@@ -373,6 +373,7 @@ function keyReleased() {
 
       playerTransferMenuOpen = false;
       frozen = false;
+      }
     }
   }
 }
