@@ -1023,6 +1023,15 @@ function drawGameplay() {
   puzzlePrompt.update(shouldShowPuzzlePrompt);
   puzzlePrompt.draw("Press E to Solve Puzzle", [255, 200, 0], 90);
 
+  //Enter boss arena
+  if (distance(pX, pY, 350, 1400) < 75 && pX > 350){
+    enemies.push(new Enemy("boss", 1900, 2700));
+    console.log("Spawned Boss");
+    setTile(34, 18, 2, 39);
+    setTile(35, 18, 2, 39);
+    setTile(36, 18, 2, 39);
+  }
+
   // Draw crafting prompt after camera pop (screen-fixed)
   if (typeof drawCraftingPromptIfNeeded === 'function') {
     drawCraftingPromptIfNeeded();
