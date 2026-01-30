@@ -1026,15 +1026,17 @@ function drawGameplay() {
   pickupCartridgePrompt.draw("Press E to Pickup Cartridge", [255, 200, 0], 90);
 
   // Check for puzzle repair condition and update prompt
-  var nearPuzzle;
-  for (let i = 0; i < puzzleCoordinates.length; i++) {
-    if (distance(pX + 600, pY + 340, puzzleCoordinates[i][0], puzzleCoordinates[i][1]) < 75) {
-      nearPuzzle = true;
+  var nearPuzzle = false;
+  if (typeof puzzleCoordinates !== 'undefined') {
+    for (let i = 0; i < puzzleCoordinates.length; i++) {
+      if (distance(pX + 600, pY + 340, puzzleCoordinates[i][0], puzzleCoordinates[i][1]) < 75) {
+        nearPuzzle = true;
+      }
     }
   }
   const shouldShowPuzzlePrompt = nearPuzzle;
   puzzlePrompt.update(shouldShowPuzzlePrompt);
-  puzzlePrompt.draw("Press E to Solve Puzzle", [255, 200, 0], 90);
+  // puzzlePrompt.draw("Press E to Solve Puzzle", [255, 200, 0], 90); // Removed per user request
 
   //Enter boss arena
   if (distance(pX, pY, 350, 1400) < 75 && pX > 350 && !triggerList.Labyrinth.isFightingBoss){

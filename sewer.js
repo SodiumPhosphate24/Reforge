@@ -85,6 +85,8 @@ function generateSewerRoom(isPuzzleRoom = false, linkKey = null) {
   return room;
 }
 
+var puzzleInteractionCount = new Map(); // Map of linkKey -> interactionCount
+
 function updateSewerPuzzle() {
   if (!inSewer || !currentSewerLink) return;
   const linkKey = getSewerLinkKey(currentSewerLink.first.row, currentSewerLink.first.col);
@@ -96,24 +98,6 @@ function updateSewerPuzzle() {
   const solved = puzzleSolved.get(linkKey);
   if (solved && solved[0]) return; // Already solved
 
-  // Track current occupancy
-  const currentOccupied = plates.map(() => false);
-
-  if (typeof players !== 'undefined') {
-    players[activePlayer].x = pX;
-    players[activePlayer].y = pY;
-    for (let p of players) {
-      if (!p.inSewer) continue;
-      const px = p.x + 600 + (p.width || 35) / 2;
-      const py = p.y + 375 + (p.height || 21) / 2;
-      for (let j = 0; j < plates.length; j++) {
-        if (dist(px, py, plates[j].x, plates[j].y) < 25) { // Smaller radius for 5x5 grid
-          currentOccupied[j] = true;
-        }
-      }
-    }
-  }
-
   // Handle toggle logic on Press E
   for (let j = 0; j < plates.length; j++) {
     const pp = plates[j];
@@ -123,13 +107,23 @@ function updateSewerPuzzle() {
     if (dist(px, py, pp.x, pp.y) < 25) {
       if (keyPressedOnce(69)) { // Press E
         togglePlateAndNeighbors(plates, pp.gridX, pp.gridY);
+        // Increment interaction count
+        const count = puzzleInteractionCount.get(linkKey) || 0;
+        puzzleInteractionCount.set(linkKey, count + 1);
       }
       break;
     }
   }
 
   // Draw puzzle instruction prompt
-  if (sewerPrompt) {
+  const firstKey = getSewerLinkKey(currentSewerLink.first.row, currentSewerLink.first.col);
+  const interactionCount = puzzleInteractionCount.get(firstKey) || 0;
+  
+  if (puzzlePressurePlates.has(firstKey) && interactionCount === 0 && (!solved || !solved[0])) {
+    if (!sewerPrompt) sewerPrompt = createPrompt();
+    sewerPrompt.update(true);
+    sewerPrompt.draw("Press E to toggle cell", [255, 150, 0], 100, true);
+  } else if (sewerPrompt) {
     sewerPrompt.update(false);
     sewerPrompt.draw("", [255, 150, 0], 100, true);
   }
@@ -282,6 +276,11 @@ function enterSewer(sewerRow, sewerCol) {
 
 function exitSewer(exitSide) {
   if (!savedWorldState || !currentSewerLink) return false;
+  
+  // Reset puzzle instruction count for this room when leaving
+  const currentKey = getSewerLinkKey(currentSewerLink.first.row, currentSewerLink.first.col);
+  puzzleInteractionCount.set(currentKey, 0);
+
   gameWorld = savedWorldState.world;
   const exitCoords = exitSide === 'A' ? currentSewerLink.first : currentSewerLink.second;
   pX = exitCoords.col * 50 - 600 + 25 - pWidth / 2;
