@@ -17,16 +17,19 @@ const SEWER_BORDER_TILE = 26;
 const SEWER_CENTER_TILE = 39;
 const SEWER_FENCE_TILE = 34;
 
-function generateSewerRoom(isPuzzleRoom = false, linkKey = null) {
+var mazePaths = new Map(); // Map of linkKey -> Set of "r,c" safe tiles
+var mazeFlashTimers = new Map(); // Map of linkKey -> timer
+
+function generateSewerRoom(roomType = "empty", linkKey = null) {
   const room = [];
   const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
   const midCol = Math.floor(SEWER_ROOM_WIDTH / 2);
 
   let plates = [];
-  if (isPuzzleRoom) {
+  if (roomType === "puzzle1") {
     // 3x3 grid of pressure plates centered vertically, moved 2 tiles to the right
-    const startX = 4; // Moved from 2 to 4
-    const startY = midRow - 1; // Row index (centered for 3x3)
+    const startX = 4;
+    const startY = midRow - 1;
     for (let r = 0; r < 3; r++) {
       for (let c = 0; c < 3; c++) {
         plates.push({ 
@@ -40,6 +43,28 @@ function generateSewerRoom(isPuzzleRoom = false, linkKey = null) {
       }
     }
     if (linkKey) puzzlePressurePlates.set(linkKey, plates);
+  } else if (roomType === "puzzle2") {
+    // Generate a twisting path for the maze
+    const path = new Set();
+    let currR = midRow;
+    let currC = 1;
+    path.add(`${currR},${currC}`);
+    
+    // Simple random-ish walk to the right
+    while (currC < SEWER_ROOM_WIDTH - 2) {
+      const dir = Math.random();
+      if (dir < 0.6) {
+        currC++;
+      } else if (dir < 0.8 && currR > 1) {
+        currR--;
+      } else if (currR < SEWER_ROOM_HEIGHT - 2) {
+        currR++;
+      }
+      path.add(`${currR},${currC}`);
+    }
+    // Ensure exit connects
+    path.add(`${midRow},${SEWER_ROOM_WIDTH - 2}`);
+    if (linkKey) mazePaths.set(linkKey, path);
   }
 
   for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
@@ -48,7 +73,8 @@ function generateSewerRoom(isPuzzleRoom = false, linkKey = null) {
       const isBorder = r === 0 || r === SEWER_ROOM_HEIGHT - 1 || c === 0 || c === SEWER_ROOM_WIDTH - 1;
       const isLeftOpening = c === 0 && (r === midRow || r === midRow - 1 || r === midRow + 1);
       const isRightOpening = c === SEWER_ROOM_WIDTH - 1 && (r === midRow || r === midRow - 1 || r === midRow + 1);
-      const isMiddleWall = isPuzzleRoom && c === midCol && !isBorder && !isLeftOpening && !isRightOpening;
+      const isMiddleWall = roomType === "puzzle1" && c === midCol && !isBorder && !isLeftOpening && !isRightOpening;
+      const isMazeArea = roomType === "puzzle2" && c >= 3 && c <= SEWER_ROOM_WIDTH - 4 && !isBorder;
 
       let isPressurePlate = false;
       for (let pp of plates) {
@@ -58,8 +84,9 @@ function generateSewerRoom(isPuzzleRoom = false, linkKey = null) {
         }
       }
 
-      let tileType;
+      let tileType = SEWER_CENTER_TILE;
       let colorIndex = 0;
+      
       if (isLeftOpening || isRightOpening) {
         tileType = SEWER_CENTER_TILE;
       } else if (isMiddleWall) {
@@ -67,10 +94,10 @@ function generateSewerRoom(isPuzzleRoom = false, linkKey = null) {
       } else if (isPressurePlate) {
         tileType = SEWER_CENTER_TILE;
         colorIndex = 1;
+      } else if (isMazeArea) {
+        tileType = 8; // Darker concrete for maze area
       } else if (isBorder) {
         tileType = SEWER_BORDER_TILE;
-      } else {
-        tileType = SEWER_CENTER_TILE;
       }
 
       row.push({
@@ -82,71 +109,137 @@ function generateSewerRoom(isPuzzleRoom = false, linkKey = null) {
     }
     room.push(row);
   }
+  // Add terminal at (2, midRow)
+  if (roomType === "puzzle2") {
+    room[midRow][2].layers[1] = { type: 6, rotation: 0 }; 
+  }
   return room;
 }
-
-var puzzleInteractionCount = new Map(); // Map of linkKey -> interactionCount
 
 function updateSewerPuzzle() {
   if (!inSewer || !currentSewerLink) return;
   const linkKey = getSewerLinkKey(currentSewerLink.first.row, currentSewerLink.first.col);
-  const plates = puzzlePressurePlates.get(linkKey);
   const room = sewerRooms.get(linkKey);
-  if (!plates || !room) return;
+  if (!room) return;
 
-  const midCol = Math.floor(SEWER_ROOM_WIDTH / 2);
+  const plates = puzzlePressurePlates.get(linkKey);
+  const mazePath = mazePaths.get(linkKey);
   const solved = puzzleSolved.get(linkKey);
-  if (solved && solved[0]) return; // Already solved
 
-  // Handle toggle logic on Press E
+  if (plates) {
+    updateLightsOutPuzzle(linkKey, plates, room, solved);
+  } else if (mazePath) {
+    updateMazePuzzle(linkKey, mazePath, room, solved);
+  }
+}
+
+function updateLightsOutPuzzle(linkKey, plates, room, solved) {
+  if (solved && solved[0]) return;
+  const midCol = Math.floor(SEWER_ROOM_WIDTH / 2);
+
   for (let j = 0; j < plates.length; j++) {
     const pp = plates[j];
     const px = pX + 600 + (pWidth || 35) / 2;
     const py = pY + 375 + (pHeight || 21) / 2;
-    
-    if (dist(px, py, pp.x, pp.y) < 25) {
-      if (keyPressedOnce(69)) { // Press E
-        togglePlateAndNeighbors(plates, pp.gridX, pp.gridY);
-        // Increment interaction count
-        const count = puzzleInteractionCount.get(linkKey) || 0;
-        puzzleInteractionCount.set(linkKey, count + 1);
-      }
+    if (dist(px, py, pp.x, pp.y) < 25 && keyPressedOnce(69)) {
+      togglePlateAndNeighbors(plates, pp.gridX, pp.gridY);
+      const count = puzzleInteractionCount.get(linkKey) || 0;
+      puzzleInteractionCount.set(linkKey, count + 1);
       break;
     }
   }
 
-  // Draw puzzle instruction prompt
-  const firstKey = getSewerLinkKey(currentSewerLink.first.row, currentSewerLink.first.col);
-  const interactionCount = puzzleInteractionCount.get(firstKey) || 0;
-  
-  if (puzzlePressurePlates.has(firstKey) && interactionCount === 0 && (!solved || !solved[0])) {
+  const interactionCount = puzzleInteractionCount.get(linkKey) || 0;
+  if (interactionCount === 0) {
     if (!sewerPrompt) sewerPrompt = createPrompt();
-    // Only call update(true) if it's not already active to avoid restarting the animation
-    if (!sewerPrompt.isActive) {
-      sewerPrompt.update(true);
-    } else {
-      // Still call update to let lerps finish, but with the same state
-      sewerPrompt.update(true);
-    }
+    if (!sewerPrompt.isActive) sewerPrompt.update(true);
+    else sewerPrompt.update(true);
     sewerPrompt.draw("Press E to toggle cell", [255, 150, 0], 100, true);
   } else if (sewerPrompt) {
     sewerPrompt.update(false);
     sewerPrompt.draw("", [255, 150, 0], 100, true);
   }
 
-  // Update visual state
   for (let pp of plates) {
     const c = Math.floor(pp.x / 50), r = Math.floor(pp.y / 50);
     room[r][c].layers[0].colorIndex = pp.active ? 2 : 1;
   }
 
-  // Check if all are active
   if (plates.every(p => p.active)) {
     for (let r = 1; r < SEWER_ROOM_HEIGHT - 1; r++) {
       room[r][midCol].layers[0].type = SEWER_CENTER_TILE;
     }
     puzzleSolved.set(linkKey, [true, true]);
     messages.push(new Message("Puzzle Solved!", 600, 375));
+  }
+}
+
+function updateMazePuzzle(linkKey, path, room, solved) {
+  const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
+  const px = pX + 600 + (pWidth || 35) / 2;
+  const py = pY + 375 + (pHeight || 21) / 2;
+  const pCol = Math.floor(px / 50);
+  const pRow = Math.floor(py / 50);
+
+  if (solved && solved[0]) {
+    // Keep maze area normal if solved
+    for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
+      for (let c = 3; c <= SEWER_ROOM_WIDTH - 4; c++) {
+        if (room[r][c].layers[0].type === 8) room[r][c].layers[0].type = SEWER_CENTER_TILE;
+      }
+    }
+    return;
+  }
+
+  // Terminal interaction
+  const termX = 2 * 50 + 25;
+  const termY = midRow * 50 + 25;
+  if (dist(px, py, termX, termY) < 50) {
+    if (!sewerPrompt) sewerPrompt = createPrompt();
+    if (!sewerPrompt.isActive) sewerPrompt.update(true);
+    else sewerPrompt.update(true);
+    sewerPrompt.draw("Press E to scan path", [0, 255, 255], 100, true);
+    
+    if (keyPressedOnce(69)) {
+      mazeFlashTimers.set(linkKey, 120); // 2 seconds at 60fps
+      const count = puzzleInteractionCount.get(linkKey) || 0;
+      puzzleInteractionCount.set(linkKey, count + 1);
+    }
+  } else if (sewerPrompt && (puzzleInteractionCount.get(linkKey) > 0 || dist(px, py, termX, termY) > 80)) {
+    sewerPrompt.update(false);
+    sewerPrompt.draw("", [0, 255, 255], 100, true);
+  }
+
+  // Handle flash visibility
+  let timer = mazeFlashTimers.get(linkKey) || 0;
+  if (timer > 0) {
+    mazeFlashTimers.set(linkKey, timer - 1);
+  }
+
+  // Update maze tile visuals
+  for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
+    for (let c = 3; c <= SEWER_ROOM_WIDTH - 4; c++) {
+      const isSafe = path.has(`${r},${c}`);
+      if (timer > 0 && isSafe) {
+        room[r][c].layers[0].colorIndex = 2; // Green/Active highlight
+      } else {
+        room[r][c].layers[0].colorIndex = 0;
+      }
+    }
+  }
+
+  // Collision detection with unsafe tiles
+  if (pCol >= 3 && pCol <= SEWER_ROOM_WIDTH - 4) {
+    if (!path.has(`${pRow},${pCol}`)) {
+      // Teleport back to start of room
+      pX = sewerExitA.x - 600 - pWidth / 2;
+      pY = sewerExitA.y - 375 - pHeight / 2;
+      messages.push(new Message("Security Breach! Resetting...", 600, 375));
+    } else if (pCol === SEWER_ROOM_WIDTH - 4) {
+      // Reached the end
+      puzzleSolved.set(linkKey, [true, true]);
+      messages.push(new Message("Path Secure!", 600, 375));
+    }
   }
 }
 
@@ -258,9 +351,13 @@ function enterSewer(sewerRow, sewerCol) {
   };
 
   if (!sewerRooms.has(firstKey)) {
-    const isFirstLink = sewerRooms.size === 0;
-    sewerRooms.set(firstKey, generateSewerRoom(isFirstLink, firstKey));
-    if (isFirstLink) puzzleSolved.set(firstKey, [false, false]);
+    const roomCount = sewerRooms.size;
+    let roomType = "empty";
+    if (roomCount === 0) roomType = "puzzle1";
+    else if (roomCount === 1) roomType = "puzzle2";
+    
+    sewerRooms.set(firstKey, generateSewerRoom(roomType, firstKey));
+    if (roomType !== "empty") puzzleSolved.set(firstKey, [false, false]);
   }
 
   if (!savedWorldState) savedWorldState = { world: gameWorld };
