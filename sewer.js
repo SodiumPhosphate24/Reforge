@@ -1,10 +1,10 @@
 var sewerLinks = new Map();
 var sewerFirstInPair = new Map(); // Tracks which sewer is "first" (left exit) in each pair
 var pendingSewerLink = null;
-var puzzleSolved = [false, false]; // [0] for left opening, [1] for right opening
-var puzzlePressurePlates = []; // [{x, y, active}]
+var puzzleSolved = new Map(); // Map of linkKey -> [leftOpen, rightOpen]
+var puzzlePressurePlates = new Map(); // Map of linkKey -> [{x, y, active}]
 var inSewer = false;
-var sewerRoom = null;
+var sewerRooms = new Map(); // Map of linkKey -> roomData
 var sewerEntryPoint = null;
 var sewerExitA = null;
 var sewerExitB = null;
@@ -17,20 +17,56 @@ const SEWER_BORDER_TILE = 26;
 const SEWER_CENTER_TILE = 39;
 const SEWER_FENCE_TILE = 34;
 
-function generateSewerRoom() {
+function generateSewerRoom(isPuzzleRoom = false, linkKey = null) {
   const room = [];
+  const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
+  const midCol = Math.floor(SEWER_ROOM_WIDTH / 2);
+
+  let plates = [];
+  if (isPuzzleRoom) {
+    plates = [
+      { x: 3 * 50 + 25, y: (midRow - 2) * 50 + 25, active: false },
+      { x: 3 * 50 + 25, y: midRow * 50 + 25, active: false },
+      { x: 3 * 50 + 25, y: (midRow + 2) * 50 + 25, active: false }
+    ];
+    if (linkKey) puzzlePressurePlates.set(linkKey, plates);
+  }
+
   for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
     const row = [];
     for (let c = 0; c < SEWER_ROOM_WIDTH; c++) {
       const isBorder = r === 0 || r === SEWER_ROOM_HEIGHT - 1 || c === 0 || c === SEWER_ROOM_WIDTH - 1;
-      const tileType = isBorder ? SEWER_BORDER_TILE : SEWER_CENTER_TILE;
+      const isLeftOpening = c === 0 && (r === midRow || r === midRow - 1 || r === midRow + 1);
+      const isRightOpening = c === SEWER_ROOM_WIDTH - 1 && (r === midRow || r === midRow - 1 || r === midRow + 1);
+      const isMiddleWall = isPuzzleRoom && c === midCol && !isBorder && !isLeftOpening && !isRightOpening;
+
+      let isPressurePlate = false;
+      for (let pp of plates) {
+        if (Math.floor(pp.x / 50) === c && Math.floor(pp.y / 50) === r) {
+          isPressurePlate = true;
+          break;
+        }
+      }
+
+      let tileType;
+      let colorIndex = 0;
+      if (isLeftOpening || isRightOpening) {
+        tileType = SEWER_CENTER_TILE;
+      } else if (isMiddleWall) {
+        tileType = SEWER_BORDER_TILE;
+      } else if (isPressurePlate) {
+        tileType = SEWER_CENTER_TILE;
+        colorIndex = 1;
+      } else if (isBorder) {
+        tileType = SEWER_BORDER_TILE;
+      } else {
+        tileType = SEWER_CENTER_TILE;
+      }
+
       row.push({
         layers: [
-          { type: tileType, rotation: 0, flipH: false, flipV: false, colorIndex: 0 },
-          null,
-          null,
-          null,
-          null
+          { type: tileType, rotation: 0, flipH: false, flipV: false, colorIndex: colorIndex },
+          null, null, null, null
         ]
       });
     }
@@ -39,127 +75,45 @@ function generateSewerRoom() {
   return room;
 }
 
-function initSewerRoom() {
-  sewerRoom = [];
-  const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
-  const midCol = Math.floor(SEWER_ROOM_WIDTH / 2);
-  
-  // Initialize pressure plates for the puzzle - vertically on the left
-  puzzlePressurePlates = [
-    { x: 3 * 50 + 25, y: (midRow - 2) * 50 + 25, active: false },
-    { x: 3 * 50 + 25, y: midRow * 50 + 25, active: false },
-    { x: 3 * 50 + 25, y: (midRow + 2) * 50 + 25, active: false }
-  ];
-
-  for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
-    const row = [];
-    for (let c = 0; c < SEWER_ROOM_WIDTH; c++) {
-      const isBorder = r === 0 || r === SEWER_ROOM_HEIGHT - 1 || c === 0 || c === SEWER_ROOM_WIDTH - 1;
-      
-      // Create openings on left and right walls at the middle row - always open
-      const isLeftOpening = c === 0 && (r === midRow || r === midRow - 1 || r === midRow + 1);
-      const isRightOpening = c === SEWER_ROOM_WIDTH - 1 && (r === midRow || r === midRow - 1 || r === midRow + 1);
-      
-      // Perimeter block wall down the middle - starts closed
-      const isMiddleWall = c === midCol && !isBorder && !isLeftOpening && !isRightOpening;
-      
-      // Pressure plate locations
-      let isPressurePlate = false;
-      for(let pp of puzzlePressurePlates) {
-        if(Math.floor(pp.x/50) === c && Math.floor(pp.y/50) === r) {
-          isPressurePlate = true;
-          break;
-        }
-      }
-
-      let tileType;
-      let colorIndex = 0;
-      
-      if (isLeftOpening || isRightOpening) {
-        tileType = SEWER_CENTER_TILE; // Always open floor
-      } else if (isMiddleWall) {
-        tileType = SEWER_BORDER_TILE;
-      } else if (isPressurePlate) {
-        tileType = SEWER_CENTER_TILE;
-        colorIndex = 1; // Unpressed variant
-      } else if (isBorder) {
-        tileType = SEWER_BORDER_TILE;
-      } else {
-        tileType = SEWER_CENTER_TILE;
-      }
-      
-      row.push({
-        layers: [
-          { type: tileType, rotation: 0, flipH: false, flipV: false, colorIndex: colorIndex },
-          null,
-          null,
-          null,
-          null
-        ]
-      });
-    }
-    sewerRoom.push(row);
-  }
-  
-  // Exit positions are in the openings
-  sewerExitA = { x: 1 * 50 + 25, y: midRow * 50 + 25 };
-  sewerExitB = { x: (SEWER_ROOM_WIDTH - 2) * 50 + 25, y: midRow * 50 + 25 };
-}
-
 function updateSewerPuzzle() {
-  if (!sewerRoom) return;
+  if (!inSewer || !currentSewerLink) return;
+  const linkKey = getSewerLinkKey(currentSewerLink.first.row, currentSewerLink.first.col);
+  const plates = puzzlePressurePlates.get(linkKey);
+  const room = sewerRooms.get(linkKey);
+  if (!plates || !room) return;
 
   // Reset pressure plate states
-  for (let pp of puzzlePressurePlates) pp.active = false;
-
-  const platesOccupied = [false, false, false];
+  for (let pp of plates) pp.active = false;
+  const platesOccupied = plates.map(() => false);
   const midCol = Math.floor(SEWER_ROOM_WIDTH / 2);
 
-  if (typeof players !== 'undefined' && typeof activePlayer !== 'undefined') {
-    // Sync active player's position to their object
+  if (typeof players !== 'undefined') {
     players[activePlayer].x = pX;
     players[activePlayer].y = pY;
-    
-    for (let i = 0; i < players.length; i++) {
-      const p = players[i];
-      // Only check players that are actually in the sewer
+    for (let p of players) {
       if (!p.inSewer) continue;
-      
-      const playerWorldX = p.x + 600 + (p.width || 35) / 2;
-      const playerWorldY = p.y + 375 + (p.height || 21) / 2;
-
-      for (let j = 0; j < puzzlePressurePlates.length; j++) {
-        const pp = puzzlePressurePlates[j];
-        const d = dist(playerWorldX, playerWorldY, pp.x, pp.y);
-        if (d < 40) {
-          pp.active = true;
+      const px = p.x + 600 + (p.width || 35) / 2;
+      const py = p.y + 375 + (p.height || 21) / 2;
+      for (let j = 0; j < plates.length; j++) {
+        if (dist(px, py, plates[j].x, plates[j].y) < 40) {
+          plates[j].active = true;
           platesOccupied[j] = true;
         }
       }
     }
   }
 
-  // Update visuals for plates in the sewer room
-  let allFilled = platesOccupied.every(v => v === true);
-  
-  for (let j = 0; j < puzzlePressurePlates.length; j++) {
-    const pp = puzzlePressurePlates[j];
-    const col = Math.floor(pp.x / 50);
-    const row = Math.floor(pp.y / 50);
-    if (sewerRoom[row] && sewerRoom[row][col]) {
-      sewerRoom[row][col].layers[0].colorIndex = pp.active ? 2 : 1;
-    }
+  for (let j = 0; j < plates.length; j++) {
+    const pp = plates[j];
+    const c = Math.floor(pp.x / 50), r = Math.floor(pp.y / 50);
+    room[r][c].layers[0].colorIndex = pp.active ? 2 : 1;
   }
 
-  if (allFilled) {
-    // Remove the center wall divider
-    for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
-      if (r > 0 && r < SEWER_ROOM_HEIGHT - 1) {
-         sewerRoom[r][midCol].layers[0].type = SEWER_CENTER_TILE;
-      }
+  if (platesOccupied.every(v => v)) {
+    for (let r = 1; r < SEWER_ROOM_HEIGHT - 1; r++) {
+      room[r][midCol].layers[0].type = SEWER_CENTER_TILE;
     }
-    puzzleSolved[0] = true;
-    puzzleSolved[1] = true;
+    puzzleSolved.set(linkKey, [true, true]);
   }
 }
 
@@ -171,7 +125,6 @@ function linkSewers(row1, col1, row2, col2) {
   const key1 = getSewerLinkKey(row1, col1);
   const key2 = getSewerLinkKey(row2, col2);
   
-  // Remove old links if they exist
   if (sewerLinks.has(key1)) {
     const oldPartner = sewerLinks.get(key1);
     sewerLinks.delete(oldPartner);
@@ -187,12 +140,8 @@ function linkSewers(row1, col1, row2, col2) {
   
   sewerLinks.set(key1, key2);
   sewerLinks.set(key2, key1);
-  
-  // key1 is "first" (left exit), key2 is "second" (right exit)
   sewerFirstInPair.set(key1, true);
   sewerFirstInPair.set(key2, false);
-  
-  console.log(`Linked sewers: (${row1},${col1}) [LEFT] <-> (${row2},${col2}) [RIGHT]`);
 }
 
 function unlinkSewer(row, col) {
@@ -201,7 +150,6 @@ function unlinkSewer(row, col) {
     const partnerKey = sewerLinks.get(key);
     sewerLinks.delete(key);
     sewerLinks.delete(partnerKey);
-    console.log(`Unlinked sewer at (${row},${col})`);
   }
 }
 
@@ -253,78 +201,50 @@ function findNearbySewerCap(playerX, playerY, range = 80, requireLinked = true) 
 function enterSewer(sewerRow, sewerCol) {
   const linkedSewer = getLinkedSewer(sewerRow, sewerCol);
   if (!linkedSewer) return false;
-  
+
   const entryKey = getSewerLinkKey(sewerRow, sewerCol);
   const enteredFromFirst = sewerFirstInPair.get(entryKey) === true;
-  
-  // Store first and second sewers for consistent exit behavior
+  const firstKey = enteredFromFirst ? entryKey : getSewerLinkKey(linkedSewer.row, linkedSewer.col);
+
   currentSewerLink = {
     first: enteredFromFirst ? { row: sewerRow, col: sewerCol } : linkedSewer,
-    second: enteredFromFirst ? linkedSewer : { row: sewerRow, col: sewerCol },
-    enteredFromFirst: enteredFromFirst
+    second: enteredFromFirst ? linkedSewer : { row: sewerRow, col: sewerCol }
   };
-  
-  if (!sewerRoom) initSewerRoom();
-  
-  // Save world state if first time entering (global state)
-  if (!savedWorldState) {
-    savedWorldState = {
-      world: gameWorld
-    };
+
+  if (!sewerRooms.has(firstKey)) {
+    const isFirstLink = sewerRooms.size === 0;
+    sewerRooms.set(firstKey, generateSewerRoom(isFirstLink, firstKey));
+    if (isFirstLink) puzzleSolved.set(firstKey, [false, false]);
   }
-  
-  gameWorld = sewerRoom;
-  
-  // Calculate spawn position
-  let spawnX, spawnY;
-  if (enteredFromFirst) {
-    spawnX = sewerExitA.x - 600 - pWidth / 2;
-    spawnY = sewerExitA.y - 375 - pHeight / 2;
-    puzzleSolved[0] = true; 
-  } else {
-    spawnX = sewerExitB.x - 600 - pWidth / 2;
-    spawnY = sewerExitB.y - 375 - pHeight / 2;
-    puzzleSolved[1] = true;
-  }
-  
-  // Only the current robot enters the sewer
-  pX = spawnX;
-  pY = spawnY;
+
+  if (!savedWorldState) savedWorldState = { world: gameWorld };
+  gameWorld = sewerRooms.get(firstKey);
+
+  const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
+  sewerExitA = { x: 1 * 50 + 25, y: midRow * 50 + 25 };
+  sewerExitB = { x: (SEWER_ROOM_WIDTH - 2) * 50 + 25, y: midRow * 50 + 25 };
+
+  pX = (enteredFromFirst ? sewerExitA.x : sewerExitB.x) - 600 - pWidth / 2;
+  pY = (enteredFromFirst ? sewerExitA.y : sewerExitB.y) - 375 - pHeight / 2;
+
   players[activePlayer].x = pX;
   players[activePlayer].y = pY;
   players[activePlayer].inSewer = true;
-  
   inSewer = true;
-  console.log("Player entered sewer system");
   return true;
 }
 
 function exitSewer(exitSide) {
   if (!savedWorldState || !currentSewerLink) return false;
-  
   gameWorld = savedWorldState.world;
-  
-  let exitCoords;
-  if (exitSide === 'A') {
-    exitCoords = currentSewerLink.first;
-  } else {
-    exitCoords = currentSewerLink.second;
-  }
-  
+  const exitCoords = exitSide === 'A' ? currentSewerLink.first : currentSewerLink.second;
   pX = exitCoords.col * 50 - 600 + 25 - pWidth / 2;
   pY = exitCoords.row * 50 - 375 + 25 - pHeight / 2;
-  
-  // Current robot leaves the sewer
   players[activePlayer].x = pX;
   players[activePlayer].y = pY;
   players[activePlayer].inSewer = false;
-  
-  // Snap camera
-  camX = -pX;
-  camY = -pY;
-  
+  camX = -pX; camY = -pY;
   inSewer = false;
-  console.log("Player exited sewer system");
   return true;
 }
 
@@ -332,25 +252,21 @@ var savedWorldState = null;
 
 function checkSewerExits() {
   if (!inSewer) return;
-  
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
   const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
   const midY = midRow * 50 + 25;
-  
-  // Exit when player reaches the doorway tiles (first/last column, near middle row)
   const nearMiddleY = Math.abs(playerCenterY - midY) < 75;
   
   if (playerCenterX < 50 && nearMiddleY) {
-    exitSewer('A'); // Left doorway = first sewer
+    exitSewer('A');
   } else if (playerCenterX > (SEWER_ROOM_WIDTH - 1) * 50 && nearMiddleY) {
-    exitSewer('B'); // Right doorway = second sewer
+    exitSewer('B');
   }
 }
 
 function drawSewerPrompt() {
   if (inSewer) {
-    // No prompt needed - just walk through the openings to exit
     if (sewerPrompt) {
       sewerPrompt.update(false);
       sewerPrompt.draw("");
@@ -360,7 +276,6 @@ function drawSewerPrompt() {
     if (nearbySewer) {
       if (!sewerPrompt) sewerPrompt = createPrompt();
       handleInteractionPrompt(sewerPrompt, nearbySewer.x, nearbySewer.y, 80, "Press E to enter sewer", true);
-      
       if (keyPressedOnce(69)) {
         enterSewer(nearbySewer.row, nearbySewer.col);
       }
@@ -373,39 +288,30 @@ function drawSewerPrompt() {
 
 function handleSewerEditorMode() {
   if (!editorMode) return;
-  
   if (keyPressedOnce(76)) {
     const nearbySewer = findNearbySewerCap(pX, pY, 80, false);
-    
     if (nearbySewer && !nearbySewer.linked) {
       if (!pendingSewerLink) {
         pendingSewerLink = { row: nearbySewer.row, col: nearbySewer.col };
-        console.log(`First sewer marked at (${nearbySewer.row}, ${nearbySewer.col}) - go to another sewer and press L`);
       } else if (pendingSewerLink.row !== nearbySewer.row || pendingSewerLink.col !== nearbySewer.col) {
         linkSewers(pendingSewerLink.row, pendingSewerLink.col, nearbySewer.row, nearbySewer.col);
         pendingSewerLink = null;
       }
     } else if (!nearbySewer) {
-      if (pendingSewerLink) {
-        pendingSewerLink = null;
-        console.log("Sewer linking cancelled");
-      }
+      if (pendingSewerLink) pendingSewerLink = null;
     }
   }
 }
 
 function drawSewerEditorUI() {
   if (!editorMode) return;
-  
   push();
-  
   if (pendingSewerLink) {
     fill(0, 200, 255);
     noStroke();
     textSize(16);
     textAlign(CENTER);
-    text(`Sewer at (${pendingSewerLink.row}, ${pendingSewerLink.col}) marked - Press L near another sewer to link`, width / 2, 70);
-    
+    text(`Sewer marked - Press L near another to link`, width / 2, 70);
     const sewerX = pendingSewerLink.col * 50 + camX;
     const sewerY = pendingSewerLink.row * 50 + camY;
     stroke(0, 255, 255);
@@ -413,37 +319,26 @@ function drawSewerEditorUI() {
     noFill();
     rect(sewerX, sewerY, 50, 50);
   }
-  
   for (let [key, partnerKey] of sewerLinks) {
     const [row, col] = key.split(',').map(Number);
     const [pRow, pCol] = partnerKey.split(',').map(Number);
-    
     const x1 = col * 50 + 25 + camX;
     const y1 = row * 50 + 25 + camY;
     const x2 = pCol * 50 + 25 + camX;
     const y2 = pRow * 50 + 25 + camY;
-    
     stroke(0, 255, 0, 150);
     strokeWeight(2);
     line(x1, y1, x2, y2);
-    
-    noStroke();
-    fill(0, 255, 0, 100);
-    ellipse(x1, y1, 20, 20);
   }
-  
   pop();
 }
 
 function sewerLinksToString() {
   const pairs = [];
   const processed = new Set();
-  
   for (let [key, partnerKey] of sewerLinks) {
     if (!processed.has(key) && !processed.has(partnerKey)) {
-      // Always put the "first" key before the colon
-      const isFirst = sewerFirstInPair.get(key) === true;
-      if (isFirst) {
+      if (sewerFirstInPair.get(key) === true) {
         pairs.push(`${key}:${partnerKey}`);
       } else {
         pairs.push(`${partnerKey}:${key}`);
@@ -452,7 +347,6 @@ function sewerLinksToString() {
       processed.add(partnerKey);
     }
   }
-  
   return pairs.join(';');
 }
 
@@ -460,17 +354,14 @@ function stringToSewerLinks(str) {
   sewerLinks.clear();
   sewerFirstInPair.clear();
   if (!str || str.trim() === '') return;
-  
   const pairs = str.split(';');
   for (let pair of pairs) {
     if (pair.includes(':')) {
       const [key1, key2] = pair.split(':');
       sewerLinks.set(key1, key2);
       sewerLinks.set(key2, key1);
-      // key1 is first (left), key2 is second (right)
       sewerFirstInPair.set(key1, true);
       sewerFirstInPair.set(key2, false);
     }
   }
-  console.log(`Loaded ${sewerLinks.size / 2} sewer link pairs`);
 }
