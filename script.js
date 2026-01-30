@@ -311,12 +311,14 @@ function createPrompt() {
     isActive: false,
 
     update: function(shouldShow) {
-      this.isActive = shouldShow;
+      if (this.isActive !== shouldShow) {
+        this.isActive = shouldShow;
+      }
 
       if (this.isActive) {
-        this.alpha = lerp(this.alpha, 255, 0.2);
-        this.scale = lerp(this.scale, 1, 0.2);
-        this.growScale = lerp(this.growScale, 1, 0.15);
+        this.alpha = lerp(this.alpha, 255, 0.1);
+        this.scale = lerp(this.scale, 1, 0.1);
+        this.growScale = lerp(this.growScale, 1, 0.1);
       } else {
         this.alpha = lerp(this.alpha, 0, 0.15);
         this.scale = lerp(this.scale, 0, 0.15);

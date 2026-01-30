@@ -121,7 +121,13 @@ function updateSewerPuzzle() {
   
   if (puzzlePressurePlates.has(firstKey) && interactionCount === 0 && (!solved || !solved[0])) {
     if (!sewerPrompt) sewerPrompt = createPrompt();
-    sewerPrompt.update(true);
+    // Only call update(true) if it's not already active to avoid restarting the animation
+    if (!sewerPrompt.isActive) {
+      sewerPrompt.update(true);
+    } else {
+      // Still call update to let lerps finish, but with the same state
+      sewerPrompt.update(true);
+    }
     sewerPrompt.draw("Press E to toggle cell", [255, 150, 0], 100, true);
   } else if (sewerPrompt) {
     sewerPrompt.update(false);
