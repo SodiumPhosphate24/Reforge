@@ -51,7 +51,7 @@ class Enemy {
     }
     if (type == "boss") {
       this.type = "boss";
-      this.name = "The Rogue Automaton";
+      this.name = "Khronos";
       this.health = 200;
       this.maxHealth = 200;
       this.speed = 1.5;

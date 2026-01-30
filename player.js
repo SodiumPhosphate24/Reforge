@@ -18,11 +18,14 @@ var playerSelectionMenuAlpha = 0;
 var selectedPlayerIndex = 0;
 var qKeyHeldFrames = 0;
 var qKeyHoldThreshold = 10; // Frames to hold Q before menu opens
+var playerSelectScrollOffset = 0; // Current scroll offset
+var playerSelectVisibleMax = 5; // Max players to show at once
 
 // Item transfer menu
 var playerTransferMenuOpen = false;
 var playerTransferMenuAlpha = 0;
 var selectedTransferPlayerIndex = 0;
+var playerTransferScrollOffset = 0;
 
 class Player {
   constructor(x, y, width, height, speed, health, damage, image, name = "Player") {
@@ -261,18 +264,28 @@ function drawPlayerSelectionMenu() {
     playerSelectionMenuAlpha = lerp(playerSelectionMenuAlpha, 0, 0.2);
   }
   
+  // Update scroll offset based on selection
+  if (selectedPlayerIndex < playerSelectScrollOffset) {
+    playerSelectScrollOffset = selectedPlayerIndex;
+  } else if (selectedPlayerIndex >= playerSelectScrollOffset + playerSelectVisibleMax) {
+    playerSelectScrollOffset = selectedPlayerIndex - playerSelectVisibleMax + 1;
+  }
+  
+  const displayCount = Math.min(players.length, playerSelectVisibleMax);
+  const menuHeight = 80 + displayCount * 60;
+  
   push();
   
   // Semi-transparent background
   fill(0, 0, 0, playerSelectionMenuAlpha * 0.7);
   rectMode(CENTER);
-  rect(600, 375, 400, 80 + players.length * 60, 10);
+  rect(600, 375, 400, menuHeight, 10);
   
   // Border
   strokeWeight(3);
   stroke(255, 150, 0, playerSelectionMenuAlpha * 0.8);
   noFill();
-  rect(600, 375, 400, 80 + players.length * 60, 10);
+  rect(600, 375, 400, menuHeight, 10);
   noStroke();
   rectMode(CORNER);
   
@@ -281,17 +294,21 @@ function drawPlayerSelectionMenu() {
   textSize(24);
   textFont(Silkscreen);
   textAlign(CENTER, CENTER);
-  text("SELECT ROBOT", 600, 315);
+  text("SELECT ROBOT", 600, 375 - menuHeight / 2 + 30);
   
   // Player list
   textSize(18);
-  const startY = 360;
+  const startY = 375 - menuHeight / 2 + 75;
   
-  for (let i = 0; i < players.length; i++) {
+  for (let i = 0; i < displayCount; i++) {
+    const playerIdx = i + playerSelectScrollOffset;
+    if (playerIdx >= players.length) break;
+    
     const yPos = startY + i * 50;
+    const p = players[playerIdx];
     
     // Highlight selected player
-    if (i === selectedPlayerIndex) {
+    if (playerIdx === selectedPlayerIndex) {
       fill(255, 150, 0, playerSelectionMenuAlpha * 0.4);
       rect(410, yPos - 20, 380, 40, 5);
     }
@@ -299,10 +316,10 @@ function drawPlayerSelectionMenu() {
     // Player name
     fill(255, 255, 255, playerSelectionMenuAlpha);
     textAlign(LEFT, CENTER);
-    text(players[i].name, 430, yPos);
+    text(p.name, 430, yPos);
     
     // Health bar
-    const healthPercent = players[i].health / players[i].maxHealth;
+    const healthPercent = p.health / p.maxHealth;
     fill(50, 50, 50, playerSelectionMenuAlpha * 0.6);
     rect(630, yPos - 10, 150, 20, 3);
     
@@ -319,15 +336,27 @@ function drawPlayerSelectionMenu() {
     fill(255, 255, 255, playerSelectionMenuAlpha);
     textAlign(CENTER, CENTER);
     textSize(12);
-    text(Math.floor(players[i].health) + "/" + players[i].maxHealth, 705, yPos);
+    text(Math.floor(p.health) + "/" + p.maxHealth, 705, yPos);
     textSize(18);
+  }
+  
+  // Scroll indicators
+  if (playerSelectScrollOffset > 0) {
+    fill(255, 150, 0, playerSelectionMenuAlpha);
+    textAlign(CENTER);
+    text("▲", 600, startY - 25);
+  }
+  if (playerSelectScrollOffset + playerSelectVisibleMax < players.length) {
+    fill(255, 150, 0, playerSelectionMenuAlpha);
+    textAlign(CENTER);
+    text("▼", 600, startY + displayCount * 50 - 15);
   }
   
   // Instructions
   fill(255, 150, 0, playerSelectionMenuAlpha * 0.9);
   textSize(14);
   textAlign(CENTER, CENTER);
-  text("UP/DOWN: Navigate | Release Q: Select", 600, startY + players.length * 50 + 20);
+  text("UP/DOWN: Navigate | Release Q: Select", 600, 375 + menuHeight / 2 - 20);
   
   pop();
 }
@@ -342,18 +371,28 @@ function drawPlayerTransferMenu() {
     playerTransferMenuAlpha = lerp(playerTransferMenuAlpha, 0, 0.2);
   }
   
+  // Update scroll offset based on selection
+  if (selectedTransferPlayerIndex < playerTransferScrollOffset) {
+    playerTransferScrollOffset = selectedTransferPlayerIndex;
+  } else if (selectedTransferPlayerIndex >= playerTransferScrollOffset + playerSelectVisibleMax) {
+    playerTransferScrollOffset = selectedTransferPlayerIndex - playerSelectVisibleMax + 1;
+  }
+  
+  const displayCount = Math.min(players.length, playerSelectVisibleMax);
+  const menuHeight = 80 + displayCount * 60;
+  
   push();
   
   // Semi-transparent background
   fill(0, 0, 0, playerTransferMenuAlpha * 0.7);
   rectMode(CENTER);
-  rect(600, 375, 400, 80 + players.length * 60, 10);
+  rect(600, 375, 400, menuHeight, 10);
   
   // Border
   strokeWeight(3);
   stroke(255, 150, 0, playerTransferMenuAlpha * 0.8);
   noFill();
-  rect(600, 375, 400, 80 + players.length * 60, 10);
+  rect(600, 375, 400, menuHeight, 10);
   noStroke();
   rectMode(CORNER);
   
@@ -362,17 +401,21 @@ function drawPlayerTransferMenu() {
   textSize(24);
   textFont(Silkscreen);
   textAlign(CENTER, CENTER);
-  text("TRANSFER ITEM TO...", 600, 315);
+  text("TRANSFER ITEM TO...", 600, 375 - menuHeight / 2 + 30);
   
-  // Player list (include all players)
+  // Player list
   textSize(18);
-  const startY = 360;
+  const startY = 375 - menuHeight / 2 + 75;
   
-  for (let i = 0; i < players.length; i++) {
+  for (let i = 0; i < displayCount; i++) {
+    const playerIdx = i + playerTransferScrollOffset;
+    if (playerIdx >= players.length) break;
+    
     const yPos = startY + i * 50;
+    const p = players[playerIdx];
     
     // Highlight selected player
-    if (i === selectedTransferPlayerIndex) {
+    if (playerIdx === selectedTransferPlayerIndex) {
       fill(255, 150, 0, playerTransferMenuAlpha * 0.4);
       rect(410, yPos - 20, 380, 40, 5);
     }
@@ -380,10 +423,10 @@ function drawPlayerTransferMenu() {
     // Player name
     fill(255, 255, 255, playerTransferMenuAlpha);
     textAlign(LEFT, CENTER);
-    text(players[i].name, 430, yPos);
+    text(p.name, 430, yPos);
     
     // Health bar
-    const healthPercent = players[i].health / players[i].maxHealth;
+    const healthPercent = p.health / p.maxHealth;
     fill(50, 50, 50, playerTransferMenuAlpha * 0.6);
     rect(630, yPos - 10, 150, 20, 3);
     
@@ -400,15 +443,27 @@ function drawPlayerTransferMenu() {
     fill(255, 255, 255, playerTransferMenuAlpha);
     textAlign(CENTER, CENTER);
     textSize(12);
-    text(Math.floor(players[i].health) + "/" + players[i].maxHealth, 705, yPos);
+    text(Math.floor(p.health) + "/" + p.maxHealth, 705, yPos);
     textSize(18);
+  }
+  
+  // Scroll indicators
+  if (playerTransferScrollOffset > 0) {
+    fill(255, 150, 0, playerTransferMenuAlpha);
+    textAlign(CENTER);
+    text("▲", 600, startY - 25);
+  }
+  if (playerTransferScrollOffset + playerSelectVisibleMax < players.length) {
+    fill(255, 150, 0, playerTransferMenuAlpha);
+    textAlign(CENTER);
+    text("▼", 600, startY + displayCount * 50 - 15);
   }
   
   // Instructions
   fill(255, 150, 0, playerTransferMenuAlpha * 0.9);
   textSize(14);
   textAlign(CENTER, CENTER);
-  text("UP/DOWN: Navigate | Release R: Transfer", 600, startY + players.length * 50 + 20);
+  text("UP/DOWN: Navigate | Release R: Transfer", 600, 375 + menuHeight / 2 - 20);
   
   pop();
 }
