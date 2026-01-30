@@ -24,11 +24,11 @@ function generateSewerRoom(isPuzzleRoom = false, linkKey = null) {
 
   let plates = [];
   if (isPuzzleRoom) {
-    // 5x5 grid of pressure plates centered vertically, moved 2 tiles to the right
+    // 3x3 grid of pressure plates centered vertically, moved 2 tiles to the right
     const startX = 4; // Moved from 2 to 4
-    const startY = midRow - 2; // Row index
-    for (let r = 0; r < 5; r++) {
-      for (let c = 0; c < 5; c++) {
+    const startY = midRow - 1; // Row index (centered for 3x3)
+    for (let r = 0; r < 3; r++) {
+      for (let c = 0; c < 3; c++) {
         plates.push({ 
           x: (startX + c) * 50 + 25, 
           y: (startY + r) * 50 + 25, 
