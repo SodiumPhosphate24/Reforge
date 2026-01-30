@@ -30,7 +30,7 @@ function controls() {
     if (keyIsDown(68)) {
       pXVel += players[activePlayer].speed;
     }
-    if(players[activePlayer].name != "ARGO"){
+    if (players[activePlayer].name != "ARGO") {
       if (keyIsDown(87)) {
         pYVel -= players[activePlayer].speed;
       }
@@ -40,7 +40,10 @@ function controls() {
     }
   }
   pYVel *= 0.8;
-  pXVel *= 0.8;
+  if (players[activePlayer].name != "ARGO") {
+    pXVel *= 0.8;
+  }
+  else { pXVel *= .95 }
   pX += pXVel;
   pY += pYVel;
   players[activePlayer].x = pX;
@@ -125,12 +128,12 @@ function keyPressed() {
       }
     }
     var nearPuzzle = -1;
-    for (let i = 0; i < puzzleCoordinates.length; i++){
-      if (distance(pX+600, pY+340, puzzleCoordinates[i][0], puzzleCoordinates[i][1]) < 75){
+    for (let i = 0; i < puzzleCoordinates.length; i++) {
+      if (distance(pX + 600, pY + 340, puzzleCoordinates[i][0], puzzleCoordinates[i][1]) < 75) {
         nearPuzzle = i;
       }
     }
-    if(nearPuzzle >= 0){
+    if (nearPuzzle >= 0) {
       handleTriggers("Labyrinth", nearPuzzle);
       console.log("Solved Puzzle " + nearPuzzle);
     }
@@ -216,7 +219,7 @@ function keyPressed() {
 
   if (keyCode == 82) {
     // Open player selection menu for item transfer (if holding item)
-    if(players.length > 1){
+    if (players.length > 1) {
       if (inventoryList[inventorySlot - 1] != null) {
         if (!playerTransferMenuOpen) {
           playerTransferMenuOpen = true;
@@ -349,30 +352,30 @@ function keyReleased() {
 
   // R key release - complete transfer
   if (keyCode == 82) {
-    if (players.length > 1){
-    if (playerTransferMenuOpen) {
-      const itemToTransfer = inventoryList[inventorySlot - 1];
-      const targetPlayer = players[selectedTransferPlayerIndex];
+    if (players.length > 1) {
+      if (playerTransferMenuOpen) {
+        const itemToTransfer = inventoryList[inventorySlot - 1];
+        const targetPlayer = players[selectedTransferPlayerIndex];
 
-      // Find empty slot in target player's inventory
-      let transferred = false;
-      for (let i = 0; i < targetPlayer.inventory.length; i++) {
-        if (targetPlayer.inventory[i] == null) {
-          targetPlayer.inventory[i] = itemToTransfer;
-          inventoryList[inventorySlot - 1] = null;
-          transferred = true;
-          break;
+        // Find empty slot in target player's inventory
+        let transferred = false;
+        for (let i = 0; i < targetPlayer.inventory.length; i++) {
+          if (targetPlayer.inventory[i] == null) {
+            targetPlayer.inventory[i] = itemToTransfer;
+            inventoryList[inventorySlot - 1] = null;
+            transferred = true;
+            break;
+          }
+          if (targetPlayer.inventory[i].name == itemToTransfer.name && itemToTransfer.stackable) {
+            targetPlayer.inventory[i].amount += itemToTransfer.amount;
+            inventoryList[inventorySlot - 1] = null;
+            transferred = true;
+            break;
+          }
         }
-        if (targetPlayer.inventory[i].name == itemToTransfer.name && itemToTransfer.stackable) {
-          targetPlayer.inventory[i].amount += itemToTransfer.amount;
-          inventoryList[inventorySlot - 1] = null;
-          transferred = true;
-          break;
-        }
-      }
 
-      playerTransferMenuOpen = false;
-      frozen = false;
+        playerTransferMenuOpen = false;
+        frozen = false;
       }
     }
   }
