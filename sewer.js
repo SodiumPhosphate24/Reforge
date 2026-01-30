@@ -115,14 +115,12 @@ function updateSewerPuzzle() {
   }
 
   // Handle toggle logic on Press E
-  let nearPlate = false;
   for (let j = 0; j < plates.length; j++) {
     const pp = plates[j];
     const px = pX + 600 + (pWidth || 35) / 2;
     const py = pY + 375 + (pHeight || 21) / 2;
     
     if (dist(px, py, pp.x, pp.y) < 25) {
-      nearPlate = true;
       if (keyPressedOnce(69)) { // Press E
         togglePlateAndNeighbors(plates, pp.gridX, pp.gridY);
       }
@@ -131,19 +129,7 @@ function updateSewerPuzzle() {
   }
 
   // Draw puzzle instruction prompt
-  if (inSewer && currentSewerLink) {
-    const firstKey = getSewerLinkKey(currentSewerLink.first.row, currentSewerLink.first.col);
-    const platesInThisRoom = puzzlePressurePlates.get(firstKey);
-    // Only show if this is the first (puzzle) sewer and it's not solved yet
-    if (platesInThisRoom && (!solved || !solved[0])) {
-      if (!sewerPrompt) sewerPrompt = createPrompt();
-      sewerPrompt.update(true);
-      sewerPrompt.draw("Press E to toggle cell", [255, 150, 0], 100, true);
-    } else if (sewerPrompt) {
-      sewerPrompt.update(false);
-      sewerPrompt.draw("", [255, 150, 0], 100, true);
-    }
-  } else if (sewerPrompt) {
+  if (sewerPrompt) {
     sewerPrompt.update(false);
     sewerPrompt.draw("", [255, 150, 0], 100, true);
   }
