@@ -370,7 +370,7 @@ function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message
 }
 
 function preload() {
-  console.log("test version invisibility patch");
+  console.log("update cheese update train crash 1.0");
   worldString = loadStrings("world.txt");
   sewer1String = loadStrings("sewer.txt");
   sewer2String = loadStrings("sewer2.txt");
