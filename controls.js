@@ -43,7 +43,7 @@ function controls() {
   if (players[activePlayer].name != "ARGO") {
     pXVel *= 0.8;
   }
-  else { pXVel *= .95 }
+  else { pXVel *= .99 }
   pX += pXVel;
   pY += pYVel;
   players[activePlayer].x = pX;

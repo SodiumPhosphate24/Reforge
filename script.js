@@ -1024,12 +1024,13 @@ function drawGameplay() {
   puzzlePrompt.draw("Press E to Solve Puzzle", [255, 200, 0], 90);
 
   //Enter boss arena
-  if (distance(pX, pY, 350, 1400) < 75 && pX > 350){
+  if (distance(pX, pY, 350, 1400) < 75 && pX > 350 && !triggerList.Labyrinth.isFightingBoss){
+    triggerList.Labyrinth.isFightingBoss = true;
     enemies.push(new Enemy("boss", 1900, 2700));
     console.log("Spawned Boss");
-    setTile(34, 18, 2, 39);
-    setTile(35, 18, 2, 39);
-    setTile(36, 18, 2, 39);
+    setTile(34, 18, 2, 26);
+    setTile(35, 18, 2, 26);
+    setTile(36, 18, 2, 26);
   }
 
   // Draw crafting prompt after camera pop (screen-fixed)
