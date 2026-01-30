@@ -52,8 +52,8 @@ class Enemy {
     if (type == "boss") {
       this.type = "boss";
       this.name = "The Rogue Automaton";
-      this.health = 150;
-      this.maxHealth = 150;
+      this.health = 200;
+      this.maxHealth = 200;
       this.speed = 1.5;
       this.acceleration = 0.08;
       this.image = KhronosImage;
@@ -211,18 +211,19 @@ class Enemy {
   onPhaseComplete() {
     // Spawn minions on phase change
     if (this.phase === 2) {
-      this.spawnMinions(2);
+      this.spawnMinions(2, "harpy");
     } else if (this.phase === 3) {
-      this.spawnMinions(3);
+      this.spawnMinions(3, "harpy");
+      this.spawnMinions(2, "greg");
     }
   }
   
-  spawnMinions(count) {
+  spawnMinions(count, type) {
     for (let i = 0; i < count; i++) {
       const angle = (TWO_PI / count) * i;
       const spawnX = this.x + cos(angle) * 100;
       const spawnY = this.y + sin(angle) * 100;
-      enemies.push(new Enemy("harpy", spawnX, spawnY));
+      enemies.push(new Enemy(type, spawnX, spawnY));
     }
   }
   

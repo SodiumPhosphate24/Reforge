@@ -20,7 +20,7 @@ class Bullet {
 
     if (type == "enemy") {
       this.type = "enemy";
-      this.image = BulletImgs[2];
+      this.image = BulletImgs[4];
       this.speed = 15;
       this.angle = angle;
       this.x = x + (30*cos(this.angle));

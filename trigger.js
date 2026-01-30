@@ -112,9 +112,9 @@ function handleTriggers(trigger, ID = -1) {
   }
   if (trigger == "Crash"){
     console.log("Train Crashed");
-    clearTile(34, 18, 2);
-    clearTile(35, 18, 2);
-    clearTile(36, 18, 2);
+    clearTile(10, 80, 2);
+    clearTile(11, 80, 2);
+    clearTile(12, 80, 2);
   }
   if (trigger == "Softlock") {
     if (triggerList.Softlock.softlockMessage == false) {
