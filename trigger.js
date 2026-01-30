@@ -113,7 +113,7 @@ function handleTriggers(trigger, ID = -1) {
   if (trigger == "Crash"){
     console.log("Train Crashed");
     clearTile(10, 80, 2);
-    clearTile(10, 80, 2);
+    clearTile(10, 80, 1);
     clearTile(11, 80, 2);
     clearTile(12, 80, 2);
   }
