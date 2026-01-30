@@ -130,13 +130,22 @@ function updateSewerPuzzle() {
     }
   }
 
-  // Draw prompt if near a plate
-  if (nearPlate) {
-    if (!sewerPrompt) sewerPrompt = createPrompt();
-    sewerPrompt.update(true);
-    sewerPrompt.draw("Press E to toggle cell");
-  } else if (sewerPrompt && inSewer) {
+  // Draw puzzle instruction prompt
+  if (inSewer && currentSewerLink) {
+    const firstKey = getSewerLinkKey(currentSewerLink.first.row, currentSewerLink.first.col);
+    const platesInThisRoom = puzzlePressurePlates.get(firstKey);
+    // Only show if this is the first (puzzle) sewer and it's not solved yet
+    if (platesInThisRoom && (!solved || !solved[0])) {
+      if (!sewerPrompt) sewerPrompt = createPrompt();
+      sewerPrompt.update(true);
+      sewerPrompt.draw("Press E to toggle cell", [255, 150, 0], 100, true);
+    } else if (sewerPrompt) {
+      sewerPrompt.update(false);
+      sewerPrompt.draw("", [255, 150, 0], 100, true);
+    }
+  } else if (sewerPrompt) {
     sewerPrompt.update(false);
+    sewerPrompt.draw("", [255, 150, 0], 100, true);
   }
 
   // Update visual state
