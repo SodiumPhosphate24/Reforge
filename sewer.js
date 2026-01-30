@@ -24,8 +24,8 @@ function generateSewerRoom(isPuzzleRoom = false, linkKey = null) {
 
   let plates = [];
   if (isPuzzleRoom) {
-    // 5x5 grid of pressure plates centered vertically, on the left side
-    const startX = 2; // Column index
+    // 5x5 grid of pressure plates centered vertically, moved 2 tiles to the right
+    const startX = 4; // Moved from 2 to 4
     const startY = midRow - 2; // Row index
     for (let r = 0; r < 5; r++) {
       for (let c = 0; c < 5; c++) {
@@ -114,14 +114,29 @@ function updateSewerPuzzle() {
     }
   }
 
-  // Handle toggle logic on entry (Lights Out style)
+  // Handle toggle logic on Press E
+  let nearPlate = false;
   for (let j = 0; j < plates.length; j++) {
     const pp = plates[j];
-    if (currentOccupied[j] && !pp.lastOccupied) {
-      // Toggle this plate and neighbors
-      togglePlateAndNeighbors(plates, pp.gridX, pp.gridY);
+    const px = pX + 600 + (pWidth || 35) / 2;
+    const py = pY + 375 + (pHeight || 21) / 2;
+    
+    if (dist(px, py, pp.x, pp.y) < 25) {
+      nearPlate = true;
+      if (keyPressedOnce(69)) { // Press E
+        togglePlateAndNeighbors(plates, pp.gridX, pp.gridY);
+      }
+      break;
     }
-    pp.lastOccupied = currentOccupied[j];
+  }
+
+  // Draw prompt if near a plate
+  if (nearPlate) {
+    if (!sewerPrompt) sewerPrompt = createPrompt();
+    sewerPrompt.update(true);
+    sewerPrompt.draw("Press E to toggle cell");
+  } else if (sewerPrompt && inSewer) {
+    sewerPrompt.update(false);
   }
 
   // Update visual state
