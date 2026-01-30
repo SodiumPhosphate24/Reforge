@@ -24,11 +24,21 @@ function generateSewerRoom(isPuzzleRoom = false, linkKey = null) {
 
   let plates = [];
   if (isPuzzleRoom) {
-    plates = [
-      { x: 3 * 50 + 25, y: (midRow - 2) * 50 + 25, active: false },
-      { x: 3 * 50 + 25, y: midRow * 50 + 25, active: false },
-      { x: 3 * 50 + 25, y: (midRow + 2) * 50 + 25, active: false }
-    ];
+    // 5x5 grid of pressure plates centered vertically, on the left side
+    const startX = 2; // Column index
+    const startY = midRow - 2; // Row index
+    for (let r = 0; r < 5; r++) {
+      for (let c = 0; c < 5; c++) {
+        plates.push({ 
+          x: (startX + c) * 50 + 25, 
+          y: (startY + r) * 50 + 25, 
+          active: false,
+          gridX: c,
+          gridY: r,
+          lastOccupied: false
+        });
+      }
+    }
     if (linkKey) puzzlePressurePlates.set(linkKey, plates);
   }
 
@@ -82,10 +92,12 @@ function updateSewerPuzzle() {
   const room = sewerRooms.get(linkKey);
   if (!plates || !room) return;
 
-  // Reset pressure plate states
-  for (let pp of plates) pp.active = false;
-  const platesOccupied = plates.map(() => false);
   const midCol = Math.floor(SEWER_ROOM_WIDTH / 2);
+  const solved = puzzleSolved.get(linkKey);
+  if (solved && solved[0]) return; // Already solved
+
+  // Track current occupancy
+  const currentOccupied = plates.map(() => false);
 
   if (typeof players !== 'undefined') {
     players[activePlayer].x = pX;
@@ -95,26 +107,50 @@ function updateSewerPuzzle() {
       const px = p.x + 600 + (p.width || 35) / 2;
       const py = p.y + 375 + (p.height || 21) / 2;
       for (let j = 0; j < plates.length; j++) {
-        if (dist(px, py, plates[j].x, plates[j].y) < 40) {
-          plates[j].active = true;
-          platesOccupied[j] = true;
+        if (dist(px, py, plates[j].x, plates[j].y) < 25) { // Smaller radius for 5x5 grid
+          currentOccupied[j] = true;
         }
       }
     }
   }
 
+  // Handle toggle logic on entry (Lights Out style)
   for (let j = 0; j < plates.length; j++) {
     const pp = plates[j];
+    if (currentOccupied[j] && !pp.lastOccupied) {
+      // Toggle this plate and neighbors
+      togglePlateAndNeighbors(plates, pp.gridX, pp.gridY);
+    }
+    pp.lastOccupied = currentOccupied[j];
+  }
+
+  // Update visual state
+  for (let pp of plates) {
     const c = Math.floor(pp.x / 50), r = Math.floor(pp.y / 50);
     room[r][c].layers[0].colorIndex = pp.active ? 2 : 1;
   }
 
-  if (platesOccupied.every(v => v)) {
+  // Check if all are active
+  if (plates.every(p => p.active)) {
     for (let r = 1; r < SEWER_ROOM_HEIGHT - 1; r++) {
       room[r][midCol].layers[0].type = SEWER_CENTER_TILE;
     }
     puzzleSolved.set(linkKey, [true, true]);
+    messages.push(new Message("Puzzle Solved!", 600, 375));
   }
+}
+
+function togglePlateAndNeighbors(plates, gx, gy) {
+  const toggle = (x, y) => {
+    const p = plates.find(plt => plt.gridX === x && plt.gridY === y);
+    if (p) p.active = !p.active;
+  };
+
+  toggle(gx, gy);     // Center
+  toggle(gx + 1, gy); // Right
+  toggle(gx - 1, gy); // Left
+  toggle(gx, gy + 1); // Down
+  toggle(gx, gy - 1); // Up
 }
 
 function getSewerLinkKey(row, col) {
