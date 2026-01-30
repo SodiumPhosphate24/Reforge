@@ -417,8 +417,9 @@ function checkSewerExits() {
 function drawSewerPrompt() {
   if (inSewer) {
     if (sewerPrompt) {
-      sewerPrompt.update(false);
-      sewerPrompt.draw("");
+      // Don't force update(false) here if the puzzle logic is using the prompt
+      // The updateSewerPuzzle function handles its own prompt logic
+      // But we need to make sure we don't clear it if it's active
     }
   } else {
     const nearbySewer = findNearbySewerCap(pX, pY);
@@ -428,7 +429,7 @@ function drawSewerPrompt() {
       if (keyPressedOnce(69)) {
         enterSewer(nearbySewer.row, nearbySewer.col);
       }
-    } else if (sewerPrompt) {
+    } else if (sewerPrompt && sewerPrompt.isActive) {
       sewerPrompt.update(false);
       sewerPrompt.draw("");
     }
