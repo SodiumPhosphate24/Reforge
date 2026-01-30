@@ -3,6 +3,7 @@ var sewerFirstInPair = new Map(); // Tracks which sewer is "first" (left exit) i
 var pendingSewerLink = null;
 var puzzleSolved = new Map(); // Map of linkKey -> [leftOpen, rightOpen]
 var puzzlePressurePlates = new Map(); // Map of linkKey -> [{x, y, active}]
+var puzzleInteractionCount = new Map(); // Map of linkKey -> interactionCount
 var inSewer = false;
 var sewerRooms = new Map(); // Map of linkKey -> roomData
 var sewerEntryPoint = null;
