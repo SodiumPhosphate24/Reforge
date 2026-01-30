@@ -696,7 +696,7 @@ function setup() {
 
   // Load sewer rooms if files exist
   setTimeout(() => {
-    if (typeof sewer1String !== 'undefined' && sewer1String.length > 0) {
+    if (typeof sewer1String !== 'undefined' && sewer1String.length > 0 && sewer1String[0].trim() !== '') {
       // Find the first sewer link once links are loaded
       for (let [key, val] of sewerLinks) {
         if (sewerFirstInPair.get(key)) {
@@ -705,7 +705,7 @@ function setup() {
         }
       }
     }
-    if (typeof sewer2String !== 'undefined' && sewer2String.length > 0) {
+    if (typeof sewer2String !== 'undefined' && sewer2String.length > 0 && sewer2String[0].trim() !== '') {
       // Find the second sewer link
       let count = 0;
       for (let [key, val] of sewerLinks) {
