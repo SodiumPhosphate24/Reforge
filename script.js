@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, ARGOImage, Book, Greg, LockNpc, Hephaestus, Atlas, OGBuschy, Daedalus;
+let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, ARGOImage, KhronosImage, Book, Greg, LockNpc, Hephaestus, Atlas, OGBuschy, Daedalus;
 
 // Boss system variables
 var activeBoss = null; // Currently active boss enemy
@@ -374,7 +374,8 @@ function preload() {
   worldString = loadStrings("world.txt");
   Buschy = loadImage("Characters/Buschy.png");
   SPUDImage = loadImage("Characters/SPUD.png");
-  ARGOImage = loadImage("Characters/Argo.png")
+  ARGOImage = loadImage("Characters/Argo.png");
+  KhronosImage = loadImage("Characters/Khronos.png");
   Prometheus = loadImage("Characters/Prometheus.png");
   Hephaestus = loadImage("Characters/Hephaestus.png");
   Atlas = loadImage("Characters/Atlas.png");

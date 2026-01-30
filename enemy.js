@@ -56,9 +56,9 @@ class Enemy {
       this.maxHealth = 150;
       this.speed = 1.5;
       this.acceleration = 0.08;
-      this.image = OGBuschy;
-      this.width = 80;
-      this.height = 100;
+      this.image = KhronosImage;
+      this.width = 124;
+      this.height = 104;
       this.lootPool = [["gun", "rare pistol", 1], ["material", "legendary wheel", 2], ["consumable", "legendary cartridge", 5]];
       this.aggroRange = 600;
       this.deaggroRange = 1200;
