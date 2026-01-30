@@ -229,14 +229,6 @@ function keyPressed() {
       }
     }
   }
-  if (keyCode == 77) {
-    // Check if there's already a dialogue message active
-    const hasActiveDialogue = messages.some(msg => msg.type === "dialogue");
-    if (!hasActiveDialogue) {
-      messages.push(new Message("dialogue", ["Buschy: granny smith apple", "Wing: Red delicious apple", "Mario: Honeycrisp apple", "Luigi: Carrot", "Luigi: Haha u thought I was gon say apple"]))
-    }
-    messages.push(new Message("quest", "Big nerd time"))
-  }
   if (keyCode == 86) {
     droppedItems.push(new DroppedItem(new Item("consumable", "legendary cartridge", 5), pX + 600, pY + 340));
   }
