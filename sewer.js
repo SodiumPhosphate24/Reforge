@@ -286,8 +286,42 @@ function drawSewerPrompt() {
   }
 }
 
+// Serialization for sewer rooms
+function sewerRoomToString(linkKey) {
+  const room = sewerRooms.get(linkKey);
+  if (!room) return "";
+  // We can reuse the worldToString logic if we make it generic, 
+  // but for now let's just use the current room
+  return worldToString(room);
+}
+
+function stringToSewerRoom(str, linkKey, isPuzzle = false) {
+  if (!str || str.trim() === "") return null;
+  // Save current world to restore it after parsing
+  const oldWorld = gameWorld;
+  // Use stringToWorld to parse the room
+  // This is a bit hacky because stringToWorld sets global gameWorld
+  stringToWorld(str);
+  const parsedRoom = gameWorld;
+  gameWorld = oldWorld;
+  sewerRooms.set(linkKey, parsedRoom);
+  if (isPuzzle) puzzleSolved.set(linkKey, [false, false]);
+  return parsedRoom;
+}
+
 function handleSewerEditorMode() {
   if (!editorMode) return;
+
+  // Copy sewer room string to clipboard if in sewer
+  if (inSewer && keyIsDown(CONTROL) && keyPressedOnce(67)) { // Ctrl+C
+    if (currentSewerLink) {
+      const entryKey = getSewerLinkKey(currentSewerLink.first.row, currentSewerLink.first.col);
+      const roomStr = sewerRoomToString(entryKey);
+      copyToClipboard(roomStr);
+      console.log("Sewer room copied to clipboard!");
+    }
+  }
+
   if (keyPressedOnce(76)) {
     const nearbySewer = findNearbySewerCap(pX, pY, 80, false);
     if (nearbySewer && !nearbySewer.linked) {

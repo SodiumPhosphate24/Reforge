@@ -372,6 +372,8 @@ function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message
 function preload() {
   console.log("test version invisibility patch");
   worldString = loadStrings("world.txt");
+  sewer1String = loadStrings("sewer.txt");
+  sewer2String = loadStrings("sewer2.txt");
   Buschy = loadImage("Characters/Buschy.png");
   SPUDImage = loadImage("Characters/SPUD.png");
   ARGOImage = loadImage("Characters/Argo.png");
@@ -691,6 +693,32 @@ function setup() {
 
   // Now parse the world with itemConstructors available
   gameWorld = stringToWorld(worldString[0]);
+
+  // Load sewer rooms if files exist
+  setTimeout(() => {
+    if (typeof sewer1String !== 'undefined' && sewer1String.length > 0) {
+      // Find the first sewer link once links are loaded
+      for (let [key, val] of sewerLinks) {
+        if (sewerFirstInPair.get(key)) {
+          stringToSewerRoom(sewer1String[0], key, true);
+          break;
+        }
+      }
+    }
+    if (typeof sewer2String !== 'undefined' && sewer2String.length > 0) {
+      // Find the second sewer link
+      let count = 0;
+      for (let [key, val] of sewerLinks) {
+        if (sewerFirstInPair.get(key)) {
+          if (count === 1) {
+            stringToSewerRoom(sewer2String[0], key, false);
+            break;
+          }
+          count++;
+        }
+      }
+    }
+  }, 500); // Small delay to ensure sewerLinks are parsed from worldString
   console.log(worldString);
   initializeHardcodes();
   inventoryList = players[activePlayer].inventory;

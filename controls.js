@@ -216,11 +216,13 @@ function keyPressed() {
 
   if (keyCode == 82) {
     // Open player selection menu for item transfer (if holding item)
-    if (inventoryList[inventorySlot - 1] != null) {
-      if (!playerTransferMenuOpen) {
-        playerTransferMenuOpen = true;
-        selectedTransferPlayerIndex = 0;
-        frozen = true;
+    if(players.length > 1){
+      if (inventoryList[inventorySlot - 1] != null) {
+        if (!playerTransferMenuOpen) {
+          playerTransferMenuOpen = true;
+          selectedTransferPlayerIndex = 0;
+          frozen = true;
+        }
       }
     }
   }
@@ -347,6 +349,7 @@ function keyReleased() {
 
   // R key release - complete transfer
   if (keyCode == 82) {
+    if (players.length > 1){
     if (playerTransferMenuOpen) {
       const itemToTransfer = inventoryList[inventorySlot - 1];
       const targetPlayer = players[selectedTransferPlayerIndex];
