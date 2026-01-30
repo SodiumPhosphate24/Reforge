@@ -31,7 +31,7 @@ var tileColorReference = [
   [180, 130, 90],   // 27 - Pipe - copper/bronze
   [120, 140, 120]   // 28 - CopperTileGreen - greenish
 ];
-
+var tileNames = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench", "White Brick", "White Tile", "Steel Crate", "Tree", "Boiler", "Water", "Sewer", "Tree2"];
 
 // ============== EDITOR (3-LAYER SUPPORT) ==============
 var editorMode = false;
@@ -489,7 +489,7 @@ function drawTilePreview() {
   rect(snapX, snapY, EDIT_TILE_SIZE, EDIT_TILE_SIZE);
 
   // Display tile name above the grid
-  const tileName = tileImgs[selectedTileType] || "Unknown";
+  const tileName = tileNames[selectedTileType] || "Unknown";
   noStroke();
   fill(0, 0, 0, 180);
   textSize(10);
