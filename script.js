@@ -326,18 +326,18 @@ function createPrompt() {
       }
     },
 
-    draw: function(promptText, color = [255, 150, 0], yPos = 47, isFixed = false) {
+    draw: function(promptText, color = [255, 150, 0], yPos = 80, isFixed = false) {
       if (this.alpha < 5) return;
 
       push();
       if (isFixed) {
-        translate(600, yPos);
+        translate(width / 2, yPos);
       } else {
         translate(pX + 600 + pWidth / 2, pY + 375 - 40);
       }
       scale(this.scale * this.growScale);
       if (!isFixed) translate(-(pX + 600 + pWidth / 2), -(pY + 375 - 40));
-      else translate(-600, -yPos);
+      else translate(-(width / 2), -yPos);
 
       fill(color[0], color[1], color[2], this.alpha * 0.78);
       textSize(20);
@@ -348,7 +348,7 @@ function createPrompt() {
       const promptWidth = textWidth(promptText);
       fill(0, 0, 0, this.alpha * 0.6);
       if (isFixed) {
-        rect(600 - promptWidth / 2 - 10, yPos - 17, promptWidth + 20, 35, 5);
+        rect(width / 2 - promptWidth / 2 - 10, yPos - 17, promptWidth + 20, 35, 5);
       } else {
         rect(pX + 600 + pWidth / 2 - promptWidth / 2 - 10, pY + 375 - 40 - 17, promptWidth + 20, 35, 5);
       }
@@ -356,7 +356,7 @@ function createPrompt() {
       // Text
       fill(color[0], color[1], color[2], this.alpha);
       if (isFixed) {
-        text(promptText, 600, yPos);
+        text(promptText, width / 2, yPos);
       } else {
         text(promptText, pX + 600 + pWidth / 2, pY + 375 - 40);
       }

@@ -155,10 +155,10 @@ function updateLightsOutPuzzle(linkKey, plates, room, solved) {
     if (!sewerPrompt) sewerPrompt = createPrompt();
     if (!sewerPrompt.isActive) sewerPrompt.update(true);
     else sewerPrompt.update(true);
-    sewerPrompt.draw("Press E to toggle cell", [255, 150, 0], 100, true);
+    sewerPrompt.draw("Press E to toggle cell", [255, 150, 0], 80, true);
   } else if (sewerPrompt) {
     sewerPrompt.update(false);
-    sewerPrompt.draw("", [255, 150, 0], 100, true);
+    sewerPrompt.draw("", [255, 150, 0], 80, true);
   }
 
   for (let pp of plates) {
@@ -199,7 +199,7 @@ function updateMazePuzzle(linkKey, path, room, solved) {
     if (!sewerPrompt) sewerPrompt = createPrompt();
     if (!sewerPrompt.isActive) sewerPrompt.update(true);
     else sewerPrompt.update(true);
-    sewerPrompt.draw("Press E to scan path", [0, 255, 255], 100, true);
+    sewerPrompt.draw("Press E to scan path", [0, 255, 255], 80, true);
     
     if (keyPressedOnce(69)) {
       mazeFlashTimers.set(linkKey, 120); // 2 seconds at 60fps
@@ -208,7 +208,7 @@ function updateMazePuzzle(linkKey, path, room, solved) {
     }
   } else if (sewerPrompt && (puzzleInteractionCount.get(linkKey) > 0 || dist(px, py, termX, termY) > 80)) {
     sewerPrompt.update(false);
-    sewerPrompt.draw("", [0, 255, 255], 100, true);
+    sewerPrompt.draw("", [0, 255, 255], 80, true);
   }
 
   // Handle flash visibility
