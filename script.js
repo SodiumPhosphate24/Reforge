@@ -460,6 +460,7 @@ function preload() {
   tileImgs[43] = null;
   tileImgs[44] = loadImage("Tiles/sewer.png");
   tileImgs[45] = null;
+  tileImgs[46] = loadImage("Tiles/Cobblestone.png");
 
   // Register multi-tile objects
   registerMultiTile(6, "Tiles/Crafting.png", 2, 2); // Workbench
