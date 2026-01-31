@@ -26,7 +26,7 @@ var triggerList = {
     softlockMessage: false
   },
   Labyrinth: {
-    puzzles : [false, false, false, false],
+    puzzles: [false, false, false, false],
     isFightingBoss: false
   }
 };
@@ -68,7 +68,7 @@ function handleTriggers(trigger, ID = -1) {
       messages.push(new Message("dialogue", ["Hephaestus: Take this. This is a steam gun. It takes some of your steam reserves to fire, but it's powerful", "Hephaestus: I hope it will help you survive out there"], "Hephaestus", true));
       return;
     }
-    if (triggerList.Hephaestus.givenGun == false){
+    if (triggerList.Hephaestus.givenGun == false) {
       triggerList.Hephaestus.givenGun = true;
       messages.push(new Message("dialogue", ["Prometheus IV: I can sense Daedalus' presence. I'll reroute you to his location"], "Prometheus", true));
       currentWaypointIndex = 6;
@@ -86,11 +86,11 @@ function handleTriggers(trigger, ID = -1) {
   if (trigger == "Objective") {
     if (triggerList.Objective.fixLeaks == false) {
       triggerList.Objective.fixLeaks = true;
-      if(triggerList.LockOpened.unlockedBoilerRoom){
+      if (triggerList.LockOpened.unlockedBoilerRoom) {
         messages.push(new Message("dialogue", ["Prometheus IV: Head to the boiler room to fix the boiler", "Prometheus IV: You will need to find a special cartridge to power it again"], "Prometheus", true));
       }
-      else{
-        messages.push(new Message("dialogue", ["Prometheus IV: Now you need to fix the boiler. You'll need to find a special cartridge to power it again", "Prometheus IV: The door is locked, try looking around the code"], "Prometheus", true));
+      else {
+        messages.push(new Message("dialogue", ["Prometheus IV: Now you need to fix the boiler. You'll need to find a special cartridge to power it again. I'd look around the factory, where the wrench was", "Prometheus IV: The door is locked, try looking around for the code..."], "Prometheus", true));
       }
       currentWaypointIndex = 4;
       return;
@@ -110,11 +110,8 @@ function handleTriggers(trigger, ID = -1) {
       return;
     }
   }
-  if (trigger == "Crash"){
+  if (trigger == "Crash") {
     console.log("Train Crashed");
-    trainTotaled = true;
-    crashFlashAlpha = 255;
-    pXVel *= 0.3; // Reduce velocity significantly but not a full stop
     clearTile(10, 80, 2);
     clearTile(10, 80, 1);
     clearTile(11, 80, 2);
@@ -139,7 +136,7 @@ function handleTriggers(trigger, ID = -1) {
       console.log("Group discussion completed. The trio will relocate when the player leaves.");
       return;
     }
-    if (groupDiscussionComplete){
+    if (groupDiscussionComplete) {
       craftingRecipes[3].unlocked = true;
       currentwaypointIndex = 8;
       const hephaestus = NonPlayerCharacters.find(npc => npc.id === "Hephaestus");
@@ -157,9 +154,9 @@ function handleTriggers(trigger, ID = -1) {
   }
 
   if (trigger == "Labyrinth") {
-    if(JSON.stringify(triggerList.Labyrinth.puzzles) != JSON.stringify([true, true, true, true])){
+    if (JSON.stringify(triggerList.Labyrinth.puzzles) != JSON.stringify([true, true, true, true])) {
       triggerList.Labyrinth.puzzles[ID] = true;
-      if(JSON.stringify(triggerList.Labyrinth.puzzles) == JSON.stringify([true, true, true, true])){
+      if (JSON.stringify(triggerList.Labyrinth.puzzles) == JSON.stringify([true, true, true, true])) {
         enemies.push(new Enemy("boss", 1900, 2700));
         console.log("Spawned Boss");
       }
@@ -167,10 +164,10 @@ function handleTriggers(trigger, ID = -1) {
   }
 }
 
-function softlockPrevention(){
-  if(!softlockPreventionOn){
-    if(!searchInventory("common cartridge") && !searchInventory("rare cartridge") && !searchInventory("legendary cartridge") && healthPoints < 5 && !triggerList.Softlock.softlockMessage){
-      if (triggerList.Objective.fixBoiler){
+function softlockPrevention() {
+  if (!softlockPreventionOn) {
+    if (!searchInventory("common cartridge") && !searchInventory("rare cartridge") && !searchInventory("legendary cartridge") && healthPoints < 5 && !triggerList.Softlock.softlockMessage) {
+      if (triggerList.Objective.fixBoiler) {
         softlockPreventionOn = true;
         messages.push(new Message("dialogue", ["Prometheus IV: You're running low on steam. You need steam to function", "Prometheus IV: You can find steam cartridges in crates, or by defeating enemies", "Prometheus IV: Now that you've fixed the boiler, it will produce a cartridge every so often", "Prometheus IV: Why don't you go grab one and pass it to yourself"], "Softlock", true));
       }
@@ -178,7 +175,7 @@ function softlockPrevention(){
         softlockPreventionOn = true;
         messages.push(new Message("dialogue", ["Prometheus IV: You're running low on steam. You need steam to function", "Prometheus IV: I'll send you a cartridge to save you"], "Prometheus", true));
         for (let j = 0; j < 8; j++) {
-          if(inventoryList[j] == null){
+          if (inventoryList[j] == null) {
             inventoryList[j] = new Item("consumable", "common cartridge", 1);
             itemLabelAlpha = 1.5;
             return;
