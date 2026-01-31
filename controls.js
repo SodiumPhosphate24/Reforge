@@ -25,6 +25,9 @@ function controls() {
 
   if (players[activePlayer].frozen == false && !playerSelectionMenuOpen) {
     if (trainTotaled && players[activePlayer].name === "ARGO") {
+      // Allow slight residual movement while totaled
+      if (keyIsDown(65)) pXVel -= players[activePlayer].speed * 0.1;
+      if (keyIsDown(68)) pXVel += players[activePlayer].speed * 0.1;
       pXVel *= 0.8;
       pYVel *= 0.8;
     } else {

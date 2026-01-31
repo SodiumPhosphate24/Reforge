@@ -112,19 +112,13 @@ function handleTriggers(trigger, ID = -1) {
   }
   if (trigger == "Crash"){
     console.log("Train Crashed");
+    trainTotaled = true;
+    crashFlashAlpha = 255;
+    pXVel *= 0.3; // Reduce velocity significantly but not a full stop
     clearTile(10, 80, 2);
     clearTile(10, 80, 1);
     clearTile(11, 80, 2);
     clearTile(12, 80, 2);
-    
-    // Impact effects
-    pXVel *= 0.1;
-    pYVel *= 0.1;
-    trainTotaled = true;
-    crashFlashAlpha = 255;
-    
-    // Steam burst at impact
-    particle(pX + 600 + pWidth/2, pY + 375 + pHeight/2, [220, 220, 220], 60, 4, 3);
   }
   if (trigger == "Softlock") {
     if (triggerList.Softlock.softlockMessage == false) {

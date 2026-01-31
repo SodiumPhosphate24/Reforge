@@ -977,6 +977,17 @@ function drawGameplay() {
   drawWorldLayer(gameWorld, 4);
   updateParticlesForLayer(4);
 
+  // Emit steam particles if train is totaled
+  if (trainTotaled && players.length > 0) {
+    const argo = players.find(p => p.name === "ARGO");
+    if (argo) {
+      // Emit steam from the top of the train
+      if (frameCount % 5 === 0) {
+        particle(argo.x + 600 + 35, argo.y + 375, [220, 220, 220], 60, 2, 4);
+      }
+    }
+  }
+
   // Draw active player AFTER all world layers so they appear on top
   fill(255);
   drawPlayers(true);
