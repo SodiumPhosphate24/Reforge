@@ -96,7 +96,8 @@ function generateSewerRoom(roomType = "empty", linkKey = null) {
         tileType = SEWER_CENTER_TILE;
         colorIndex = 1;
       } else if (isMazeArea) {
-        tileType = 8; // Darker concrete for maze area
+        tileType = SEWER_CENTER_TILE;
+        colorIndex = 1; // Darker inactive plate color
       } else if (isBorder) {
         tileType = SEWER_BORDER_TILE;
       }
@@ -110,10 +111,7 @@ function generateSewerRoom(roomType = "empty", linkKey = null) {
     }
     room.push(row);
   }
-  // Add terminal at (2, midRow)
-  if (roomType === "puzzle2") {
-    room[midRow][2].layers[1] = { type: 6, rotation: 0 }; 
-  }
+  // Add terminal logic check (no tile)
   return room;
 }
 
@@ -192,10 +190,13 @@ function updateMazePuzzle(linkKey, path, room, solved) {
     return;
   }
 
-  // Terminal interaction
+  // Terminal interaction (no tile, just left side area)
   const termX = 2 * 50 + 25;
   const termY = midRow * 50 + 25;
-  if (dist(px, py, termX, termY) < 50) {
+  // Check if player is on the left side (cols 0-2) near the vertical middle
+  const nearLeftTerminalArea = px < 3 * 50 && Math.abs(py - termY) < 100;
+  
+  if (nearLeftTerminalArea) {
     if (!sewerPrompt) sewerPrompt = createPrompt();
     if (!sewerPrompt.isActive) sewerPrompt.update(true);
     else sewerPrompt.update(true);
@@ -206,7 +207,7 @@ function updateMazePuzzle(linkKey, path, room, solved) {
       const count = puzzleInteractionCount.get(linkKey) || 0;
       puzzleInteractionCount.set(linkKey, count + 1);
     }
-  } else if (sewerPrompt && (puzzleInteractionCount.get(linkKey) > 0 || dist(px, py, termX, termY) > 80)) {
+  } else if (sewerPrompt && (puzzleInteractionCount.get(linkKey) > 0 || !nearLeftTerminalArea)) {
     sewerPrompt.update(false);
     sewerPrompt.draw("", [0, 255, 255], 80, true);
   }
