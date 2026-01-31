@@ -2,6 +2,36 @@
 
 This is a 2D top-down action game built with p5.js called "Reforge". Players control engineer robots that can craft new robots, weapons, and items while fighting zombies in a tile-based world. The game features a crafting system, inventory management, multiple playable characters, enemy AI with pathfinding, a particle system, NPCs with dialogue, and a built-in level editor.
 
+# Gameplay Guide: Chronological Walkthrough
+
+## Phase 1: The Awakening (Cryochamber & Tutorial)
+1. **Exit the Cryochamber**: You start in a cryochamber. Move outside to trigger the first dialogue with **Prometheus IV**.
+2. **Talk to Prometheus**: He will guide you to the **Workbench** located just north of the starting area.
+3. **Forge a SPUD**: Use the materials found in nearby crates to craft your first robot, the **SPUD** (Steam Powered Utility Droid).
+4. **Learn Controls**: Press and hold **Q** to open the robot selection menu. Use the arrow keys to select the SPUD and release Q to switch.
+
+## Phase 2: Repairs & Security (The Factory)
+5. **Find the Wrench**: Switch to your SPUD (it's faster and smaller) and head to the **Factory** (follow the waypoint markers). Locate the **Old Wrench** in a crate.
+6. **Fix the Leaks**: Use the wrench to repair the 5 steam leaks around the central hub. Stand near a leak and press **E**.
+7. **Unlock the Boiler Room**: You'll need a 4-digit code to enter the boiler room. The code is **1855** (found by exploring notes). Interact with the keypad/Lock NPC near the door.
+8. **Repair the Boiler**: Find a **Boiler Cartridge** (often found in crates or dropped by enemies) and use it on the Boiler to restore power to the bunker.
+
+## Phase 3: The Journey South (ARGO & The Train)
+9. **Craft ARGO**: Once the boiler is fixed, you'll unlock the recipe for **ARGO**, the heavy-duty train robot. Forge it at the workbench.
+10. **Drive the Train**: Switch to ARGO. ARGO is restricted to the **Rails**. Head southeast along the rail line.
+11. **The Crash**: Continue southeast until you reach the **Fence Barricade**. Drive ARGO at high speed into the fence to crash through it. This will "total" ARGO and open the path to the military sector.
+
+## Phase 4: The Military Sector (AEGIS)
+12. **Explore AEGIS**: Enter the AEGIS military bunker. You'll need to navigate through more dangerous enemies (Gregs and Cyclops).
+13. **The Labyrinth**: Solve the four pressure plate puzzles in the Labyrinth area to unlock the path to the final encounter.
+
+## Phase 5: The Final Confrontation
+14. **Sewer Puzzles**: Navigate the sewer systems. 
+    - **Sewer 1**: Solve the "Lights Out" 3x3 pressure plate puzzle.
+    - **Sewer 2**: Navigate the "Shadow Path" invisible maze. Use the terminal on the left to reveal the path temporarily.
+15. **Boss Battle**: Face the **Final Boss** (Khronos). Use high-damage weapons like the Western Pistol or Steam Gun.
+16. **How to Win**: Defeat the boss to reclaim the surface and complete the "Reforge" initiative.
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.

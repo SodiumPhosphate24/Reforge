@@ -451,13 +451,13 @@ function drawIntro() {
       strokeWeight(12 - i * 3);
       stroke(112, 66, 20, currentScene.textAlpha * 0.3);
       fill(255, 200, 80, currentScene.textAlpha);
-      text("EXIT THE CRYOCHAMBER", width / 2, height / 2);
+      text("STABILIZE THE BUNKER", width / 2, height / 2);
     }
 
     // Inner sharp text
     noStroke();
     fill(255, 220, 100, currentScene.textAlpha);
-    text("EXIT THE CRYOCHAMBER", width / 2, height / 2);
+    text("STABILIZE THE BUNKER", width / 2, height / 2);
 
     pop();
     return;
