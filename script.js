@@ -30,6 +30,8 @@ var prePX = 0, prePY = 0;
 var camX = -12500; var camY = -12500;
 var pSpeed = 1.3;
 var pXVel = 0; var pYVel = 0;
+var trainTotaled = false;
+var crashFlashAlpha = 0;
 var pWidth = 35; var pHeight = 21.4;
 var gameWorld = [];
 var worldString = "";

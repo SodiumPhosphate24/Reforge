@@ -24,18 +24,23 @@ function controls() {
   }
 
   if (players[activePlayer].frozen == false && !playerSelectionMenuOpen) {
-    if (keyIsDown(65)) {
-      pXVel -= players[activePlayer].speed;
-    }
-    if (keyIsDown(68)) {
-      pXVel += players[activePlayer].speed;
-    }
-    if (players[activePlayer].name != "ARGO") {
-      if (keyIsDown(87)) {
-        pYVel -= players[activePlayer].speed;
+    if (trainTotaled && players[activePlayer].name === "ARGO") {
+      pXVel *= 0.8;
+      pYVel *= 0.8;
+    } else {
+      if (keyIsDown(65)) {
+        pXVel -= players[activePlayer].speed;
       }
-      if (keyIsDown(83)) {
-        pYVel += players[activePlayer].speed;
+      if (keyIsDown(68)) {
+        pXVel += players[activePlayer].speed;
+      }
+      if (players[activePlayer].name != "ARGO") {
+        if (keyIsDown(87)) {
+          pYVel -= players[activePlayer].speed;
+        }
+        if (keyIsDown(83)) {
+          pYVel += players[activePlayer].speed;
+        }
       }
     }
   }

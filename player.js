@@ -114,6 +114,16 @@ function updatePlayerFlip() {
 }
 
 function drawPlayers(onlyActive = false) {
+  // Draw white flash effect
+  if (typeof crashFlashAlpha !== 'undefined' && crashFlashAlpha > 0) {
+    push();
+    fill(255, 255, 255, crashFlashAlpha);
+    noStroke();
+    rect(0, 0, width, height);
+    crashFlashAlpha = lerp(crashFlashAlpha, 0, 0.1);
+    pop();
+  }
+  
   updatePlayerFlip();
   if(players[activePlayer].name == "ARGO" && (distance(pX, pY, 3450, 125) < 10) && pXVel <= -3){
     handleTriggers("Crash");
@@ -195,6 +205,17 @@ function drawPlayers(onlyActive = false) {
     }
     imageMode(CENTER);
     image(PlayerImage, 0, 0, drawWidth, drawHeight);
+    
+    // Constant steam if totaled
+    if (trainTotaled && players[activePlayer].name === "ARGO") {
+      if (frameCount % 5 === 0) {
+        const steam = new Particle(random(-10, 10), -drawHeight/2 + random(-10, 10), [200, 200, 200], 60, 2, 3);
+        steam.vy = -random(1, 3);
+        steam.vx = random(-0.5, 0.5);
+        particles.push(steam);
+      }
+    }
+    
     imageMode(CORNER);
     pop();
 
