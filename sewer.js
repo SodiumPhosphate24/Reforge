@@ -20,6 +20,16 @@ const SEWER_FENCE_TILE = 34;
 
 var mazePaths = new Map(); // Map of linkKey -> Set of "r,c" safe tiles
 var mazeFlashTimers = new Map(); // Map of linkKey -> timer
+var mazeScanProgress = new Map(); // Map of linkKey -> scan column progress (for animation)
+var mazeTileAlpha = new Map(); // Map of linkKey -> Map of "r,c" -> alpha (for smooth fade)
+
+// Fixed constant path for the shadow maze (always the same)
+const FIXED_MAZE_PATH = new Set([
+  "7,3", "7,4", "6,4", "6,5", "5,5", "5,6", "5,7", "6,7", "7,7", "7,8",
+  "8,8", "8,9", "8,10", "7,10", "6,10", "6,11", "6,12", "7,12", "8,12",
+  "8,13", "8,14", "7,14", "6,14", "5,14", "5,15", "5,16", "6,16", "7,16",
+  "7,17", "7,18", "7,19", "7,20"
+]);
 
 function generateSewerRoom(roomType = "empty", linkKey = null) {
   const room = [];
@@ -45,27 +55,12 @@ function generateSewerRoom(roomType = "empty", linkKey = null) {
     }
     if (linkKey) puzzlePressurePlates.set(linkKey, plates);
   } else if (roomType === "puzzle2") {
-    // Generate a twisting path for the maze
-    const path = new Set();
-    let currR = midRow;
-    let currC = 1;
-    path.add(`${currR},${currC}`);
-    
-    // Simple random-ish walk to the right
-    while (currC < SEWER_ROOM_WIDTH - 2) {
-      const dir = Math.random();
-      if (dir < 0.6) {
-        currC++;
-      } else if (dir < 0.8 && currR > 1) {
-        currR--;
-      } else if (currR < SEWER_ROOM_HEIGHT - 2) {
-        currR++;
-      }
-      path.add(`${currR},${currC}`);
+    // Use the fixed constant path for the maze
+    if (linkKey) {
+      mazePaths.set(linkKey, FIXED_MAZE_PATH);
+      mazeScanProgress.set(linkKey, -1); // -1 means not scanning
+      mazeTileAlpha.set(linkKey, new Map());
     }
-    // Ensure exit connects
-    path.add(`${midRow},${SEWER_ROOM_WIDTH - 2}`);
-    if (linkKey) mazePaths.set(linkKey, path);
   }
 
   for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
@@ -179,12 +174,15 @@ function updateMazePuzzle(linkKey, path, room, solved) {
   const py = pY + 375 + (pHeight || 21) / 2;
   const pCol = Math.floor(px / 50);
   const pRow = Math.floor(py / 50);
+  
+  const mazeStartCol = 3;
+  const mazeEndCol = SEWER_ROOM_WIDTH - 4;
 
   if (solved && solved[0]) {
-    // Keep maze area normal if solved
+    // Keep maze area solved appearance
     for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
-      for (let c = 3; c <= SEWER_ROOM_WIDTH - 4; c++) {
-        if (room[r][c].layers[0].type === 8) room[r][c].layers[0].type = SEWER_CENTER_TILE;
+      for (let c = mazeStartCol; c <= mazeEndCol; c++) {
+        room[r][c].layers[0].colorIndex = 2; // All green when solved
       }
     }
     return;
@@ -193,7 +191,6 @@ function updateMazePuzzle(linkKey, path, room, solved) {
   // Terminal interaction (no tile, just left side area)
   const termX = 2 * 50 + 25;
   const termY = midRow * 50 + 25;
-  // Check if player is on the left side (cols 0-2) near the vertical middle
   const nearLeftTerminalArea = px < 3 * 50 && Math.abs(py - termY) < 100;
   
   if (nearLeftTerminalArea) {
@@ -203,7 +200,9 @@ function updateMazePuzzle(linkKey, path, room, solved) {
     sewerPrompt.draw("Press E to scan path", [0, 255, 255], 80, true);
     
     if (keyPressedOnce(69)) {
-      mazeFlashTimers.set(linkKey, 120); // 2 seconds at 60fps
+      // Start scanning animation from left to right
+      mazeScanProgress.set(linkKey, mazeStartCol);
+      mazeFlashTimers.set(linkKey, 180); // 3 seconds total display time
       const count = puzzleInteractionCount.get(linkKey) || 0;
       puzzleInteractionCount.set(linkKey, count + 1);
     }
@@ -212,32 +211,66 @@ function updateMazePuzzle(linkKey, path, room, solved) {
     sewerPrompt.draw("", [0, 255, 255], 80, true);
   }
 
-  // Handle flash visibility
+  // Handle scanning animation progress
+  let scanCol = mazeScanProgress.get(linkKey) || -1;
   let timer = mazeFlashTimers.get(linkKey) || 0;
+  
+  // Advance scan column every 4 frames for smooth sweep
+  if (scanCol >= mazeStartCol && scanCol <= mazeEndCol) {
+    if (frameCount % 4 === 0) {
+      mazeScanProgress.set(linkKey, scanCol + 1);
+    }
+  }
+  
+  // Timer countdown
   if (timer > 0) {
     mazeFlashTimers.set(linkKey, timer - 1);
+  } else {
+    // Reset scan when timer expires
+    mazeScanProgress.set(linkKey, -1);
   }
 
-  // Update maze tile visuals
+  // Get or create alpha map for smooth transitions
+  let alphaMap = mazeTileAlpha.get(linkKey);
+  if (!alphaMap) {
+    alphaMap = new Map();
+    mazeTileAlpha.set(linkKey, alphaMap);
+  }
+
+  // Update maze tile visuals with smooth alpha transitions
   for (let r = 0; r < SEWER_ROOM_HEIGHT; r++) {
-    for (let c = 3; c <= SEWER_ROOM_WIDTH - 4; c++) {
-      const isSafe = path.has(`${r},${c}`);
-      if (timer > 0 && isSafe) {
-        room[r][c].layers[0].colorIndex = 2; // Green/Active highlight
+    for (let c = mazeStartCol; c <= mazeEndCol; c++) {
+      const key = `${r},${c}`;
+      const isSafe = path.has(key);
+      let currentAlpha = alphaMap.get(key) || 0;
+      
+      // Determine target alpha based on scan progress and timer
+      let targetAlpha = 0;
+      if (timer > 0 && isSafe && c <= scanCol) {
+        targetAlpha = 1;
+      }
+      
+      // Smooth lerp transition
+      currentAlpha = currentAlpha + (targetAlpha - currentAlpha) * 0.15;
+      alphaMap.set(key, currentAlpha);
+      
+      // Set color index based on alpha (0 = dark, 2 = green/safe)
+      if (currentAlpha > 0.5) {
+        room[r][c].layers[0].colorIndex = 2; // Green highlight
       } else {
-        room[r][c].layers[0].colorIndex = 0;
+        room[r][c].layers[0].colorIndex = 1; // Dark (inactive plate color)
       }
     }
   }
 
   // Collision detection with unsafe tiles
-  if (pCol >= 3 && pCol <= SEWER_ROOM_WIDTH - 4) {
+  if (pCol >= mazeStartCol && pCol <= mazeEndCol) {
     if (!path.has(`${pRow},${pCol}`)) {
       // Teleport back to start of room
       pX = sewerExitA.x - 600 - pWidth / 2;
       pY = sewerExitA.y - 375 - pHeight / 2;
       messages.push(new Message("Security Breach! Resetting...", 600, 375));
-    } else if (pCol === SEWER_ROOM_WIDTH - 4) {
+    } else if (pCol === mazeEndCol) {
       // Reached the end
       puzzleSolved.set(linkKey, [true, true]);
       messages.push(new Message("Path Secure!", 600, 375));
