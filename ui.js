@@ -441,9 +441,9 @@ function drawPickupPrompt(item) {
   if (!item) return;
 
   push();
-  translate(600, 47);
+  translate(width / 2, 80);
   scale(pickupPromptScale * pickupPromptGrowScale);
-  translate(-600, -47);
+  translate(-(width / 2), -80);
 
   fill(255, 150, 0, pickupPromptAlpha * 0.78);
   textSize(20);
@@ -456,11 +456,11 @@ function drawPickupPrompt(item) {
   // Background for text
   const promptWidth = textWidth(promptText);
   fill(0, 0, 0, pickupPromptAlpha * 0.6);
-  rect(600 - promptWidth / 2 - 10, 30, promptWidth + 20, 35, 5);
+  rect(width / 2 - promptWidth / 2 - 10, 63, promptWidth + 20, 35, 5);
 
   // Text
   fill(255, 150, 0, pickupPromptAlpha);
-  text(promptText, 600, 47);
+  text(promptText, width / 2, 80);
 
   pop();
 }

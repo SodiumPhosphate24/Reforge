@@ -432,7 +432,7 @@ function drawSewerPrompt() {
       }
     } else if (sewerPrompt && sewerPrompt.isActive) {
       sewerPrompt.update(false);
-      sewerPrompt.draw("");
+      sewerPrompt.draw("", [255, 150, 0], 80, true);
     }
   }
 }

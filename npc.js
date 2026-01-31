@@ -206,6 +206,6 @@ function drawNPCPromptIfNeeded() {
     );
   } else if (interactionPrompt) {
     interactionPrompt.update(false);
-    interactionPrompt.draw("");
+    interactionPrompt.draw("", [255, 150, 0], 80, true);
   }
 }

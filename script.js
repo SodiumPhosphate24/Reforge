@@ -375,12 +375,13 @@ function createPrompt() {
  * @param {String} message - The text to display
  * @param {Boolean} condition - Additional condition for showing (default: true)
  * @param {Array} color - RGB array for the prompt color
+ * @param {Boolean} isFixed - Whether to draw at fixed screen position (default: true)
  */
-function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message, condition = true, color = [255, 150, 0]) {
+function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message, condition = true, color = [255, 150, 0], isFixed = true) {
   const distToPlayer = distance(targetX, targetY, pX + 600, pY + 340);
   const shouldShow = distToPlayer < proximity && condition && gameState === "playing";
   promptObj.update(shouldShow);
-  promptObj.draw(message, color);
+  promptObj.draw(message, color, 80, isFixed);
   return shouldShow;
 }
 
@@ -1019,13 +1020,13 @@ function drawGameplay() {
   const cartridgeCooldown = nearBoiler && triggerList.Objective.fixBoiler && generateCooldown > 0;
   const pickupCartridge = nearBoiler && triggerList.Objective.fixBoiler && generateCooldown <= 0;
   fixBoilerPrompt.update(repairBoiler);
-  fixBoilerPrompt.draw("Press E to Restore Boiler", [255, 200, 0], 90);
+  fixBoilerPrompt.draw("Press E to Restore Boiler", [255, 200, 0], 80, true);
 
   boilerCartridgeCooldownPrompt.update(cartridgeCooldown);
-  boilerCartridgeCooldownPrompt.draw("Cartridge ready in " + Math.floor(generateCooldown / 10), [255, 200, 0], 90);
+  boilerCartridgeCooldownPrompt.draw("Cartridge ready in " + Math.floor(generateCooldown / 10), [255, 200, 0], 80, true);
 
   pickupCartridgePrompt.update(pickupCartridge);
-  pickupCartridgePrompt.draw("Press E to Pickup Cartridge", [255, 200, 0], 90);
+  pickupCartridgePrompt.draw("Press E to Pickup Cartridge", [255, 200, 0], 80, true);
 
   // Check for puzzle repair condition and update prompt
   var nearPuzzle = false;
