@@ -48,8 +48,9 @@ var lastBreadcrumbTime = 0;
 var breadcrumbInterval = 200; // Leave a breadcrumb every 0.2 seconds
 var maxBreadcrumbs = 15; // Keep maximum 15 breadcrumbs for most recent path
 var breadcrumbMinDistance = 2; // Minimum distance between breadcrumbs in pixels
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench", "White Brick", "White Tile", "Steel Crate", "Tree", "Boiler", "Water", "Sewer", "Tree2", "Cobblestone"];
-var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 0, 1, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileNames = [];
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench", "White Brick", "White Tile", "Steel Crate", "Tree", "Boiler", "Water", "Sewer", "Tree2", "Cobblestone", "Wooden Post", "Wooden post top", "Boarded Window", "Vines"];
+var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 0, 1, 2, 2, 2, 2, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
@@ -102,6 +103,10 @@ var tileColors = [
   [[255, 255, 255]], // 43 Water
   [[255, 255, 255]], // 44 Sewer
   [[255, 255, 255]], // 45 Tree2
+  [[255, 255, 255]], // 46 Cobblestone
+  [[200, 200, 200]], // 47 Wooden Post
+  [[200, 200, 200]], // 48 wooden post top
+  [[255, 255, 255]], // 49 Boarded Window
   [[255, 255, 255]]
 ];
 
@@ -390,6 +395,7 @@ function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message
 
 function preload() {
   console.log("update cheese update train crash 1.0");
+  arrayCopy(tileImgs, 0, tileNames, 0, tileImgs.length);
   worldString = loadStrings("world.txt");
   sewer1String = loadStrings("sewer.txt");
   sewer2String = loadStrings("sewer2.txt");
@@ -412,8 +418,8 @@ function preload() {
   BulletImgs[3] = loadImage("Items/Bullets/LegendaryBullet.png");
   BulletImgs[4] = loadImage("Items/Bullets/ExplosiveBullet.png");
   GunImgs[0] = loadImage("Items/Guns/SteamGun.png");
-  GunImgs[1] = loadImage("Items/Guns/WesternPistol.png");
-  GunImgs[2] = loadImage("Items/Guns/RarePistol.png");
+  GunImgs[1] = loadImage("Items/Guns/Shotgun.png");
+  GunImgs[2] = loadImage("Items/Guns/Rifle.png");
   tileImgs[0] = loadImage("Tiles/deadGrass.png");
   tileImgs[1] = loadImage("Tiles/Asphalt.png");
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");
@@ -461,6 +467,10 @@ function preload() {
   tileImgs[44] = loadImage("Tiles/sewer.png");
   tileImgs[45] = null;
   tileImgs[46] = loadImage("Tiles/Cobblestone.png");
+  tileImgs[47] = loadImage("Tiles/WoodenPost.png");
+  tileImgs[48] = loadImage("Tiles/WoodenPostTop.png");
+  tileImgs[49] = loadImage("Tiles/BoardedWindow.png");
+  tileImgs[50] = loadImage("Tiles/Vines.png");
 
   // Register multi-tile objects
   registerMultiTile(6, "Tiles/Crafting.png", 2, 2); // Workbench
@@ -692,8 +702,8 @@ function setup() {
   // Initialize itemConstructors BEFORE parsing world so crate inventories can be loaded
   itemConstructors = [
     ["gun", "steam gun", 1, GunImgs[0]],
-    ["gun", "western", 1, GunImgs[1]],
-    ["gun", "rare pistol", 1, GunImgs[2]],
+    ["gun", "shotgun", 1, GunImgs[1]],
+    ["gun", "rifle", 1, GunImgs[2]],
     ["consumable", "cheese", 1, itemImgs[0]],
     ["consumable", "soda", 1, itemImgs[1]],
     ["consumable", "common cartridge", 1, itemImgs[2]],

@@ -121,20 +121,20 @@ class Item {
         this.HtoW = 0.43;
 
       }
-      if (name == "western") {
+      if (name == "shotgun") {
         this.name = name;
         this.image = GunImgs[1];
         this.damage = 2;
         this.ammo = 100;
         this.fireRate = .5;
-        this.HtoW = 0.55;
+        this.HtoW = 0.43;
       }
-      if (name == "rare pistol") {
+      if (name == "rifle") {
         this.name = name;
         this.image = GunImgs[2];
         this.damage = 3;
-        this.fireRate = .67;
-        this.HtoW = .46;
+        this.fireRate = .75;
+        this.HtoW = .43;
       }
     }
 
