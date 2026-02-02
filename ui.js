@@ -126,7 +126,7 @@ class Item {
         this.image = GunImgs[1];
         this.damage = 2;
         this.ammo = 100;
-        this.fireRate = .5;
+        this.fireRate = .1;
         this.HtoW = 0.43;
       }
       if (name == "rifle") {

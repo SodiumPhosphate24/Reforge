@@ -395,10 +395,10 @@ function mouseClicked() {
         if (recoil >= 10) {
           // Only humans or healthy robots can shoot, and only robots consume battery
           if (activePlayer === 0) {
-            bullets.push(new Bullet("common", currentItem.damage));
+            shoot(currentItem.name);
           } else if (players[activePlayer].health > 10) {
             players[activePlayer].health -= 3;
-            bullets.push(new Bullet("common", currentItem.damage));
+            shoot(currentItem.name);
           }
         }
       }
@@ -427,6 +427,18 @@ function mouseClicked() {
         }
       }
     }
+  }
+}
+
+function shoot(type){
+  var currentItem = inventoryList[inventorySlot - 1];
+  if(type == "steam gun") {
+    bullets.push(new Bullet("common", currentItem.damage));
+  }
+  if(type == "shotgun") {
+    bullets.push(new Bullet("common", currentItem.damage));
+    bullets.push(new Bullet("common", currentItem.damage, calculateAim() - 0.1));
+    bullets.push(new Bullet("common", currentItem.damage), calculateAim() + 0.1);
   }
 }
 

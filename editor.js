@@ -732,7 +732,7 @@ function handleEditorKeyPress() {
   //T to spawn enemy
   if (keyCode == 84) {
     enemies.push(new Enemy(enemyTypes[selectedEnemyIndex], pX + mouseX, pY + mouseY));
-    enemySpawns += "enemies.push(new Enemy(\"" + enemyTypes[selectedEnemyIndex] + "\", " + (pX + mouseX) + ", " + (pY + mouseY) + "));\n";
+    enemySpawns += "enemies.push(new Enemy(\"" + enemyTypes[selectedEnemyIndex] + "\", " + Math.floor(pX + mouseX) + ", " + Math.floor(pY + mouseY) + "));\n";
     console.log(enemySpawns);
   }
 

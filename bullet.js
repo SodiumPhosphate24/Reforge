@@ -12,7 +12,12 @@ class Bullet {
       this.type = "common";
       this.image = BulletImgs[0];
       this.speed = 35;
-      this.angle = calculateAim(); // use same angle as gun
+      if(angle == 0){
+        this.angle = calculateAim(); // use same angle as gun
+      }
+      else{
+        this.angle = angle;
+      }
       const spawnPos = raycastToBarrel(barrelPos);
       this.x = spawnPos.x;
       this.y = spawnPos.y;
