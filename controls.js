@@ -392,14 +392,12 @@ function mouseClicked() {
       var currentItem = inventoryList[inventorySlot - 1];
 
       if (currentItem.type == "gun") {
-        if (recoil >= 10) {
-          // Only humans or healthy robots can shoot, and only robots consume battery
-          if (activePlayer === 0) {
-            shoot(currentItem.name);
-          } else if (players[activePlayer].health > 10) {
-            players[activePlayer].health -= 3;
-            shoot(currentItem.name);
-          }
+        // Only humans or healthy robots can shoot, and only robots consume battery
+        if (activePlayer === 0) {
+          shoot(currentItem.name);
+        } else if (players[activePlayer].health > 10) {
+          players[activePlayer].health -= 3;
+          shoot(currentItem.name);
         }
       }
       if (currentItem.type == "consumable" && activePlayer != 0) {
@@ -432,13 +430,21 @@ function mouseClicked() {
 
 function shoot(type){
   var currentItem = inventoryList[inventorySlot - 1];
-  if(type == "steam gun") {
-    bullets.push(new Bullet("common", currentItem.damage));
-  }
-  if(type == "shotgun") {
-    bullets.push(new Bullet("common", currentItem.damage));
-    bullets.push(new Bullet("common", currentItem.damage, calculateAim() - 0.1));
-    bullets.push(new Bullet("common", currentItem.damage), calculateAim() + 0.1);
+  if (recoil >= 10) {
+    if(type == "steam gun") {
+      bullets.push(new Bullet("common", currentItem.damage));
+    }
+    if(type == "shotgun") {
+      bullets.push(new Bullet("common", currentItem.damage));
+      bullets.push(new Bullet("common", currentItem.damage, calculateAim() - 0.1));
+      bullets.push(new Bullet("common", currentItem.damage), calculateAim() + 0.1);
+    }
+    if(type == "rifle") {
+      bullets.push(new Bullet("common", currentItem.damage));
+      if(mouseIsPressed){
+        shoot("rifle");
+      }
+    }
   }
 }
 
