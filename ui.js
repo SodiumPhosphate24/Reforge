@@ -133,7 +133,7 @@ class Item {
         this.name = name;
         this.image = GunImgs[2];
         this.damage = 3;
-        this.fireRate = .75;
+        this.fireRate = .5;
         this.HtoW = .43;
       }
     }

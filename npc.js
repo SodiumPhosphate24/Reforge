@@ -174,6 +174,20 @@ function drawNPCs() {
       }
     }
   }
+  if (triggerList.Labyrinth.labyrinthTalk) {
+    const hephaestus = NonPlayerCharacters.find(npc => npc.id === "Hephaestus");
+    const atlas = NonPlayerCharacters.find(npc => npc.id === "Atlas");
+    const daedalus = NonPlayerCharacters.find(npc => npc.id === "Daedalus");
+    const distToHephaestus = distance(hephaestus.x, hephaestus.y, pX + 600, pY + 340);
+    if (distToHephaestus > 1000) {
+      hephaestus.x = 13750;
+      hephaestus.y = 825;
+      atlas.x = 13700;
+      atlas.y = 925;
+      daedalus.x = 13800;
+      daedalus.y = 925;
+    }
+  }
 }
 
 function drawNPCPromptIfNeeded() {

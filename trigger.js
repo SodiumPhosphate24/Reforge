@@ -26,6 +26,7 @@ var triggerList = {
     softlockMessage: false
   },
   Labyrinth: {
+    labyrinthTalk: false,
     puzzles: [false, false, false, false],
     isFightingBoss: false
   }
@@ -137,18 +138,8 @@ function handleTriggers(trigger, ID = -1) {
       return;
     }
     if (groupDiscussionComplete) {
-      craftingRecipes[3].unlocked = true;
+      unlockRecipe("ARGO");
       currentwaypointIndex = 8;
-      const hephaestus = NonPlayerCharacters.find(npc => npc.id === "Hephaestus");
-      const atlas = NonPlayerCharacters.find(npc => npc.id === "Atlas");
-      const daedalus = NonPlayerCharacters.find(npc => npc.id === "Daedalus");
-
-      hephaestus.x = 13750;
-      hephaestus.y = 825;
-      atlas.x = 13700;
-      atlas.y = 925;
-      daedalus.x = 13800;
-      daedalus.y = 925;
       return;
     }
   }

@@ -389,12 +389,14 @@ function mouseHeld() {
   if (mouseIsPressed){
     if (!editorMode) {
       if (inventoryList[inventorySlot-1] != null){
-        if (inventoryList[inventorySlot-1].name == "rifle"){
-          if (activePlayer === 0) {
-            shoot("rifle");
-          } else if (players[activePlayer].health > 10) {
-            players[activePlayer].health -= 3;
-            shoot("rifle");
+        if (recoil > 10){
+          if (inventoryList[inventorySlot-1].name == "rifle"){
+            if (activePlayer === 0) {
+              shoot("rifle");
+            } else if (players[activePlayer].health > 10) {
+              players[activePlayer].health -= 3;
+              shoot("rifle");
+            }
           }
         }
       }
@@ -457,8 +459,8 @@ function shoot(type){
     }
     if(type == "shotgun") {
       bullets.push(new Bullet("common", currentItem.damage));
-      bullets.push(new Bullet("common", currentItem.damage, calculateAim() - 0.1));
-      bullets.push(new Bullet("common", currentItem.damage, calculateAim() + 0.1));
+      bullets.push(new Bullet("common", currentItem.damage, calculateAim() - 0.06));
+      bullets.push(new Bullet("common", currentItem.damage, calculateAim() + 0.14));
     }
     if(type == "rifle") {
       bullets.push(new Bullet("common", currentItem.damage));
