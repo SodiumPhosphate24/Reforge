@@ -13,7 +13,7 @@ class Bullet {
       this.image = BulletImgs[0];
       this.speed = 35;
       if(angle == 0){
-        this.angle = calculateAim(); // use same angle as gun
+        this.angle = calculateAim() + .04; // use same angle as gun
       }
       else{
         this.angle = angle;

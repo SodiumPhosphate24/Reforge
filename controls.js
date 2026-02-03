@@ -3,6 +3,7 @@ var lockCodeInput = ""; // Track code input for Lock NPC
 var lockCodeActive = false; // Whether we're inputting a code
 
 function controls() {
+  mouseHeld();
   // Don't allow controls during menu or transition
   if (gameState !== "playing") {
     return;
@@ -381,6 +382,26 @@ function keyReleased() {
   }
 }
 
+function mouseHeld() {
+  if (gameState !== "playing") {
+    return;
+  }
+  if (mouseIsPressed){
+    if (!editorMode) {
+      if (inventoryList[inventorySlot-1] != null){
+        if (inventoryList[inventorySlot-1].name == "rifle"){
+          if (activePlayer === 0) {
+            shoot("rifle");
+          } else if (players[activePlayer].health > 10) {
+            players[activePlayer].health -= 3;
+            shoot("rifle");
+          }
+        }
+      }
+    }
+  }
+}
+
 function mouseClicked() {
   // Don't allow game interactions during menu or transition
   if (gameState !== "playing") {
@@ -437,13 +458,10 @@ function shoot(type){
     if(type == "shotgun") {
       bullets.push(new Bullet("common", currentItem.damage));
       bullets.push(new Bullet("common", currentItem.damage, calculateAim() - 0.1));
-      bullets.push(new Bullet("common", currentItem.damage), calculateAim() + 0.1);
+      bullets.push(new Bullet("common", currentItem.damage, calculateAim() + 0.1));
     }
     if(type == "rifle") {
       bullets.push(new Bullet("common", currentItem.damage));
-      if(mouseIsPressed){
-        shoot("rifle");
-      }
     }
   }
 }
