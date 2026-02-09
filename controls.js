@@ -359,8 +359,8 @@ function keyReleased() {
         const targetPlayer = players[selectedTransferPlayerIndex];
 
         // Find empty slot in target player's inventory
-        if (selectedPlayerIndex != activePlayer){
-          let transferred = false;
+        let transferred = false;
+        if (selectedTransferPlayerIndex != activePlayer){
           for (let i = 0; i < targetPlayer.inventory.length; i++) {
             if (targetPlayer.inventory[i] == null) {
               targetPlayer.inventory[i] = itemToTransfer;

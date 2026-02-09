@@ -59,7 +59,7 @@ function handleTriggers(trigger, ID = -1) {
       currentWaypointIndex = 1;
       unlockRecipe("SPUD");
       unlockRecipe("SCAMPER");
-      unlockRecipe("STURD-E");
+      unlockRecipe("STUR-D");
       return;
     }
   }

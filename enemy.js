@@ -987,3 +987,22 @@ function drawEnemyRaycasts() {
   }
   pop();
 }
+
+function bloodMoon(){
+  if (bloodMoonCooldown > 0){
+    bloodMoonCooldown--;
+  }
+  else {
+    let aggroed = false;
+    for (let i = 0; i < enemies.length; i++){
+      if (enemies[i].aggro){
+        aggroed = true;
+      }
+    }
+    if (!aggroed){
+      bloodMoonCooldown = 105000;
+      enemies = [];
+      enemySpawns();
+    }
+  }
+}

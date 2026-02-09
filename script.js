@@ -41,6 +41,7 @@ var hotbar = [];
 var recoil = 10;
 var generateCooldown = 1000;
 var softlockPreventionOn = false;
+var bloodMoonCooldown = 105000;
 
 // Breadcrumb system variables
 var breadcrumbs = [];
@@ -49,8 +50,8 @@ var breadcrumbInterval = 200; // Leave a breadcrumb every 0.2 seconds
 var maxBreadcrumbs = 15; // Keep maximum 15 breadcrumbs for most recent path
 var breadcrumbMinDistance = 2; // Minimum distance between breadcrumbs in pixels
 var tileNames = [];
-var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench", "White Brick", "White Tile", "Steel Crate", "Tree", "Boiler", "Water", "Sewer", "Tree2", "Cobblestone", "Wooden Post", "Wooden post top", "Boarded Window", "Vines", "Exterior Copper Pipe"];
-var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 0, 1, 2, 2, 2, 2, 2, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
+var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench", "White Brick", "White Tile", "Steel Crate", "Tree", "Boiler", "Water", "Sewer", "Tree2", "Cobblestone", "Wooden Post", "Wooden post top", "Boarded Window", "Vines", "Exterior Copper Pipe", "Brick Roof"];
+var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 0, 1, 2, 2, 2, 2, 2, 2, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile color variants - each tile can have multiple color tints
 // Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
@@ -108,7 +109,8 @@ var tileColors = [
   [[200, 200, 200]], // 48 wooden post top
   [[255, 255, 255]], // 49 Boarded Window
   [[255, 255, 255]], // 50 Vines
-  [[240, 210, 170]] // 51 Exterior Copper Pipe
+  [[240, 210, 170]], // 51 Exterior Copper Pipe
+  [255, 255, 255] // 52 Brick Roof
 ];
 
 // Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image
@@ -473,6 +475,7 @@ function preload() {
   tileImgs[49] = loadImage("Tiles/BoardedWindow.png");
   tileImgs[50] = loadImage("Tiles/Vines.png");
   tileImgs[51] = null; //pipe variants need to load
+  tileImgs[52] = loadImage("Tiles/Brick.png");
   // Register multi-tile objects
   registerMultiTile(6, "Tiles/Crafting.png", 2, 2); // Workbench
   registerMultiTile(36, "Tiles/Lampost.png", 1, 2); // Lampost
@@ -903,6 +906,7 @@ function drawGameplay() {
   mainHand();
   drawEnemies();
   drawBullets();
+  bloodMoon();
 
   // Calculate player center for distance checks
   const playerCenterX = pX + 600 + pWidth / 2;
@@ -1057,7 +1061,7 @@ function drawGameplay() {
   fixBoilerPrompt.draw("Press E to Restore Boiler", [255, 200, 0], 80, true);
 
   boilerCartridgeCooldownPrompt.update(cartridgeCooldown);
-  boilerCartridgeCooldownPrompt.draw("Cartridge ready in " + Math.floor(generateCooldown / 60), [255, 200, 0], 80, true);
+  boilerCartridgeCooldownPrompt.draw("Cartridge ready in " + Math.ceil(generateCooldown / 60), [255, 200, 0], 80, true);
 
   pickupCartridgePrompt.update(pickupCartridge);
   pickupCartridgePrompt.draw("Press E to Pickup Cartridge", [255, 200, 0], 80, true);
