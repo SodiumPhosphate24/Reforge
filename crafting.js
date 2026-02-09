@@ -99,7 +99,7 @@ var craftingRecipes = [
     output: { type: "gun", name: "steam shotgun", amount: 1 }
   },
   {
-    name: "SMG (Steam Machine Gun)",
+    name: "steam rifle",
     category: "Weapons",
     type: "item",
     unlocked : true,
@@ -123,16 +123,24 @@ var craftingRecipes = [
   },
   // ITEMS
   {
-    name: "Rare CPU",
+    name: "Rare Cartridge",
     category: "Items",
     type: "item",
-    unlocked : false,
+    unlocked : true,
     ingredients: [
-      { itemName: "common CPU", amount: 5 }
+      { itemName: "common cartridge", amount: 4 }
     ],
-    output: { type: "material", name: "rare CPU", amount: 1 }
+    output: { type: "material", name: "rare cartridge", amount: 1 }
+  },
+  {
+    name: "Legendary Cartridge",
+    category: "Items",
+    type: "item",
+    unlocked : true,
+    ingredients: [
+      { itemName: "rare cartridge", amount: 4 }
+    ],
   }
-  // Add more recipes as needed
 ];
 
 var selectedRecipe = 0;

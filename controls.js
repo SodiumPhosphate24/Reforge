@@ -359,19 +359,21 @@ function keyReleased() {
         const targetPlayer = players[selectedTransferPlayerIndex];
 
         // Find empty slot in target player's inventory
-        let transferred = false;
-        for (let i = 0; i < targetPlayer.inventory.length; i++) {
-          if (targetPlayer.inventory[i] == null) {
-            targetPlayer.inventory[i] = itemToTransfer;
-            inventoryList[inventorySlot - 1] = null;
-            transferred = true;
-            break;
-          }
-          if (targetPlayer.inventory[i].name == itemToTransfer.name && itemToTransfer.stackable) {
-            targetPlayer.inventory[i].amount += itemToTransfer.amount;
-            inventoryList[inventorySlot - 1] = null;
-            transferred = true;
-            break;
+        if (selectedPlayerIndex != activePlayer){
+          let transferred = false;
+          for (let i = 0; i < targetPlayer.inventory.length; i++) {
+            if (targetPlayer.inventory[i] == null) {
+              targetPlayer.inventory[i] = itemToTransfer;
+              inventoryList[inventorySlot - 1] = null;
+              transferred = true;
+              break;
+            }
+            if (targetPlayer.inventory[i].name == itemToTransfer.name && itemToTransfer.stackable) {
+              targetPlayer.inventory[i].amount += itemToTransfer.amount;
+              inventoryList[inventorySlot - 1] = null;
+              transferred = true;
+              break;
+            }
           }
         }
 

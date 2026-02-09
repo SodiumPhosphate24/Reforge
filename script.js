@@ -1057,7 +1057,7 @@ function drawGameplay() {
   fixBoilerPrompt.draw("Press E to Restore Boiler", [255, 200, 0], 80, true);
 
   boilerCartridgeCooldownPrompt.update(cartridgeCooldown);
-  boilerCartridgeCooldownPrompt.draw("Cartridge ready in " + Math.floor(generateCooldown / 10), [255, 200, 0], 80, true);
+  boilerCartridgeCooldownPrompt.draw("Cartridge ready in " + Math.floor(generateCooldown / 60), [255, 200, 0], 80, true);
 
   pickupCartridgePrompt.update(pickupCartridge);
   pickupCartridgePrompt.draw("Press E to Pickup Cartridge", [255, 200, 0], 80, true);
@@ -1073,7 +1073,7 @@ function drawGameplay() {
   }
   const shouldShowPuzzlePrompt = nearPuzzle;
   puzzlePrompt.update(shouldShowPuzzlePrompt);
-  // puzzlePrompt.draw("Press E to Solve Puzzle", [255, 200, 0], 90); // Removed per user request
+  // puzzlePrompt.draw("Press E to Solve Puzzle", [255, 200, 0], 90);
 
   //Enter boss arena
   if (distance(pX, pY, 350, 1400) < 75 && pX > 350 && !triggerList.Labyrinth.isFightingBoss) {
@@ -2501,10 +2501,8 @@ function drawGunDebugRect() {
 
       if (item.type === "bullet") {
         baseSize = 18;
-      } else if (item.name == "steam gun") {
+      } else if (item.type === "gun") {
         baseSize = 52;
-      } else if (item.type === "gun" && item.name != "steam gun") {
-        baseSize = 30;
       } else if (item.type === "consumable") {
         baseSize = 25;
       } else if (item.type === "projectile") {

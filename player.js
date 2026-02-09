@@ -175,6 +175,8 @@ function drawPlayers(onlyActive = false) {
     fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
     ellipse(pX + 600 + pWidth / 2, pY + 375 + pHeight, pWidth, pHeight * 0.6);
 
+    players[activePlayer].isDead();
+
     if (players[activePlayer] && players[activePlayer].name === "SPUD") {
       const headX = pX + 600 + pWidth / 2;
       const headY = pY + 375;
