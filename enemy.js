@@ -56,7 +56,7 @@ class Enemy {
       this.maxHealth = 4;
       this.speed = 2;
       this.acceleration = 0.15; // how quickly it changes direction
-      this.image = BadGuy;
+      this.image = OGBuschy;
       this.width = 48;
       this.height = 56;
       this.lootPool = [["consumable", "common cartridge", 1], ["material", "common wheel", 1]];
