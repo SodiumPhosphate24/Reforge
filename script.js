@@ -110,7 +110,7 @@ var tileColors = [
   [[255, 255, 255]], // 49 Boarded Window
   [[255, 255, 255]], // 50 Vines
   [[240, 210, 170]], // 51 Exterior Copper Pipe
-  [255, 255, 255] // 52 Brick Roof
+  [[255, 255, 255]] // 52 Brick Roof
 ];
 
 // Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image

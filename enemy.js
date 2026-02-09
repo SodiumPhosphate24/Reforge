@@ -47,7 +47,21 @@ class Enemy {
       this.height = 54;
       this.lootPool = [["consumable", "common cartridge", 1], ["material", "common wheel", 1]];
       this.shootRange = 300;
-      this.shootCooldown = 25;
+      this.attackCooldown = 50;
+      this.attackRate = 50;
+    }
+    if (type == "hydra") {
+      this.type = "hydra";
+      this.health = 4;
+      this.maxHealth = 4;
+      this.speed = 2;
+      this.acceleration = 0.15; // how quickly it changes direction
+      this.image = BadGuy;
+      this.width = 48;
+      this.height = 56;
+      this.lootPool = [["consumable", "common cartridge", 1], ["material", "common wheel", 1]];
+      this.attackCooldown = 250;
+      this.attackRate = 250;
     }
     if (type == "boss") {
       this.type = "boss";
@@ -143,15 +157,25 @@ class Enemy {
   }
 
   shoot(){
-    if (this.shootCooldown > 0) {
-      this.shootCooldown--;
-      return;
-    }
     const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
     if (distToPlayer < this.shootRange) {
       const angle = atan2(pY + 340 - this.y, pX + 600 - this.x);
       bullets.push(new Bullet("enemy", 1, angle, this.x+(this.width/2), this.y+(this.height/2)));
-      this.shootCooldown = 50;
+    }
+  }
+
+  attack(){
+    if(this.attackCooldown > 0){
+      this.attackCooldown--;
+    }
+    if(this.attackCooldown <= 0){
+      if(this.type == "greg"){
+        this.shoot();
+      }
+      if(this.type == "hydra"){
+        this.spawnMinions(1, "hydra");
+      }
+      this.attackCooldown = this.attackRate;
     }
   }
 
@@ -284,7 +308,7 @@ class Enemy {
           this.sprayAttack();
         } else {
           if (this.minionsSpawned < 6) {
-            this.spawnMinions(1);
+            this.spawnMinions(1, "harpy");
             this.minionsSpawned++;
           }
           this.attackCooldown = 90;
@@ -786,13 +810,13 @@ function drawEnemies() {
     }
 
     if (enemy.hitsPlayer()) {
-      if (enemy.type == "harpy") {
-        players[activePlayer].health -= 2;
+      if (enemy.type == "harpy" || enemy.type == "hydra") {
+        players[activePlayer].health -= 1;
         healthPoints = players[activePlayer].health;
         healthPoints = constrain(healthPoints, 0, players[activePlayer].maxHealth);
       } else if (enemy.type == "boss") {
         // Boss deals more damage
-        players[activePlayer].health -= 5;
+        players[activePlayer].health -= 4;
         healthPoints = players[activePlayer].health;
         healthPoints = constrain(healthPoints, 0, players[activePlayer].maxHealth);
       }
