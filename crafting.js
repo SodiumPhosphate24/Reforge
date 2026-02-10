@@ -77,7 +77,7 @@ var craftingRecipes = [
     name: "steam gun",
     category: "Weapons",
     type: "item",
-    unlocked : true,
+    unlocked : false,
     ingredients: [
       { itemName: "cog", amount: 5},
       { itemName: "pipe", amount: 2},
@@ -89,7 +89,7 @@ var craftingRecipes = [
     name: "steam shotgun",
     category: "Weapons",
     type: "item",
-    unlocked : true,
+    unlocked : false,
     ingredients: [
       { itemName: "cog", amount: 5},
       { itemName: "pipe", amount: 5},

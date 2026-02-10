@@ -1032,6 +1032,9 @@ function bloodMoon(){
       bloodMoonCooldown = 18000;
       enemies = [];
       spawnEnemies();
+      if (typeof startBloodMoonEffect === 'function') {
+        startBloodMoonEffect();
+      }
       console.log("Blood Mooned");
     }
   }

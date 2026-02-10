@@ -43,6 +43,9 @@ var recoil = 10;
 var generateCooldown = 750;
 var softlockPreventionOn = false;
 var bloodMoonCooldown = 18000;
+var bloodMoonActive = false;
+var bloodMoonOverlayAlpha = 0;
+var bloodMoonParticles = [];
 
 // Breadcrumb system variables
 var breadcrumbs = [];
@@ -908,6 +911,7 @@ function drawGameplay() {
   drawEnemies();
   drawBullets();
   bloodMoon();
+  drawBloodMoonOverlay();
 
   // Calculate player center for distance checks
   const playerCenterX = pX + 600 + pWidth / 2;
@@ -2825,4 +2829,78 @@ function initializeHardcodes() {
 
 
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
+}
+function startBloodMoonEffect() {
+  bloodMoonActive = true;
+  bloodMoonOverlayAlpha = 0;
+  bloodMoonParticles = [];
+  // Spawn initial burst of particles
+  for (let i = 0; i < 50; i++) {
+    bloodMoonParticles.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - 0.5) * 4,
+      vy: (Math.random() - 0.5) * 4,
+      size: Math.random() * 3 + 2,
+      life: 255
+    });
+  }
+  
+  // End effect after 5 seconds
+  setTimeout(() => {
+    bloodMoonActive = false;
+  }, 5000);
+}
+
+function drawBloodMoonOverlay() {
+  if (!bloodMoonActive && bloodMoonOverlayAlpha <= 0) return;
+
+  // Update overlay alpha
+  if (bloodMoonActive) {
+    bloodMoonOverlayAlpha = lerp(bloodMoonOverlayAlpha, 60, 0.05);
+  } else {
+    bloodMoonOverlayAlpha = lerp(bloodMoonOverlayAlpha, 0, 0.05);
+  }
+
+  if (bloodMoonOverlayAlpha > 1) {
+    push();
+    // High-tech cyan glow overlay
+    noStroke();
+    fill(0, 255, 255, bloodMoonOverlayAlpha);
+    rect(0, 0, width, height);
+
+    // Update and draw particles
+    for (let i = bloodMoonParticles.length - 1; i >= 0; i--) {
+      let p = bloodMoonParticles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= 4;
+
+      // Draw particle with glow
+      fill(150, 255, 255, p.life * (bloodMoonOverlayAlpha / 60));
+      noStroke();
+      ellipse(p.x, p.y, p.size);
+      
+      // Add a small square for "tech" feel
+      if (p.life > 100) {
+        rect(p.x - p.size, p.y - p.size, p.size / 2, p.size / 2);
+      }
+
+      if (p.life <= 0) {
+        bloodMoonParticles.splice(i, 1);
+        // Respawn if still active
+        if (bloodMoonActive) {
+          bloodMoonParticles.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 4,
+            vy: (Math.random() - 0.5) * 4,
+            size: Math.random() * 3 + 2,
+            life: 255
+          });
+        }
+      }
+    }
+    pop();
+  }
 }
