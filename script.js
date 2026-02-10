@@ -41,7 +41,7 @@ var hotbar = [];
 var recoil = 10;
 var generateCooldown = 1000;
 var softlockPreventionOn = false;
-var bloodMoonCooldown = 105000;
+var bloodMoonCooldown = 18000;
 
 // Breadcrumb system variables
 var breadcrumbs = [];

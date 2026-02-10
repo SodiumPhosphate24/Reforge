@@ -1024,9 +1024,9 @@ function bloodMoon(){
       }
     }
     if (!aggroed){
-      bloodMoonCooldown = 105000;
+      bloodMoonCooldown = 18000;
       enemies = [];
-      enemySpawns();
+      spawnEnemies();
     }
   }
 }
