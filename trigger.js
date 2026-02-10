@@ -32,19 +32,20 @@ var triggerList = {
   }
 };
 
+//Check trigger name and handle accordingly
 function handleTriggers(trigger, ID = -1) {
   if (trigger == "LockOpened") {
+    //update lock trigger
     triggerList.LockOpened.unlockedBoilerRoom = true;
     messages.push(new Message("quest", "Boiler Room Unlocked!"));
     console.log("Lock opened with code 1855!");
-    // Add your unlock logic here (open door, change waypoint, etc.)
     return;
   }
 
   if (trigger == "Prometheus") {
+    //update dialogue
     if (triggerList.Prometheus.talkToPrometheus == false) {
       triggerList.Prometheus.talkToPrometheus = true;
-      //droppedItems.push(new DroppedItem(new Item("gun", "glock", 1), 13300, 12800));
       triggerList.Prometheus.dropppedStarterGun = true;
       NonPlayerCharacters[0].message = [
         "Prometheus IV: Good. You adapt quickly.",
@@ -57,6 +58,7 @@ function handleTriggers(trigger, ID = -1) {
       ];
       triggerState++;
       currentWaypointIndex = 1;
+      //Prometheus describes how to make bots, so the recipes are unlocked
       unlockRecipe("SPUD");
       unlockRecipe("SCAMPER");
       unlockRecipe("STUR-D");
@@ -69,6 +71,7 @@ function handleTriggers(trigger, ID = -1) {
       droppedItems.push(new DroppedItem(new Item("gun", "steam gun", 1), 23075, 22675));
       NonPlayerCharacters[1].message = ["Hephaestus: ..."];
       messages.push(new Message("dialogue", ["Hephaestus: Take this. This is a steam gun. It takes some of your steam reserves to fire, but it's powerful", "Hephaestus: I hope it will help you survive out there"], "Hephaestus", true));
+      //hephaestus gives you a gun, so all weaponry recipes are unlocked
       unlockRecipe("steam gun");
       unlockRecipe("shotgun");
       unlockRecipe("rifle");
@@ -148,20 +151,11 @@ function handleTriggers(trigger, ID = -1) {
       return;
     }
   }
-
-  if (trigger == "Labyrinth") {
-    if (JSON.stringify(triggerList.Labyrinth.puzzles) != JSON.stringify([true, true, true, true])) {
-      triggerList.Labyrinth.puzzles[ID] = true;
-      if (JSON.stringify(triggerList.Labyrinth.puzzles) == JSON.stringify([true, true, true, true])) {
-        enemies.push(new Enemy("boss", 1900, 2700));
-        console.log("Spawned Boss");
-      }
-    }
-  }
 }
 
 function softlockPrevention() {
   if (!softlockPreventionOn) {
+    //check if player is low on steam, and also possesses no cartridges early on in the game. This would softlock the player, so as a fix, prometheus gives the player a cartridge to help
     if (!searchInventory("common cartridge") && !searchInventory("rare cartridge") && !searchInventory("legendary cartridge") && healthPoints < 5 && !triggerList.Softlock.softlockMessage) {
       if (triggerList.Objective.fixBoiler) {
         softlockPreventionOn = true;

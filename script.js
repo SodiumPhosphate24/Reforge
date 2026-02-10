@@ -39,7 +39,7 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var generateCooldown = 1000;
+var generateCooldown = 750;
 var softlockPreventionOn = false;
 var bloodMoonCooldown = 18000;
 

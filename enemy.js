@@ -161,6 +161,7 @@ class Enemy {
     if (distToPlayer < this.shootRange) {
       const angle = atan2(pY + 340 - this.y, pX + 600 - this.x);
       bullets.push(new Bullet("enemy", 1, angle, this.x+(this.width/2), this.y+(this.height/2)));
+      return;
     }
   }
 

@@ -18,7 +18,7 @@ function drawInventory() {
     lastInventorySlot = inventorySlot;
   }
 
-  // Slowly decrease alpha
+  // Slowly decrease transparency
   if (itemLabelAlpha > 0) {
     itemLabelAlpha -= 0.02;
     if (itemLabelAlpha < 0) itemLabelAlpha = 0;
@@ -32,7 +32,7 @@ function drawInventory() {
     if (inventoryList[i] != null) {
       imageMode(CENTER);
 
-      // Calculate proper sizing to fit within inventory slot (max 50x50)
+      // Calculate proper sizing for images to fit inside inventory slots
       const maxSize = 50 * (inventoryList[i].scaleFactor || 1.0);
       let itemWidth, itemHeight;
 
@@ -71,7 +71,7 @@ function drawInventory() {
 }
 
 function drawHealth() {
-  // Hide health bar for the human character (player index 0)
+  // Hide health bar for the human character
   if (activePlayer === 0) {
     return;
   }
@@ -106,7 +106,7 @@ function buffs() {
 class Item {
   constructor(type, name, amount, scaleFactor = 1.0) {
     this.amount = amount;
-    this.scaleFactor = scaleFactor; // Default scale is 1.0 (no scaling)
+    this.scaleFactor = scaleFactor;
 
     if (type == "gun") {
       this.type = "gun";
@@ -243,20 +243,20 @@ class DroppedItem {
     this.x = x;
     this.y = y;
 
-    // Slide animation properties
-    this.slideDistance = random(15, 30); // How far it slides
-    this.slideAngle = random(0, TWO_PI); // Random direction
+    // Slide animation properties when items are dropped and they shoot in a random direction for a short distance
+    this.slideDistance = random(15, 30); // total dist
+    this.slideAngle = random(0, TWO_PI); // random direction in radians
     this.slideProgress = 0; // 0 to 1
-    this.slideSpeed = 0.08; // How fast the slide animation completes
+    this.slideSpeed = 0.08; // how long it takes
     this.isSliding = true;
 
-    // Floating animation properties
-    this.floatTime = random(0, TWO_PI); // Random start phase for variety
+    // Floating animation properties (sin wave)
+    this.floatTime = random(0, TWO_PI); //random to make sure every item doesn't float in sync
     this.floatSpeed = 0.05;
     this.floatAmplitude = 8; // How high it floats
     this.floatHeight = 15; // Base height above ground
 
-    // Size properties - categorize by item type
+    // Size properties categorize by item type
     this.calculateItemSize();
   }
 

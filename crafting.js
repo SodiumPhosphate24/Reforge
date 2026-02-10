@@ -34,7 +34,7 @@ var craftingRecipes = [
     category: "Robots",
     type: "player",
     unlocked : false,
-    playerConstructor: {width : 35, height : 25, speed : 5, health : 50, damage : 1},
+    playerConstructor: {width : 35, height : 25, speed : 1.7, health : 75, damage : 1},
     ingredients: [
       { itemName: "rare wheel", amount: 2 },
       { itemName: "rare cartridge", amount: 2 },
@@ -48,7 +48,7 @@ var craftingRecipes = [
     category: "Robots",
     type: "player",
     unlocked : false,
-    playerConstructor: {width : 105, height : 75, speed : .5, health : 350, damage : 1},
+    playerConstructor: {width : 105, height : 75, speed : .9, health : 150, damage : 1},
     ingredients: [
       { itemName: "rare wheel", amount: 4 },
       { itemName: "legendary cartridge", amount: 2 },
@@ -79,10 +79,9 @@ var craftingRecipes = [
     type: "item",
     unlocked : true,
     ingredients: [
-      { itemName: "cog", amount: 5,
-        itemName: "pipe", amount: 2,
-        itemName: "common cartridge", amount: 1
-      }
+      { itemName: "cog", amount: 5),
+      { itemName: "pipe", amount: 2),
+      { itemName: "common cartridge", amount: 1}
     ],
     output: { type: "gun", name: "steam gun", amount: 1 }
   },
@@ -108,18 +107,7 @@ var craftingRecipes = [
       { itemName: "pipe", amount: 10},
       { itemName: "legendary cartridge", amount: 1}
     ],
-    output: { type: "gun", name: "steam machine gun", amount: 1 }
-  },
-  {
-    name: "Grenade",
-    category: "Weapons",
-    type: "item",
-    unlocked : true,
-    ingredients: [
-      { itemName: "rock", amount: 5 },
-      { itemName: "cheese", amount: 1 }
-    ],
-    output: { type: "projectile", name: "grenade", amount: 1 }
+    output: { type: "gun", name: "steam rifle gun", amount: 1 }
   },
   // ITEMS
   {
@@ -140,6 +128,7 @@ var craftingRecipes = [
     ingredients: [
       { itemName: "rare cartridge", amount: 4 }
     ],
+    output: { type: "material", name: "legendary cartridge", amount: 1 }
   }
 ];
 

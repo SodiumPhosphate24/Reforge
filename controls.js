@@ -113,7 +113,7 @@ function keyPressed() {
             }
           }
         }
-        else {
+        else if(messages.length == 0){
           messages.push(new Message("dialogue", ["Prometheus IV: You need to fix the leaks before you can fix the boiler"]));
         }
       }
@@ -129,7 +129,7 @@ function keyPressed() {
             }
             else {
               inventoryList[i] = new Item("consumable", "common cartridge", 1);
-              generateCooldown = 1000;
+              generateCooldown = 750;
               return;
             }
           }
