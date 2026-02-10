@@ -136,16 +136,6 @@ function keyPressed() {
         }
       }
     }
-    var nearPuzzle = -1;
-    for (let i = 0; i < puzzleCoordinates.length; i++) {
-      if (distance(pX + 600, pY + 340, puzzleCoordinates[i][0], puzzleCoordinates[i][1]) < 75) {
-        nearPuzzle = i;
-      }
-    }
-    if (nearPuzzle >= 0) {
-      handleTriggers("Labyrinth", nearPuzzle);
-      console.log("Solved Puzzle " + nearPuzzle);
-    }
 
     // Use nearestPickupItem instead of looping
     if (nearestPickupItem) {
@@ -232,7 +222,7 @@ function keyPressed() {
       if (inventoryList[inventorySlot - 1] != null) {
         if (!playerTransferMenuOpen) {
           playerTransferMenuOpen = true;
-          selectedTransferPlayerIndex = 0;
+          selectedTransferPlayerIndex = activePlayer;
           frozen = true;
         }
       }

@@ -850,7 +850,6 @@ function handleEditorMouseWheel(event) {
       } else {
         selectedItemIndex = (selectedItemIndex - 1 + itemConstructors.length) % itemConstructors.length;
       }
-      console.log("Selected item:", itemConstructors[selectedItemIndex][1]);
     }
     return true; // Consume wheel when paused
   }

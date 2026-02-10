@@ -33,7 +33,7 @@ var triggerList = {
 };
 
 //Check trigger name and handle accordingly
-function handleTriggers(trigger, ID = -1) {
+function handleTriggers(trigger) {
   if (trigger == "LockOpened") {
     //update lock trigger
     triggerList.LockOpened.unlockedBoilerRoom = true;

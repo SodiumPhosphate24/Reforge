@@ -128,8 +128,7 @@ function initializeIntro() {
       backgroundColor: [20, 16, 10], // Lighter sepia
       backgroundImage: BunkerImg,
       dialogue: [
-        "PROMETHEUS: Your location: Subterranean Refuge—Bunker Designation B12.",
-        "PROMETHEUS: Depth: forty-two meters.",
+        "PROMETHEUS: Your location: Refuge—Lab Designation B12.",
         "PROMETHEUS: Structural integrity… …compromised."
       ],
       onUpdate: function(timer) {
@@ -223,7 +222,7 @@ function initializeIntro() {
       backgroundImage: PrometheusIntroImg,
       dialogue: [
         "PROMETHEUS: I apologize for the conditions of your awakening.",
-        "PROMETHEUS: This bunker was not designed to remain dormant for centuries.",
+        "PROMETHEUS: This lab was not designed to remain dormant for centuries.",
         "PROMETHEUS: Power reserves are nearly depleted.",
         "PROMETHEUS: My own chassis is… …severely compromised.",
         "[Metal scraping sound.]"
