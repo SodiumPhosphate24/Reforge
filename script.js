@@ -25,7 +25,7 @@ var puzzlePrompt = null;
 // Alarm system
 var alarmFlashAlpha = 0;
 var alarmFlashIncreasing = true;
-var pIFrames = 6;
+var pIFrames = 15;
 var pX = 12500; var pY = 12500; var playerDamage = 1;
 var prePX = 0, prePY = 0;
 var camX = -12500; var camY = -12500;

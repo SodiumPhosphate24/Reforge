@@ -246,8 +246,8 @@ class Enemy {
   spawnMinions(count, type) {
     for (let i = 0; i < count; i++) {
       const angle = (TWO_PI / count) * i;
-      const spawnX = this.x + cos(angle) * 100;
-      const spawnY = this.y + sin(angle) * 100;
+      const spawnX = this.x + cos(angle) * 120;
+      const spawnY = this.y + sin(angle) * 120;
       enemies.push(new Enemy(type, spawnX, spawnY));
     }
   }
@@ -820,7 +820,7 @@ function drawEnemies() {
           healthPoints = players[activePlayer].health;
           healthPoints = constrain(healthPoints, 0, players[activePlayer].maxHealth);
         }
-        pIFrames = 6;
+        pIFrames = 15;
       }
       else {
         pIFrames--;
@@ -1032,6 +1032,7 @@ function bloodMoon(){
       bloodMoonCooldown = 18000;
       enemies = [];
       spawnEnemies();
+      console.log("Blood Mooned");
     }
   }
 }
