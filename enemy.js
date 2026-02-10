@@ -390,6 +390,7 @@ class Enemy {
     if (this.aggro) {
       // Breadcrumb AI: Follow the player's trail
       let targetX, targetY;
+      this.attack();
 
       if (breadcrumbs.length === 0) {
         // No breadcrumbs yet, stop moving
