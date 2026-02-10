@@ -101,7 +101,7 @@ var craftingRecipes = [
     name: "steam rifle",
     category: "Weapons",
     type: "item",
-    unlocked : true,
+    unlocked : false,
     ingredients: [
       { itemName: "cog", amount: 10},
       { itemName: "pipe", amount: 10},
