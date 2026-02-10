@@ -390,9 +390,6 @@ class Enemy {
     if (this.aggro) {
       // Breadcrumb AI: Follow the player's trail
       let targetX, targetY;
-      if (this.type == "greg"){
-        this.shoot();
-      }
 
       if (breadcrumbs.length === 0) {
         // No breadcrumbs yet, stop moving
