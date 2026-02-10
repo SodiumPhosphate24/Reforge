@@ -808,15 +808,21 @@ function drawEnemies() {
     }
 
     if (enemy.hitsPlayer()) {
-      if (enemy.type == "harpy" || enemy.type == "hydra") {
-        players[activePlayer].health -= 1;
-        healthPoints = players[activePlayer].health;
-        healthPoints = constrain(healthPoints, 0, players[activePlayer].maxHealth);
-      } else if (enemy.type == "boss") {
-        // Boss deals more damage
-        players[activePlayer].health -= 4;
-        healthPoints = players[activePlayer].health;
-        healthPoints = constrain(healthPoints, 0, players[activePlayer].maxHealth);
+      if(pIFrames <= 0) {
+        if (enemy.type == "harpy" || enemy.type == "hydra") {
+          players[activePlayer].health -= 10;
+          healthPoints = players[activePlayer].health;
+          healthPoints = constrain(healthPoints, 0, players[activePlayer].maxHealth);
+        } else if (enemy.type == "boss") {
+          // Boss deals more damage
+          players[activePlayer].health -= 20;
+          healthPoints = players[activePlayer].health;
+          healthPoints = constrain(healthPoints, 0, players[activePlayer].maxHealth);
+        }
+        pIFrames = 6;
+      }
+      else {
+        pIFrames--;
       }
     }
     if (enemy.isDead()) {
