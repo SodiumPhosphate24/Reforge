@@ -79,9 +79,9 @@ var craftingRecipes = [
     type: "item",
     unlocked : true,
     ingredients: [
-      { itemName: "cog", amount: 5 },
-      { itemName: "pipe", amount: 2 },
-      { itemName: "common cartridge", amount: 1 }
+      { itemName: "cog", amount: 5},
+      { itemName: "pipe", amount: 2},
+      { itemName: "common cartridge", amount: 1}
     ],
     output: { type: "gun", name: "steam gun", amount: 1 }
   },
