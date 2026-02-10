@@ -397,7 +397,7 @@ function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message
 }
 
 function preload() {
-  console.log("update cheese update train crash 1.0");
+  console.log("Polish Hot Dog Update");
   arrayCopy(tileImgs, 0, tileNames, 0, tileImgs.length);
   worldString = loadStrings("world.txt");
   sewer1String = loadStrings("sewer.txt");
