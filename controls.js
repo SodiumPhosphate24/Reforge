@@ -382,7 +382,7 @@ function mouseHeld() {
     console.log("Mouse Down");
     if (!editorMode) {
       if (inventoryList[inventorySlot-1] != null){
-        if (recoil > 10){
+        if (recoil >= 10){
           if (inventoryList[inventorySlot-1].name == "rifle"){
             if (activePlayer === 0) {
               shoot("rifle");
