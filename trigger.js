@@ -37,8 +37,7 @@ function handleTriggers(trigger, ID = -1) {
   if (trigger == "LockOpened") {
     //update lock trigger
     triggerList.LockOpened.unlockedBoilerRoom = true;
-    messages.push(new Message("quest", "Boiler Room Unlocked!"));
-    console.log("Lock opened with code 1855!");
+    //console.log("Lock opened with code 1855!");
     return;
   }
 

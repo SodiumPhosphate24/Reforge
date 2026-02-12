@@ -519,19 +519,30 @@ function drawCraftingMenu() {
       } else {
         fill(255, 100, 100, craftingMenuAlpha);
       }
-      text(recipe.name, 240, yPos);
-
+      
+      if(recipe.name == "ARGO"){
+        text(recipe.name, 240, yPos - 5);
+      }
+      else{
+        text(recipe.name, 240, yPos);
+      }
+      
       // Ingredients
       fill(255, 255, 255, craftingMenuAlpha);
       textSize(16);
+      let lineShift = 0;
       let ingredientText = "Requires: ";
       for (let j = 0; j < recipe.ingredients.length; j++) {
         ingredientText += recipe.ingredients[j].amount + "x " + recipe.ingredients[j].itemName;
         if (j < recipe.ingredients.length - 1) {
           ingredientText += ", ";
+          if(recipe.ingredients.length >= 5 && j == 3){
+            ingredientText += "\n";
+            lineShift = 15;
+          }
         }
       }
-      text(ingredientText, 240, yPos + 30);
+      text(ingredientText, 240, yPos + 30 - lineShift);
 
       // Output
       text("Crafts: " + recipe.output.amount + "x " + recipe.output.name, 240, yPos + 55);
@@ -561,7 +572,6 @@ function drawCraftingMenu() {
       const indicatorHeight = 385 / Math.max(1, unlockedRecipes.length / maxVisibleRecipes);
       rect(970, 235 + scrollPercent * (385 - indicatorHeight), 10, indicatorHeight, 5);
     }
-
     textAlign(CENTER, CENTER);
   }
 
