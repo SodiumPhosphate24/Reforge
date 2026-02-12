@@ -66,8 +66,8 @@ class Enemy {
     if (type == "boss") {
       this.type = "boss";
       this.name = "Khronos";
-      this.health = 200;
-      this.maxHealth = 200;
+      this.health = 175;
+      this.maxHealth = 175;
       this.speed = 1.5;
       this.acceleration = 0.08;
       this.image = KhronosImage;

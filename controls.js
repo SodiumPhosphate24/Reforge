@@ -379,6 +379,7 @@ function mouseHeld() {
     return;
   }
   if (mouseIsPressed){
+    console.log("Mouse Down");
     if (!editorMode) {
       if (inventoryList[inventorySlot-1] != null){
         if (recoil > 10){
@@ -388,6 +389,7 @@ function mouseHeld() {
             } else if (players[activePlayer].health > 10) {
               players[activePlayer].health -= 3;
               shoot("rifle");
+              console.log("Shot Rifle");
             }
           }
         }
@@ -406,7 +408,7 @@ function mouseClicked() {
     if (inventoryList[inventorySlot - 1] != null) {
       var currentItem = inventoryList[inventorySlot - 1];
 
-      if (currentItem.type == "gun") {
+      if (currentItem.type == "gun" && currentItem.name != "rifle") {
         // Only humans or healthy robots can shoot, and only robots consume battery
         if (activePlayer === 0) {
           shoot(currentItem.name);

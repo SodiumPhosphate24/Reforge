@@ -95,7 +95,7 @@ var craftingRecipes = [
       { itemName: "pipe", amount: 5},
       {itemName: "rare cartridge", amount: 2}
     ],
-    output: { type: "gun", name: "steam shotgun", amount: 1 }
+    output: { type: "gun", name: "shotgun", amount: 1 }
   },
   {
     name: "steam rifle",
@@ -107,7 +107,7 @@ var craftingRecipes = [
       { itemName: "pipe", amount: 10},
       { itemName: "legendary cartridge", amount: 1}
     ],
-    output: { type: "gun", name: "steam rifle gun", amount: 1 }
+    output: { type: "gun", name: "rifle", amount: 1 }
   },
   // ITEMS
   {
