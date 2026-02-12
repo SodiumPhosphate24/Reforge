@@ -911,7 +911,7 @@ function drawGameplay() {
   drawEnemies();
   drawBullets();
   bloodMoon();
-  drawBloodMoonOverlay();
+  // drawBloodMoonOverlay(); // Removed from here to move above UI
 
   // Calculate player center for distance checks
   const playerCenterX = pX + 600 + pWidth / 2;
@@ -1127,6 +1127,8 @@ function drawGameplay() {
   if (typeof drawPlayerTransferMenu === 'function') {
     drawPlayerTransferMenu();
   }
+
+  drawBloodMoonOverlay();
 
   // Draw fog centered on camera, constrained to screen
   tint(255, 200);
