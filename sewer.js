@@ -135,7 +135,7 @@ function updateLightsOutPuzzle(linkKey, plates, room, solved) {
     const pp = plates[j];
     const px = pX + 600 + (pWidth || 35) / 2;
     const py = pY + 375 + (pHeight || 21) / 2;
-    if (dist(px, py, pp.x, pp.y) < 25 && keyPressedOnce(69)) {
+    if (pp && dist(px, py, pp.x, pp.y) < 25 && keyPressedOnce(69)) {
       togglePlateAndNeighbors(plates, pp.gridX, pp.gridY);
       const count = puzzleInteractionCount.get(linkKey) || 0;
       puzzleInteractionCount.set(linkKey, count + 1);
