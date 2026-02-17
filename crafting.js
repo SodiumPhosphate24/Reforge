@@ -19,8 +19,8 @@ var craftingRecipes = [
     name: "SPUD",
     category: "Robots",
     type: "player",
-    unlocked : false,
-    playerConstructor: {width : 35, height : 35, speed : 1.3, health : 100, damage : 1},
+    unlocked: false,
+    playerConstructor: { width: 35, height: 35, speed: 1.3, health: 100, damage: 1 },
     ingredients: [
       { itemName: "common wheel", amount: 2 },
       { itemName: "common cartridge", amount: 1 },
@@ -33,13 +33,13 @@ var craftingRecipes = [
     name: "SCAMPER",
     category: "Robots",
     type: "player",
-    unlocked : false,
-    playerConstructor: {width : 35, height : 25, speed : 1.7, health : 75, damage : 1},
+    unlocked: false,
+    playerConstructor: { width: 35, height: 25, speed: 1.7, health: 75, damage: 1 },
     ingredients: [
       { itemName: "rare wheel", amount: 2 },
       { itemName: "rare cartridge", amount: 2 },
       { itemName: "cog", amount: 5 },
-      { itemName: "pipe", amount: 5}
+      { itemName: "pipe", amount: 5 }
     ],
     output: { type: "player", name: "SCAMPER", amount: 1 }
   },
@@ -47,22 +47,22 @@ var craftingRecipes = [
     name: "STUR-D",
     category: "Robots",
     type: "player",
-    unlocked : false,
-    playerConstructor: {width : 105, height : 75, speed : .9, health : 150, damage : 1},
+    unlocked: false,
+    playerConstructor: { width: 105, height: 75, speed: .9, health: 150, damage: 1 },
     ingredients: [
       { itemName: "rare wheel", amount: 4 },
       { itemName: "legendary cartridge", amount: 2 },
-      { itemName: "cog", amount: 10},
-      { itemName: "pipe", amount: 10}
+      { itemName: "cog", amount: 10 },
+      { itemName: "pipe", amount: 10 }
     ],
     output: { type: "player", name: "STUR-D", amount: 1 }
   },
   {
-    name : "ARGO",
-    category : "Robots",
-    type : "player",
-    unlocked : false,
-    playerConstructor: {width : 225, height : 95, speed : .5, health : 100, damage : 1},
+    name: "ARGO",
+    category: "Robots",
+    type: "player",
+    unlocked: false,
+    playerConstructor: { width: 225, height: 95, speed: .5, health: 100, damage: 1 },
     ingredients: [
       { itemName: "pipe", amount: 25 },
       { itemName: "cog", amount: 25 },
@@ -77,11 +77,11 @@ var craftingRecipes = [
     name: "steam gun",
     category: "Weapons",
     type: "item",
-    unlocked : false,
+    unlocked: false,
     ingredients: [
-      { itemName: "cog", amount: 5},
-      { itemName: "pipe", amount: 2},
-      { itemName: "common cartridge", amount: 1}
+      { itemName: "cog", amount: 5 },
+      { itemName: "pipe", amount: 2 },
+      { itemName: "common cartridge", amount: 1 }
     ],
     output: { type: "gun", name: "steam gun", amount: 1 }
   },
@@ -89,11 +89,11 @@ var craftingRecipes = [
     name: "steam shotgun",
     category: "Weapons",
     type: "item",
-    unlocked : false,
+    unlocked: false,
     ingredients: [
-      { itemName: "cog", amount: 5},
-      { itemName: "pipe", amount: 5},
-      {itemName: "rare cartridge", amount: 2}
+      { itemName: "cog", amount: 5 },
+      { itemName: "pipe", amount: 5 },
+      { itemName: "rare cartridge", amount: 2 }
     ],
     output: { type: "gun", name: "shotgun", amount: 1 }
   },
@@ -101,11 +101,11 @@ var craftingRecipes = [
     name: "steam rifle",
     category: "Weapons",
     type: "item",
-    unlocked : false,
+    unlocked: false,
     ingredients: [
-      { itemName: "cog", amount: 10},
-      { itemName: "pipe", amount: 10},
-      { itemName: "legendary cartridge", amount: 1}
+      { itemName: "cog", amount: 10 },
+      { itemName: "pipe", amount: 10 },
+      { itemName: "legendary cartridge", amount: 1 }
     ],
     output: { type: "gun", name: "rifle", amount: 1 }
   },
@@ -114,7 +114,7 @@ var craftingRecipes = [
     name: "Rare Cartridge",
     category: "Items",
     type: "item",
-    unlocked : true,
+    unlocked: true,
     ingredients: [
       { itemName: "common cartridge", amount: 4 }
     ],
@@ -124,7 +124,7 @@ var craftingRecipes = [
     name: "Legendary Cartridge",
     category: "Items",
     type: "item",
-    unlocked : true,
+    unlocked: true,
     ingredients: [
       { itemName: "rare cartridge", amount: 4 }
     ],
@@ -162,7 +162,7 @@ function isNearWorkbench() {
       const tileCenterX = col * 50 + 25;
       const tileCenterY = row * 50 + 25;
       const dist = Math.sqrt(
-        Math.pow(playerCenterX - tileCenterX, 2) + 
+        Math.pow(playerCenterX - tileCenterX, 2) +
         Math.pow(playerCenterY - tileCenterY, 2)
       );
 
@@ -230,7 +230,7 @@ function canCraftRecipe(recipe) {
   return true;
 }
 
-function searchInventory(itemName){
+function searchInventory(itemName) {
   for (let item of inventoryList) {
     if (item && item.name === itemName) {
       return true;
@@ -295,7 +295,12 @@ function craftItem(recipe) {
     if (recipe.name === "ARGO") {
       robotImage = ARGOImage;
     }
-
+    if (recipe.name === "STUR-D") {
+      robotImage = STURDImage;
+    }
+    if (recipe.name === "SCAMPER") {
+      robotImage = SCAMPERImage;
+    }
     // Find nearest workbench position (bottom-right corner of 2x2 workbench)
     const playerCenterX = pX + 600 + pWidth / 2;
     const playerCenterY = pY + 375 + pHeight / 2;
@@ -315,7 +320,7 @@ function craftItem(recipe) {
         const tileCenterX = col * 50 + 25;
         const tileCenterY = row * 50 + 25;
         const dist = Math.sqrt(
-          Math.pow(playerCenterX - tileCenterX, 2) + 
+          Math.pow(playerCenterX - tileCenterX, 2) +
           Math.pow(playerCenterY - tileCenterY, 2)
         );
 
@@ -339,22 +344,22 @@ function craftItem(recipe) {
     if (workbenchTiles.length > 0) {
       let maxRow = workbenchTiles[0].row;
       let maxCol = workbenchTiles[0].col;
-      
+
       for (const tile of workbenchTiles) {
         if (tile.row > maxRow || (tile.row === maxRow && tile.col > maxCol)) {
           maxRow = tile.row;
           maxCol = tile.col;
         }
       }
-      
+
       // Position is 200px to the right of the bottom-right tile's right edge
       workbenchBottomRightX = (maxCol + 1) * 50 + 200 - 600;
       workbenchBottomRightY = maxRow * 50 - 375;
       foundWorkbench = true;
     }
 
-    if(recipe.name === "ARGO"){
-      players.push(new Player(workbenchBottomRightX-400, workbenchBottomRightY + 50, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
+    if (recipe.name === "ARGO") {
+      players.push(new Player(workbenchBottomRightX - 400, workbenchBottomRightY + 50, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
     }
     else {
       players.push(new Player(workbenchBottomRightX, workbenchBottomRightY + 15, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
@@ -519,14 +524,14 @@ function drawCraftingMenu() {
       } else {
         fill(255, 100, 100, craftingMenuAlpha);
       }
-      
-      if(recipe.name == "ARGO"){
+
+      if (recipe.name == "ARGO") {
         text(recipe.name, 240, yPos - 5);
       }
-      else{
+      else {
         text(recipe.name, 240, yPos);
       }
-      
+
       // Ingredients
       fill(255, 255, 255, craftingMenuAlpha);
       textSize(16);
@@ -536,7 +541,7 @@ function drawCraftingMenu() {
         ingredientText += recipe.ingredients[j].amount + "x " + recipe.ingredients[j].itemName;
         if (j < recipe.ingredients.length - 1) {
           ingredientText += ", ";
-          if(recipe.ingredients.length >= 5 && j == 3){
+          if (recipe.ingredients.length >= 5 && j == 3) {
             ingredientText += "\n";
             lineShift = 15;
           }
@@ -581,7 +586,7 @@ function drawCraftingMenu() {
 // Draw crafting prompt when near workbench
 function drawCraftingPromptIfNeeded() {
   if (!craftingPrompt) craftingPrompt = createPrompt();
-  
+
   const nearWorkbench = isNearWorkbench();
 
   if (nearWorkbench && !craftingMenuOpen) {

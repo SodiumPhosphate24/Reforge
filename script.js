@@ -409,6 +409,8 @@ function preload() {
   Buschy = loadImage("Characters/Buschy.png");
   SPUDImage = loadImage("Characters/SPUD.png");
   ARGOImage = loadImage("Characters/Argo.png");
+  SCAMPERImage = loadImage("Characters/Scamper.png")
+  STURDImage = loadImage("Characters/STURD.png")
   KhronosImage = loadImage("Characters/Khronos.png");
   Prometheus = loadImage("Characters/Prometheus.png");
   Hephaestus = loadImage("Characters/Hephaestus.png");
