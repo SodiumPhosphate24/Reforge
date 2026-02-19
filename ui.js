@@ -5,6 +5,15 @@ var itemLabelAlpha = 0;
 var lastInventorySlot = 1;
 function drawUI() {
   buffs();
+  
+  // Press ESC to Pause indicator
+  push();
+  textAlign(RIGHT, TOP);
+  textSize(14);
+  textFont(Silkscreen);
+  fill(255, 255, 255, 150);
+  text("ESC to Pause", width - 20, 20);
+  pop();
 }
 
 function drawItems() {

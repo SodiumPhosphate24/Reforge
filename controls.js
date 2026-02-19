@@ -73,6 +73,11 @@ function controls() {
 function mousePressed() { }
 
 function keyPressed() {
+  if (keyCode === ESCAPE) {
+    if (gameState === "playing") {
+      isPaused = !isPaused;
+    }
+  }
   // Q key handling moved to keyReleased for hold-to-select menu
   if (keyCode == 67 && keyIsDown(17)) {
     navigator.clipboard.writeText(worldToString(gameWorld));

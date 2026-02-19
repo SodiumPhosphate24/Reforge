@@ -806,6 +806,12 @@ function draw() {
     return;
   }
 
+  // Show controls screen
+  if (gameState === "controls") {
+    drawControlsScreen();
+    return;
+  }
+
   // Show transition fade
   if (gameState === "transition") {
     updateTransition();
@@ -859,6 +865,10 @@ function mouseReleased() {
 }
 
 function drawGameplay() {
+  if (isPaused) {
+    drawPauseMenu();
+    return;
+  }
   prePX = pX;
   prePY = pY;
   background(50);

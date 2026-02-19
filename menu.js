@@ -1,5 +1,6 @@
 // Menu state management
-var gameState = "menu"; // "menu", "playing", "credits", or "settings"
+var gameState = "menu"; // "menu", "playing", "credits", "settings", "controls"
+var isPaused = false;
 let menuFadeAlpha = 255;
 let gameplayFadeAlpha = 0;
 let transitionSpeed = 5;
@@ -7,15 +8,15 @@ let menuAnimationTime = 0;
 let ReforgeLogo;
 
 // Menu options
-let menuOptions = ["Play", "Credits", "Settings"];
+let menuOptions = ["Play", "Controls", "Credits", "Settings"];
 let selectedMenuOption = 0;
-let menuOptionHoverAlpha = [0, 0, 0];
+let menuOptionHoverAlpha = [0, 0, 0, 0];
 let lastMenuKeyPress = 0;
 let menuKeyDelay = 150; // Delay between key presses in ms
 
 // New variables for menu animation
-let menuOptionSlideProgress = [0, 0, 0];
-let menuOptionTargetSlide = [0, 0, 0]; // 0 for off-screen right, 1 for on-screen
+let menuOptionSlideProgress = [0, 0, 0, 0];
+let menuOptionTargetSlide = [0, 0, 0, 0]; // 0 for off-screen right, 1 for on-screen
 let menuOptionXOffset = 500; // Starting X offset for animation
 let menuAnimationDelay = 10; // Frames delay between each option
 let menuAnimationTimer = 0; // Timer for staggered animation
@@ -249,15 +250,13 @@ function handleMenuClick(optionIndex) {
     for (let i = 0; i < menuOptions.length; i++) {
       menuOptionTargetSlide[i] = 0;
     }
-  } else if (optionIndex === 1) { // Credits
-    // Start exit animation, will change state once complete
-    pendingStateChange = "credits";
+  } else if (optionIndex === 1) { // Controls
+    pendingStateChange = "controls";
     menuAnimationTimer = 0;
-    // Set all targets to slide off-screen
     for (let i = 0; i < menuOptions.length; i++) {
       menuOptionTargetSlide[i] = 0;
     }
-  } else if (optionIndex === 2) { // Settings
+  } else if (optionIndex === 2) { // Credits
     // Start exit animation, will change state once complete
     pendingStateChange = "settings";
     menuAnimationTimer = 0;
@@ -442,4 +441,81 @@ function startGameFromMenu() {
   console.log("Starting game from menu");
   pendingStateChange = "intro";
   animateMenuOut();
+}
+function drawControlsScreen() {
+  background(20, 20, 30);
+  if (titleScreenImg) {
+    push();
+    imageMode(CENTER);
+    image(titleScreenImg, width/2, height/2, width, height);
+    pop();
+  }
+  
+  push();
+  fill(0, 0, 0, 200);
+  rect(0, 0, width, height);
+  
+  fill(255, 200, 80);
+  textFont(Silkscreen);
+  textSize(40);
+  textAlign(CENTER);
+  text("CONTROLS", width/2, 100);
+  
+  textSize(20);
+  fill(255);
+  let startY = 180;
+  let spacing = 35;
+  let leftX = width/2 - 200;
+  let rightX = width/2 + 50;
+  
+  textAlign(LEFT);
+  text("WASD", leftX, startY); text("- Move", rightX, startY);
+  text("MOUSE", leftX, startY + spacing); text("- Aim / Shoot", rightX, startY + spacing);
+  text("E", leftX, startY + spacing*2); text("- Interact / Pickup", rightX, startY + spacing*2);
+  text("Q (Hold)", leftX, startY + spacing*3); text("- Switch Robot", rightX, startY + spacing*3);
+  text("1-8", leftX, startY + spacing*4); text("- Inventory Slots", rightX, startY + spacing*4);
+  text("X", leftX, startY + spacing*5); text("- Drop Item", rightX, startY + spacing*5);
+  text("R (Hold)", leftX, startY + spacing*6); text("- Transfer Item", rightX, startY + spacing*6);
+  text("ESC", leftX, startY + spacing*7); text("- Pause Game", rightX, startY + spacing*7);
+  
+  textAlign(CENTER);
+  fill(255, 255, 255, 150);
+  text("Press ESC to return", width/2, height - 80);
+  pop();
+  
+  if (keyPressedOnce(ESCAPE)) {
+    gameState = "menu";
+    menuAnimationTimer = 0;
+    for (let i = 0; i < menuOptions.length; i++) {
+      menuOptionSlideProgress[i] = 0;
+      menuOptionTargetSlide[i] = 0;
+    }
+  }
+}
+
+function drawPauseMenu() {
+  push();
+  fill(0, 0, 0, 150);
+  rect(0, 0, width, height);
+  
+  fill(255, 200, 80);
+  textFont(Silkscreen);
+  textSize(50);
+  textAlign(CENTER);
+  text("PAUSED", width/2, height/2 - 150);
+  
+  textSize(20);
+  fill(255);
+  text("CONTROLS", width/2, height/2 - 60);
+  textSize(16);
+  let startY = height/2 - 20;
+  let spacing = 25;
+  text("WASD - Move | MOUSE - Aim/Shoot | E - Interact", width/2, startY);
+  text("Q (Hold) - Switch Robot | 1-8 - Slots | X - Drop", width/2, startY + spacing);
+  text("R (Hold) - Transfer | ESC - Resume", width/2, startY + spacing*2);
+  
+  textSize(24);
+  fill(255, 255, 255, sin(frameCount/10)*100 + 155);
+  text("Press ESC to Resume", width/2, height/2 + 120);
+  pop();
 }
