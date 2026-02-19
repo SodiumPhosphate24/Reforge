@@ -1,5 +1,5 @@
 // Menu state management
-var gameState = "menu"; // "menu", "playing", "credits", "settings", "controls"
+var gameState = "menu"; // "menu", "playing", "credits", "controls"
 var isPaused = false;
 let menuFadeAlpha = 255;
 let gameplayFadeAlpha = 0;
@@ -8,15 +8,15 @@ let menuAnimationTime = 0;
 let ReforgeLogo;
 
 // Menu options
-let menuOptions = ["Play", "Controls", "Credits", "Settings"];
+let menuOptions = ["Play", "Controls", "Credits"];
 let selectedMenuOption = 0;
-let menuOptionHoverAlpha = [0, 0, 0, 0];
+let menuOptionHoverAlpha = [0, 0, 0];
 let lastMenuKeyPress = 0;
 let menuKeyDelay = 150; // Delay between key presses in ms
 
 // New variables for menu animation
-let menuOptionSlideProgress = [0, 0, 0, 0];
-let menuOptionTargetSlide = [0, 0, 0, 0]; // 0 for off-screen right, 1 for on-screen
+let menuOptionSlideProgress = [0, 0, 0];
+let menuOptionTargetSlide = [0, 0, 0]; // 0 for off-screen right, 1 for on-screen
 let menuOptionXOffset = 500; // Starting X offset for animation
 let menuAnimationDelay = 10; // Frames delay between each option
 let menuAnimationTimer = 0; // Timer for staggered animation
@@ -258,7 +258,7 @@ function handleMenuClick(optionIndex) {
     }
   } else if (optionIndex === 2) { // Credits
     // Start exit animation, will change state once complete
-    pendingStateChange = "settings";
+    pendingStateChange = "credits";
     menuAnimationTimer = 0;
     // Set all targets to slide off-screen
     for (let i = 0; i < menuOptions.length; i++) {
@@ -367,40 +367,6 @@ function drawCreditsScreen() {
   textSize(18);
   fill(255, 255, 255, 150);
   text("Press ESC to return to menu", width / 2, height - 80);
-  pop();
-
-  // Handle ESC to return to menu
-  if (keyPressedOnce(ESCAPE)) {
-    gameState = "menu";
-    // Reset menu animation for re-entry - start off-screen right
-    menuAnimationTimer = 0;
-    for (let i = 0; i < menuOptions.length; i++) {
-      menuOptionSlideProgress[i] = 0; // Start off-screen
-      menuOptionTargetSlide[i] = 0; // Will be set to 1 by animation logic
-    }
-  }
-}
-
-function drawSettingsScreen() {
-  background(20, 20, 30);
-
-  // Title
-  push();
-  fill(100, 255, 255);
-  textFont(Silkscreen);
-  textSize(48);
-  textAlign(CENTER, CENTER);
-  text("SETTINGS", width / 2, 200);
-
-  // Placeholder text
-  textSize(24);
-  fill(255, 255, 255, 200);
-  text("Coming Soon", width / 2, height / 2);
-
-  // Back instruction
-  textSize(18);
-  fill(100, 255, 255, 180);
-  text("Press ESC to return to menu", width / 2, height - 100);
   pop();
 
   // Handle ESC to return to menu

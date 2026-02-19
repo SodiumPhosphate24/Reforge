@@ -800,12 +800,6 @@ function draw() {
     return;
   }
 
-  // Show settings screen
-  if (gameState === "settings") {
-    drawSettingsScreen();
-    return;
-  }
-
   // Show controls screen
   if (gameState === "controls") {
     drawControlsScreen();
