@@ -186,7 +186,7 @@ function isNearWorkbench() {
 function toggleCraftingMenu() {
   if (craftingMenuOpen) {
     craftingMenuClosing = true;
-  } else if (isNearWorkbench()) {
+  } else if (!inSewer && isNearWorkbench()) {
     craftingMenuOpen = true;
     craftingMenuClosing = false;
 
@@ -386,8 +386,8 @@ function craftItem(recipe) {
 function drawCraftingMenu() {
   if (!craftingMenuOpen && !craftingMenuClosing) return;
 
-  // Auto-close if too far from workbench
-  if (craftingMenuOpen && !craftingMenuClosing && !isNearWorkbench()) {
+  // Auto-close if too far from workbench or if in sewer
+  if (craftingMenuOpen && !craftingMenuClosing && (inSewer || !isNearWorkbench())) {
     craftingMenuClosing = true;
   }
 
@@ -578,7 +578,7 @@ function drawCraftingMenu() {
 function drawCraftingPromptIfNeeded() {
   if (!craftingPrompt) craftingPrompt = createPrompt();
 
-  const nearWorkbench = isNearWorkbench();
+  const nearWorkbench = !inSewer && isNearWorkbench();
 
   if (nearWorkbench && !craftingMenuOpen) {
     handleInteractionPrompt(
