@@ -135,7 +135,7 @@ function updateLightsOutPuzzle(linkKey, plates, room, solved) {
     const pp = plates[j];
     const px = pX + 600 + (pWidth || 35) / 2;
     const py = pY + 375 + (pHeight || 21) / 2;
-    if (pp && dist(px, py, pp.x, pp.y) < 25 && keyPressedOnce(69)) {
+    if (pp && dist(px, py, pp.x, pp.y) < 25 && keyIsPressed && keyCode === 69) {
       togglePlateAndNeighbors(plates, pp.gridX, pp.gridY);
       const count = puzzleInteractionCount.get(linkKey) || 0;
       puzzleInteractionCount.set(linkKey, count + 1);
@@ -199,7 +199,7 @@ function updateMazePuzzle(linkKey, path, room, solved) {
     else sewerPrompt.update(true);
     sewerPrompt.draw("Press E to scan path", [0, 255, 255], 80, true);
     
-    if (keyPressedOnce(69)) {
+    if (keyIsPressed && keyCode === 69) {
       // Start scanning animation from left to right
       mazeScanProgress.set(linkKey, mazeStartCol);
       mazeFlashTimers.set(linkKey, 180); // 3 seconds total display time
@@ -462,7 +462,7 @@ function drawSewerPrompt() {
     if (nearbySewer) {
       if (!sewerPrompt) sewerPrompt = createPrompt();
       handleInteractionPrompt(sewerPrompt, nearbySewer.x, nearbySewer.y, 80, "Press E to enter sewer", true);
-      if (keyPressedOnce(69)) {
+      if (keyIsPressed && keyCode === 69) {
         enterSewer(nearbySewer.row, nearbySewer.col);
       }
     } else if (sewerPrompt && sewerPrompt.isActive) {

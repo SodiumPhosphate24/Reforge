@@ -3,24 +3,24 @@ class Enemy {
     this.x = x;
     this.y = y;
     this.aggro = false;
-    this.vx = 0; // velocity x
-    this.vy = 0; // velocity y
+    this.vx = 0; 
+    this.vy = 0; 
     this.aggroRange = 325;
-    this.deaggroRange = 700; // de-aggro at longer distance
-    this.currentBreadcrumbIndex = 0; // Which breadcrumb we're following
-    this.raycastTarget = null; // For visualization in editor
-    this.wallAvoidanceMode = false; // Track if we're in wall avoidance mode
-    this.wallAvoidanceVx = 0; // Locked velocity while avoiding wall
+    this.deaggroRange = 700; 
+    this.currentBreadcrumbIndex = 0; 
+    this.raycastTarget = null; 
+    this.wallAvoidanceMode = false; 
+    this.wallAvoidanceVx = 0; 
     this.wallAvoidanceVy = 0;
-    this.wallAvoidanceDistance = 0; // How far we've traveled in avoidance mode
-    this.wallAvoidanceMaxDistance = 0; // Maximum distance to travel before checking
+    this.wallAvoidanceDistance = 0; 
+    this.wallAvoidanceMaxDistance = 0; 
 
     if (type == "harpy") {//Basic Melee Damage, Medium Speed, Low Health
       this.type = "harpy";
       this.health = 2;
       this.maxHealth = 2;
       this.speed = 2;
-      this.acceleration = 0.15; // how quickly it changes direction
+      this.acceleration = 0.15;
       this.image = BadGuy;
       this.width = 48;
       this.height = 56;

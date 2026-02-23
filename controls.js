@@ -92,6 +92,7 @@ function keyPressed() {
 
   // E key: Interaction
   if (keyCode == 69) {
+    if (inSewer) return; // Ignore surface interactions while in sewer
     if (canFreeDaedalus) {
       clearTile(464, 169, 1);
     }
