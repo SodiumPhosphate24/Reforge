@@ -1,19 +1,18 @@
 class Bullet {
   constructor(type, damage, angle = 0, x = 0, y = 0) {
-    // Spawn from gun barrel position, but check for walls first
     const barrelPos = getGunBarrelPosition();
     
     this.damage = damage;
     this.hit = null;
 
-    this.lifespan = 25; // frames
+    this.lifespan = 25; // 25 frames
     if (type == "common") {
       recoil = 0;
       this.type = "common";
       this.image = BulletImgs[0];
       this.speed = 35;
       if(angle == 0){
-        this.angle = calculateAim() + .04; // use same angle as gun
+        this.angle = calculateAim() + .04; //.04 for adjustment
       }
       else{
         this.angle = angle;
@@ -34,7 +33,7 @@ class Bullet {
   }
 
   update() {
-    // direction vector from enemy -> player
+    // direction vector from angle
     this.x += this.speed * cos(this.angle);
     this.y += this.speed * sin(this.angle);
     this.lifespan--;
@@ -63,7 +62,7 @@ class Bullet {
   }
 
   hitsWall() {
-    // Bullets are already in world coordinates, so we need a direct tile check
+    // Checks bullet coordinates with tiles
     const w = 18, h = 5;
     const left = this.x;
     const top = this.y;
@@ -88,14 +87,13 @@ class Bullet {
             if (tileWalls[t.type] == 1) {
               const tL = col * 50, tT = row * 50, tR = tL + 50, tB = tT + 50;
               if (left < tR && right > tL && top < tB && bottom > tT) {
-                // If it's a crate (type 5), destroy it
+                // Destroys crates (type 5)
                 if (t.type === 5) {
-                  // Get stored items for this crate
+                  // Drops stored items
                   const crateKey = row + "," + col;
                   const storedItems = crateInventories.get(crateKey);
 
                   if (storedItems && storedItems.length > 0) {
-                    // Drop all stored items
                     for (const itemConstructor of storedItems) {
                       droppedItems.push(new DroppedItem(
                         new Item(itemConstructor[0], itemConstructor[1], itemConstructor[2]),
@@ -103,10 +101,9 @@ class Bullet {
                         row * 50 + 25
                       ));
                     }
-                    // Remove from inventory map
                     crateInventories.delete(crateKey);
                   } else {
-                    // Fallback: drop random item if no inventory stored
+                    // Drops a random item if no item stored
                     let r = Math.floor(Math.random() * itemConstructors.length);
                     droppedItems.push(new DroppedItem(
                       new Item(itemConstructors[r][0], itemConstructors[r][1], itemConstructors[r][2]),
@@ -122,11 +119,10 @@ class Bullet {
               }
             }
           }
-        } else if (cell) { // legacy
+        } else if (cell) { //crate failsafe
           if (tileWalls[cell.type] == 1) {
             const tL = col * 50, tT = row * 50, tR = tL + 50, tB = tT + 50;
             if (left < tR && right > tL && top < tB && bottom > tT) {
-              // If it's a crate (type 5), destroy it
               if (cell.type === 5) {
                 clearTile(row, col, 0);
               }
@@ -142,7 +138,7 @@ class Bullet {
 function drawBullets() {
   let count = 0;
 
-  // Calculate viewport bounds for culling
+  // Calculate visual bounds for destroying bullets off screen
   const viewLeft = -camX - 50;
   const viewRight = -camX + width + 50;
   const viewTop = -camY - 50;
@@ -152,7 +148,7 @@ function drawBullets() {
     const b = bullets[count];
     b.update();
 
-    // Only draw bullets within viewport
+    // Only draw bullets within view
     if (b.x >= viewLeft && b.x <= viewRight &&
         b.y >= viewTop && b.y <= viewBottom) {
       push();
@@ -161,7 +157,7 @@ function drawBullets() {
       // rotate around its center
       rotate(b.angle);
 
-      // draw the bullet image (or fallback rect) centered
+      // draw the bullet image
       if (b.image) {
         image(b.image, -10, -10, 18, 5); // -10,-10 centers it
       } else {
@@ -170,6 +166,7 @@ function drawBullets() {
       }
       pop();
     }
+    //Destroys the bullet if it hits an enemy, wall, or player
     if (b.hitsEnemy() || b.hitsWall() || b.hitsPlayer() || b.lifespan <= 0) {
       bullets.splice(count, 1);
       count--;
@@ -181,13 +178,14 @@ function drawBullets() {
 
 
 function calculateAim() {
-  // player center in SCREEN space
+  // player center on screen
   const pxs = pX + camX + pWidth / 2 + 600;
   const pys = pY + camY + pHeight / 2 + 370;
 
   return atan2(mouseY - pys, mouseX - pxs);
 }
 
+//Cheesy Goodness
 // Raycast from player center to barrel position to check for walls
 function raycastToBarrel(barrelPos) {
   const playerCenterX = pX + 600 + pWidth / 2;
@@ -228,7 +226,7 @@ function raycastToBarrel(barrelPos) {
           };
         }
       }
-    } else if (cell) { // legacy
+    } else if (cell) { // failsafe
       if (tileWalls[cell.type] == 1) {
         const safeI = Math.max(0, i - 1);
         return {

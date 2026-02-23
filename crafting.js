@@ -1,15 +1,12 @@
 
-// Crafting menu state
 var craftingMenuOpen = false;
 var craftingMenuClosing = false;
-var craftingMenuAlpha = 0; // Fade in effect
-var craftingMenuSlideY = 50; // Slide up animation
-var craftingMenuScale = 0; // Scale animation
+var craftingMenuAlpha = 0;
+var craftingMenuSlideY = 50;
+var craftingMenuScale = 0;
 
-// Crafting prompt animation
 let craftingPrompt = null;
 
-// Crafting tabs
 var craftingTabs = ["Robots", "Weapons", "Items"];
 var selectedTab = 0;
 
@@ -133,9 +130,10 @@ var craftingRecipes = [
 ];
 
 var selectedRecipe = 0;
-var craftingScrollOffset = 0; // Tracks scroll position
-var maxVisibleRecipes = 4; // How many recipes to show at once
+var craftingScrollOffset = 0;
+var maxVisibleRecipes = 4;
 
+// Unlocks a recipe
 function unlockRecipe(name) {
   for (let i = 0; i < craftingRecipes.length; i++) {
     if (craftingRecipes[i].name === name) {
@@ -145,11 +143,12 @@ function unlockRecipe(name) {
   }
 }
 
+// Checks if player is near a workbench
 function isNearWorkbench() {
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
 
-  const checkRadius = 150; // Slightly larger radius for 2x2 workbench
+  const checkRadius = 120;
 
   // Check all tiles within radius
   for (let row = 0; row < gameWorld.length; row++) {
@@ -157,8 +156,7 @@ function isNearWorkbench() {
       const cell = gameWorld[row][col];
       if (!cell) continue;
 
-      // For 2x2 workbench, calculate distance to the center of the 2x2 cluster
-      // We'll check if ANY workbench tile is nearby
+      // Calculate distance to center of 2x2
       const tileCenterX = col * 50 + 25;
       const tileCenterY = row * 50 + 25;
       const dist = Math.sqrt(
@@ -184,12 +182,11 @@ function isNearWorkbench() {
   return false;
 }
 
+// Toggles crafting menu
 function toggleCraftingMenu() {
   if (craftingMenuOpen) {
-    // Start closing animation
     craftingMenuClosing = true;
   } else if (isNearWorkbench()) {
-    // Open menu
     craftingMenuOpen = true;
     craftingMenuClosing = false;
 
@@ -215,6 +212,7 @@ function toggleCraftingMenu() {
   frozen = craftingMenuOpen;
 }
 
+// Checks if player has enough ingredients to craft a recipe
 function canCraftRecipe(recipe) {
   for (let ingredient of recipe.ingredients) {
     let foundAmount = 0;
@@ -230,6 +228,7 @@ function canCraftRecipe(recipe) {
   return true;
 }
 
+// Checks if player has an item in their inventory
 function searchInventory(itemName) {
   for (let item of inventoryList) {
     if (item && item.name === itemName) {
@@ -239,6 +238,7 @@ function searchInventory(itemName) {
   return false;
 }
 
+// Crafts a recipe
 function craftItem(recipe) {
   if (!canCraftRecipe(recipe)) return;
 
@@ -259,7 +259,7 @@ function craftItem(recipe) {
   }
 
   if (recipe.type === "item") {
-    // Add crafted item to inventory
+    // Adds items to inventory
     const craftedItem = new Item(recipe.output.type, recipe.output.name, recipe.output.amount);
 
     // Try to stack with existing items
@@ -287,7 +287,6 @@ function craftItem(recipe) {
 
   if (recipe.type === "player") {
     let p = recipe.playerConstructor;
-    // Determine which image to use based on recipe name
     let robotImage = PlayerImage;
     if (recipe.name === "SPUD") {
       robotImage = SPUDImage;
@@ -301,7 +300,7 @@ function craftItem(recipe) {
     if (recipe.name === "SCAMPER") {
       robotImage = SCAMPERImage;
     }
-    // Find nearest workbench position (bottom-right corner of 2x2 workbench)
+    // Finds spawnpoint for robot
     const playerCenterX = pX + 600 + pWidth / 2;
     const playerCenterY = pY + 375 + pHeight / 2;
     const checkRadius = 150;
@@ -310,7 +309,7 @@ function craftItem(recipe) {
     let workbenchBottomRightY = pY;
     let foundWorkbench = false;
 
-    // Find all workbench tiles near player
+    // Find workbench tiles near player
     const workbenchTiles = [];
     for (let row = 0; row < gameWorld.length; row++) {
       for (let col = 0; col < gameWorld[row].length; col++) {
@@ -352,20 +351,20 @@ function craftItem(recipe) {
         }
       }
 
-      // Position is 200px to the right of the bottom-right tile's right edge
+      // Position in relation to workbench
       workbenchBottomRightX = (maxCol + 1) * 50 + 200 - 600;
       workbenchBottomRightY = maxRow * 50 - 375;
       foundWorkbench = true;
     }
-
-    if (recipe.name === "ARGO") {
+    // Spawn robot
+    if (recipe.name === "ARGO") {//Position adjustment for ARGO
       players.push(new Player(workbenchBottomRightX - 400, workbenchBottomRightY + 50, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
     }
     else {
       players.push(new Player(workbenchBottomRightX, workbenchBottomRightY + 15, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
     }
 
-    // Trigger particle system #5 for 1 second
+    // Trigger particle animation
     if (typeof particleSources !== 'undefined' && particleSources.length > 5) {
       particleSources[5].spawnRate = 20;
       setTimeout(() => {
@@ -378,12 +377,12 @@ function craftItem(recipe) {
 
   handleTriggers("Crafting");
 
-  // Close crafting menu after crafting
+  // Close crafting menu
   craftingMenuClosing = true;
 }
 
 
-
+// Draws crafting menu
 function drawCraftingMenu() {
   if (!craftingMenuOpen && !craftingMenuClosing) return;
 
@@ -398,7 +397,6 @@ function drawCraftingMenu() {
     craftingMenuSlideY = lerp(craftingMenuSlideY, 50, 0.25);
     craftingMenuScale = lerp(craftingMenuScale, 0, 0.3);
 
-    // Finish closing when alpha is nearly 0
     if (craftingMenuAlpha < 1) {
       craftingMenuOpen = false;
       craftingMenuClosing = false;
@@ -422,7 +420,7 @@ function drawCraftingMenu() {
   push();
   translate(0, craftingMenuSlideY);
 
-  // Semi-transparent background with scale and fade
+  // Background
   fill(0, 0, 0, craftingMenuAlpha * 0.78);
   rectMode(CENTER);
   rect(600, 375, 800 * craftingMenuScale, 550 * craftingMenuScale, 10);
@@ -435,7 +433,6 @@ function drawCraftingMenu() {
   noStroke();
   rectMode(CORNER);
 
-  // Only draw content if scale is reasonable
   if (craftingMenuScale > 0.3) {
     // Title
     fill(255, 150, 0, craftingMenuAlpha);
@@ -444,7 +441,7 @@ function drawCraftingMenu() {
     textAlign(CENTER, CENTER);
     text("CRAFTING MENU", 600, 120);
 
-    // Draw tabs
+    // Tabs
     textSize(18);
     const tabWidth = 200;
     const tabStartX = 600 - (craftingTabs.length * tabWidth) / 2;
@@ -452,7 +449,7 @@ function drawCraftingMenu() {
       const tabX = tabStartX + i * tabWidth;
       const tabY = 155;
 
-      // Tab background
+      // Background
       if (i === selectedTab) {
         fill(255, 150, 0, craftingMenuAlpha * 0.6);
       } else {
@@ -460,7 +457,7 @@ function drawCraftingMenu() {
       }
       rect(tabX, tabY, tabWidth - 10, 35, 5);
 
-      // Tab text
+      // Text
       fill(255, 255, 255, craftingMenuAlpha);
       textAlign(CENTER, CENTER);
       text(craftingTabs[i], tabX + (tabWidth - 10) / 2, tabY + 17);
@@ -472,7 +469,7 @@ function drawCraftingMenu() {
     textAlign(CENTER, CENTER);
     text("LEFT/RIGHT: Switch tabs | UP/DOWN: Select | ENTER: Craft | E: Close", 600, 205);
 
-    // Recipe list with scrolling
+    // Recipe list
     textAlign(LEFT, TOP);
     textSize(20);
 
@@ -482,18 +479,13 @@ function drawCraftingMenu() {
       const recipe = craftingRecipes[i];
       const canCraft = canCraftRecipe(recipe);
 
-      /*
-      if (!recipe.unlocked && canCraft) {
-        recipe.unlocked = true;
-      }
-      */
-
+      // Only show unlocked recipes in current tab
       if (recipe.unlocked && recipe.category === craftingTabs[selectedTab]) {
         unlockedRecipes.push({ index: i, recipe: recipe });
       }
     }
 
-    // Adjust scroll offset to keep selected recipe in view
+    // Adjust scroll offset
     if (selectedRecipe < craftingScrollOffset) {
       craftingScrollOffset = selectedRecipe;
     }
@@ -501,7 +493,6 @@ function drawCraftingMenu() {
       craftingScrollOffset = selectedRecipe - maxVisibleRecipes + 1;
     }
 
-    // Clamp scroll offset
     craftingScrollOffset = Math.max(0, Math.min(craftingScrollOffset, Math.max(0, unlockedRecipes.length - maxVisibleRecipes)));
 
     // Draw visible recipes
@@ -525,7 +516,7 @@ function drawCraftingMenu() {
         fill(255, 100, 100, craftingMenuAlpha);
       }
 
-      if (recipe.name == "ARGO") {
+      if (recipe.name == "ARGO") { // Spacial adjustment for ARGO recipe
         text(recipe.name, 240, yPos - 5);
       }
       else {
@@ -541,7 +532,7 @@ function drawCraftingMenu() {
         ingredientText += recipe.ingredients[j].amount + "x " + recipe.ingredients[j].itemName;
         if (j < recipe.ingredients.length - 1) {
           ingredientText += ", ";
-          if (recipe.ingredients.length >= 5 && j == 3) {
+          if (recipe.ingredients.length >= 5 && j == 3) { // Line break for long recipes
             ingredientText += "\n";
             lineShift = 15;
           }
@@ -556,7 +547,7 @@ function drawCraftingMenu() {
       yPos += recipeHeight;
     }
 
-    // Draw scroll indicators
+    // Scroll indicators
     if (unlockedRecipes.length > maxVisibleRecipes) {
       fill(255, 150, 0, craftingMenuAlpha * 0.6);
       textSize(14);
@@ -569,7 +560,7 @@ function drawCraftingMenu() {
         text("▼ Scroll Down", 600, 630);
       }
 
-      // Show position indicator
+      // Position indicator
       const scrollPercent = craftingScrollOffset / Math.max(1, unlockedRecipes.length - maxVisibleRecipes);
       fill(255, 150, 0, craftingMenuAlpha * 0.3);
       rect(970, 235, 10, 385, 5);
@@ -583,7 +574,7 @@ function drawCraftingMenu() {
   pop();
 }
 
-// Draw crafting prompt when near workbench
+// Crafting prompt if near workbench
 function drawCraftingPromptIfNeeded() {
   if (!craftingPrompt) craftingPrompt = createPrompt();
 
@@ -592,8 +583,8 @@ function drawCraftingPromptIfNeeded() {
   if (nearWorkbench && !craftingMenuOpen) {
     handleInteractionPrompt(
       craftingPrompt,
-      pX + 600, // Workbench is wherever player is interacting, but typically we'd use workbench pos. 
-      pY + 340, // Here we use player center as proxy since isNearWorkbench() uses player pos
+      pX + 600,
+      pY + 340,
       50,
       "Press E to Craft"
     );
@@ -603,16 +594,16 @@ function drawCraftingPromptIfNeeded() {
   }
 }
 
+// Handles crafting menu input
 function handleCraftingInput() {
   if (!craftingMenuOpen) return;
 
-  // Switch tabs
+  // Arrow keys: navigate
   if (keyPressedOnce(LEFT_ARROW)) {
     selectedTab--;
     if (selectedTab < 0) selectedTab = craftingTabs.length - 1;
     craftingScrollOffset = 0;
 
-    // Find first unlocked recipe in new tab
     for (let i = 0; i < craftingRecipes.length; i++) {
       if (craftingRecipes[i].unlocked && craftingRecipes[i].category === craftingTabs[selectedTab]) {
         selectedRecipe = i;
@@ -625,7 +616,6 @@ function handleCraftingInput() {
     if (selectedTab >= craftingTabs.length) selectedTab = 0;
     craftingScrollOffset = 0;
 
-    // Find first unlocked recipe in new tab
     for (let i = 0; i < craftingRecipes.length; i++) {
       if (craftingRecipes[i].unlocked && craftingRecipes[i].category === craftingTabs[selectedTab]) {
         selectedRecipe = i;
@@ -644,7 +634,6 @@ function handleCraftingInput() {
 
   if (unlockedIndices.length === 0) return;
 
-  // Navigate recipes (only through unlocked ones in current tab)
   if (keyPressedOnce(UP_ARROW)) {
     let currentPos = unlockedIndices.indexOf(selectedRecipe);
     if (currentPos > 0) {
@@ -662,7 +651,7 @@ function handleCraftingInput() {
     }
   }
 
-  // Craft selected recipe
+  // Enter: craft recipe
   if (keyPressedOnce(ENTER)) {
     if (craftingRecipes[selectedRecipe].unlocked) {
       craftItem(craftingRecipes[selectedRecipe]);

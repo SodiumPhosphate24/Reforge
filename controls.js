@@ -1,25 +1,25 @@
 var enemySpawns = "";
-var lockCodeInput = ""; // Track code input for Lock NPC
-var lockCodeActive = false; // Whether we're inputting a code
+var lockCodeInput = "";
+var lockCodeActive = false; 
 
 function controls() {
   mouseHeld();
-  // Don't allow controls during menu or transition
+  // No controls during menu or transition
   if (gameState !== "playing") {
     return;
   }
 
-  // Handle Q key hold for player selection menu
+  // Q Key: Player Switching
   if (keyIsDown(81) && players.length > 1) {
     qKeyHeldFrames++;
     if (qKeyHeldFrames >= qKeyHoldThreshold && !playerSelectionMenuOpen) {
       playerSelectionMenuOpen = true;
       selectedPlayerIndex = activePlayer;
-      frozen = true; // Freeze game while menu is open
+      frozen = true;
     }
   } else {
     if (playerSelectionMenuOpen) {
-      // Q was released, close menu
+      // Q released
       frozen = false;
     }
   }
@@ -52,7 +52,7 @@ function controls() {
   if (players[activePlayer].name != "ARGO") {
     pXVel *= 0.8;
   }
-  else { pXVel *= .99 }
+  else { pXVel *= .99 } //Argo has more momentum
   pX += pXVel;
   pY += pYVel;
   players[activePlayer].x = pX;
@@ -63,14 +63,12 @@ function controls() {
       players[activePlayer].health -= .025;
     }
   }
-  // Guard if world failed to load
+  // Failsafe for failure to load world
   if (!gameWorld.length || !gameWorld[0]?.length) return;
 
   pX = constrain(pX, -600, gameWorld[0].length * 50 - width / 2 - pWidth);
   pY = constrain(pY, -400, gameWorld.length * 50 - height / 2 - pHeight);
 }
-
-function mousePressed() { }
 
 function keyPressed() {
   if (keyCode === ESCAPE) {
@@ -78,37 +76,38 @@ function keyPressed() {
       isPaused = !isPaused;
     }
   }
-  // Q key handling moved to keyReleased for hold-to-select menu
+  // Q key: Player Selection
   if (keyCode == 67 && keyIsDown(17)) {
     navigator.clipboard.writeText(worldToString(gameWorld));
     console.log("map and crate inventories copied to clipboard");
   }
 
+  // Number keys 1-8: Inventory Slots
   if (keyCode >= 49 && keyCode <= 56) {
-    // Don't allow inventory switching during dialogue
     const hasActiveDialogue = messages.some(msg => msg.type === "dialogue");
     if (!hasActiveDialogue) {
       inventorySlot = keyCode - 48;
     }
   }
 
+  // E key: Interaction
   if (keyCode == 69) {
     if (canFreeDaedalus) {
       clearTile(464, 169, 1);
     }
-    // Check for leak repair first (highest priority when holding wrench)
+    // Check for leak repair
     if (nearestLeak) {
-      // Permanently repair the leak by setting spawn rate to 0
       particleSources[nearestLeak.index].spawnRate = 0;
-      nearestLeak = null; // Clear the nearest leak
+      nearestLeak = null;
       totalLeaks--;
       if (totalLeaks == 0) {
         handleTriggers("Objective");
       }
       return;
     }
-    // Check for boiler repair next (if holding boiler cartridge)
+    // Check for boiler interaction
     if (distance(pX, pY, 12000, 12500) < 75) {
+      // Checks fix first, if holding boiler cartridge
       if (triggerList.Objective.fixBoiler == false) {
         if (triggerList.Objective.fixLeaks) {
           if (inventoryList[inventorySlot - 1] != null) {
@@ -122,6 +121,7 @@ function keyPressed() {
           messages.push(new Message("dialogue", ["Prometheus IV: You need to fix the leaks before you can fix the boiler"]));
         }
       }
+      // Then checks for a cartridge pickup
       else {
         if (generateCooldown <= 0) {
           for (let i = 0; i < inventoryList.length; i++) {
@@ -142,13 +142,13 @@ function keyPressed() {
       }
     }
 
-    // Use nearestPickupItem instead of looping
+    // Checks for item pickup
     if (nearestPickupItem) {
       const itemIndex = droppedItems.indexOf(nearestPickupItem);
       if (itemIndex === -1) return; // Item was removed, shouldn't happen
 
       const item = droppedItems[itemIndex];
-
+      // If item is stackable, checks for existing stack
       if (item.item.stackable) {
         let stacked = false;
         for (let j = 0; j < inventoryList.length; j++) {
@@ -163,6 +163,7 @@ function keyPressed() {
             }
           }
         }
+        // If no stack found, checks for empty slot
         if (!stacked) {
           for (let j = 0; j < 8; j++) {
             if (inventoryList[j] == null) {
@@ -183,6 +184,7 @@ function keyPressed() {
           return;
         }
       }
+      // If item is not stackable, checks for empty slot
       else {
         for (let j = 0; j < 8; j++) {
           if (inventoryList[j] == null) {
@@ -203,13 +205,14 @@ function keyPressed() {
         return;
       }
     }
-
+    // Checks for crafting bench
     if (typeof isNearWorkbench === 'function' && isNearWorkbench()) {
       toggleCraftingMenu();
       return;
     }
   }
 
+  // X key: Drop Item
   if (keyCode == 88) {
     if (inventoryList[inventorySlot - 1] != null) {
       droppedItems.push(new DroppedItem(inventoryList[inventorySlot - 1], pX + 600, pY + 340));
@@ -217,12 +220,9 @@ function keyPressed() {
     }
   }
 
-  if (keyCode == 71) {
-    speedBuff = !speedBuff;
-  }
-
+  // R key: Item Transfer
   if (keyCode == 82) {
-    // Open player selection menu for item transfer (if holding item)
+    // Opens player transfer menu if holding an item and there are other players
     if (players.length > 1) {
       if (inventoryList[inventorySlot - 1] != null) {
         if (!playerTransferMenuOpen) {
@@ -233,30 +233,31 @@ function keyPressed() {
       }
     }
   }
+
+  // V key: Drop legendary cartridge (Dev tool)
   if (keyCode == 86) {
     droppedItems.push(new DroppedItem(new Item("consumable", "legendary cartridge", 5), pX + 600, pY + 340));
   }
 
-  // Handle numeric input for Lock code (0-9)
+  // Number keys 0-9: Lock Code Input
   if (lockCodeActive && keyCode >= 48 && keyCode <= 57) {
     if (lockCodeInput.length < 4) {
       lockCodeInput += String.fromCharCode(keyCode);
     }
   }
 
-  // Backspace to delete last digit
+  // Backspace: Delete last digit of lock code
   if (lockCodeActive && keyCode == 8) {
     lockCodeInput = lockCodeInput.slice(0, -1);
   }
 
-  // Enter to submit code or dismiss if already open
+  // Enter: Submit lock code
   if (lockCodeActive && keyCode == 13) {
+    // Correct Code
     if (lockCodeInput === "1855") {
-      // Correct code!
       lockCodeActive = false;
       lockCodeInput = "";
       handleTriggers("LockOpened");
-      // Close the dialogue
       for (let k = messages.length - 1; k >= 0; k--) {
         if (messages[k].id === "Lock") {
           messages[k].closing = true;
@@ -273,9 +274,7 @@ function keyPressed() {
           break;
         }
       }
-      // Trigger objective
-    } else {
-      // Wrong code or just dismissing
+    } else { // Wrong Code
       lockCodeActive = false;
       lockCodeInput = "";
       for (let k = messages.length - 1; k >= 0; k--) {
@@ -297,12 +296,13 @@ function keyPressed() {
     }
   }
 
+  // C key: Drop random item (Dev tool)
   if (keyCode == 67) {
     let r = Math.floor(Math.random() * itemConstructors.length);
     droppedItems.push(new DroppedItem(new Item(itemConstructors[r][0], itemConstructors[r][1], itemConstructors[r][2]), pX + 600, pY + 340));
   }
 
-  // Handle arrow keys for player selection menu
+  // Arrow Keys: Player Selection Menu
   if (playerSelectionMenuOpen) {
     if (keyCode === UP_ARROW) {
       selectedPlayerIndex = (selectedPlayerIndex - 1 + players.length) % players.length;
@@ -312,7 +312,7 @@ function keyPressed() {
     }
   }
 
-  // Handle arrow keys for transfer menu
+  // Arrow Keys: Player Transfer Menu
   if (playerTransferMenuOpen) {
     if (keyCode === UP_ARROW) {
       selectedTransferPlayerIndex = (selectedTransferPlayerIndex - 1 + players.length) % players.length;
@@ -322,22 +322,23 @@ function keyPressed() {
     }
   }
 
+  // Editor key press handler
   if (typeof handleEditorKeyPress === "function") {
     handleEditorKeyPress();
   }
 
-  // Layer switching for editor mode
+  // Number keys 1-4: Editor Layer Selection
   if (editorMode) {
-    if (keyPressedOnce(49)) editorLayer = 0; // Key '1'
-    if (keyPressedOnce(50)) editorLayer = 1; // Key '2'
-    if (keyPressedOnce(51)) editorLayer = 2; // Key '3'
-    if (keyPressedOnce(52)) editorLayer = 3; // Key '4'
+    if (keyPressedOnce(49)) editorLayer = 0;
+    if (keyPressedOnce(50)) editorLayer = 1;
+    if (keyPressedOnce(51)) editorLayer = 2;
+    if (keyPressedOnce(52)) editorLayer = 3;
   }
 
 }
 
 function keyReleased() {
-  // Q key release - switch to selected player if menu was open
+  // Q key release - switch to selected player
   if (keyCode == 81) {
     if (playerSelectionMenuOpen) {
       switchPlayer(selectedPlayerIndex);
@@ -383,8 +384,8 @@ function mouseHeld() {
   if (gameState !== "playing") {
     return;
   }
+  //If holding a rifle, it will fire continuously
   if (mouseIsPressed){
-    console.log("Mouse Down");
     if (!editorMode) {
       if (inventoryList[inventorySlot-1] != null){
         if (recoil >= 10){
@@ -404,7 +405,7 @@ function mouseHeld() {
 }
 
 function mouseClicked() {
-  // Don't allow game interactions during menu or transition
+  // No mouse input during menu or transition
   if (gameState !== "playing") {
     return;
   }
@@ -451,6 +452,7 @@ function mouseClicked() {
 }
 
 function shoot(type){
+  //Different shot patterns for different guns
   var currentItem = inventoryList[inventorySlot - 1];
   if (recoil >= 10) {
     if(type == "steam gun") {
@@ -468,6 +470,7 @@ function shoot(type){
 }
 
 function useItem() {
+  // Decrement item amount and remove if zero
   inventoryList[inventorySlot - 1].amount -= 1;
   if (inventoryList[inventorySlot - 1].amount <= 0) {
     inventoryList[inventorySlot - 1] = null;
@@ -476,10 +479,10 @@ function useItem() {
 
 function mouseWheel(event) {
   if (typeof handleEditorMouseWheel === 'function' && handleEditorMouseWheel(event)) {
-    return false; // Editor handled it, prevent default behavior
+    return false; // Prevent default behavior in editor mode
   }
 
-  // Check if there's an active dialogue - prevent inventory switching
+  // No scroll wheel input if active message
   const hasActiveDialogue = messages.some(msg => msg.type === "dialogue");
   if (hasActiveDialogue) {
     return false;
@@ -496,5 +499,5 @@ function mouseWheel(event) {
     lastScroll = currentTime;
   }
 
-  return false; // Prevents default scrolling behavior (reducing system lag)
+  return false; // Prevents default scrolling behavior
 }
