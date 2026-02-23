@@ -288,9 +288,9 @@ class Enemy {
           this.sprayAttack();
         }
       } else if (this.phase === 3) {
-        // Phase 3: Rapid fire, charges, and minion spawns
+        // Phase 3: Rapid fire, charges, minion spawns
         if (attackRoll < 0.4) {
-          this.bossShoot(5); // 5-shot burst
+          this.bossShoot(5);
           this.attackCooldown = 40;
         } else if (attackRoll < 0.6) {
           this.startCharge();
@@ -306,7 +306,7 @@ class Enemy {
       }
     }
     
-    // Handle burst shooting
+    // Burst Shot
     if (this.burstCount > 0) {
       if (this.burstCooldown <= 0) {
         const angle = atan2(pY + 340 - (this.y + this.height/2), pX + 600 - (this.x + this.width/2));
@@ -328,7 +328,7 @@ class Enemy {
     this.isCharging = true;
     this.chargeTargetX = pX + 600;
     this.chargeTargetY = pY + 340;
-    this.chargeSpeed = 6 + this.phase * 2; // Faster each phase
+    this.chargeSpeed = 6 + this.phase * 2;
     this.attackCooldown = 90;
   }
   
@@ -350,7 +350,7 @@ class Enemy {
       this.bossUpdate();
     }
     
-    // Find distance to closest breadcrumb (or player if no breadcrumbs)
+    // Find distance to closest breadcrumb
     let closestDist = Infinity;
     
     if (breadcrumbs.length > 0) {
@@ -366,18 +366,18 @@ class Enemy {
       closestDist = distance(this.x, this.y, pX + 600, pY + 340);
     }
 
-    // Aggro/De-aggro logic based on distance to closest breadcrumb
+    // Aggro/De-aggro logic
     if ((!this.aggro && closestDist < this.aggroRange) || this.health < this.maxHealth) {
       this.aggro = true;
     } else if (this.aggro && closestDist > this.deaggroRange && this.health == this.maxHealth) {
       this.aggro = false;
-      // Gradually slow down when de-aggroing
+      // Slow down when de-aggroing
       this.vx *= 0.9;
       this.vy *= 0.9;
     }
 
     if (this.aggro) {
-      // Breadcrumb AI: Follow the player's trail
+      // Breadcrumb AI
       let targetX, targetY;
       if(this.type != "boss"){
         this.attack();
@@ -385,12 +385,11 @@ class Enemy {
       
 
       if (breadcrumbs.length === 0) {
-        // No breadcrumbs yet, stop moving
+        // No breadcrumbs, stop moving
         this.vx *= 0.9;
         this.vy *= 0.9;
-        return; // Exit update method
+        return; 
       } else {
-        // Make sure our index is valid
         if (this.currentBreadcrumbIndex >= breadcrumbs.length) {
           this.currentBreadcrumbIndex = breadcrumbs.length - 1;
         }
@@ -402,14 +401,14 @@ class Enemy {
         for (let searchIndex = breadcrumbs.length - 1; searchIndex >= this.currentBreadcrumbIndex; searchIndex--) {
           const testBreadcrumb = breadcrumbs[searchIndex];
 
-          // Check if we can reach this breadcrumb with raycast (no walls blocking)
+          // Raycast to check if we can reach this breadcrumb
           if (this.canReachPoint(testBreadcrumb.x, testBreadcrumb.y)) {
             targetX = testBreadcrumb.x;
             targetY = testBreadcrumb.y;
             targetIndex = searchIndex;
             foundReachable = true;
-            this.raycastTarget = { x: targetX, y: targetY, blocked: false }; // For editor visualization
-            break; // Found the farthest reachable breadcrumb
+            this.raycastTarget = { x: targetX, y: targetY, blocked: false }; 
+            break;
           }
         }
 
@@ -429,23 +428,21 @@ class Enemy {
           }
         }
 
-        // If still no breadcrumbs are reachable, stop moving
+        // If no breadcrumbs are reachable, stop moving
         if (!foundReachable) {
-          // No reachable breadcrumbs - stop moving
           this.vx *= 0.9;
           this.vy *= 0.9;
-          return; // Exit update method
+          return;
         } else {
           this.currentBreadcrumbIndex = targetIndex;
         }
 
-        // Check if we're close enough to move to next breadcrumb
+        // Check if close enough to move to next breadcrumb
         const distToBreadcrumb = distance(this.x + 10, this.y + 10, targetX, targetY);
         if (distToBreadcrumb < 30 && foundReachable) {
-          // Move to next breadcrumb
           this.currentBreadcrumbIndex++;
           if (this.currentBreadcrumbIndex >= breadcrumbs.length) {
-            this.currentBreadcrumbIndex = breadcrumbs.length - 1; // Stay at last one
+            this.currentBreadcrumbIndex = breadcrumbs.length - 1;
           }
         }
       }
@@ -453,23 +450,22 @@ class Enemy {
       // Calculate angle to target
       this.angle = atan2(targetY - (this.y + 10), targetX - (this.x + 10));
 
-      // Target velocity based on desired direction
+      // Direction velocity toward target
       let targetVx = this.speed * cos(this.angle);
       let targetVy = this.speed * sin(this.angle);
 
-      // Smoothly interpolate current velocity toward target
       this.vx = lerp(this.vx, targetVx, this.acceleration);
       this.vy = lerp(this.vy, targetVy, this.acceleration);
 
-      // Store previous position for collision resolution
+      // Previous position for collision resolution
       const prevX = this.x;
       const prevY = this.y;
 
-      // Try to move both axes first
+      // Collision detection
       this.x += this.vx;
       this.y += this.vy;
 
-      // Check for wall collisions and resolve with intelligent navigation
+      // Check for wall collisions
       if (this.checkWallCollision()) {
         // Revert to previous position
         this.x = prevX;

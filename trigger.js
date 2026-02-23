@@ -37,6 +37,7 @@ function handleTriggers(trigger, ID = -1) {
   if (trigger == "LockOpened") {
     //update lock trigger
     triggerList.LockOpened.unlockedBoilerRoom = true;
+    updateCurrentObjective();
     //console.log("Lock opened with code 1855!");
     return;
   }
@@ -57,6 +58,7 @@ function handleTriggers(trigger, ID = -1) {
       ];
       triggerState++;
       currentWaypointIndex = 1;
+      updateCurrentObjective();
       //Prometheus describes how to make bots, so the recipes are unlocked
       unlockRecipe("SPUD");
       unlockRecipe("SCAMPER");
@@ -74,12 +76,14 @@ function handleTriggers(trigger, ID = -1) {
       unlockRecipe("steam gun");
       unlockRecipe("shotgun");
       unlockRecipe("rifle");
+      updateCurrentObjective();
       return;
     }
     if (triggerList.Hephaestus.givenGun == false) {
       triggerList.Hephaestus.givenGun = true;
       messages.push(new Message("dialogue", ["Prometheus IV: I can sense Daedalus' presence. I'll reroute you to his location"], "Prometheus", true));
       currentWaypointIndex = 6;
+      updateCurrentObjective();
       return;
     }
   }
@@ -88,6 +92,7 @@ function handleTriggers(trigger, ID = -1) {
       triggerList.Crafting.craftedFirstRobot = true;
       messages.push(new Message("dialogue", ["Prometheus IV: Excellent. Your first creation.", "Prometheus IV: T-This is a SPUD. A Steam Powered Utility Droid.", "Prometheus IV: It was one of your most famous steam inven-ntions", "Prometheus IV: It can serve as a mobility robot.", "Prometheus IV: You can send it to the factory to find the wrench to fix the leaks.", "Prometheus IV: Press and hold Q to switch to your SPUD, using your arrow keys to navigate."], "Prometheus", true)); // Pass true for isTriggered
       currentWaypointIndex = 2;
+      updateCurrentObjective();
       return;
     }
   }
@@ -101,12 +106,14 @@ function handleTriggers(trigger, ID = -1) {
         messages.push(new Message("dialogue", ["Prometheus IV: Now you need to fix the boiler. You'll need to find a special cartridge to power it again. I'd look around the factory, where the wrench was", "Prometheus IV: The door is locked, try looking around for the code..."], "Prometheus", true));
       }
       currentWaypointIndex = 4;
+      updateCurrentObjective();
       return;
     }
     if (triggerList.Objective.fixBoiler == false) {
       triggerList.Objective.fixBoiler = true;
       messages.push(new Message("dialogue", ["Prometheus IV: You did it!", "Prometheus IV: The boiler is running again. The bunker is safe for now.", "Prometheus IV: No time to celebrate. You might not be alone", "Prometheus IV: My systems are detecting human activity in a region to the southeast", "Prometheus IV: The last traces are in AEGIS, a worn out military bunker. Couldn't hurt to check it out", "Prometheus IV: I'll reroute you to the area"], "Prometheus", true));
       currentWaypointIndex = 5;
+      updateCurrentObjective();
       return;
     }
   }
@@ -115,6 +122,7 @@ function handleTriggers(trigger, ID = -1) {
       triggerList.Pickup.pickedUpWrench = true;
       messages.push(new Message("dialogue", ["Prometheus IV: Exc-xcellent. You fo...ound the wrench.", "Prometheus IV: Pass the item to yo-urself by pressing and holding R.", "Prometheus IV: N-ow, go fix the l-leaks."], "Prometheus", true)); // Pass true for isTriggered
       currentWaypointIndex = 3;
+      updateCurrentObjective();
       return;
     }
   }
@@ -141,12 +149,14 @@ function handleTriggers(trigger, ID = -1) {
     if (daedalus && daedalus.teleported && !groupDiscussionComplete) {
       groupDiscussionComplete = true;
       currentWaypointIndex = 7;
+      updateCurrentObjective();
       console.log("Group discussion completed. The trio will relocate when the player leaves.");
       return;
     }
     if (groupDiscussionComplete) {
       unlockRecipe("ARGO");
       currentwaypointIndex = 8;
+      updateCurrentObjective();
       return;
     }
   }
@@ -176,5 +186,31 @@ function softlockPrevention() {
         return;
       }
     }
+  }
+}
+
+var currentObjective = "Talk to Prometheus IV";
+
+function updateCurrentObjective() {
+  if (!triggerList.Prometheus.talkToPrometheus) {
+    currentObjective = "Talk to Prometheus IV";
+  } else if (!triggerList.Crafting.craftedFirstRobot) {
+    currentObjective = "Forge a SPUD at the workbench";
+  } else if (!triggerList.Pickup.pickedUpWrench) {
+    currentObjective = "Find the Old Wrench in the factory";
+  } else if (!triggerList.Objective.fixLeaks) {
+    currentObjective = "Repair the 5 steam leaks with the wrench";
+  } else if (!triggerList.LockOpened.unlockedBoilerRoom) {
+    currentObjective = "Find the code and unlock the boiler room";
+  } else if (!triggerList.Objective.fixBoiler) {
+    currentObjective = "Repair the boiler with a cartridge";
+  } else if (!triggerList.Hephaestus.talkToHephaestus) {
+    currentObjective = "Find Hephaestus in the military sector";
+  } else if (!triggerList.Hephaestus.givenGun) {
+    currentObjective = "Follow Hephaestus' guidance";
+  } else if (!groupDiscussionComplete) {
+    currentObjective = "Reach Daedalus' location";
+  } else {
+    currentObjective = "Explore and survive the ruins";
   }
 }
