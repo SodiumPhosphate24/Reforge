@@ -471,18 +471,17 @@ class Enemy {
         this.x = prevX;
         this.y = prevY;
 
-        // If not already in wall avoidance mode, determine the avoidance direction
+        // Determine the avoidance direction
         if (!this.wallAvoidanceMode) {
-          // Detect which direction the target is relative to enemy
           const targetDirX = targetX - (this.x + 10);
           const targetDirY = targetY - (this.y + 10);
-          
-          // Normalize direction to just sign (-1, 0, or 1)
+
+          // Normalize direction to sign (-1, 0, or 1)
           const targetSignX = targetDirX > 0 ? 1 : (targetDirX < 0 ? -1 : 0);
           const targetSignY = targetDirY > 0 ? 1 : (targetDirY < 0 ? -1 : 0);
 
-          // Test which cardinal directions are blocked
-          const testDist = 3; // pixels to test in each direction
+          // Test which directions are blocked
+          const testDist = 3;
           
           this.x = prevX + testDist;
           const rightBlocked = this.checkWallCollision();
@@ -496,33 +495,29 @@ class Enemy {
           const upBlocked = this.checkWallCollision();
           this.y = prevY;
 
-          // Determine correction direction based on collision and target location
+          // Determine correction direction
           let correctionVx = 0;
           let correctionVy = 0;
 
-          // If hitting a wall on the side we want to go, move perpendicular instead
+          // If hitting wall, move perpendicular
           if (rightBlocked && targetSignX > 0) {
-            // Want to go right but blocked - move vertically
             correctionVx = 0;
             correctionVy = targetSignY !== 0 ? targetSignY * this.speed : (upBlocked ? this.speed : -this.speed);
-            this.wallAvoidanceMaxDistance = this.height; // Travel height of enemy
+            this.wallAvoidanceMaxDistance = this.height;
           } else if (leftBlocked && targetSignX < 0) {
-            // Want to go left but blocked - move vertically
             correctionVx = 0;
             correctionVy = targetSignY !== 0 ? targetSignY * this.speed : (upBlocked ? this.speed : -this.speed);
             this.wallAvoidanceMaxDistance = this.height;
           } else if (downBlocked && targetSignY > 0) {
-            // Want to go down but blocked - move horizontally
             correctionVx = targetSignX !== 0 ? targetSignX * this.speed : (leftBlocked ? this.speed : -this.speed);
             correctionVy = 0;
-            this.wallAvoidanceMaxDistance = this.width; // Travel width of enemy
+            this.wallAvoidanceMaxDistance = this.width;
           } else if (upBlocked && targetSignY < 0) {
-            // Want to go up but blocked - move horizontally
             correctionVx = targetSignX !== 0 ? targetSignX * this.speed : (leftBlocked ? this.speed : -this.speed);
             correctionVy = 0;
             this.wallAvoidanceMaxDistance = this.width;
           } else {
-            // General sliding - try each axis independently
+            // General sliding, try each axis independently
             this.x = prevX + this.vx;
             const canMoveX = !this.checkWallCollision();
             this.x = prevX;
@@ -535,7 +530,7 @@ class Enemy {
             if (canMoveY) correctionVy = this.vy;
           }
 
-          // Enter wall avoidance mode and lock the direction
+          // Trigger wall avoidance mode, lock the direction
           if (correctionVx !== 0 || correctionVy !== 0) {
             this.wallAvoidanceMode = true;
             this.wallAvoidanceVx = correctionVx;
@@ -544,9 +539,8 @@ class Enemy {
           }
         }
 
-        // Apply the locked wall avoidance movement
+        // Apply locked wall avoidance movement
         if (this.wallAvoidanceMode) {
-          // Check if we've traveled far enough or can now move toward breadcrumb
           if (this.wallAvoidanceDistance >= this.wallAvoidanceMaxDistance) {
             // Try moving toward breadcrumb
             const testAngle = atan2(targetY - (this.y + 10), targetX - (this.x + 10));
@@ -557,11 +551,10 @@ class Enemy {
             this.y = prevY + testVy;
             
             if (!this.checkWallCollision()) {
-              // Success! Can move toward breadcrumb now, step slightly away from wall first
               this.x = prevX;
               this.y = prevY;
-              
-              // Take small step away from wall (opposite of avoidance direction)
+
+              // Move away from wall
               const stepAwayDist = 0.5;
               this.x -= this.wallAvoidanceVx * stepAwayDist / this.speed;
               this.y -= this.wallAvoidanceVy * stepAwayDist / this.speed;
@@ -570,11 +563,9 @@ class Enemy {
               this.wallAvoidanceMode = false;
               this.wallAvoidanceDistance = 0;
               
-              // Apply breadcrumb-following velocity
               this.vx = testVx;
               this.vy = testVy;
-            } else {
-              // Still blocked, continue wall avoidance
+            } else { // Continue wall avoidance
               this.x = prevX + this.wallAvoidanceVx;
               this.y = prevY + this.wallAvoidanceVy;
               
@@ -587,7 +578,6 @@ class Enemy {
                 this.wallAvoidanceMode = false;
                 this.wallAvoidanceDistance = 0;
               } else {
-                // Track distance traveled
                 this.wallAvoidanceDistance += Math.sqrt(this.wallAvoidanceVx * this.wallAvoidanceVx + this.wallAvoidanceVy * this.wallAvoidanceVy);
                 this.vx = this.wallAvoidanceVx;
                 this.vy = this.wallAvoidanceVy;
@@ -607,28 +597,24 @@ class Enemy {
               this.wallAvoidanceMode = false;
               this.wallAvoidanceDistance = 0;
             } else {
-              // Track distance traveled
               this.wallAvoidanceDistance += Math.sqrt(this.wallAvoidanceVx * this.wallAvoidanceVx + this.wallAvoidanceVy * this.wallAvoidanceVy);
               this.vx = this.wallAvoidanceVx;
               this.vy = this.wallAvoidanceVy;
             }
           }
         } else {
-          // Completely stuck and no avoidance direction found
           this.vx *= -0.5;
           this.vy *= -0.5;
         }
       } else {
-        // No collision - exit wall avoidance mode
         this.wallAvoidanceMode = false;
         this.wallAvoidanceDistance = 0;
       }
     } else {
-      // Apply friction when not aggroed
       this.vx *= 0.95;
       this.vy *= 0.95;
 
-      // Move with remaining velocity
+      // Move with velocity
       if (Math.abs(this.vx) > 0.01 || Math.abs(this.vy) > 0.01) {
         const prevX = this.x;
         const prevY = this.y;
@@ -647,7 +633,6 @@ class Enemy {
   }
 
   checkWallCollision() {
-    // Apply hitbox cushion: reduce top by 10px, sides by 4px each
     const hitboxCushionX = 4;
     const hitboxCushionTop = 10;
     
@@ -663,6 +648,7 @@ class Enemy {
     const topTile = Math.floor(top / 50);
     const bottomTile = Math.floor(bottom / 50);
 
+    // Check all tiles in enemy's area
     for (let row = topTile; row <= bottomTile; row++) {
       for (let col = leftTile; col <= rightTile; col++) {
         if (row < 0 || col < 0 || row >= gameWorld.length || col >= gameWorld[row].length) continue;
@@ -678,7 +664,7 @@ class Enemy {
               if (left < tR && right > tL && top < tB && bottom > tT) return true;
             }
           }
-        } else if (cell) { // legacy
+        } else if (cell) { // failsafe
           if (tileWalls[cell.type] == 1) {
             const tL = col * 50, tT = row * 50, tR = tL + 50, tB = tT + 50;
             if (left < tR && right > tL && top < tB && bottom > tT) return true;
@@ -698,7 +684,6 @@ class Enemy {
   }
 
   hitsPlayer() {
-    // Apply same hitbox cushion as wall collision
     const hitboxCushionX = 4;
     const hitboxCushionTop = 10;
     
@@ -718,7 +703,7 @@ class Enemy {
 function drawEnemies() {
   let count = 0;
 
-  // Calculate viewport bounds for culling
+  // Calculate visual bounds for enemies
   const viewLeft = -camX - 100;
   const viewRight = -camX + width + 100;
   const viewTop = -camY - 100;
@@ -726,20 +711,18 @@ function drawEnemies() {
 
   for (let i = 0; i < enemies.length; i++) {
     const enemy = enemies[count];
-
-    // Always update logic
+    
     enemy.update();
 
-    // Check if enemy is within viewport for rendering
+    // Check if enemy is within view to draw
     const inView = enemy.x >= viewLeft && enemy.x <= viewRight &&
                    enemy.y >= viewTop && enemy.y <= viewBottom;
 
     if (inView) {
-      // Boss-specific rendering
       if (enemy.isBoss) {
         push();
-        
-        // Apply shake effect
+
+        // Shake effect
         let drawX = enemy.x;
         let drawY = enemy.y;
         if (enemy.shakeIntensity > 0.1) {
@@ -747,28 +730,27 @@ function drawEnemies() {
           drawY += random(-enemy.shakeIntensity, enemy.shakeIntensity);
         }
         
-        // Draw aura effect based on phase
+        // Aura effect
         noStroke();
         let auraColor;
         if (enemy.phase === 1) {
-          auraColor = color(255, 100, 0, 50); // Orange
+          auraColor = color(255, 100, 0, 50);
         } else if (enemy.phase === 2) {
-          auraColor = color(255, 50, 50, 70); // Red
+          auraColor = color(255, 50, 50, 70);
         } else {
-          auraColor = color(150, 0, 255, 90); // Purple
+          auraColor = color(150, 0, 255, 90);
         }
         
-        // Pulsing aura
+        // Aura Pulse
         for (let r = enemy.auraRadius; r > 0; r -= 15) {
           fill(red(auraColor), green(auraColor), blue(auraColor), alpha(auraColor) * (r / enemy.auraRadius));
           ellipse(drawX + enemy.width/2, drawY + enemy.height/2, r * 2, r * 2);
         }
         
-        // Phase transition flash effect
+        // Flash effecct
         if (enemy.flashTimer > 0) {
           tint(255, 255, 255, 150 + sin(enemy.flashTimer * 0.5) * 100);
         } else if (enemy.phaseTransitioning) {
-          // Flicker during transition
           tint(255, 100 + sin(frameCount * 0.3) * 100, 100 + sin(frameCount * 0.3) * 100);
         }
         
@@ -777,9 +759,7 @@ function drawEnemies() {
         noTint();
         pop();
         
-        // Don't draw regular health bar for boss (use boss bar instead)
       } else {
-        // Regular enemy rendering
         if (enemy.aggro) {
           fill(255, 0, 0);
         } else {
@@ -796,6 +776,7 @@ function drawEnemies() {
       }
     }
 
+    // Deal damage to player if colliding
     if (enemy.hitsPlayer()) {
       if(pIFrames <= 0) {
         if (enemy.type == "harpy" || enemy.type == "hydra") {
@@ -803,7 +784,6 @@ function drawEnemies() {
           healthPoints = players[activePlayer].health;
           healthPoints = constrain(healthPoints, 0, players[activePlayer].maxHealth);
         } else if (enemy.type == "boss") {
-          // Boss deals more damage
           players[activePlayer].health -= 20;
           healthPoints = players[activePlayer].health;
           healthPoints = constrain(healthPoints, 0, players[activePlayer].maxHealth);
@@ -815,11 +795,11 @@ function drawEnemies() {
       }
     }
     if (enemy.isDead()) {
-      // Clear active boss reference if boss dies
       if (enemy.isBoss) {
         activeBoss = null;
       }
-      
+
+      // Drop loot
       let r = Math.floor(Math.random() * (enemy.lootPool.length + 2));
       if (r < enemy.lootPool.length) {
         droppedItems.push(new DroppedItem(new Item(enemy.lootPool[r][0], enemy.lootPool[r][1], enemy.lootPool[r][2]), enemy.x, enemy.y));
@@ -831,7 +811,7 @@ function drawEnemies() {
   }
 }
 
-// Draw boss health bar at top of screen
+// Boss health bar
 function drawBossBar() {
   if (!activeBoss || activeBoss.isDead() || !activeBoss.aggro) return;
   
@@ -872,7 +852,7 @@ function drawBossBar() {
   noStroke();
   rect(barX, barY + 15, barWidth, barHeight, 4);
   
-  // Health bar fill with gradient effect based on phase
+  // Health bar fill
   const healthPercent = activeBoss.health / activeBoss.maxHealth;
   let healthColor;
   
@@ -887,59 +867,31 @@ function drawBossBar() {
   fill(healthColor);
   rect(barX, barY + 15, barWidth * healthPercent, barHeight, 4);
   
-  // Health bar shine effect
+  // Health bar shine 
   for (let i = 0; i < 3; i++) {
     fill(255, 255, 255, 30 - i * 10);
     rect(barX, barY + 15 + i * 2, barWidth * healthPercent, 4, 2);
   }
   
-  // Phase transition effect
   if (activeBoss.phaseTransitioning) {
     const progress = activeBoss.phaseTransitionTimer / activeBoss.phaseTransitionDuration;
     fill(255, 255, 255, 150 * (1 - progress));
     rect(barX, barY + 15, barWidth, barHeight, 4);
     
-    // "PHASE X" text
+    // Phase text
     fill(255, 255, 255, 255 * sin(progress * PI));
     textSize(24);
     text("PHASE " + activeBoss.phase, width / 2, barY + 30);
   }
   
-  // Phase indicators (small circles)
-  const indicatorY = barY + 55;
-  for (let i = 1; i <= 3; i++) {
-    const indicatorX = barX + (barWidth / 4) * i;
-    
-    if (i <= activeBoss.phase) {
-      // Active phase
-      fill(nameColor);
-      stroke(255, 255, 255, 150);
-      strokeWeight(2);
-    } else {
-      // Inactive phase
-      fill(60, 60, 60);
-      stroke(100, 100, 100);
-      strokeWeight(1);
-    }
-    ellipse(indicatorX, indicatorY, 12, 12);
-  }
-  
-  // Phase labels
-  noStroke();
-  textSize(10);
-  fill(180, 180, 180);
-  text("I", barX + barWidth / 4, indicatorY);
-  text("II", barX + barWidth / 2, indicatorY);
-  text("III", barX + barWidth * 3 / 4, indicatorY);
-  
   pop();
 }
-// Draw breadcrumbs for editor mode
+// Draw breadcrumbs in editor mode
 function drawBreadcrumbs() {
   if (!breadcrumbs || breadcrumbs.length === 0) return;
 
   push();
-  // Draw lines connecting breadcrumbs
+  // Lines connecting breadcrumbs
   stroke(255, 255, 0, 150);
   strokeWeight(2);
   noFill();
@@ -949,7 +901,7 @@ function drawBreadcrumbs() {
   }
   endShape();
 
-  // Draw breadcrumb markers
+  // Breadcrumb markers
   for (let i = 0; i < breadcrumbs.length; i++) {
     const b = breadcrumbs[i];
 
@@ -969,7 +921,7 @@ function drawBreadcrumbs() {
   pop();
 }
 
-// Draw enemy raycasts for editor mode
+// Draw enemy raycasts in editor mode
 function drawEnemyRaycasts() {
   if (!enemies || enemies.length === 0) return;
 
@@ -983,16 +935,16 @@ function drawEnemyRaycasts() {
       const endX = enemy.raycastTarget.x;
       const endY = enemy.raycastTarget.y;
 
-      // Draw raycast line
+      // Raycast line
       if (enemy.raycastTarget.blocked) {
-        stroke(255, 0, 0, 150); // Red if blocked
+        stroke(255, 0, 0, 150);
       } else {
-        stroke(0, 255, 0, 150); // Green if clear
+        stroke(0, 255, 0, 150);
       }
       strokeWeight(2);
       line(startX, startY, endX, endY);
 
-      // Draw endpoint marker
+      // Endpoint marker
       noStroke();
       if (enemy.raycastTarget.blocked) {
         fill(255, 0, 0, 150);
@@ -1005,6 +957,7 @@ function drawEnemyRaycasts() {
   pop();
 }
 
+// Blood moon functionality, respawns enemies
 function bloodMoon(){
   if (bloodMoonCooldown > 0){
     bloodMoonCooldown--;

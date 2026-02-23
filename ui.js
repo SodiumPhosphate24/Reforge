@@ -6,7 +6,7 @@ var lastInventorySlot = 1;
 function drawUI() {
   buffs();
   
-  // Press ESC to Pause indicator
+  // Instructions to view controls or pause
   push();
   textSize(14);
   textFont(Silkscreen);
@@ -19,14 +19,14 @@ function drawUI() {
   text("ESC to Pause", width - 20, 20);
   pop();
 
-  // Current Objective indicator
+  // Display current objective... ensures predefinition and displays corresponding objective.
   if (typeof currentObjective !== 'undefined') {
     push();
     textAlign(CENTER, TOP);
     textSize(18);
     textFont(Silkscreen);
     
-    // Draw background for objective
+    // Small box with objective neatly written inside.
     const objText = "Objective: " + currentObjective;
     const objWidth = textWidth(objText);
     fill(0, 0, 0, 150);
@@ -44,6 +44,7 @@ function drawUI() {
 
 var hasUsedCartridge = false;
 function drawCartridgeTutorial() {
+  //if the player hasn't yet used a cartridge, and they are low on health, this message will guide them to use a cartridge to replenish their energy
   if (hasUsedCartridge || activePlayer === 0) return;
   
   const lowEnergy = healthPoints < players[activePlayer].maxHealth * 0.3;
@@ -62,7 +63,7 @@ function drawCartridgeTutorial() {
       textSize(18);
       textFont(Silkscreen);
       fill(255, 200, 0, 200 + sin(frameCount * 0.1) * 55);
-      text("Low Energy! Click a cartridge in your inventory to use it", width / 2, height - 150);
+      text("Click with a cartridge in hand to restore energy.", width / 2, height - 150);
       pop();
     }
   }
@@ -73,9 +74,9 @@ function drawItems() {
 }
 
 function drawInventory() {
-  // Check if inventory slot changed
+  // If inventory slot changed, flash the name of the new item.
   if (lastInventorySlot !== inventorySlot) {
-    itemLabelAlpha = 1.5; // Set to 1.5 for slight delay
+    itemLabelAlpha = 1.5; // Set to 1.5 for slight delay, so it stays a while before fading out
     lastInventorySlot = inventorySlot;
   }
 
@@ -93,16 +94,15 @@ function drawInventory() {
     if (inventoryList[i] != null) {
       imageMode(CENTER);
 
-      // Calculate proper sizing for images to fit inside inventory slots
+      // resize images to fit within the bounds of an inventory slot. 
       const maxSize = 50 * (inventoryList[i].scaleFactor || 1.0);
       let itemWidth, itemHeight;
-
+//does ratio based on which 
       if (inventoryList[i].HtoW > 1) {
-        // Height is larger
         itemHeight = maxSize;
         itemWidth = maxSize / inventoryList[i].HtoW;
       } else {
-        // Width is larger or equal
+
         itemWidth = maxSize;
         itemHeight = maxSize * inventoryList[i].HtoW;
       }
