@@ -1,17 +1,14 @@
-// REFORGE - Intro Cutscene System
-// Handles the cinematic opening sequence
-
 class IntroScene {
   constructor(sceneData) {
     this.id = sceneData.id;
     this.type = sceneData.type; // 'text', 'dialogue', 'gameplay', 'transition'
-    this.duration = sceneData.duration || 0; // frames, 0 = wait for input
+    this.duration = sceneData.duration || 0;
     this.dialogue = sceneData.dialogue || [];
-    this.onEnter = sceneData.onEnter || (() => { });
+    this.onEnter = sceneData.onEnter || (() => { }); // Cheesy Goodness
     this.onUpdate = sceneData.onUpdate || (() => { });
     this.onExit = sceneData.onExit || (() => { });
     this.backgroundImage = sceneData.backgroundImage || null;
-    this.backgroundColor = sceneData.backgroundColor || [20, 15, 10]; // Sepia tone
+    this.backgroundColor = sceneData.backgroundColor || [20, 15, 10];
     this.timer = 0;
     this.dialogueIndex = 0;
     this.textAlpha = 0;

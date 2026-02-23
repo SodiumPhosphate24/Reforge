@@ -6,20 +6,7 @@ var lastInventorySlot = 1;
 function drawUI() {
   buffs();
   
-  // Instructions to view controls or pause
-  push();
-  textSize(14);
-  textFont(Silkscreen);
-  fill(255, 255, 255, 150);
-  
-  textAlign(LEFT, TOP);
-  text("ESC to view controls", 20, 20);
-  
-  textAlign(RIGHT, TOP);
-  text("ESC to Pause", width - 20, 20);
-  pop();
-
-  // Display current objective... ensures predefinition and displays corresponding objective.
+  // Current Objective indicator
   if (typeof currentObjective !== 'undefined') {
     push();
     textAlign(CENTER, TOP);
@@ -38,6 +25,19 @@ function drawUI() {
     text(objText, width / 2, 22);
     pop();
   }
+
+  // Press ESC to Pause indicator
+  push();
+  textSize(14);
+  textFont(Silkscreen);
+  fill(255, 255, 255, 150);
+  
+  textAlign(LEFT, TOP);
+  text("ESC to view controls", 20, 20);
+  
+  textAlign(RIGHT, TOP);
+  text("ESC to Pause", width - 20, 20);
+  pop();
   
   drawCartridgeTutorial();
 }
@@ -97,7 +97,7 @@ function drawInventory() {
       // resize images to fit within the bounds of an inventory slot. 
       const maxSize = 50 * (inventoryList[i].scaleFactor || 1.0);
       let itemWidth, itemHeight;
-//does ratio based on which 
+//does ratio based on which is larger dimension
       if (inventoryList[i].HtoW > 1) {
         itemHeight = maxSize;
         itemWidth = maxSize / inventoryList[i].HtoW;

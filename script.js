@@ -176,31 +176,6 @@ function drawFadeToGame() {
 
   pop();
 
-  // Draw pickup prompt after camera pop (screen-fixed)
-  drawPickupPromptIfNeeded();
-
-  // Draw NPC prompt after camera pop (screen-fixed)
-  drawNPCPromptIfNeeded();
-
-  // Draw leak repair prompt after camera pop (screen-fixed)
-  drawLeakPromptIfNeeded();
-
-  // Draw UI elements
-
-  messageDisplay();
-  // Draw fog centered on camera, constrained to screen
-  tint(255, 200);
-  const fogSize = width + 100;
-  imageMode(CENTER);
-  let fogX = pX + camX + 600;
-  let fogY = pY + camY + 375;
-  fogX = constrain(fogX, width / 2, width / 2);
-  fogY = constrain(fogY, height / 2, height / 2);
-
-  image(Fog, fogX, fogY, fogSize, fogSize);
-  imageMode(CORNER);
-  noTint();
-
   drawUI();
 
   // Overlay with fading black (eyes opening)
@@ -239,13 +214,6 @@ function drawFadeToGame() {
     fill(255, 200, 80, textAlpha);
     text("EXIT THE CRYOCHAMBER", width / 2, height / 2);
 
-    // Inner sharp text
-
-
-    // Lampost and Bench use variant system (not multi-tile)
-    // Will be configured in tileVariants below
-
-
     noStroke();
     fill(255, 220, 100, textAlpha);
     text("EXIT THE CRYOCHAMBER", width / 2, height / 2);
@@ -254,8 +222,32 @@ function drawFadeToGame() {
   }
 }
 
+function updateLeakDetection() {
+  nearestLeak = null;
+  let nearestDist = Infinity;
 
-var tintedTileCache = [];
+  // Only check if holding wrench
+  const currentItem = inventoryList[inventorySlot - 1];
+  if (!currentItem || currentItem.name !== "old wrench") {
+    return;
+  }
+
+  for (let i = 0; i < 5; i++) {
+    const ps = particleSources[i];
+    // Skip if leak is already fixed
+    if (ps.spawnRate === 0) continue;
+
+    const d = distance(pX + 600, pY + 340, ps.x, ps.y);
+    if (d < 120 && d < nearestDist) {
+      nearestDist = d;
+      nearestLeak = {
+        x: ps.x,
+        y: ps.y,
+        index: i
+      };
+    }
+  }
+}
 
 // Tile variants storage
 var tileVariants = {};
@@ -791,18 +783,21 @@ function draw() {
   // Show menu screen if not playing
   if (gameState === "menu") {
     drawMenuScreen();
+    drawUI(); 
     return;
   }
 
   // Show credits screen
   if (gameState === "credits") {
     drawCreditsScreen();
+    drawUI();
     return;
   }
 
   // Show controls screen
   if (gameState === "controls") {
     drawControlsScreen();
+    drawUI();
     return;
   }
 
@@ -810,6 +805,7 @@ function draw() {
   if (gameState === "transition") {
     updateTransition();
     drawTransitionOverlay();
+    drawUI();
     return;
   }
 
@@ -817,6 +813,7 @@ function draw() {
   if (gameState === "intro") {
     updateIntro();
     drawIntro();
+    drawUI();
     return;
   }
 
@@ -861,6 +858,7 @@ function mouseReleased() {
 function drawGameplay() {
   if (isPaused) {
     drawPauseMenu();
+    drawUI();
     return;
   }
   prePX = pX;
@@ -1150,6 +1148,7 @@ function drawGameplay() {
   imageMode(CORNER);
   drawHealth();
   drawBossBar();
+  drawUI();
   noTint();
   doRecoil();
   if (editorMode) {
