@@ -31,17 +31,17 @@ class Enemy {
       this.health = 6;
       this.maxHealth = 6;
       this.speed = 1;
-      this.acceleration = 0.15; // how quickly it changes direction
+      this.acceleration = 0.15;
       this.image = BadGuy;
       this.width = 48;
       this.height = 56;
     }
-    if (type == "greg") {//Low Ranged Damage, Medium Speed, Medium Health
+    if (type == "greg") { //Shoots
       this.type = "greg";
       this.health = 3;
       this.maxHealth = 3;
       this.speed = 2;
-      this.acceleration = 0.15; // how quickly it changes direction
+      this.acceleration = 0.15;
       this.image = Greg;
       this.width = 28;
       this.height = 54;
@@ -50,12 +50,12 @@ class Enemy {
       this.attackCooldown = 50;
       this.attackRate = 50;
     }
-    if (type == "hydra") {
+    if (type == "hydra") { // Medium Damage, Duplicates
       this.type = "hydra";
       this.health = 4;
       this.maxHealth = 4;
       this.speed = 2;
-      this.acceleration = 0.15; // how quickly it changes direction
+      this.acceleration = 0.15; 
       this.image = OGBuschy;
       this.width = 48;
       this.height = 56;
@@ -79,16 +79,13 @@ class Enemy {
       
       // Boss-specific properties
       this.isBoss = true;
-      this.phase = 1; // Current combat phase (1, 2, or 3)
+      this.phase = 1;
       this.phaseTransitioning = false;
       this.phaseTransitionTimer = 0;
-      this.phaseTransitionDuration = 120; // 2 seconds at 60fps
+      this.phaseTransitionDuration = 120;
+      this.phase2Threshold = 0.66;
+      this.phase3Threshold = 0.33;
       
-      // Phase thresholds (percentage of health)
-      this.phase2Threshold = 0.66; // Enter phase 2 at 66% health
-      this.phase3Threshold = 0.33; // Enter phase 3 at 33% health
-      
-      // Attack patterns
       this.attackCooldown = 0;
       this.attackPattern = 0;
       this.chargeSpeed = 0;
@@ -100,17 +97,14 @@ class Enemy {
       this.burstCount = 0;
       this.burstCooldown = 0;
       
-      // Spawn minions
       this.minionSpawnCooldown = 0;
       this.minionsSpawned = 0;
       
-      // Visual effects
       this.flashTimer = 0;
       this.shakeIntensity = 0;
       this.auraRadius = 0;
       this.auraAngle = 0;
       
-      // Set as active boss
       activeBoss = this;
     }
   }
@@ -124,7 +118,7 @@ class Enemy {
     const dy = targetY - startY;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    // Number of steps to check along the ray
+    // Steps to check along the ray
     const steps = Math.ceil(distance / 10);
 
     for (let i = 1; i <= steps; i++) {
@@ -156,6 +150,7 @@ class Enemy {
     return true; // Clear path
   }
 
+  // Enemy-specific methods
   shoot(){
     const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
     if (distToPlayer < this.shootRange) {
@@ -164,7 +159,8 @@ class Enemy {
       return;
     }
   }
-
+  
+  // Enemy attack method
   attack(){
     if(this.attackCooldown > 0){
       this.attackCooldown--;
@@ -184,16 +180,13 @@ class Enemy {
   bossUpdate() {
     if (!this.isBoss) return;
     
-    // Only run boss attacks when aggro
     if (!this.aggro) return;
     
-    // Update visual effects
     this.auraAngle += 0.02;
     this.auraRadius = 60 + sin(this.auraAngle * 3) * 10;
     if (this.flashTimer > 0) this.flashTimer--;
     if (this.shakeIntensity > 0) this.shakeIntensity *= 0.95;
     
-    // Check for phase transitions
     const healthPercent = this.health / this.maxHealth;
     
     if (!this.phaseTransitioning) {
@@ -214,10 +207,9 @@ class Enemy {
         this.phaseTransitionTimer = 0;
         this.onPhaseComplete();
       }
-      return; // Don't attack during transition
+      return;
     }
     
-    // Phase-specific attack patterns
     this.executePhaseAttacks();
   }
   
@@ -228,13 +220,11 @@ class Enemy {
     this.flashTimer = 60;
     this.shakeIntensity = 8;
     
-    // Speed increase per phase
     this.speed += 0.5;
     this.acceleration += 0.02;
   }
-  
+
   onPhaseComplete() {
-    // Spawn minions on phase change
     if (this.phase === 2) {
       this.spawnMinions(2, "harpy");
     } else if (this.phase === 3) {
@@ -259,7 +249,7 @@ class Enemy {
     
     const distToPlayer = distance(this.x + this.width/2, this.y + this.height/2, pX + 600, pY + 340);
     
-    // Handle charging attack
+    // Charge attack
     if (this.isCharging) {
       const dx = this.chargeTargetX - this.x;
       const dy = this.chargeTargetY - this.y;
@@ -276,12 +266,11 @@ class Enemy {
       return;
     }
     
-    // Execute attacks based on phase
     if (this.attackCooldown <= 0 && distToPlayer < this.shootRange * 1.5) {
       const attackRoll = Math.random();
       
       if (this.phase === 1) {
-        // Phase 1: Single shots and occasional charge
+        // Phase 1: Single shots, charge
         if (attackRoll < 0.7) {
           this.bossShoot(1);
           this.attackCooldown = 40;
@@ -289,9 +278,9 @@ class Enemy {
           this.startCharge();
         }
       } else if (this.phase === 2) {
-        // Phase 2: Burst fire and faster charges
+        // Phase 2: Burst fire, faster charges
         if (attackRoll < 0.5) {
-          this.bossShoot(3); // 3-shot burst
+          this.bossShoot(3);
           this.attackCooldown = 50;
         } else if (attackRoll < 0.8) {
           this.startCharge();

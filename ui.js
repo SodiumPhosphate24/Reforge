@@ -8,12 +8,44 @@ function drawUI() {
   
   // Press ESC to Pause indicator
   push();
-  textAlign(RIGHT, TOP);
   textSize(14);
   textFont(Silkscreen);
   fill(255, 255, 255, 150);
+  
+  textAlign(LEFT, TOP);
+  text("ESC to view controls", 20, 20);
+  
+  textAlign(RIGHT, TOP);
   text("ESC to Pause", width - 20, 20);
   pop();
+  
+  drawCartridgeTutorial();
+}
+
+var hasUsedCartridge = false;
+function drawCartridgeTutorial() {
+  if (hasUsedCartridge || activePlayer === 0) return;
+  
+  const lowEnergy = healthPoints < players[activePlayer].maxHealth * 0.3;
+  if (lowEnergy) {
+    let hasCartridge = false;
+    for (let item of inventoryList) {
+      if (item && item.name.includes("cartridge")) {
+        hasCartridge = true;
+        break;
+      }
+    }
+    
+    if (hasCartridge) {
+      push();
+      textAlign(CENTER, CENTER);
+      textSize(18);
+      textFont(Silkscreen);
+      fill(255, 200, 0, 200 + sin(frameCount * 0.1) * 55);
+      text("Low Energy! Click a cartridge in your inventory to use it", width / 2, height - 150);
+      pop();
+    }
+  }
 }
 
 function drawItems() {

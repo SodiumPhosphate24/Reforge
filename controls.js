@@ -472,6 +472,9 @@ function shoot(type){
 
 function useItem() {
   // Decrement item amount and remove if zero
+  if (inventoryList[inventorySlot - 1] && inventoryList[inventorySlot - 1].name.includes("cartridge")) {
+    hasUsedCartridge = true;
+  }
   inventoryList[inventorySlot - 1].amount -= 1;
   if (inventoryList[inventorySlot - 1].amount <= 0) {
     inventoryList[inventorySlot - 1] = null;
