@@ -206,7 +206,7 @@ function keyPressed() {
       }
     }
     // Checks for crafting bench
-    if (typeof isNearWorkbench === 'function' && isNearWorkbench()) {
+    if (!inSewer && typeof isNearWorkbench === 'function' && isNearWorkbench()) {
       toggleCraftingMenu();
       return;
     }

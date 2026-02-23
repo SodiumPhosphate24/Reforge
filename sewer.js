@@ -396,6 +396,9 @@ function enterSewer(sewerRow, sewerCol) {
   }
 
   if (!savedWorldState) savedWorldState = { world: gameWorld };
+  
+  // Set inSewer to true BEFORE switching the world reference
+  inSewer = true;
   gameWorld = sewerRooms.get(firstKey);
 
   const midRow = Math.floor(SEWER_ROOM_HEIGHT / 2);
@@ -408,7 +411,6 @@ function enterSewer(sewerRow, sewerCol) {
   players[activePlayer].x = pX;
   players[activePlayer].y = pY;
   players[activePlayer].inSewer = true;
-  inSewer = true;
   return true;
 }
 

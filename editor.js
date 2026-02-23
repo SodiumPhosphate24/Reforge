@@ -789,12 +789,12 @@ function handleEditorKeyPress() {
   }
 }
 
-// Cheesy Goodness
-// Handle mouse wheel in editor mode
+
+// Editor mouse events
 function handleEditorMouseWheel(event) {
   if (!editorMode) return false;
 
-  // If paused, use wheel to browse items instead
+  // Crate scrolling
   if (cratePlacementPaused) {
     if (typeof itemConstructors !== 'undefined' && itemConstructors.length > 0) {
       if (event.delta > 0) {
@@ -803,9 +803,10 @@ function handleEditorMouseWheel(event) {
         selectedItemIndex = (selectedItemIndex - 1 + itemConstructors.length) % itemConstructors.length;
       }
     }
-    return true; // Consume wheel when paused
+    return true;
   }
 
+  // Tile type wheel
   const m = __getMaxTileTypes();
   if (m > 0) {
     if (event.delta > 0) {
@@ -815,14 +816,15 @@ function handleEditorMouseWheel(event) {
     }
   }
   console.log("Mouse wheel changed to tile type:", selectedTileType);
-  return true; // consume wheel in editor mode
+  return true;
 }
 
+// Editor mouse released
 function handleEditorMouseReleased() {
   if (!editorMode) return false;
   if (cratePlacementPaused) return false;
   
-  // Handle particle source placement on mouse release
+  // Particle source placement
   if (placingParticleSource && mouseButton === LEFT) {
     var worldX = mouseX - camX;
     var worldY = mouseY - camY;
@@ -830,7 +832,7 @@ function handleEditorMouseReleased() {
     particleSources.push({
       x: worldX,
       y: worldY,
-      layer: editorLayer, // Use current editor layer
+      layer: editorLayer, 
       arcStart: particleSourceConfig.arcStart,
       arcEnd: particleSourceConfig.arcEnd,
       color: [...particleSourceConfig.color],
@@ -846,4 +848,3 @@ function handleEditorMouseReleased() {
   
   return false;
 }
-// ============== END EDITOR (3-LAYER SUPPORT) ==============
