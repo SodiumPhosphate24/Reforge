@@ -1088,23 +1088,8 @@ function drawGameplay() {
   }
 }
 
-/* ===================== LAYERED WORLD (3 layers: 0,1 behind; 2 above player) =====================
 
-Cell encoding in world.txt (backwards compatible):
-- Legacy single layer: "3" or "3:90"
-- Multi-layer: "L0,L1,L2" where each Ln is "" or "type[:rot]"
-Rows use '|' and columns use '/' as you already had.
-
-Example row:
-0,,/1,3,/2,,/,,4/|
-
-Crate inventory encoding:
-- Inline with tile data: "type@itemIndex.itemIndex.itemIndex"
-  e.g., "5@1.3.0" for a crate with items (indices from itemConstructors)
-
-================================================================================================= */
-
-// --- Editor-friendly helpers ---
+// Editor helper functions
 function getTile(row, col, layer = 0) {
   const cell = gameWorld[row]?.[col];
   if (!cell) return null;
