@@ -32,9 +32,11 @@ function drawUI() {
   textFont(Silkscreen);
   fill(255, 255, 255, 150);
 
-  textAlign(LEFT, TOP);
+  
   if (gameState == "playing") {
+    textAlign(LEFT, TOP);
     text("ESC to view controls", 20, 20);
+    textAlign(RIGHT, CENTER);
   }
 
   drawCartridgeTutorial();
