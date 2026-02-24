@@ -32,12 +32,13 @@ function drawUI() {
   textFont(Silkscreen);
   fill(255, 255, 255, 150);
 
-  
   if (gameState == "playing") {
     textAlign(LEFT, TOP);
     text("ESC to view controls", 20, 20);
-    textAlign(RIGHT, CENTER);
+    textAlign(RIGHT, TOP); // Changed from CENTER back to TOP to avoid setting bad defaults for following text
+    text("ESC to Pause", width - 20, 20); // Restored missing text
   }
+  pop(); // Ensure pop is called to reset drawing state
 
   drawCartridgeTutorial();
 }
