@@ -195,7 +195,7 @@ function updateCurrentObjective() {
   if (!triggerList.Prometheus.talkToPrometheus) {
     currentObjective = "Talk to Prometheus IV";
   } else if (!triggerList.Crafting.craftedFirstRobot) {
-    currentObjective = "Forge a SPUD at the workbench";
+    currentObjective = "Create a SPUD at the workbench";
   } else if (!triggerList.Pickup.pickedUpWrench) {
     currentObjective = "Find the Old Wrench in the factory";
   } else if (!triggerList.Objective.fixLeaks) {
@@ -207,7 +207,7 @@ function updateCurrentObjective() {
   } else if (!triggerList.Hephaestus.talkToHephaestus) {
     currentObjective = "Find Hephaestus in the military sector";
   } else if (!triggerList.Hephaestus.givenGun) {
-    currentObjective = "Follow Hephaestus' guidance";
+    currentObjective = "Locate and rescue Daedalus with the Steam Gun";
   } else if (!groupDiscussionComplete) {
     currentObjective = "Reach Daedalus' location";
   } else {

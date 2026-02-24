@@ -5,20 +5,20 @@ var itemLabelAlpha = 0;
 var lastInventorySlot = 1;
 function drawUI() {
   buffs();
-  
+
   // Current Objective indicator
-  if (typeof currentObjective !== 'undefined') {
+  if (typeof currentObjective !== 'undefined' && gameState == "playing") {
     push();
     textAlign(CENTER, TOP);
     textSize(18);
     textFont(Silkscreen);
-    
-    // Small box with objective neatly written inside.
+
+    // Small box with objective written inside.
     const objText = "Objective: " + currentObjective;
     const objWidth = textWidth(objText);
     fill(0, 0, 0, 150);
     rect(width / 2 - objWidth / 2 - 15, 15, objWidth + 30, 35, 5);
-    
+
     // Draw text with pulse effect
     const pulse = sin(frameCount * 0.05) * 30;
     fill(255, 255, 255, 225 + pulse);
@@ -31,14 +31,14 @@ function drawUI() {
   textSize(14);
   textFont(Silkscreen);
   fill(255, 255, 255, 150);
-  
+
   textAlign(LEFT, TOP);
   text("ESC to view controls", 20, 20);
-  
+
   textAlign(RIGHT, TOP);
   text("ESC to Pause", width - 20, 20);
   pop();
-  
+
   drawCartridgeTutorial();
 }
 
@@ -46,7 +46,7 @@ var hasUsedCartridge = false;
 function drawCartridgeTutorial() {
   //if the player hasn't yet used a cartridge, and they are low on health, this message will guide them to use a cartridge to replenish their energy
   if (hasUsedCartridge || activePlayer === 0) return;
-  
+
   const lowEnergy = healthPoints < players[activePlayer].maxHealth * 0.3;
   if (lowEnergy) {
     let hasCartridge = false;
@@ -56,7 +56,7 @@ function drawCartridgeTutorial() {
         break;
       }
     }
-    
+
     if (hasCartridge) {
       push();
       textAlign(CENTER, CENTER);
@@ -97,7 +97,7 @@ function drawInventory() {
       // resize images to fit within the bounds of an inventory slot. 
       const maxSize = 50 * (inventoryList[i].scaleFactor || 1.0);
       let itemWidth, itemHeight;
-//does ratio based on which is larger dimension
+      // does ratio based on which is larger dimension
       if (inventoryList[i].HtoW > 1) {
         itemHeight = maxSize;
         itemWidth = maxSize / inventoryList[i].HtoW;
@@ -261,7 +261,7 @@ class Item {
         this.image = matImgs[5];
         this.HtoW = 1;
       }
-      if(name == "train blueprint"){
+      if (name == "train blueprint") {
         this.name = name;
         this.image = matImgs[6];
         this.HtoW = 1;

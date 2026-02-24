@@ -1,28 +1,23 @@
 let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, ARGOImage, KhronosImage, Book, Greg, LockNpc, Hephaestus, Atlas, OGBuschy, Daedalus;
 
-// Boss system variables
-var activeBoss = null; // Currently active boss enemy
-//music
+var activeBoss = null;
+
 let themeSong;
-let maxTileTypes = 0; // will be set in setup()
-// Waypoint system
+let maxTileTypes = 0;
+
 var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875], [23983, 21925], [8475, 23225], [4425, 950], [13850, 850]];
 var currentWaypointIndex = 0;
-var puzzleCoordinates = [[400, 600], [200, 4250], [3150, 4250], [3450, 200]];
+//var puzzleCoordinates = [[400, 600], [200, 4250], [3150, 4250], [3450, 200]];
 var itemConstructors = [];
-// Example: Custom label for a special object
-var nearestSpecialObject = null; // Store nearest object info
-// Leak repair system
-var nearestLeak = null; // Stores nearest repairable leak info
+var nearestSpecialObject = null;
+var nearestLeak = null;
 var totalLeaks = 5;
 
-// Boiler repair system
 var fixBoilerPrompt = null;
 var boilerCartridgeCooldownPrompt = null;
 var pickupCartridgePrompt = null;
 var puzzlePrompt = null;
 
-// Alarm system
 var alarmFlashAlpha = 0;
 var alarmFlashIncreasing = true;
 var pIFrames = 15;
@@ -47,18 +42,16 @@ var bloodMoonActive = false;
 var bloodMoonOverlayAlpha = 0;
 var bloodMoonParticles = [];
 
-// Breadcrumb system variables
 var breadcrumbs = [];
 var lastBreadcrumbTime = 0;
-var breadcrumbInterval = 200; // Leave a breadcrumb every 0.2 seconds
-var maxBreadcrumbs = 15; // Keep maximum 15 breadcrumbs for most recent path
-var breadcrumbMinDistance = 2; // Minimum distance between breadcrumbs in pixels
+var breadcrumbInterval = 200; 
+var maxBreadcrumbs = 15; 
+var breadcrumbMinDistance = 2;
 var tileNames = [];
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench", "White Brick", "White Tile", "Steel Crate", "Tree", "Boiler", "Water", "Sewer", "Tree2", "Cobblestone", "Wooden Post", "Wooden post top", "Boarded Window", "Vines", "Exterior Copper Pipe", "Brick Roof"];
 var tileWalls = [2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 0, 1, 2, 2, 2, 2, 2, 2, 2]; // 0 walkable, 1 solid, 2 roof (walk-through + fades
 
 // Tile color variants - each tile can have multiple color tints
-// Format: tileColors[tileIndex] = [[r,g,b], [r,g,b], ...]
 var tileColors = [
   [[200, 220, 10]], // 0 - grass (white = no tint, shows base green color)
   [[255, 255, 255]], // 1 - asphalt
@@ -117,13 +110,11 @@ var tileColors = [
   [[255, 255, 255]] // 52 Brick Roof
 ];
 
-// Cache for tinted tile images - Format: tintedTileCache[tileIndex][colorIndex] = p5.Image
-
-// Fade transition from intro to gameplay
 var fadeToGameProgress = 0;
 
+// Game state management
 function updateFadeToGame() {
-  fadeToGameProgress += 0.005; // Slower fade speed (was 0.01)
+  fadeToGameProgress += 0.005; 
 
   if (fadeToGameProgress >= 1.0) {
     gameState = "playing";
@@ -133,35 +124,33 @@ function updateFadeToGame() {
   }
 }
 
+// Draw the fade in overlay
 function drawFadeToGame() {
-  // Clear background
   background(50);
-
-  // Draw the game underneath the fade
+  // Draw the gameplay scene behind fade
   push();
-  // Position camera for gameplay view
+  // Position camera
   controlCamera();
   translate(camX, camY);
 
-  // Draw all game layers
+  // Game layers
   drawWorldLayer(gameWorld, 0);
   drawWorldLayer(gameWorld, 1);
 
-  // Draw items (dropped items)
+  // Items
   updateDroppedItems();
 
   // Draw NPCs before roofs so they appear underneath
   fill(255);
   drawNPCs();
 
-  // Draw idle players before roofs so they appear "inside" buildings
+  // Draw idle players before roofs
   drawPlayers(false);
 
   drawWorldLayer(gameWorld, 2);
   drawWorldLayer(gameWorld, 3);
 
   fill(255);
-  // ACTIVE player is no longer drawn here (moved to after layer 4)
 
   drawGunDebugRect();
   drawEnemies();
@@ -171,14 +160,13 @@ function drawFadeToGame() {
   drawWorldLayer(gameWorld, 4);
   updateParticlesForLayer(4);
 
-  // Draw indicators and active player on top of everything
   drawPlayers(true);
 
   pop();
 
   drawUI();
 
-  // Overlay with fading black (eyes opening)
+  // Black fade
   push();
   const fadeAlpha = map(fadeToGameProgress, 0, 1, 255, 0);
   fill(0, 0, 0, fadeAlpha);
@@ -186,29 +174,23 @@ function drawFadeToGame() {
   rect(0, 0, width, height);
   pop();
 
-  // Draw "EXIT THE CRYOCHAMBER" text with simple fade in/out
+  // "EXIT THE CRYOCHAMBER"
   if (fadeToGameProgress < 0.9) {
     push();
     textFont(Silkscreen);
     textAlign(CENTER, CENTER);
 
-    // Calculate text alpha - simple fade in then fade out
     let textAlpha;
     if (fadeToGameProgress < 0.15) {
-      // Fade in
       textAlpha = map(fadeToGameProgress, 0, 0.15, 0, 255);
     } else if (fadeToGameProgress < 0.7) {
-      // Stay visible
       textAlpha = 255;
     } else {
-      // Fade out
       textAlpha = map(fadeToGameProgress, 0.7, 0.9, 255, 0);
     }
 
-    // Draw text with sepia glow
     textSize(42);
 
-    // Outer glow
     strokeWeight(6);
     stroke(112, 66, 20, textAlpha * 0.4);
     fill(255, 200, 80, textAlpha);
@@ -222,6 +204,7 @@ function drawFadeToGame() {
   }
 }
 
+// leak detection
 function updateLeakDetection() {
   nearestLeak = null;
   let nearestDist = Infinity;
@@ -252,17 +235,10 @@ function updateLeakDetection() {
 // Tile variants storage
 var tileVariants = {};
 
-// Multi-tile configuration: defines tiles that span multiple grid cells
-// Format: tileType -> { width, height, fullImage, sections: [] }
+// Multi-tile configuration: tiles that need multiple cells
+// { width, height, fullImage, sections: [] }
 var multiTileConfig = {};
 
-/**
- * Registers a multi-tile object (e.g., workbench, lampost)
- * @param {Number} tileID - The tile ID in the world data
- * @param {String} imagePath - Path to the full source image
- * @param {Number} gridW - Width in grid cells
- * @param {Number} gridH - Height in grid cells
- */
 function registerMultiTile(tileID, imagePath, gridW, gridH) {
   const img = loadImage(imagePath);
   multiTileConfig[tileID] = {
@@ -272,7 +248,7 @@ function registerMultiTile(tileID, imagePath, gridW, gridH) {
     sections: []
   };
 
-  // Map to tileVariants for the rendering system
+  // Map to tileVariants
   if (!tileVariants[tileID]) {
     tileVariants[tileID] = {
       variants: {},
@@ -281,13 +257,12 @@ function registerMultiTile(tileID, imagePath, gridW, gridH) {
   }
 }
 
-// Generate multi-tile sections by splitting source image into grid
+// Generate multi-tile tiles by splitting into grid
 function generateAllMultiTileSections() {
   for (let tileID in multiTileConfig) {
     const config = multiTileConfig[tileID];
     const fullImg = config.fullImage;
 
-    // Calculate tile dimensions
     const tileW = fullImg.width / config.width;
     const tileH = fullImg.height / config.height;
 
@@ -307,7 +282,7 @@ function generateAllMultiTileSections() {
 
 var enemies = [], bullets = [], messages = [], droppedItems = [], NonPlayerCharacters = [];
 var inventoryList;
-var crateInventories = new Map(); // Stores crate contents: "row,col" -> [itemConstructor, ...]
+var crateInventories = new Map(); // Stores crate contents
 
 // Reusable prompt system
 function createPrompt() {
@@ -373,17 +348,7 @@ function createPrompt() {
   };
 }
 
-/**
- * Consolidated interaction prompt handler
- * @param {Object} promptObj - The prompt object from createPrompt()
- * @param {Number} targetX - World X of the interactable
- * @param {Number} targetY - World Y of the interactable
- * @param {Number} proximity - Max distance for the prompt to show
- * @param {String} message - The text to display
- * @param {Boolean} condition - Additional condition for showing (default: true)
- * @param {Array} color - RGB array for the prompt color
- * @param {Boolean} isFixed - Whether to draw at fixed screen position (default: true)
- */
+// Helper function to handle interaction prompts
 function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message, condition = true, color = [255, 150, 0], isFixed = true) {
   const distToPlayer = distance(targetX, targetY, pX + 600, pY + 340);
   const shouldShow = distToPlayer < proximity && condition && gameState === "playing";
@@ -393,7 +358,7 @@ function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message
 }
 
 function preload() {
-  console.log("Polish Hot Dog Update");
+  console.log("Greenish Egg Salad Sandwich Update");
   arrayCopy(tileImgs, 0, tileNames, 0, tileImgs.length);
   worldString = loadStrings("world.txt");
   sewer1String = loadStrings("sewer.txt");
@@ -424,10 +389,10 @@ function preload() {
   tileImgs[0] = loadImage("Tiles/deadGrass.png");
   tileImgs[1] = loadImage("Tiles/Asphalt.png");
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");
-  tileImgs[3] = null; // Concrete uses variants, loaded below
+  tileImgs[3] = null; 
   tileImgs[4] = loadImage("Tiles/Brick.png");
   tileImgs[5] = loadImage("Tiles/Crate.png");
-  tileImgs[6] = null; // Workbench uses variants, loaded below
+  tileImgs[6] = null;
   tileImgs[7] = loadImage("Tiles/Dirt.png");
   tileImgs[8] = null;
   tileImgs[9] = loadImage("Tiles/Door.png");
@@ -472,13 +437,13 @@ function preload() {
   tileImgs[48] = loadImage("Tiles/WoodenPostTop.png");
   tileImgs[49] = loadImage("Tiles/BoardedWindow.png");
   tileImgs[50] = loadImage("Tiles/Vines.png");
-  tileImgs[51] = null; //pipe variants need to load
+  tileImgs[51] = null; 
   tileImgs[52] = loadImage("Tiles/Brick.png");
   // Register multi-tile objects
-  registerMultiTile(6, "Tiles/Crafting.png", 2, 2); // Workbench
-  registerMultiTile(36, "Tiles/Lampost.png", 1, 2); // Lampost
-  registerMultiTile(37, "Tiles/Bench.png", 2, 1);   // Bench
-  registerMultiTile(41, "Tiles/Tree.png", 1, 2);    // Tree
+  registerMultiTile(6, "Tiles/Crafting.png", 2, 2); 
+  registerMultiTile(36, "Tiles/Lampost.png", 1, 2); 
+  registerMultiTile(37, "Tiles/Bench.png", 2, 1);   
+  registerMultiTile(41, "Tiles/Tree.png", 1, 2);    
   registerMultiTile(42, "Tiles/Boiler.png", 1, 2);
   registerMultiTile(45, "Tiles/pineTree.png", 1, 2);
 
@@ -506,13 +471,12 @@ function preload() {
   ReforgeLogo = loadImage("REFORGE.png");
   titleScreenImg = loadImage("hud/titleScreen.png");
   WaypointImg = loadImage("Waypoint.png");
-  themeSong = loadSound("music/themeSong.mp3"); // Restore loadSound
-  // Intro sequence images
+  themeSong = loadSound("music/themeSong.mp3"); 
+  
   BunkerImg = loadImage("Buschwick Industries.png");
   PrometheusIntroImg = loadImage("PrometheusIntro.png");
   CryochamberImg = loadImage("Cryochamber.png");
 
-  // Load concrete tile variants
   tileVariants[3] = {
     variants: {
       'full': loadImage("Tiles/Concrete.png"),
@@ -538,7 +502,6 @@ function preload() {
     }
   };
 
-  // Pipe variants - straight, L, T, cross
   tileVariants[27] = {
     variants: {
       'straight': loadImage("Tiles/Pipe.png"),
@@ -566,7 +529,7 @@ function preload() {
   }
 }
 
-// Generate multi-tile sections by splitting source image into grid
+// Generate multi-tile tiles by splitting into grid
 function generateAllMultiTileSections() {
   for (let tileID in multiTileConfig) {
     const config = multiTileConfig[tileID];
@@ -576,7 +539,7 @@ function generateAllMultiTileSections() {
     }
 
     const fullImg = config.fullImage;
-    // Wait for image to load if it hasn't yet (though p5 preload usually handles this)
+    // Failsafe for image loading
     if (!fullImg || fullImg.width <= 1) {
       console.warn(`Image for multi-tile ${tileID} not loaded yet or invalid. Skipping section generation.`);
       continue;
@@ -587,12 +550,12 @@ function generateAllMultiTileSections() {
 
     config.sections = [];
 
-    // Also ensure tileVariants is updated with the correct structure
+    // updates tileVariants
     if (!tileVariants[tileID]) {
       tileVariants[tileID] = { variants: {}, fullImage: fullImg };
     }
 
-    // Split image into grid sections
+    // Split image along grid sections
     for (let row = 0; row < config.height; row++) {
       config.sections[row] = [];
       for (let col = 0; col < config.width; col++) {
@@ -604,7 +567,7 @@ function generateAllMultiTileSections() {
         );
         config.sections[row][col] = section;
 
-        // Map to tileVariants for the rendering system
+        // Map to tileVariants
         if (config.width === 2 && config.height === 2) {
           const names = [['top_left', 'top_right'], ['bottom_left', 'bottom_right']];
           tileVariants[tileID].variants[names[row][col]] = section;
@@ -624,7 +587,7 @@ function generateAllMultiTileSections() {
   }
 }
 
-// Generate cached tinted versions of all tiles
+// Generate tile tints
 function generateTintedTileCache() {
   console.log("Generating tinted tile cache...");
   tintedTileCache = [];
@@ -633,7 +596,6 @@ function generateTintedTileCache() {
     tintedTileCache[tileIndex] = [];
     const baseImg = tileImgs[tileIndex];
 
-    // Skip if no image or if image is a string for this tile
     if (!baseImg || typeof baseImg === 'string') {
       tintedTileCache[tileIndex] = [null];
       continue;
@@ -644,18 +606,16 @@ function generateTintedTileCache() {
     for (let colorIndex = 0; colorIndex < colors.length; colorIndex++) {
       const [r, g, b] = colors[colorIndex];
 
-      // Create a graphics buffer to render the tinted tile
       const tintedImg = createGraphics(50, 50);
       tintedImg.tint(r, g, b);
       tintedImg.image(baseImg, 0, 0, 50, 50);
       tintedImg.noTint();
 
-      // Store the tinted image
+      // Store tinted image
       tintedTileCache[tileIndex][colorIndex] = tintedImg;
     }
-    // Add missing variants for tile 39 if they don't exist in tileColors
     if (tileIndex === 39 && colors.length < 3) {
-      const extraColors = [[50, 50, 50], [0, 255, 0]]; // Pressed variant
+      const extraColors = [[50, 50, 50], [0, 255, 0]];
       for (let i = 0; i < extraColors.length; i++) {
         const [r, g, b] = extraColors[i];
         const tintedImg = createGraphics(50, 50);
@@ -703,13 +663,10 @@ function setup() {
   maxTileTypes = tileImgs.length;
   PlayerImage = Buschy;
 
-  // Multi-tile system handles generating sections for registered objects
   generateAllMultiTileSections();
 
-  // Generate tinted tile cache after images are loaded
   generateTintedTileCache();
 
-  // Initialize itemConstructors BEFORE parsing world so crate inventories can be loaded
   itemConstructors = [
     ["gun", "steam gun", 1, GunImgs[0]],
     ["gun", "shotgun", 1, GunImgs[1]],
@@ -731,10 +688,10 @@ function setup() {
     ["material", "train blueprint", 1, matImgs[6]]
   ];
 
-  // Now parse the world with itemConstructors available
   gameWorld = stringToWorld(worldString[0]);
 
-  // Load sewer rooms if files exist
+  // Cheesy Goodness
+  // Load sewer rooms
   setTimeout(() => {
     if (typeof sewer1String !== 'undefined' && sewer1String.length > 0 && sewer1String[0].trim() !== '') {
       // Find the first sewer link once links are loaded
@@ -763,45 +720,36 @@ function setup() {
   initializeHardcodes();
   inventoryList = players[activePlayer].inventory;
 
-  // Initialize indicator position
   indicatorCurrentX = pX + 600;
   indicatorCurrentY = pY + 375;
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
 
-  // Initialize boiler prompt
   fixBoilerPrompt = createPrompt();
   boilerCartridgeCooldownPrompt = createPrompt();
   pickupCartridgePrompt = createPrompt();
   puzzlePrompt = createPrompt();
-
-  // Intro will be started from menu screen
-  // Roof fade will be initialized during intro sequence
 }
 
 function draw() {
-  // Show menu screen if not playing
   if (gameState === "menu") {
     drawMenuScreen();
     drawUI(); 
     return;
   }
 
-  // Show credits screen
   if (gameState === "credits") {
     drawCreditsScreen();
     drawUI();
     return;
   }
 
-  // Show controls screen
   if (gameState === "controls") {
     drawControlsScreen();
     drawUI();
     return;
   }
 
-  // Show transition fade
   if (gameState === "transition") {
     updateTransition();
     drawTransitionOverlay();
@@ -809,7 +757,6 @@ function draw() {
     return;
   }
 
-  // Show intro cutscene (now includes fade)
   if (gameState === "intro") {
     updateIntro();
     drawIntro();
@@ -817,7 +764,6 @@ function draw() {
     return;
   }
 
-  // Normal gameplay
   drawGameplay();
   updateLeakDetection();
 }
@@ -1852,7 +1798,7 @@ function getTileVariant(row, col, layer, tileType) {
     variant = 'full';
     rotation = 0;
   } else if (cardinalCount === 4) {
-    // Surrounded on all sides - use center
+    // Surrounded on all sides - use center also buschy year
     variant = 'center';
     rotation = 0;
   } else if (cardinalCount === 3) {
@@ -2064,7 +2010,6 @@ function drawWorldLayer(world, layerIndex) {
             }
           }
           if (items.length > maxDisplayItems) {
-            //Buschy year
             fill(255);
             noStroke();
             textSize(10);
@@ -2838,6 +2783,7 @@ function initializeHardcodes() {
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
 }
 function startBloodMoonEffect() {
+  messages.push(new Message("PROMETHEUS IV: Khronos has initiated a System Reboot. His minions are repaired and redeployed. Watch out."));
   bloodMoonActive = true;
   bloodMoonOverlayAlpha = 0;
   bloodMoonParticles = [];
