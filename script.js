@@ -1096,7 +1096,7 @@ function getTile(row, col, layer = 0) {
   if ('layers' in cell) {
     return cell.layers[layer] || null;
   }
-  return (layer === 0) ? cell : null; // legacy cell is layer 0
+  return (layer === 0) ? cell : null; // Failsafe layer 0
 }
 
 function setTile(row, col, layer, type, rotation = 0, flipH = false, flipV = false, colorIndex = 0) {
