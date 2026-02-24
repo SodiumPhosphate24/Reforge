@@ -33,11 +33,9 @@ function drawUI() {
   fill(255, 255, 255, 150);
 
   textAlign(LEFT, TOP);
-  text("ESC to view controls", 20, 20);
-
-  textAlign(RIGHT, TOP);
-  text("ESC to Pause", width - 20, 20);
-  pop();
+  if (gameState == "playing") {
+    text("ESC to view controls", 20, 20);
+  }
 
   drawCartridgeTutorial();
 }

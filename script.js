@@ -1125,14 +1125,15 @@ function clearTile(row, col, layer) {
   if (typeof updateTileWalls === 'function') updateTileWalls();
 }
 
-// --- Serializer / Parser (with backward compatibility) ---
+// Convert world to a string
+// Cheesy goodness
 function worldToString(world) {
   let out = "";
   for (let r = 0; r < world.length; r++) {
     const row = world[r];
     for (let c = 0; c < row.length; c++) {
       const cell = row[c];
-      if (c > 0) out += "/"; // Add separator before cell (except first)
+      if (c > 0) out += "/";
 
       if (!cell) continue;
 
@@ -1141,30 +1142,30 @@ function worldToString(world) {
           if (!t) return "";
           let s = String(t.type);
           if (t.rotation && t.rotation !== 0) s += ":" + t.rotation;
-          // Add flip notation
+          // Flip notation
           if (t.flipH || t.flipV) {
-            if (!t.rotation) s += ":0"; // Add rotation 0 if not present
+            if (!t.rotation) s += ":0"; 
             s += ":" + (t.flipH ? "H" : "") + (t.flipV ? "V" : "");
           }
-          // Add color index notation
+          // Color index notation
           if (t.colorIndex && t.colorIndex !== 0) {
-            if (!t.rotation && !t.flipH && !t.flipV) s += ":0"; // Add rotation if not present
-            if (!t.flipH && !t.flipV) s += ":"; // Add flip separator if not present
+            if (!t.rotation && !t.flipH && !t.flipV) s += ":0";
+            if (!t.flipH && !t.flipV) s += ":";
             s += ":C" + t.colorIndex;
           }
-          // Only add crate inventory if this specific layer contains a crate (type 5)
+          // Add crate inventory if necessary (type 5)
           if (t.type === 5) {
             const crateKey = r + "," + c;
             if (crateInventories.has(crateKey)) {
               const items = crateInventories.get(crateKey);
-              // Convert items back to indices
+              // Gets item indices
               const itemIndices = items.map(itemConstructor =>
                 itemConstructors.findIndex(ic =>
                   ic[0] === itemConstructor[0] && ic[1] === itemConstructor[1]
                 )
-              ).filter(idx => idx !== -1); // Ensure valid indices
+              ).filter(idx => idx !== -1);
               if (itemIndices.length > 0) {
-                s += "@" + itemIndices.join("."); // Append inventory data
+                s += "@" + itemIndices.join(".");
               }
             }
           }
@@ -1174,12 +1175,12 @@ function worldToString(world) {
       } else {
         let s = String(cell.type);
         if (cell.rotation && cell.rotation !== 0) s += ":" + cell.rotation;
-        // Add flip notation
+        // Flip notation
         if (cell.flipH || cell.flipV) {
-          if (!cell.rotation) s += ":0"; // Add rotation 0 if not present
+          if (!cell.rotation) s += ":0";
           s += ":" + (cell.flipH ? "H" : "") + (cell.flipV ? "V" : "");
         }
-        // Check for crate inventory in legacy format (only for crates, type 5)
+        // Check for crate inventories
         const crateKey = r + "," + c;
         if (crateInventories.has(crateKey) && cell.type === 5) {
           const items = crateInventories.get(crateKey);
@@ -1218,15 +1219,16 @@ function worldToString(world) {
   return out;
 }
 
+// Parses world string
 function stringToWorld(s) {
   if (!s) {
     console.log("No string provided to stringToWorld");
     return [];
   }
 
-  crateInventories.clear(); // Clear before parsing
+  crateInventories.clear();
 
-  // Check for sewer links (after ~ separator)
+  // Check sewer links (~ separator)
   let mainData = s;
   if (s.includes("~")) {
     const sewerParts = s.split("~");
@@ -1236,7 +1238,7 @@ function stringToWorld(s) {
     }
   }
 
-  // Check for particle sources (after & separator)
+  // Check particle sources (& separator)
   let worldData = mainData;
   if (mainData.includes("&")) {
     const parts = mainData.split("&");
@@ -1245,7 +1247,7 @@ function stringToWorld(s) {
 
     // Parse particle sources
     if (typeof particleSources !== 'undefined') {
-      particleSources.length = 0; // Clear existing
+      particleSources.length = 0;
       const sources = psData.split(";");
       for (const sourceStr of sources) {
         if (!sourceStr.trim()) continue;
@@ -1262,7 +1264,7 @@ function stringToWorld(s) {
             speed: vals[9],
             spawnRate: vals[10],
             duration: vals[11],
-            layer: vals[12] || 0 // Default to layer 0 if not specified
+            layer: vals[12] || 0
           });
         }
       }
@@ -1285,7 +1287,6 @@ function stringToWorld(s) {
       if (cellStr === "") { outRow.push(undefined); continue; }
 
       if (cellStr.includes(",")) {
-        // Multi-layer format - exactly 5 layers (0-4)
         const layerStrs = cellStr.split(",");
         const layers = [null, null, null, null, null];
         let crateItemsForCell = null;
@@ -1295,7 +1296,7 @@ function stringToWorld(s) {
           const tstr = layerStrs[L].trim();
           if (tstr === "") { layers[L] = null; continue; }
 
-          // Check for crate inventory (@ separator)
+          // Check crate inventory (@ separator)
           let tileData = tstr;
           let crateItemsStr = null;
           if (tstr.includes("@")) {
@@ -1319,14 +1320,14 @@ function stringToWorld(s) {
             layers[L] = { type: parseInt(tileData, 10), rotation: 0, flipH: false, flipV: false, colorIndex: 0 };
           }
 
-          // Store crate items info for later processing
+          // Store crate items info
           if (crateItemsStr && layers[L] && layers[L].type === 5) {
             crateItemsForCell = crateItemsStr;
             crateLayerIndex = L;
           }
         }
 
-        // Process crate items after all layers are parsed
+        // Process crate items
         if (crateItemsForCell && crateLayerIndex >= 0) {
           const itemIndices = crateItemsForCell.split(".").map(idx => parseInt(idx, 10));
           const items = itemIndices
