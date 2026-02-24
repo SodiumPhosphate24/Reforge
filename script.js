@@ -1107,7 +1107,6 @@ function setTile(row, col, layer, type, rotation = 0, flipH = false, flipV = fal
     const old = gameWorld[row][col];
     gameWorld[row][col] = { layers: [old, null, null, null, null] };
   }
-  // Ensure the layers array has exactly 5 elements (0-4)
   while (gameWorld[row][col].layers.length < 5) {
     gameWorld[row][col].layers.push(null);
   }
@@ -1120,9 +1119,9 @@ function setTile(row, col, layer, type, rotation = 0, flipH = false, flipV = fal
   };
 }
 
+// Helper function to clear a tile
 function clearTile(row, col, layer) {
   setTile(row, col, layer, null);
-  // Re-calculate collisions/fading if necessary
   if (typeof updateTileWalls === 'function') updateTileWalls();
 }
 

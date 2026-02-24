@@ -7,6 +7,10 @@ let transitionSpeed = 5;
 let menuAnimationTime = 0;
 let ReforgeLogo;
 
+// Credits pagination
+let creditsPage = 0;
+const totalCreditsPages = 2;
+
 // Menu options
 let menuOptions = ["Play", "Controls", "Credits"];
 let selectedMenuOption = 0;
@@ -344,41 +348,61 @@ function drawCreditsScreen() {
   let startY = 280;
   let spacing = 40;
   
-  text("GAME DESIGN & PROGRAMMING", width / 2, startY);
-  fill(255, 220, 100);
-  text("The Reforge Programming Team", width / 2, startY + spacing);
-  
-  fill(255, 255, 255, 220);
-  text("MUSIC", width / 2, startY + spacing * 3);
-  fill(255, 220, 100);
-  text("'Mysterious' by Infrared Scale", width / 2, startY + spacing * 4);
-  textSize(14);
-  fill(200, 200, 200, 200);
-  text("Creative Commons Attribution license (reuse allowed)", width / 2, startY + spacing * 4.8);
-  text("Source: https://www.youtube.com/watch?v=neXbwN3zJ5Q", width / 2, startY + spacing * 5.4);
-  
-  textSize(24);
-  fill(255, 255, 255, 220);
-  text("ART ASSETS", width / 2, startY + spacing * 7);
-  fill(255, 220, 100);
-  text("The Reforge Art Team", width / 2, startY + spacing * 8);
-
-  fill(255, 255, 255, 220);
-  text("LITERARY CITATIONS", width / 2, startY + spacing * 10);
-  fill(255, 220, 100);
-  textSize(16);
-  text("'Frankenstein; or, The Modern Prometheus' by Mary Shelley", width / 2, startY + spacing * 11);
-  text("'Walden; or, Life in the Woods' by Henry David Thoreau", width / 2, startY + spacing * 11.8);
+  if (creditsPage === 0) {
+    text("GAME DESIGN & PROGRAMMING", width / 2, startY);
+    fill(255, 220, 100);
+    text("The Reforge Programming Team", width / 2, startY + spacing);
+    
+    fill(255, 255, 255, 220);
+    text("MUSIC", width / 2, startY + spacing * 3);
+    fill(255, 220, 100);
+    text("'Mysterious' by Infrared Scale", width / 2, startY + spacing * 4);
+    textSize(14);
+    fill(200, 200, 200, 200);
+    text("Creative Commons Attribution license (reuse allowed)", width / 2, startY + spacing * 4.8);
+    text("Source: https://www.youtube.com/watch?v=neXbwN3zJ5Q", width / 2, startY + spacing * 5.4);
+    
+    textSize(24);
+    fill(255, 255, 255, 220);
+    text("ART ASSETS", width / 2, startY + spacing * 7);
+    fill(255, 220, 100);
+    text("The Reforge Art Team", width / 2, startY + spacing * 8);
+  } else {
+    fill(255, 255, 255, 220);
+    text("LITERARY CITATIONS", width / 2, startY);
+    fill(255, 220, 100);
+    textSize(18);
+    text("'Frankenstein; or, The Modern Prometheus' by Mary Shelley", width / 2, startY + spacing * 1.5);
+    text("'Walden; or, Life in the Woods' by Henry David Thoreau", width / 2, startY + spacing * 2.5);
+    
+    fill(255, 255, 255, 200);
+    textSize(14);
+    text("(Used for atmosphere and narrative depth)", width / 2, startY + spacing * 3.5);
+  }
 
   // Back instruction
   textSize(18);
   fill(255, 255, 255, 150);
   text("Press ESC to return to menu", width / 2, height - 80);
+  
+  // Page indicator and navigation hint
+  textSize(14);
+  text("Page " + (creditsPage + 1) + " of " + totalCreditsPages, width / 2, height - 120);
+  text("Use LEFT / RIGHT arrows to flip pages", width / 2, height - 140);
   pop();
+
+  // Handle navigation
+  if (keyPressedOnce(LEFT_ARROW)) {
+    creditsPage = (creditsPage - 1 + totalCreditsPages) % totalCreditsPages;
+  }
+  if (keyPressedOnce(RIGHT_ARROW)) {
+    creditsPage = (creditsPage + 1) % totalCreditsPages;
+  }
 
   // Handle ESC to return to menu
   if (keyPressedOnce(ESCAPE)) {
     gameState = "menu";
+    creditsPage = 0; // Reset for next time
     // Reset menu animation for re-entry - start off-screen right
     menuAnimationTimer = 0;
     for (let i = 0; i < menuOptions.length; i++) {
