@@ -780,7 +780,7 @@ function updateLeakDetection() {
 
   for (let i = 0; i < 5; i++) {
     const ps = particleSources[i];
-    // Skip if leak is already fixed
+    // Skip if leak is fixed
     if (ps.spawnRate === 0) continue;
 
     const d = distance(pX + 600, pY + 340, ps.x, ps.y);
@@ -814,7 +814,7 @@ function drawGameplay() {
   controlCamera();
   translate(camX, camY);
 
-  // --- Roof fade update (kept) ---
+  // Roof fade update
   const __roofSeeds = getOverlappingRoofSeeds(pX, pY, pWidth, pHeight);
   floodFillRoof(__roofSeeds);
   stepRoofFades();
@@ -826,24 +826,24 @@ function drawGameplay() {
   drawWorldLayer(gameWorld, 1);
   updateParticlesForLayer(1);
 
-  // Draw items (dropped items)
+  // Draw items
   updateDroppedItems();
 
-  // Draw NPCs before roofs so they appear underneath
+  // Draw NPCs
   fill(255);
   drawNPCs();
 
-  // Check sewer exits (still within world coordinates for distance checks)
+  // Check sewer exits
   if (typeof checkSewerExits === 'function') {
     checkSewerExits();
   }
 
-  // Update sewer puzzle (pressure plates)
+  // Update sewer puzzle
   if (typeof updateSewerPuzzle === 'function') {
     updateSewerPuzzle();
   }
 
-  // Draw idle players BEFORE layer 2 so they appear "inside" buildings under roofs
+  // Draw idle players before roofs
   fill(255);
   drawPlayers(false);
 
@@ -853,21 +853,19 @@ function drawGameplay() {
   drawWorldLayer(gameWorld, 3);
   updateParticlesForLayer(3);
 
-  // --- Only the gun rotates (isolated) ---
-  drawGunDebugRect(); // uses calculateAim()
-  // ---------------------------------------
+  // Rotate gun
+  drawGunDebugRect(); 
 
   mainHand();
   drawEnemies();
   drawBullets();
   bloodMoon();
-  // drawBloodMoonOverlay(); // Removed from here to move above UI
 
-  // Calculate player center for distance checks
+  // Player center for distance checks
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
 
-  // Check for nearby leaks and update nearestLeak for prompt
+  // Check nearby leaks
   nearestLeak = null;
   let nearestLeakDistance = Infinity;
 
@@ -875,18 +873,15 @@ function drawGameplay() {
   const holdingOldWrench = inventoryList[inventorySlot - 1] != null &&
     inventoryList[inventorySlot - 1].name === "old wrench";
 
-  // Spawn particles from sources
+  // Spawn particles
   if (typeof particleSources !== 'undefined') {
     for (let sourceIndex = 0; sourceIndex < particleSources.length; sourceIndex++) {
       const ps = particleSources[sourceIndex];
 
-      // Check if this is one of the first 5 sources (repairable leaks)
       if (sourceIndex < 5 && ps.spawnRate > 0) {
         const distToPlayer = dist(playerCenterX, playerCenterY, ps.x, ps.y);
 
-        // Check if player is near and holding wrench
         if (holdingOldWrench && distToPlayer < 120) {
-          // Track nearest leak for prompt
           if (distToPlayer < nearestLeakDistance) {
             nearestLeakDistance = distToPlayer;
             nearestLeak = { x: ps.x, y: ps.y, index: sourceIndex };
@@ -894,17 +889,16 @@ function drawGameplay() {
         }
       }
 
-      // Spawn particles based on spawn rate
+      // Spawn particles
       for (let i = 0; i < ps.spawnRate; i++) {
-        if (random() < 0.3) { // 30% chance per particle slot
+        if (random() < 0.3) {
           const angle = random(ps.arcStart, ps.arcEnd);
           const particleSize = ps.size + random(-ps.sizeVariance, ps.sizeVariance);
 
-          // Create particle using existing particle system
           const px = ps.x;
           const py = ps.y;
 
-          // Manual particle creation with custom direction
+          // Manual particle creation
           const p = new Particle(px, py, ps.color, ps.duration, ps.speed, ps.layer || 0);
           p.angle = radians(angle);
           p.vx = cos(p.angle) * ps.speed;
@@ -916,14 +910,13 @@ function drawGameplay() {
     }
   }
 
-  // --- Breadcrumb system update ---
+  // Breadcrumb update
   const currentTime = millis();
   if (currentTime - lastBreadcrumbTime > breadcrumbInterval) {
-    // Add a new breadcrumb at the player's world position (center of player)
+    // Add breadcrumb at player position
     const playerWorldX = pX + 600 + pWidth / 2;
     const playerWorldY = pY + 375 + pHeight / 2;
 
-    // Check if we should add a new breadcrumb (only if far enough from last one)
     let shouldAddBreadcrumb = true;
     if (breadcrumbs.length > 0) {
       const lastBreadcrumb = breadcrumbs[breadcrumbs.length - 1];
@@ -936,15 +929,14 @@ function drawGameplay() {
     if (shouldAddBreadcrumb) {
       breadcrumbs.push({ x: playerWorldX, y: playerWorldY, timestamp: currentTime });
 
-      // Remove old breadcrumbs if we exceed the maximum
+      // Remove old breadcrumbs
       if (breadcrumbs.length > maxBreadcrumbs) {
-        breadcrumbs.shift(); // Remove the oldest breadcrumb
+        breadcrumbs.shift();
       }
     }
 
     lastBreadcrumbTime = currentTime;
   }
-  // --------------------------------
 
   controls();
   softlockPrevention();
@@ -957,57 +949,56 @@ function drawGameplay() {
   drawWorldLayer(gameWorld, 4);
   updateParticlesForLayer(4);
 
-  // Emit steam particles if train is totaled
+  // Steam particles if ARGO is totaled
   if (trainTotaled && players.length > 0) {
     const argo = players.find(p => p.name === "ARGO");
     if (argo) {
-      // Emit steam from the top of the train
       if (frameCount % 5 === 0) {
         particle(argo.x + 600 + 35, argo.y + 375, [220, 220, 220], 60, 2, 4);
       }
     }
   }
 
-  // Draw active player AFTER all world layers so they appear on top
+  // Draw active player after all world layers
   fill(255);
   drawPlayers(true);
 
-  // Draw particle sources in editor mode
+  // Draw particle sources, editor mode
   if (typeof drawParticleSources === 'function') {
     drawParticleSources();
   }
 
-  // Draw breadcrumbs in editor mode
+  // Draw breadcrumbs, editor mode
   if (editorMode && typeof drawBreadcrumbs === 'function') {
     drawBreadcrumbs();
   }
 
-  // Draw enemy raycasts in editor mode
+  // Draw enemy raycasts, editor mode
   if (editorMode && typeof drawEnemyRaycasts === 'function') {
     drawEnemyRaycasts();
   }
 
   pop();
 
-  // Draw pickup prompt after camera pop (screen-fixed)
+  // Pickup prompt
   drawPickupPromptIfNeeded();
 
-  // Draw NPC prompt after camera pop (screen-fixed)
+  // NPC prompt
   drawNPCPromptIfNeeded();
 
-  // Draw sewer prompt after camera pop (screen-fixed)
+  // Sewer prompt
   if (typeof drawSewerPrompt === 'function') {
     drawSewerPrompt();
   }
 
-  // Draw leak repair prompt after camera pop (screen-fixed)
+  // Leak repair prompt
   drawLeakPromptIfNeeded();
 
-  // Check for boiler repair condition and update prompt
+  // Boiler repair condition check and update prompt
   const holdingBoilerCartridge = inventoryList[inventorySlot - 1] != null &&
     inventoryList[inventorySlot - 1].name === "boiler cartridge";
   const nearBoiler = distance(pX, pY, 12000, 12500) < 75;
-  const atRightWaypoint = currentWaypointIndex >= 4; // Adjust this based on when you want the prompt to appear
+  const atRightWaypoint = currentWaypointIndex >= 4;
 
   const repairBoiler = holdingBoilerCartridge && nearBoiler && atRightWaypoint;
   const cartridgeCooldown = nearBoiler && triggerList.Objective.fixBoiler && generateCooldown > 0;
@@ -1021,19 +1012,6 @@ function drawGameplay() {
   pickupCartridgePrompt.update(pickupCartridge);
   pickupCartridgePrompt.draw("Press E to Pickup Cartridge", [255, 200, 0], 80, true);
 
-  // Check for puzzle repair condition and update prompt
-  var nearPuzzle = false;
-  if (typeof puzzleCoordinates !== 'undefined') {
-    for (let i = 0; i < puzzleCoordinates.length; i++) {
-      if (distance(pX + 600, pY + 340, puzzleCoordinates[i][0], puzzleCoordinates[i][1]) < 75) {
-        nearPuzzle = true;
-      }
-    }
-  }
-  const shouldShowPuzzlePrompt = nearPuzzle;
-  puzzlePrompt.update(shouldShowPuzzlePrompt);
-  // puzzlePrompt.draw("Press E to Solve Puzzle", [255, 200, 0], 90);
-
   //Enter boss arena
   if (distance(pX, pY, 350, 1400) < 75 && pX > 350 && !triggerList.Labyrinth.isFightingBoss) {
     triggerList.Labyrinth.isFightingBoss = true;
@@ -1044,14 +1022,12 @@ function drawGameplay() {
     setTile(36, 18, 2, 26);
   }
 
-  // Draw crafting prompt after camera pop (screen-fixed)
+  // Crafting prompt
   if (typeof drawCraftingPromptIfNeeded === 'function') {
     drawCraftingPromptIfNeeded();
   }
 
-  // Draw waypoint arrow (screen-fixed at edge)
-
-
+  // Draw waypoint arrow
   drawWaypoint();
 
   drawInventory();
@@ -1080,11 +1056,11 @@ function drawGameplay() {
 
   drawBloodMoonOverlay();
 
-  // Draw fog centered on camera, constrained to screen
+  // Draw fog
   tint(255, 200);
   const fogSize = width + 100;
   imageMode(CENTER);
-  // Center fog on camera position
+  // Center fog
   let fogX = pX + camX + 600;
   let fogY = pY + camY + 375;
   fogX = constrain(fogX, width / 2, width / 2);
@@ -2768,7 +2744,7 @@ function initializeHardcodes() {
       "Steam Power for Dummies : A properly maintained steam engine can last for centuries. If you're reading this in the year 2355, you're doing something right",
       "Steam Power for Dummies : Remember, steam is humanity's greatest ally. If civilization has fallen while you were in cryogenic storage, think of this book as a relic of a more optimistic era, and you're on your own"], Book, "Book"));
   //NonPlayerCharacters.push(new NPC(13650, 12420, "Book", ["The 7 Habits of Highly Effective Engineers \n That Have Been Cryogenically Frozen for 500 Years: Burger"], Book, "Book"));
-  NonPlayerCharacters.push(new NPC(13650, 12420, "Book", [""], Book, "Book"));
+  NonPlayerCharacters.push(new NPC(13650, 12420, "Book", ["Frankenstein: I had worked hard for nearly two years, for the sole purpose of infusing life into an inanimate body.", "Frankenstein: For this I had deprived myself of rest and health. I had desired it with an ardour that far exceeded moderation.", "Frankenstein: but now that I had finished, the beauty of the dream vanished, and breathless horror and disgust filled my heart."], Book, "Book"));
   NonPlayerCharacters.push(new NPC(13350, 13050, "Book",
     [
       "Walden : I went to the woods because I wished to live deliberately, to front only the essential facts of life, and see if I could not learn what it had to teach, and not, when I came to die, discover that I had not lived. I did not wish to live what was not life, living is so dear;",

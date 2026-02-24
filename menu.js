@@ -363,6 +363,13 @@ function drawCreditsScreen() {
   fill(255, 220, 100);
   text("The Reforge Art Team", width / 2, startY + spacing * 8);
 
+  fill(255, 255, 255, 220);
+  text("LITERARY CITATIONS", width / 2, startY + spacing * 10);
+  fill(255, 220, 100);
+  textSize(16);
+  text("'Frankenstein; or, The Modern Prometheus' by Mary Shelley", width / 2, startY + spacing * 11);
+  text("'Walden; or, Life in the Woods' by Henry David Thoreau", width / 2, startY + spacing * 11.8);
+
   // Back instruction
   textSize(18);
   fill(255, 255, 255, 150);
