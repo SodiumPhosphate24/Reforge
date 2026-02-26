@@ -31,7 +31,7 @@ var craftingRecipes = [
     category: "Robots",
     type: "player",
     unlocked: false,
-    playerConstructor: { width: 35, height: 25, speed: 1.7, health: 75, damage: 1 },
+    playerConstructor: { width: 50, height: 40, speed: 1.7, health: 75, damage: 1 },
     ingredients: [
       { itemName: "rare wheel", amount: 2 },
       { itemName: "rare cartridge", amount: 2 },
@@ -45,7 +45,7 @@ var craftingRecipes = [
     category: "Robots",
     type: "player",
     unlocked: false,
-    playerConstructor: { width: 105, height: 75, speed: .9, health: 150, damage: 1 },
+    playerConstructor: { width: 90, height: 60, speed: .9, health: 150, damage: 1 },
     ingredients: [
       { itemName: "rare wheel", amount: 4 },
       { itemName: "legendary cartridge", amount: 2 },
@@ -359,6 +359,7 @@ function craftItem(recipe) {
     // Spawn robot
     if (recipe.name === "ARGO") {//Position adjustment for ARGO
       players.push(new Player(workbenchBottomRightX - 400, workbenchBottomRightY + 50, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));
+      triggerList.Crafting.trainBuilt = true;
     }
     else {
       players.push(new Player(workbenchBottomRightX, workbenchBottomRightY + 15, p.width, p.height, p.speed, p.health, p.damage, robotImage, recipe.name));

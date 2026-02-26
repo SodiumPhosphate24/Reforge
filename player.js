@@ -1,27 +1,24 @@
 var activePlayer = 0;
 var players = [];
-var indicatorAlpha = 0; // Fade in/out alpha for indicator
-var indicatorTargetX = 0; // Target position for smooth transition
+var indicatorAlpha = 0; 
+var indicatorTargetX = 0; 
 var indicatorTargetY = 0;
-var indicatorCurrentX = 0; // Current position for smooth transition
+var indicatorCurrentX = 0; 
 var indicatorCurrentY = 0;
-var isTransitioning = false; // Track if switching between players
-var transitionFrames = 0; // Count frames since transition started
+var isTransitioning = false; 
+var transitionFrames = 0; 
 
-// Player flip state
-var playerFlipScale = 1; // Current flip scale (-1 for left, 1 for right)
-var targetFlipScale = 1; // Target flip scale
+var playerFlipScale = 1;
+var targetFlipScale = 1;
 
-// Player selection menu
 var playerSelectionMenuOpen = false;
 var playerSelectionMenuAlpha = 0;
 var selectedPlayerIndex = 0;
 var qKeyHeldFrames = 0;
-var qKeyHoldThreshold = 10; // Frames to hold Q before menu opens
-var playerSelectScrollOffset = 0; // Current scroll offset
-var playerSelectVisibleMax = 5; // Max players to show at once
+var qKeyHoldThreshold = 10;
+var playerSelectScrollOffset = 0;
+var playerSelectVisibleMax = 5;
 
-// Item transfer menu
 var playerTransferMenuOpen = false;
 var playerTransferMenuAlpha = 0;
 var selectedTransferPlayerIndex = 0;
@@ -41,13 +38,13 @@ class Player {
     this.image = image;
     this.name = name;
     this.frozen = false;
-    this.inSewer = false; // Track if this specific robot is in the sewer
+    this.inSewer = false;
   }
   getImage() {
     return this.image;
   }
   takeDamage(damage) {
-    // Human (index 0) is invulnerable and has no health depletion
+    // Bastian (index 0) is immortal
     const isHuman = players.indexOf(this) === 0;
     if (isHuman) return;
     this.health -= damage;
@@ -67,10 +64,10 @@ class Player {
   }
 }
 function switchPlayer(newPlayer) {
-  // Sync current player position before switching
   players[activePlayer].x = pX;
   players[activePlayer].y = pY;
 
+  // Update player state
   activePlayer = newPlayer;
   pX = players[activePlayer].x;
   pY = players[activePlayer].y;
@@ -82,7 +79,7 @@ function switchPlayer(newPlayer) {
   pHeight = players[activePlayer].height;
   inventoryList = players[activePlayer].inventory;
 
-  // Update inSewer global based on the NEW player's location
+  // Update inSewer
   inSewer = players[activePlayer].inSewer;
   if (inSewer) {
     gameWorld = sewerRoom;
@@ -90,11 +87,9 @@ function switchPlayer(newPlayer) {
     gameWorld = savedWorldState.world;
   }
 
-  // Reset velocity
   pXVel = 0;
   pYVel = 0;
 
-  // Update indicator target
   indicatorTargetX = pX + 600 + pWidth / 2;
   indicatorTargetY = pY + 375 - 50;
 
@@ -103,18 +98,15 @@ function switchPlayer(newPlayer) {
 }
 // Update player flip based on velocity
 function updatePlayerFlip() {
-  // Only flip if player is moving horizontally
   if (Math.abs(pXVel) > 0.1) {
-    // Set target flip based on velocity direction
     targetFlipScale = pXVel > 0 ? 1 : -1;
   }
 
-  // Smoothly lerp current flip to target
   playerFlipScale = lerp(playerFlipScale, targetFlipScale, 0.2);
 }
 
 function drawPlayers(onlyActive = false) {
-  // Draw white flash effect
+  // White flash effect
   if (typeof crashFlashAlpha !== 'undefined' && crashFlashAlpha > 0) {
     push();
     fill(255, 255, 255, crashFlashAlpha);
@@ -130,11 +122,9 @@ function drawPlayers(onlyActive = false) {
   }
 
   if (onlyActive === false) {
-    // Draw idle players at their world positions
     for (let i = 0; i < players.length; i++) {
       if (!players[i]) continue;
 
-      // Only draw players that are in the same environment (sewer vs world)
       if (players[i].inSewer !== inSewer) continue;
       if (i === activePlayer) continue;
 
@@ -143,6 +133,7 @@ function drawPlayers(onlyActive = false) {
       fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
       ellipse(players[i].x + 600 + players[i].width / 2, players[i].y + 375 + players[i].height, players[i].width, players[i].height * 0.6);
 
+      // SPUD Steam effect
       if (players[i].name === "SPUD") {
         const headX = players[i].x + 600 + players[i].width / 2;
         const headY = players[i].y + 375;
@@ -171,12 +162,13 @@ function drawPlayers(onlyActive = false) {
   }
 
   if (onlyActive === true) {
-    // Draw active player shadow
+    // Player shadow
     fill(0, 0, 0, 80 - sin(frameCount / 25) * 10);
     ellipse(pX + 600 + pWidth / 2, pY + 375 + pHeight, pWidth, pHeight * 0.6);
 
     players[activePlayer].isDead();
 
+    // SPUD Steam effect
     if (players[activePlayer] && players[activePlayer].name === "SPUD") {
       const headX = pX + 600 + pWidth / 2;
       const headY = pY + 375;
@@ -208,7 +200,7 @@ function drawPlayers(onlyActive = false) {
     imageMode(CENTER);
     image(PlayerImage, 0, 0, drawWidth, drawHeight);
 
-    // Constant steam if totaled
+    // ARGO steam (if totaled)
     if (trainTotaled && players[activePlayer].name === "ARGO") {
       if (frameCount % 5 === 0) {
         const steam = new Particle(random(-10, 10), -drawHeight / 2 + random(-10, 10), [200, 200, 200], 60, 2, 3);
@@ -225,19 +217,16 @@ function drawPlayers(onlyActive = false) {
   }
 }
 
+// Draws the player indicator
 function drawIndicator() {
-  // Update target position to follow active player
   indicatorTargetX = pX + 600 + pWidth / 2;
   indicatorTargetY = pY + 375 - 50;
 
-  // Constant fast lerp speed
   const lerpSpeed = 0.25;
 
-  // Smooth transition to target position
   indicatorCurrentX = lerp(indicatorCurrentX, indicatorTargetX, lerpSpeed);
   indicatorCurrentY = lerp(indicatorCurrentY, indicatorTargetY, lerpSpeed);
 
-  // End transition after indicator gets close enough
   if (isTransitioning) {
     transitionFrames++;
     const distance = dist(indicatorCurrentX, indicatorCurrentY, indicatorTargetX, indicatorTargetY);
@@ -246,14 +235,10 @@ function drawIndicator() {
     }
   }
 
-  // Fade in indicator
-  indicatorAlpha = lerp(indicatorAlpha, 180, 0.1); // Max alpha of 180 for subtle effect
+  indicatorAlpha = lerp(indicatorAlpha, 180, 0.1);
 
-  // Sin wave hover motion
   const hoverOffset = sin(frameCount / 20) * 4;
 
-  // Calculate angle from indicator to player (point is at bottom center of image)
-  // Only rotate if indicator is far enough from player to avoid snap
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
   const distToPlayer = dist(indicatorCurrentX, indicatorCurrentY + hoverOffset, playerCenterX, playerCenterY);
@@ -262,14 +247,14 @@ function drawIndicator() {
   if (distToPlayer > 20) {
     angle = atan2(playerCenterY - (indicatorCurrentY + hoverOffset), playerCenterX - indicatorCurrentX) + PI;
   } else {
-    angle = PI; // Keep pointing down when very close to player
+    angle = PI;
   }
 
-  // Draw indicator with fade, hover, and rotation
+  // Draw indicator
   push();
   tint(255, indicatorAlpha);
   translate(indicatorCurrentX, indicatorCurrentY + hoverOffset);
-  rotate(angle + HALF_PI); // Add HALF_PI since point is at bottom center
+  rotate(angle + HALF_PI);
   imageMode(CENTER);
   image(IndicatorImg, 0, 0, 30, 30);
   imageMode(CORNER);
@@ -277,17 +262,16 @@ function drawIndicator() {
   pop();
 }
 
+// Draws the player selection menu
 function drawPlayerSelectionMenu() {
   if (!playerSelectionMenuOpen && playerSelectionMenuAlpha < 5) return;
 
-  // Animate menu appearance
   if (playerSelectionMenuOpen) {
     playerSelectionMenuAlpha = lerp(playerSelectionMenuAlpha, 255, 0.2);
   } else {
     playerSelectionMenuAlpha = lerp(playerSelectionMenuAlpha, 0, 0.2);
   }
 
-  // Update scroll offset based on selection
   if (selectedPlayerIndex < playerSelectScrollOffset) {
     playerSelectScrollOffset = selectedPlayerIndex;
   } else if (selectedPlayerIndex >= playerSelectScrollOffset + playerSelectVisibleMax) {
@@ -299,7 +283,7 @@ function drawPlayerSelectionMenu() {
 
   push();
 
-  // Semi-transparent background
+  // Background
   fill(0, 0, 0, playerSelectionMenuAlpha * 0.7);
   rectMode(CENTER);
   rect(600, 375, 400, menuHeight, 10);
@@ -330,7 +314,6 @@ function drawPlayerSelectionMenu() {
     const yPos = startY + i * 50;
     const p = players[playerIdx];
 
-    // Highlight selected player
     if (playerIdx === selectedPlayerIndex) {
       fill(255, 150, 0, playerSelectionMenuAlpha * 0.4);
       rect(410, yPos - 20, 380, 40, 5);
@@ -384,17 +367,16 @@ function drawPlayerSelectionMenu() {
   pop();
 }
 
+// Draws the player transfer menu
 function drawPlayerTransferMenu() {
   if (!playerTransferMenuOpen && playerTransferMenuAlpha < 5) return;
 
-  // Animate menu appearance
   if (playerTransferMenuOpen) {
     playerTransferMenuAlpha = lerp(playerTransferMenuAlpha, 255, 0.2);
   } else {
     playerTransferMenuAlpha = lerp(playerTransferMenuAlpha, 0, 0.2);
   }
 
-  // Update scroll offset based on selection
   if (selectedTransferPlayerIndex < playerTransferScrollOffset) {
     playerTransferScrollOffset = selectedTransferPlayerIndex;
   } else if (selectedTransferPlayerIndex >= playerTransferScrollOffset + playerSelectVisibleMax) {
@@ -406,7 +388,7 @@ function drawPlayerTransferMenu() {
 
   push();
 
-  // Semi-transparent background
+  // Background
   fill(0, 0, 0, playerTransferMenuAlpha * 0.7);
   rectMode(CENTER);
   rect(600, 375, 400, menuHeight, 10);
@@ -437,7 +419,6 @@ function drawPlayerTransferMenu() {
     const yPos = startY + i * 50;
     const p = players[playerIdx];
 
-    // Highlight selected player
     if (playerIdx === selectedTransferPlayerIndex) {
       fill(255, 150, 0, playerTransferMenuAlpha * 0.4);
       rect(410, yPos - 20, 380, 40, 5);

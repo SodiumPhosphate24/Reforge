@@ -11,13 +11,15 @@ var triggerList = {
   },
   Crafting: {
     craftedFirstRobot: false,
+    trainBuilt: false
   },
   LockOpened: {
     unlockedBoilerRoom: false
   },
   Objective: {
     fixLeaks: false,
-    fixBoiler: false
+    fixBoiler: false,
+    freeDaedalus: false
   },
   Pickup: {
     pickedUpWrench: false
@@ -27,6 +29,8 @@ var triggerList = {
   },
   Labyrinth: {
     labyrinthTalk: false,
+    trainTalk: false,
+    wallBreached: false,
     puzzles: [false, false, false, false],
     isFightingBoss: false
   }
@@ -127,6 +131,7 @@ function handleTriggers(trigger, ID = -1) {
     }
   }
   if (trigger == "Crash") {
+    triggerList.Labyrinth.wallBreached = true;
     console.log("Train Crashed");
     clearTile(10, 80, 2);
     clearTile(10, 80, 1);
@@ -153,9 +158,16 @@ function handleTriggers(trigger, ID = -1) {
       console.log("Group discussion completed. The trio will relocate when the player leaves.");
       return;
     }
-    if (groupDiscussionComplete) {
+    if (!triggerList.Labyrinth.labyrinthTalk) {
+      triggerList.Labyrinth.labyrinthTalk = true;
       unlockRecipe("ARGO");
       currentwaypointIndex = 8;
+      updateCurrentObjective();
+      return;
+    }
+    if (!triggerList.Labyrinth.trainTalk) {
+      triggerList.Labyrinth.trainTalk = true;
+      currentwaypointIndex = 9;
       updateCurrentObjective();
       return;
     }
@@ -199,18 +211,26 @@ function updateCurrentObjective() {
   } else if (!triggerList.Pickup.pickedUpWrench) {
     currentObjective = "Find the Old Wrench in the factory";
   } else if (!triggerList.Objective.fixLeaks) {
-    currentObjective = "Repair the 5 steam leaks with the wrench";
+    currentObjective = "Repair the steam leaks with the wrench";
   } else if (!triggerList.LockOpened.unlockedBoilerRoom) {
     currentObjective = "Find the code and unlock the boiler room";
   } else if (!triggerList.Objective.fixBoiler) {
-    currentObjective = "Repair the boiler with a cartridge";
+    currentObjective = "Repair the boiler with a special cartridge";
   } else if (!triggerList.Hephaestus.talkToHephaestus) {
-    currentObjective = "Find Hephaestus in the military sector";
-  } else if (!triggerList.Hephaestus.givenGun) {
-    currentObjective = "Locate and rescue Daedalus with the Steam Gun";
-  } else if (!groupDiscussionComplete) {
+    currentObjective = "Investigate activity in the military base AEGIS";
+  } else if (!triggerList.Objective.freeDaedalus) {
     currentObjective = "Reach Daedalus' location";
+  } else if (!groupDiscussionComplete) {
+    currentObjective = "Reunite with Hephaestus and Atlas";
+  } else if (!triggerList.Labyrinth.labyrinthTalk) {
+    currentObjective = "Reach Khronos' Labyrinth";
+  } else if (!triggerList.Labyrinth.trainTalk) {
+    currentObjective = "Reach the train station";
+  } else if (!triggerList.Crafting.trainBuilt) {
+    currentObjective = "Find materials to build a train";
+  } else if (!triggerList.Labyrinth.wallBreached) {
+    currentObjective = "Breach the Labyrinth's wall";
   } else {
-    currentObjective = "Explore and survive the ruins";
+    currentObjective = "Confront Khronos";
   }
 }

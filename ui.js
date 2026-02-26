@@ -6,6 +6,50 @@ var lastInventorySlot = 1;
 function drawUI() {
   buffs();
 
+  // The Hunger Games header
+  push();
+  textAlign(CENTER, TOP);
+  textFont(Silkscreen);
+  textSize(24);
+  fill(255, 255, 255);
+  text("The Hunger Games", width / 2, 60);
+
+  // Left decoration
+  let leftX = width / 2 - 180;
+  let topY = 72;
+  noFill();
+  stroke(0, 200, 0);
+  strokeWeight(2);
+  ellipse(leftX, topY, 30, 30);
+  ellipse(leftX, topY, 20, 20);
+  
+  // Left Triangle
+  fill(0, 200, 0);
+  noStroke();
+  push();
+  translate(leftX - 22, topY);
+  rotate(PI + HALF_PI);
+  triangle(-8, 5, 8, 5, 0, -8);
+  pop();
+
+  // Right decoration
+  let rightX = width / 2 + 180;
+  noFill();
+  stroke(0, 200, 0);
+  strokeWeight(2);
+  ellipse(rightX, topY, 30, 30);
+  ellipse(rightX, topY, 20, 20);
+  
+  // Right Triangle
+  fill(0, 200, 0);
+  noStroke();
+  push();
+  translate(rightX + 22, topY);
+  rotate(HALF_PI);
+  triangle(-8, 5, 8, 5, 0, -8);
+  pop();
+  pop();
+
   // Current Objective indicator
   if (typeof currentObjective !== 'undefined' && gameState == "playing") {
     push();
