@@ -1,5 +1,3 @@
-
-// Particle system
 let particles = [];
 
 class Particle {
@@ -7,33 +5,29 @@ class Particle {
     this.x = x;
     this.y = y;
     this.color = color; // [R, G, B]
-    this.duration = duration; // frames
+    this.duration = duration;
     this.maxDuration = duration;
     this.speed = speed;
-    this.layer = layer; // Rendering layer (0-4)
+    this.layer = layer; 
     
-    // Random direction for burst effect
+    // Direction for burst
     this.angle = random(0, TWO_PI);
     this.vx = cos(this.angle) * speed;
     this.vy = sin(this.angle) * speed;
     
-    // Random size variation
     this.size = random(3, 8);
     
-    // Fade out effect
+    // Fade
     this.alpha = 255;
   }
   
   update() {
-    // Move particle
     this.x += this.vx;
     this.y += this.vy;
     
-    // Apply friction/slowdown
     this.vx *= 0.95;
     this.vy *= 0.95;
     
-    // Decrease duration and fade out
     this.duration--;
     this.alpha = map(this.duration, 0, this.maxDuration, 0, 255);
   }
@@ -51,14 +45,11 @@ class Particle {
   }
 }
 
-// Main particle burst function
+// Burst function
 function particle(x, y, color, duration, speed, layer = 0) {
-  // Create 10-15 particles per burst
   const particleCount = Math.floor(random(10, 15));
   
   for (let i = 0; i < particleCount; i++) {
     particles.push(new Particle(x, y, color, duration, speed, layer));
   }
 }
-
-// Particle update and drawing is now handled per-layer in script.js

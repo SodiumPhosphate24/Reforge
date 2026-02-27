@@ -375,7 +375,9 @@ function preload() {
   Daedalus = loadImage("Characters/Daedalus.png");
   LockNpc = loadImage("Characters/Lock.png");
   BadGuy = loadImage("Characters/Enemy.png");
-  Greg = loadImage("Items/Consumables/CommonBattery.png");
+  Harpy = loadImage("Characters/Harpy.png");
+  Greg = loadImage("Characters/Greg.png");
+  //Greg = loadImage("Items/Consumables/CommonBattery.png");
   OGBuschy = loadImage("Characters/OGBuschy.png");
   Book = loadImage("Characters/Book.png");
   BulletImgs[0] = loadImage("Items/Bullets/CommonBullet.png");

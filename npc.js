@@ -103,7 +103,7 @@ function drawNPCs() {
     }
   }
 
-  // Handle Daedalus teleporting to Hephaestus/Atlas
+  // Handle Daedalus teleportation to AEGIS
   const daedalus = NonPlayerCharacters.find(npc => npc.id === "Daedalus");
   if (daedalus && daedalus.scale >= 1 && daedalus.hasTalkedAfterRescue && !daedalus.teleported) {
     const distToPlayer = distance(daedalus.x, daedalus.y, pX + 600, pY + 340);
@@ -111,7 +111,6 @@ function drawNPCs() {
       daedalus.x = 23100;
       daedalus.y = 22650;
       daedalus.teleported = true;
-      console.log("Daedalus has traveled to the new area near Hephaestus and Atlas.");
 
       var groupTalk = [
         "Hephaestus: Daedalus, we saw them take you.",
@@ -175,7 +174,8 @@ function drawNPCs() {
       }
     }
   }
-  
+
+  // Handle train station relocation
   if (triggerList.Labyrinth.labyrinthTalk) {
     const hephaestus = NonPlayerCharacters.find(npc => npc.id === "Hephaestus");
     const atlas = NonPlayerCharacters.find(npc => npc.id === "Atlas");
@@ -197,6 +197,7 @@ function drawNPCs() {
   }
 }
 
+// Draws interaction prompt for NPCs
 function drawNPCPromptIfNeeded() {
   if (nearestNPC && !craftingMenuOpen) {
     const nameLower = nearestNPC.name.toLowerCase();
