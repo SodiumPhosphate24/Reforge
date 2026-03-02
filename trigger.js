@@ -158,19 +158,19 @@ function handleTriggers(trigger, ID = -1) {
       console.log("Group discussion completed. The trio will relocate when the player leaves.");
       return;
     }
-    if (!triggerList.Labyrinth.labyrinthTalk) {
-      triggerList.Labyrinth.labyrinthTalk = true;
-      unlockRecipe("ARGO");
-      currentwaypointIndex = 8;
-      updateCurrentObjective();
-      return;
-    }
-    if (!triggerList.Labyrinth.trainTalk) {
-      triggerList.Labyrinth.trainTalk = true;
-      currentwaypointIndex = 9;
-      updateCurrentObjective();
-      return;
-    }
+  }
+  if ((trigger == "Hephaestus" || trigger == "Atlas" || trigger == "Daedalus") && groupDiscussionComplete && !triggerList.Labyrinth.labyrinthTalk) {
+    triggerList.Labyrinth.labyrinthTalk = true;
+    unlockRecipe("ARGO");
+    currentwaypointIndex = 8;
+    updateCurrentObjective();
+    return;
+  }
+  if ((trigger == "Hephaestus" || trigger == "Atlas" || trigger == "Daedalus") && groupDiscussionComplete && triggerList.Labyrinth.labyrinthTalk && !triggerList.Labyrinth.trainTalk) {
+    triggerList.Labyrinth.trainTalk = true;
+    currentwaypointIndex = 9;
+    updateCurrentObjective();
+    return;
   }
 }
 
