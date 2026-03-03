@@ -358,7 +358,7 @@ function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message
 }
 
 function preload() {
-  console.log("Greenish Egg Salad Sandwich Update");
+  console.log("Polish Hot Dog Update");
   arrayCopy(tileImgs, 0, tileNames, 0, tileImgs.length);
   worldString = loadStrings("world.txt");
   sewer1String = loadStrings("sewer.txt");

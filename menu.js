@@ -67,6 +67,7 @@ function drawMenuScreen() {
   menuAnimationTimer++;
 
   // Draw REFORGE logo with floating animation
+
   push();
   imageMode(CENTER);
 
@@ -79,8 +80,9 @@ function drawMenuScreen() {
   // Sin wave float animation
   const floatOffset = sin(frameCount / 30) * 8;
 
-  image(ReforgeLogo, width / 2, 180 + floatOffset, displayWidth, displayHeight);
+  image(ReforgeLogo, width / 2, 370 + floatOffset, displayWidth, displayHeight);
   pop();
+
 
   // Draw menu options on right side
   const menuX = width - 250;
