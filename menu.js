@@ -155,16 +155,16 @@ function drawMenuScreen() {
     // Draw selection effect for selected option
     if (selectedMenuOption === i) {
       selectionPulse = sin(frameCount / 10) * 5;
-      
+
       // Outer glow
       fill(255, 200, 50, 20 + menuOptionHoverAlpha[i] * 0.1);
-      rect(currentMenuX - arrowWidth - 15 - selectionPulse/2, optionY - 25 - selectionPulse/2, totalWidth + 30 + selectionPulse, 50 + selectionPulse, 8);
-      
+      rect(currentMenuX - arrowWidth - 15 - selectionPulse / 2, optionY - 25 - selectionPulse / 2, totalWidth + 30 + selectionPulse, 50 + selectionPulse, 8);
+
       // Main background
       fill(255, 255, 255, 40 + menuOptionHoverAlpha[i] * 0.2);
       noStroke();
       rect(currentMenuX - arrowWidth - 10, optionY - 25, totalWidth + 20, 50, 5);
-      
+
       // Selection particles effect
       if (frameCount % 10 === 0) {
         selectionParticles.push({
@@ -346,15 +346,15 @@ function drawCreditsScreen() {
   // Credits content
   textSize(24);
   fill(255, 255, 255, 220);
-  
+
   let startY = 280;
   let spacing = 40;
-  
+
   if (creditsPage === 0) {
     text("GAME DESIGN & PROGRAMMING", width / 2, startY);
     fill(255, 220, 100);
     text("The Reforge Programming Team", width / 2, startY + spacing);
-    
+
     fill(255, 255, 255, 220);
     text("MUSIC", width / 2, startY + spacing * 3);
     fill(255, 220, 100);
@@ -363,7 +363,7 @@ function drawCreditsScreen() {
     fill(200, 200, 200, 200);
     text("Creative Commons Attribution license (reuse allowed)", width / 2, startY + spacing * 4.8);
     text("Source: https://www.youtube.com/watch?v=neXbwN3zJ5Q", width / 2, startY + spacing * 5.4);
-    
+
     textSize(24);
     fill(255, 255, 255, 220);
     text("ART ASSETS", width / 2, startY + spacing * 7);
@@ -376,7 +376,7 @@ function drawCreditsScreen() {
     textSize(18);
     text("'Frankenstein; or, The Modern Prometheus' by Mary Shelley", width / 2, startY + spacing * 1.5);
     text("'Walden; or, Life in the Woods' by Henry David Thoreau", width / 2, startY + spacing * 2.5);
-    
+
     fill(255, 255, 255, 200);
     textSize(14);
     text("(Used for atmosphere and narrative depth)", width / 2, startY + spacing * 3.5);
@@ -386,11 +386,11 @@ function drawCreditsScreen() {
   textSize(18);
   fill(255, 255, 255, 150);
   text("Press ESC to return to menu", width / 2, height - 80);
-  
+
   // Page indicator and navigation hint
   textSize(14);
   text("Page " + (creditsPage + 1) + " of " + totalCreditsPages, width / 2, height - 120);
-  text("Use LEFT / RIGHT arrows to flip pages", width / 2, height - 140);
+  text("Use LEFT / RIGHT arrows to flip pages", width / 6, height - 140);
   pop();
 
   // Handle navigation
@@ -446,42 +446,42 @@ function drawControlsScreen() {
   if (titleScreenImg) {
     push();
     imageMode(CENTER);
-    image(titleScreenImg, width/2, height/2, width, height);
+    image(titleScreenImg, width / 2, height / 2, width, height);
     pop();
   }
-  
+
   push();
   fill(0, 0, 0, 200);
   rect(0, 0, width, height);
-  
+
   fill(255, 200, 80);
   textFont(Silkscreen);
   textSize(40);
   textAlign(CENTER);
-  text("CONTROLS", width/2, 100);
-  
+  text("CONTROLS", width / 2, 100);
+
   textSize(20);
   fill(255);
   let startY = 180;
   let spacing = 35;
-  let leftX = width/2 - 200;
-  let rightX = width/2 + 50;
-  
+  let leftX = width / 2 - 200;
+  let rightX = width / 2 + 50;
+
   textAlign(LEFT);
   text("WASD", leftX, startY); text("- Move", rightX, startY);
   text("MOUSE", leftX, startY + spacing); text("- Aim / Shoot", rightX, startY + spacing);
-  text("E", leftX, startY + spacing*2); text("- Interact / Pickup", rightX, startY + spacing*2);
-  text("Q (Hold)", leftX, startY + spacing*3); text("- Switch Robot", rightX, startY + spacing*3);
-  text("1-8", leftX, startY + spacing*4); text("- Inventory Slots", rightX, startY + spacing*4);
-  text("X", leftX, startY + spacing*5); text("- Drop Item", rightX, startY + spacing*5);
-  text("R (Hold)", leftX, startY + spacing*6); text("- Transfer Item", rightX, startY + spacing*6);
-  text("ESC", leftX, startY + spacing*7); text("- Pause Game", rightX, startY + spacing*7);
-  
+  text("E", leftX, startY + spacing * 2); text("- Interact / Pickup", rightX, startY + spacing * 2);
+  text("Q (Hold)", leftX, startY + spacing * 3); text("- Switch Robot", rightX, startY + spacing * 3);
+  text("1-8", leftX, startY + spacing * 4); text("- Inventory Slots", rightX, startY + spacing * 4);
+  text("X", leftX, startY + spacing * 5); text("- Drop Item", rightX, startY + spacing * 5);
+  text("R (Hold)", leftX, startY + spacing * 6); text("- Transfer Item", rightX, startY + spacing * 6);
+  text("ESC", leftX, startY + spacing * 7); text("- Pause Game", rightX, startY + spacing * 7);
+
   textAlign(CENTER);
   fill(255, 255, 255, 150);
-  text("Press ESC to return", width/2, height - 80);
+  text("Press ESC to return", width / 2, height - 80);
   pop();
-  
+
   if (keyPressedOnce(ESCAPE)) {
     gameState = "menu";
     menuAnimationTimer = 0;
@@ -496,25 +496,25 @@ function drawPauseMenu() {
   push();
   fill(0, 0, 0, 150);
   rect(0, 0, width, height);
-  
+
   fill(255, 200, 80);
   textFont(Silkscreen);
   textSize(50);
   textAlign(CENTER);
-  text("PAUSED", width/2, height/2 - 150);
-  
+  text("PAUSED", width / 2, height / 2 - 150);
+
   textSize(20);
   fill(255);
-  text("CONTROLS", width/2, height/2 - 60);
+  text("CONTROLS", width / 2, height / 2 - 60);
   textSize(16);
-  let startY = height/2 - 20;
+  let startY = height / 2 - 20;
   let spacing = 25;
-  text("WASD - Move | MOUSE - Aim/Shoot | E - Interact", width/2, startY);
-  text("Q (Hold) - Switch Robot | 1-8 - Slots | X - Drop", width/2, startY + spacing);
-  text("R (Hold) - Transfer | ESC - Resume", width/2, startY + spacing*2);
-  
+  text("WASD - Move | MOUSE - Aim/Shoot | E - Interact", width / 2, startY);
+  text("Q (Hold) - Switch Robot | 1-8 - Slots | X - Drop", width / 2, startY + spacing);
+  text("R (Hold) - Transfer | ESC - Resume", width / 2, startY + spacing * 2);
+
   textSize(24);
-  fill(255, 255, 255, sin(frameCount/10)*100 + 155);
-  text("Press ESC to Resume", width/2, height/2 + 120);
+  fill(255, 255, 255, sin(frameCount / 10) * 100 + 155);
+  text("Press ESC to Resume", width / 2, height / 2 + 120);
   pop();
 }
