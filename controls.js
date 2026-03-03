@@ -415,7 +415,7 @@ function mouseClicked() {
     if (inventoryList[inventorySlot - 1] != null) {
       var currentItem = inventoryList[inventorySlot - 1];
 
-      if (currentItem.type == "gun" && currentItem.name != "rifle") {
+      if (currentItem.type == "sprayer" && currentItem.name != "pulser") {
         // Only humans or healthy robots can shoot, and only robots consume battery
         if (activePlayer === 0) {
           shoot(currentItem.name);
@@ -453,18 +453,17 @@ function mouseClicked() {
 }
 
 function shoot(type){
-  //Different shot patterns for different guns
   var currentItem = inventoryList[inventorySlot - 1];
   if (recoil >= 10) {
-    if(type == "steam gun") {
+    if(type == "steam sprayer") {
       bullets.push(new Bullet("common", currentItem.damage));
     }
-    if(type == "shotgun") {
+    if(type == "sprayer") {
       bullets.push(new Bullet("common", currentItem.damage));
       bullets.push(new Bullet("common", currentItem.damage, calculateAim() - 0.06));
       bullets.push(new Bullet("common", currentItem.damage, calculateAim() + 0.14));
     }
-    if(type == "rifle") {
+    if(type == "pulser") {
       bullets.push(new Bullet("common", currentItem.damage));
     }
   }

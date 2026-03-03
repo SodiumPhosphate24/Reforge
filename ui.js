@@ -170,12 +170,12 @@ class Item {
     this.amount = amount;
     this.scaleFactor = scaleFactor;
 
-    if (type == "gun") {
-      this.type = "gun";
+    if (type == "sprayer") {
+      this.type = "sprayer";
       this.stackable = false;
-      if (name == "steam gun") {
+      if (name == "steam sprayer") {
         this.name = name;
-        this.image = GunImgs[0];
+        this.image = SprayerImgs[0];
         this.damage = 1;
         this.ammo = 100;
         this.ammoType = "common";
@@ -183,16 +183,16 @@ class Item {
         this.HtoW = 0.43;
 
       }
-      if (name == "shotgun") {
+      if (name == "spreader") {
         this.name = name;
-        this.image = GunImgs[1];
+        this.image = SprayerImgs[1];
         this.damage = 1;
         this.fireRate = .167;
         this.HtoW = 0.43;
       }
-      if (name == "rifle") {
+      if (name == "pulser") {
         this.name = name;
-        this.image = GunImgs[2];
+        this.image = SprayerImgs[2];
         this.damage = 1;
         this.fireRate = .3;
         this.HtoW = .43;
@@ -325,10 +325,10 @@ class DroppedItem {
     // Determine base size based on item type
     let baseSize = 35; // Default
 
-    if (this.item.name == "steam gun") {
+    if (this.item.name == "steam sprayer") {
       baseSize = 52;
-    } else if (this.item.type === "gun" && this.item.name != "steam gun") {
-      baseSize = 40; // Guns are moderately sized
+    } else if (this.item.type === "sprayer" && this.item.name != "steam sprayer") {
+      baseSize = 40;
     } else if (this.item.type === "consumable" || this.item.type == "material") {
       baseSize = 30; // Consumables are medium
     } else if (this.item.type === "projectile") {

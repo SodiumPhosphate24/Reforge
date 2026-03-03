@@ -35,6 +35,7 @@ class Enemy {
       this.image = BadGuy;
       this.width = 48;
       this.height = 56;
+      this.lootPool = [["consumable", "common cartridge", 1]];
     }
     if (type == "greg") { //Shoots
       this.type = "greg";
@@ -73,7 +74,7 @@ class Enemy {
       this.image = KhronosImage;
       this.width = 124;
       this.height = 104;
-      this.lootPool = [["gun", "rare pistol", 1], ["material", "legendary wheel", 2], ["consumable", "legendary cartridge", 5]];
+      this.lootPool = [["material", "legendary wheel", 2], ["consumable", "legendary cartridge", 5]];
       this.aggroRange = 600;
       this.deaggroRange = 1200;
       

@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], GunImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, ARGOImage, KhronosImage, Book, Greg, LockNpc, Hephaestus, Atlas, OGBuschy, Daedalus;
+let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], SprayerImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, ARGOImage, KhronosImage, Book, Greg, LockNpc, Hephaestus, Atlas, OGBuschy, Daedalus;
 
 var activeBoss = null;
 
@@ -385,9 +385,9 @@ function preload() {
   BulletImgs[2] = loadImage("Items/Bullets/RareBullet.png");
   BulletImgs[3] = loadImage("Items/Bullets/LegendaryBullet.png");
   BulletImgs[4] = loadImage("Items/Bullets/ExplosiveBullet.png");
-  GunImgs[0] = loadImage("Items/Guns/SteamGun.png");
-  GunImgs[1] = loadImage("Items/Guns/Shotgun.png");
-  GunImgs[2] = loadImage("Items/Guns/Rifle.png");
+  SprayerImgs[0] = loadImage("Items/Sprayers/Sprayer.png");
+  SprayerImgs[1] = loadImage("Items/Sprayers/Spreader.png");
+  SprayerImgs[2] = loadImage("Items/Sprayers/Pulser.png");
   tileImgs[0] = loadImage("Tiles/deadGrass.png");
   tileImgs[1] = loadImage("Tiles/Asphalt.png");
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");
@@ -670,9 +670,9 @@ function setup() {
   generateTintedTileCache();
 
   itemConstructors = [
-    ["gun", "steam gun", 1, GunImgs[0]],
-    ["gun", "shotgun", 1, GunImgs[1]],
-    ["gun", "rifle", 1, GunImgs[2]],
+    ["sprayer", "steam sprayer", 1, SprayerImgs[0]],
+    ["sprayer", "spreader", 1, SprayerImgs[1]],
+    ["sprayer", "pulser", 1, SprayerImgs[2]],
     ["consumable", "cheese", 1, itemImgs[0]],
     ["consumable", "soda", 1, itemImgs[1]],
     ["consumable", "common cartridge", 1, itemImgs[2]],
@@ -855,7 +855,7 @@ function drawGameplay() {
   drawWorldLayer(gameWorld, 3);
   updateParticlesForLayer(3);
 
-  // Rotate gun
+  // Rotate sprayer
   drawGunDebugRect(); 
 
   mainHand();
@@ -2378,11 +2378,11 @@ function stepRoofFades() {
 }
 /* ====== End roof scale animation system ====== */
 
-// --- Gun flip animation state ---
-let currentGunFlip = 0; // current flip angle (0 or 180)
-let targetGunFlip = 0;  // target flip angle
+// --- Sprayer flip animation state ---
+let currentSprayerFlip = 0; // current flip angle (0 or 180)
+let targetSprayerFlip = 0;  // target flip angle
 
-// --- Only-gun-rotates helper (uses your calculateAim()) ---
+// --- Only-sprayer-rotates helper (uses your calculateAim()) ---
 function drawGunDebugRect() {
   push(); // isolate transforms
 
@@ -2393,26 +2393,26 @@ function drawGunDebugRect() {
   const aimAngle = calculateAim();
   rotate(aimAngle);
 
-  // Determine if gun should flip based on mouse position relative to player
+  // Determine if sprayer should flip based on mouse position relative to player
   // Calculate player center in screen coordinates
   const playerScreenX = pX + camX + 600 + pWidth / 2;
 
-  // If mouse is to the left of player, flip the gun
+  // If mouse is to the left of player, flip the sprayer
   if (mouseX < playerScreenX) {
-    targetGunFlip = 180;
+    targetSprayerFlip = 180;
   } else {
-    targetGunFlip = 0;
+    targetSprayerFlip = 0;
   }
 
   // Smoothly interpolate current flip to target flip
-  currentGunFlip = lerp(currentGunFlip, targetGunFlip, 0.2);
+  currentSprayerFlip = lerp(currentSprayerFlip, targetSprayerFlip, 0.2);
 
   // Apply the flip rotation (around X-axis conceptually, but we scale Y)
   push();
-  translate(25, 0); // move to gun position
+  translate(25, 0); // move to sprayer position
 
   // Flip by scaling Y when needed
-  const flipScale = cos(radians(currentGunFlip));
+  const flipScale = cos(radians(currentSprayerFlip));
   scale(1, flipScale);
 
   // Draw the item image pointing along +X with proper sizing
@@ -2421,11 +2421,11 @@ function drawGunDebugRect() {
       const item = inventoryList[inventorySlot - 1];
 
       // Determine base size based on item type
-      let baseSize = 30; // Default for guns
+      let baseSize = 30; // Default for sprayers
 
       if (item.type === "bullet") {
         baseSize = 18;
-      } else if (item.type === "gun") {
+      } else if (item.type === "sprayer") {
         baseSize = 52;
       } else if (item.type === "consumable") {
         baseSize = 25;
@@ -2464,12 +2464,12 @@ function drawGunDebugRect() {
   pop(); // restore transforms
 }
 
-// Helper function to get gun barrel position in world coordinates
+// Helper function to get sprayer barrel position in world coordinates
 function getGunBarrelPosition() {
   const angle = calculateAim();
-  const gunLength = 30; // matches gun image width
-  const gunOffset = 25; // distance from player center to gun start
-  const barrelDistance = gunOffset + gunLength; // total distance to barrel tip
+  const sprayerLength = 30;
+  const sprayerOffset = 25; 
+  const barrelDistance = sprayerOffset + sprayerLength; // total distance to barrel tip
 
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
@@ -2490,7 +2490,7 @@ function mainHand() {
 function doRecoil() {
   let rate = 1;
   if (inventoryList[inventorySlot - 1] != null) {
-    if (inventoryList[inventorySlot - 1].type == "gun") {
+    if (inventoryList[inventorySlot - 1].type == "sprayer") {
       rate = inventoryList[inventorySlot - 1].fireRate;
     }
   }

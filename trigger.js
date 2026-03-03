@@ -2,12 +2,11 @@ var triggerState = 0;
 var triggerList = {
   Prometheus: {
     talkToPrometheus: false,
-    dropppedStarterGun: false,
-    openedFirstCrate: false,
+    openedFirstCrate: false
   },
   Hephaestus: {
     talkToHephaestus: false,
-    givenGun: false
+    givenSprayer: false
   },
   Crafting: {
     craftedFirstRobot: false,
@@ -50,7 +49,6 @@ function handleTriggers(trigger, ID = -1) {
     //update dialogue
     if (triggerList.Prometheus.talkToPrometheus == false) {
       triggerList.Prometheus.talkToPrometheus = true;
-      triggerList.Prometheus.dropppedStarterGun = true;
       NonPlayerCharacters[0].message = [
         "Prometheus IV: Good. You adapt quickly.",
         "Prometheus IV: Those components… should be sufficient to construct your first autonomous unit.",
@@ -73,18 +71,17 @@ function handleTriggers(trigger, ID = -1) {
   if (trigger == "Hephaestus") {
     if (triggerList.Hephaestus.talkToHephaestus == false) {
       triggerList.Hephaestus.talkToHephaestus = true;
-      droppedItems.push(new DroppedItem(new Item("gun", "steam gun", 1), 23075, 22675));
+      droppedItems.push(new DroppedItem(new Item("sprayer", "steam sprayer", 1), 23075, 22675));
       NonPlayerCharacters[1].message = ["Hephaestus: ..."];
-      messages.push(new Message("dialogue", ["Hephaestus: Take this. This is a steam gun. It takes some of your steam reserves to fire, but it's powerful", "Hephaestus: I hope it will help you survive out there"], "Hephaestus", true));
-      //hephaestus gives you a gun, so all weaponry recipes are unlocked
-      unlockRecipe("steam gun");
-      unlockRecipe("shotgun");
-      unlockRecipe("rifle");
+      messages.push(new Message("dialogue", ["Hephaestus: Take this. This is a steam sprayer. It takes some of your steam reserves to operate, but it can be used to short circuit enemies", "Hephaestus: I hope it will help you survive out there"], "Hephaestus", true));
+      unlockRecipe("steam sprayer");
+      unlockRecipe("steam spreader");
+      unlockRecipe("steam pulser");
       updateCurrentObjective();
       return;
     }
-    if (triggerList.Hephaestus.givenGun == false) {
-      triggerList.Hephaestus.givenGun = true;
+    if (triggerList.Hephaestus.givenSprayer == false) {
+      triggerList.Hephaestus.givenSprayer = true;
       messages.push(new Message("dialogue", ["Prometheus IV: I can sense Daedalus' presence. I'll reroute you to his location"], "Prometheus", true));
       currentWaypointIndex = 6;
       updateCurrentObjective();
@@ -149,7 +146,7 @@ function handleTriggers(trigger, ID = -1) {
   }
 
   // Group discussion completion - when any of the three NPCs finish the reunion dialogue
-  if ((trigger == "Hephaestus" || trigger == "Atlas" || trigger == "Daedalus") && triggerList.Hephaestus.givenGun) {
+  if ((trigger == "Hephaestus" || trigger == "Atlas" || trigger == "Daedalus") && triggerList.Hephaestus.givenSprayer) {
     const daedalus = NonPlayerCharacters.find(npc => npc.id === "Daedalus");
     if (daedalus && daedalus.teleported && !groupDiscussionComplete) {
       groupDiscussionComplete = true;

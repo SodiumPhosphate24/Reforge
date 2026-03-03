@@ -7,7 +7,7 @@ var craftingMenuScale = 0;
 
 let craftingPrompt = null;
 
-var craftingTabs = ["Robots", "Weapons", "Items"];
+var craftingTabs = ["Robots", "Steam Tools", "Items"];
 var selectedTab = 0;
 
 var craftingRecipes = [
@@ -69,10 +69,10 @@ var craftingRecipes = [
     ],
     output: { type: "player", name: "ARGO", amount: 1 }
   },
-  // WEAPONS
+  // STEAM TOOLS
   {
-    name: "steam gun",
-    category: "Weapons",
+    name: "steam sprayer",
+    category: "Steam Tools",
     type: "item",
     unlocked: false,
     ingredients: [
@@ -80,11 +80,11 @@ var craftingRecipes = [
       { itemName: "pipe", amount: 2 },
       { itemName: "common cartridge", amount: 1 }
     ],
-    output: { type: "gun", name: "steam gun", amount: 1 }
+    output: { type: "sprayer", name: "steam sprayer", amount: 1 }
   },
   {
-    name: "steam shotgun",
-    category: "Weapons",
+    name: "steam spreader",
+    category: "Steam Tools",
     type: "item",
     unlocked: false,
     ingredients: [
@@ -92,11 +92,11 @@ var craftingRecipes = [
       { itemName: "pipe", amount: 5 },
       { itemName: "rare cartridge", amount: 2 }
     ],
-    output: { type: "gun", name: "shotgun", amount: 1 }
+    output: { type: "sprayer", name: "spreader", amount: 1 }
   },
   {
-    name: "steam rifle",
-    category: "Weapons",
+    name: "steam pulser",
+    category: "Steam Tools",
     type: "item",
     unlocked: false,
     ingredients: [
@@ -104,7 +104,7 @@ var craftingRecipes = [
       { itemName: "pipe", amount: 10 },
       { itemName: "legendary cartridge", amount: 1 }
     ],
-    output: { type: "gun", name: "rifle", amount: 1 }
+    output: { type: "sprayer", name: "pulser", amount: 1 }
   },
   // ITEMS
   {
