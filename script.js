@@ -671,8 +671,8 @@ function setup() {
 
   itemConstructors = [
     ["sprayer", "steam sprayer", 1, SprayerImgs[0]],
-    ["sprayer", "spreader", 1, SprayerImgs[1]],
-    ["sprayer", "pulser", 1, SprayerImgs[2]],
+    ["sprayer", "steam spreader", 1, SprayerImgs[1]],
+    ["sprayer", "steam pulser", 1, SprayerImgs[2]],
     ["consumable", "cheese", 1, itemImgs[0]],
     ["consumable", "soda", 1, itemImgs[1]],
     ["consumable", "common cartridge", 1, itemImgs[2]],
