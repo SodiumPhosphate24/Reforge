@@ -29,6 +29,7 @@ var triggerList = {
   Labyrinth: {
     labyrinthTalk: false,
     trainTalk: false,
+    movedToTrain: false,
     wallBreached: false,
     puzzles: [false, false, false, false],
     isFightingBoss: false
@@ -165,15 +166,11 @@ function handleTriggers(trigger, ID = -1) {
     updateCurrentObjective();
     return;
   }
-  if ((trigger == "Hephaestus" || trigger == "Atlas" || trigger == "Daedalus") && groupDiscussionComplete && triggerList.Labyrinth.labyrinthTalk && !triggerList.Labyrinth.trainTalk) {
+  if ((trigger == "Hephaestus" || trigger == "Atlas" || trigger == "Daedalus") && groupDiscussionComplete && triggerList.Labyrinth.movedToTrain && !triggerList.Labyrinth.trainTalk) {
     triggerList.Labyrinth.trainTalk = true;
     currentwaypointIndex = 9;
     updateCurrentObjective();
     return;
-  }
-
-  if (trigger === "Ending") {
-    resetToMainMenu();
   }
 }
 

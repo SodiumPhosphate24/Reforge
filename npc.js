@@ -190,6 +190,7 @@ function drawNPCs() {
       atlas.y = 925;
       daedalus.x = 13800;
       daedalus.y = 925;
+      triggerList.Labyrinth.movedToTrain = true;
 
       const trainDialogue = [
       "Hephaestus: So... this is the station. The old rail lines still run through the city.",
