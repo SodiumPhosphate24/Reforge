@@ -420,8 +420,9 @@ function mouseClicked() {
         if (activePlayer === 0) {
           shoot(currentItem.name);
         } else if (players[activePlayer].health > 10) {
-          players[activePlayer].health -= 3;
-          shoot(currentItem.name);
+          if(recoil >= 10){
+            shoot(currentItem.name);
+          }
         }
       }
       if (currentItem.type == "consumable" && activePlayer != 0) {
@@ -458,7 +459,7 @@ function shoot(type){
     if(type == "steam sprayer") {
       bullets.push(new Bullet("common", currentItem.damage));
     }
-    if(type == "sprayer") {
+    if(type == "spreader") {
       bullets.push(new Bullet("common", currentItem.damage));
       bullets.push(new Bullet("common", currentItem.damage, calculateAim() - 0.06));
       bullets.push(new Bullet("common", currentItem.damage, calculateAim() + 0.14));

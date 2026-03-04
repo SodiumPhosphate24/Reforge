@@ -734,6 +734,7 @@ function setup() {
 }
 
 function draw() {
+  updateEnding();
   if (gameState === "menu") {
     drawMenuScreen();
     drawUI();
@@ -768,6 +769,7 @@ function draw() {
 
   drawGameplay();
   updateLeakDetection();
+  drawEndingOverlay();
 }
 
 function updateLeakDetection() {
@@ -1090,6 +1092,62 @@ function drawGameplay() {
   }
 }
 
+
+function startEndingSequence() {
+  endingPhase = 1;
+  endingTimer = frameCount;
+}
+
+let endingPhase = 0;
+let endingTimer = 0;
+let endingFadeAlpha = 0;
+
+function updateEnding() {
+  if (endingPhase === 0) return;
+
+  if (endingPhase === 1) {
+    // Wait 4 seconds (approx 240 frames at 60fps)
+    if (frameCount - endingTimer > 240) {
+      endingPhase = 2;
+    }
+  } else if (endingPhase === 2) {
+    // Fade to black
+    endingFadeAlpha = lerp(endingFadeAlpha, 255, 0.02);
+    if (endingFadeAlpha > 250) {
+      endingFadeAlpha = 255;
+      endingPhase = 3;
+      
+      const endDialogue = [
+        "Hephaestus: It's... over. The machines are silent.",
+        "Atlas: I still can't believe it. The network is gone.",
+        "Daedalus: Centuries of domination... ended by one survivor.",
+        "Prometheus: Bastian, you have done what none of us thought possible.",
+        "Hephaestus: You brought fire back to mankind.",
+        "Atlas: The cities will wake again.",
+        "Daedalus: The world will rebuild.",
+        "Prometheus: Humanity endures... because of you, Bastian.",
+        "Hephaestus: The age of machines is finished.",
+        "Prometheus: The world has been reforged."
+      ];
+      
+      messages.push(new Message("dialogue", endDialogue, "Ending", true));
+    }
+  }
+}
+
+function drawEndingOverlay() {
+  if (endingFadeAlpha > 0) {
+    push();
+    fill(0, 0, 0, endingFadeAlpha);
+    noStroke();
+    rect(0, 0, width, height);
+    pop();
+  }
+}
+
+function resetToMainMenu() {
+  location.reload(); 
+}
 
 // Editor helper functions
 function getTile(row, col, layer = 0) {

@@ -191,7 +191,15 @@ function drawNPCs() {
       daedalus.x = 13800;
       daedalus.y = 925;
 
-      const trainDialogue = ["Hephaestus: Here it is... the train station.", "Atlas: Blah blah blah, make a train to breach the wall", "Daedalus: Blah blah blah, find the materials around in the city"];
+      const trainDialogue = [
+      "Hephaestus: So... this is the station. The old rail lines still run through the city.",
+      "Atlas: Then we use them. A train should hit the wall hard enough to break through the barricade.",
+      "Daedalus: If we can rebuild one. The engines were stripped long ago. We'll need to salvage parts from around the city.",
+      "Hephaestus: Cartridges, Wheels, Cogs... there should be enough",
+      "Atlas: Good. Khronos won't expect technology this old.",
+      "Daedalus: Search the ruins to the east. Bring back anything that looks like it came from a locomotive.",
+      "Hephaestus: Once we rebuild the engine, we ride straight through that wall. Good luck."
+      ];
       hephaestus.message = trainDialogue;
       atlas.message = trainDialogue;
       daedalus.message = trainDialogue;

@@ -799,6 +799,11 @@ function drawEnemies() {
       if (enemy.isBoss) {
         activeBoss = null;
         messages.push(new Message("quest", "Lvl 4 Completed"));
+        
+        // Start ending sequence
+        if (typeof startEndingSequence === 'function') {
+          startEndingSequence();
+        }
       }
 
       // Drop loot

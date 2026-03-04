@@ -73,7 +73,7 @@ function handleTriggers(trigger, ID = -1) {
       triggerList.Hephaestus.talkToHephaestus = true;
       droppedItems.push(new DroppedItem(new Item("sprayer", "steam sprayer", 1), 23075, 22675));
       NonPlayerCharacters[1].message = ["Hephaestus: ..."];
-      messages.push(new Message("dialogue", ["Hephaestus: Take this. This is a steam sprayer. It takes some of your steam reserves to operate, but it can be used to short circuit enemies", "Hephaestus: I hope it will help you survive out there"], "Hephaestus", true));
+      messages.push(new Message("dialogue", ["Hephaestus: Take this. This is a steam sprayer. It takes some of your steam reserves to operate, but it can be used to short circuit enemy robots", "Hephaestus: I hope it will help you survive out there"], "Hephaestus", true));
       unlockRecipe("steam sprayer");
       unlockRecipe("steam spreader");
       unlockRecipe("steam pulser");
@@ -170,6 +170,10 @@ function handleTriggers(trigger, ID = -1) {
     currentwaypointIndex = 9;
     updateCurrentObjective();
     return;
+  }
+
+  if (trigger === "Ending") {
+    resetToMainMenu();
   }
 }
 
