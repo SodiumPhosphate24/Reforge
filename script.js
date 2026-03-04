@@ -2750,7 +2750,7 @@ function startBloodMoonEffect() {
   bloodMoonActive = true;
   bloodMoonOverlayAlpha = 0;
   bloodMoonParticles = [];
-  // Spawn initial burst of particles
+  // create effect 
   for (let i = 0; i < 50; i++) {
     bloodMoonParticles.push({
       x: Math.random() * width,
