@@ -2746,11 +2746,12 @@ function initializeHardcodes() {
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
 }
 function startBloodMoonEffect() {
-  messages.push(new Message("PROMETHEUS IV: Khronos has initiated a System Reboot. His minions are repaired and redeployed. Watch out."));
+  messages.push(new Message("dialogue", "PROMETHEUS IV: Khronos has initiated a System Reboot. His minions are repaired and redeployed. Watch out."));
   bloodMoonActive = true;
   bloodMoonOverlayAlpha = 0;
   bloodMoonParticles = [];
-  // create effect 
+  // create effect particles
+  
   for (let i = 0; i < 50; i++) {
     bloodMoonParticles.push({
       x: Math.random() * width,
