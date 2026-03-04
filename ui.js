@@ -180,7 +180,7 @@ class Item {
         this.ammo = 100;
         this.ammoType = "common";
         this.fireRate = .33;
-        this.HtoW = 0.13;
+        this.HtoW = 0.16;
 
       }
       if (name == "steam spreader") {
@@ -188,14 +188,14 @@ class Item {
         this.image = SprayerImgs[1];
         this.damage = 1;
         this.fireRate = .167;
-        this.HtoW = 0.13;
+        this.HtoW = 0.16;
       }
       if (name == "steam pulser") {
         this.name = name;
         this.image = SprayerImgs[2];
         this.damage = 1;
         this.fireRate = .3;
-        this.HtoW = .13;
+        this.HtoW = .16;
       }
     }
 
