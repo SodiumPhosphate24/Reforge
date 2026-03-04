@@ -92,7 +92,7 @@ var craftingRecipes = [
       { itemName: "pipe", amount: 5 },
       { itemName: "rare cartridge", amount: 2 }
     ],
-    output: { type: "sprayer", name: "spreader", amount: 1 }
+    output: { type: "sprayer", name: "steam spreader", amount: 1 }
   },
   {
     name: "steam pulser",
@@ -104,7 +104,7 @@ var craftingRecipes = [
       { itemName: "pipe", amount: 10 },
       { itemName: "legendary cartridge", amount: 1 }
     ],
-    output: { type: "sprayer", name: "pulser", amount: 1 }
+    output: { type: "sprayer", name: "steam pulser", amount: 1 }
   },
   // ITEMS
   {

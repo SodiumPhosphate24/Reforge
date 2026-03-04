@@ -385,9 +385,9 @@ function preload() {
   BulletImgs[2] = loadImage("Items/Bullets/RareBullet.png");
   BulletImgs[3] = loadImage("Items/Bullets/LegendaryBullet.png");
   BulletImgs[4] = loadImage("Items/Bullets/ExplosiveBullet.png");
-  SprayerImgs[0] = loadImage("Items/Sprayers/Sprayer.png");
-  SprayerImgs[1] = loadImage("Items/Sprayers/Spreader.png");
-  SprayerImgs[2] = loadImage("Items/Sprayers/Pulser.png");
+  SprayerImgs[0] = loadImage("Items/Sprayers/steamSprayer.png");
+  SprayerImgs[1] = loadImage("Items/Sprayers/steamSpreader.png");
+  SprayerImgs[2] = loadImage("Items/Sprayers/steamPulser.png");
   tileImgs[0] = loadImage("Tiles/deadGrass.png");
   tileImgs[1] = loadImage("Tiles/Asphalt.png");
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");

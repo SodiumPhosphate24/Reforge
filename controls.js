@@ -390,13 +390,12 @@ function mouseHeld() {
     if (!editorMode) {
       if (inventoryList[inventorySlot-1] != null){
         if (recoil >= 10){
-          if (inventoryList[inventorySlot-1].name == "rifle"){
+          if (inventoryList[inventorySlot-1].name == "steam pulser"){
             if (activePlayer === 0) {
-              shoot("rifle");
+              shoot("steam pulser");
             } else if (players[activePlayer].health > 10) {
               players[activePlayer].health -= 3;
-              shoot("rifle");
-              console.log("Shot Rifle");
+              shoot("steam pulser");
             }
           }
         }
@@ -415,13 +414,14 @@ function mouseClicked() {
     if (inventoryList[inventorySlot - 1] != null) {
       var currentItem = inventoryList[inventorySlot - 1];
 
-      if (currentItem.type == "sprayer" && currentItem.name != "pulser") {
+      if (currentItem.type == "sprayer" && currentItem.name != "steam pulser") {
         // Only humans or healthy robots can shoot, and only robots consume battery
         if (activePlayer === 0) {
           shoot(currentItem.name);
         } else if (players[activePlayer].health > 10) {
           if(recoil >= 10){
             shoot(currentItem.name);
+            players[activePlayer].health -= 3;
           }
         }
       }
@@ -459,12 +459,12 @@ function shoot(type){
     if(type == "steam sprayer") {
       bullets.push(new Bullet("common", currentItem.damage));
     }
-    if(type == "spreader") {
+    if(type == "steam spreader") {
       bullets.push(new Bullet("common", currentItem.damage));
       bullets.push(new Bullet("common", currentItem.damage, calculateAim() - 0.06));
       bullets.push(new Bullet("common", currentItem.damage, calculateAim() + 0.14));
     }
-    if(type == "pulser") {
+    if(type == "steam pulser") {
       bullets.push(new Bullet("common", currentItem.damage));
     }
   }

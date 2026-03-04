@@ -148,7 +148,7 @@ function handleTriggers(trigger, ID = -1) {
     softlockPreventionOn = false;
   }
 
-  // Group discussion completion - when any of the three NPCs finish the reunion dialogue
+  // Group discussion completion when any of the three NPCs finish the reunion dialogue
   if ((trigger == "Hephaestus" || trigger == "Atlas" || trigger == "Daedalus") && triggerList.Hephaestus.givenSprayer) {
     const daedalus = NonPlayerCharacters.find(npc => npc.id === "Daedalus");
     if (daedalus && daedalus.teleported && !groupDiscussionComplete) {

@@ -6,27 +6,27 @@ var lastInventorySlot = 1;
 function drawUI() {
   buffs();
 
-  // Current Objective indicator
+  // current Objective indicator
   if (typeof currentObjective !== 'undefined' && gameState == "playing") {
     push();
     textAlign(CENTER, TOP);
     textSize(18);
     textFont(Silkscreen);
 
-    // Small box with objective written inside.
+    // small box with objective written inside.
     const objText = "Objective: " + currentObjective;
     const objWidth = textWidth(objText);
     fill(0, 0, 0, 150);
     rect(width / 2 - objWidth / 2 - 15, 15, objWidth + 30, 35, 5);
 
-    // Draw text with pulse effect
+    // draw text with pulse effect
     const pulse = sin(frameCount * 0.05) * 30;
     fill(255, 255, 255, 225 + pulse);
     text(objText, width / 2, 22);
     pop();
   }
 
-  // Press ESC to Pause indicator
+  // press escape to pause indicator
   push();
   textSize(14);
   textFont(Silkscreen);
@@ -35,10 +35,10 @@ function drawUI() {
   if (gameState == "playing") {
     textAlign(LEFT, TOP);
     text("ESC to view controls", 20, 20);
-    textAlign(RIGHT, TOP); // Changed from CENTER back to TOP to avoid setting bad defaults for following text
-    text("ESC to Pause", width - 20, 20); // Restored missing text
+    textAlign(RIGHT, TOP); 
+    text("ESC to Pause", width - 20, 20); 
   }
-  pop(); // Ensure pop is called to reset drawing state
+  pop();
 
   drawCartridgeTutorial();
 }
@@ -180,22 +180,22 @@ class Item {
         this.ammo = 100;
         this.ammoType = "common";
         this.fireRate = .33;
-        this.HtoW = 0.43;
+        this.HtoW = 0.13;
 
       }
-      if (name == "spreader") {
+      if (name == "steam spreader") {
         this.name = name;
         this.image = SprayerImgs[1];
         this.damage = 1;
         this.fireRate = .167;
-        this.HtoW = 0.43;
+        this.HtoW = 0.13;
       }
-      if (name == "pulser") {
+      if (name == "steam pulser") {
         this.name = name;
         this.image = SprayerImgs[2];
         this.damage = 1;
         this.fireRate = .3;
-        this.HtoW = .43;
+        this.HtoW = .13;
       }
     }
 
@@ -437,10 +437,10 @@ class DroppedItem {
 
 }
 
-let nearestPickupItem = null; // Store for screen-fixed rendering
-let pickupPromptAlpha = 0; // Fade animation
-let pickupPromptScale = 0; // Scale animation
-let pickupPromptGrowScale = 0.5; // Growing scale animation
+let nearestPickupItem = null;
+let pickupPromptAlpha = 0; 
+let pickupPromptScale = 0; 
+let pickupPromptGrowScale = 0.5; 
 
 function updateDroppedItems() {
   let count = 0;
@@ -450,7 +450,7 @@ function updateDroppedItems() {
   const playerCenterX = pX + 600 + pWidth / 2;
   const playerCenterY = pY + 375 + pHeight / 2;
 
-  // Calculate viewport bounds for culling
+  //calculate the right position to draw, using the edges of the screen as a ref
   const viewLeft = -camX - 100;
   const viewRight = -camX + width + 100;
   const viewTop = -camY - 100;
@@ -459,7 +459,7 @@ function updateDroppedItems() {
   for (let i = 0; i < droppedItems.length; i++) {
     let item = droppedItems[count];
 
-    // Only update and draw items within extended viewport
+    // only draw items within screen view
     const itemX = item.x + item.itemWidth / 2;
     const itemY = item.y + item.itemHeight / 2;
 
@@ -467,7 +467,7 @@ function updateDroppedItems() {
       itemY >= viewTop && itemY <= viewBottom) {
       item.draw();
 
-      // Check if this is the nearest pickup-able item
+      // check if this is the nearest pickup able item
       if (item.checkPickup()) {
         const d = distance(playerCenterX, playerCenterY, itemX, itemY);
         if (d < nearestDistance) {
@@ -482,7 +482,6 @@ function updateDroppedItems() {
 }
 
 function drawPickupPromptIfNeeded() {
-  // Fade in/out and scale based on whether item is near
   if (nearestPickupItem) {
     pickupPromptAlpha = lerp(pickupPromptAlpha, 255, 0.2);
     pickupPromptScale = lerp(pickupPromptScale, 1, 0.2);
@@ -511,15 +510,14 @@ function drawPickupPrompt(item) {
   textFont(Silkscreen);
   textAlign(CENTER, CENTER);
 
-  // Display at top of screen
+  // disp at top of screen
   const promptText = "Press E to Pick Up " + item.item.name;
 
-  // Background for text
+  // background for text
   const promptWidth = textWidth(promptText);
   fill(0, 0, 0, pickupPromptAlpha * 0.6);
   rect(width / 2 - promptWidth / 2 - 10, 63, promptWidth + 20, 35, 5);
 
-  // Text
   fill(255, 150, 0, pickupPromptAlpha);
   text(promptText, width / 2, 80);
 
