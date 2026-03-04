@@ -44,8 +44,8 @@ var bloodMoonParticles = [];
 
 var breadcrumbs = [];
 var lastBreadcrumbTime = 0;
-var breadcrumbInterval = 200; 
-var maxBreadcrumbs = 15; 
+var breadcrumbInterval = 200;
+var maxBreadcrumbs = 15;
 var breadcrumbMinDistance = 2;
 var tileNames = [];
 var tileImgs = ["grass", "asphalt", "lined asphalt", "Concrete", "Brick", "Crate", "Workbench", "dirt", "darkConcrete", "door", "window", "crack", "wood", "whiteConcrete", "barnDoor", "barnWindow", "fence", "fenceCorner", "fenceDown", "fenceEdge", "fencePost", "Grave 1", "Grave 2", "Grave 3", "Rail", "Stone Brick", "Stone Brick Wall", "Pipe", "CopperTileGreen", "Gravel", "Note", "ChainLink", "ChainLinkBottomCorner", "ChainLinkCorner", "ChainLinkVertical", "ChainLinkEnd", "Lampost", "Bench", "White Brick", "White Tile", "Steel Crate", "Tree", "Boiler", "Water", "Sewer", "Tree2", "Cobblestone", "Wooden Post", "Wooden post top", "Boarded Window", "Vines", "Exterior Copper Pipe", "Brick Roof"];
@@ -114,7 +114,7 @@ var fadeToGameProgress = 0;
 
 // Game state management
 function updateFadeToGame() {
-  fadeToGameProgress += 0.005; 
+  fadeToGameProgress += 0.005;
 
   if (fadeToGameProgress >= 1.0) {
     gameState = "playing";
@@ -391,7 +391,7 @@ function preload() {
   tileImgs[0] = loadImage("Tiles/deadGrass.png");
   tileImgs[1] = loadImage("Tiles/Asphalt.png");
   tileImgs[2] = loadImage("Tiles/Asphalt2.png");
-  tileImgs[3] = null; 
+  tileImgs[3] = null;
   tileImgs[4] = loadImage("Tiles/Brick.png");
   tileImgs[5] = loadImage("Tiles/Crate.png");
   tileImgs[6] = null;
@@ -439,13 +439,13 @@ function preload() {
   tileImgs[48] = loadImage("Tiles/WoodenPostTop.png");
   tileImgs[49] = loadImage("Tiles/BoardedWindow.png");
   tileImgs[50] = loadImage("Tiles/Vines.png");
-  tileImgs[51] = null; 
+  tileImgs[51] = null;
   tileImgs[52] = loadImage("Tiles/Brick.png");
   // Register multi-tile objects
-  registerMultiTile(6, "Tiles/Crafting.png", 2, 2); 
-  registerMultiTile(36, "Tiles/Lampost.png", 1, 2); 
-  registerMultiTile(37, "Tiles/Bench.png", 2, 1);   
-  registerMultiTile(41, "Tiles/Tree.png", 1, 2);    
+  registerMultiTile(6, "Tiles/Crafting.png", 2, 2);
+  registerMultiTile(36, "Tiles/Lampost.png", 1, 2);
+  registerMultiTile(37, "Tiles/Bench.png", 2, 1);
+  registerMultiTile(41, "Tiles/Tree.png", 1, 2);
   registerMultiTile(42, "Tiles/Boiler.png", 1, 2);
   registerMultiTile(45, "Tiles/pineTree.png", 1, 2);
 
@@ -473,8 +473,8 @@ function preload() {
   ReforgeLogo = loadImage("REFORGE.png");
   titleScreenImg = loadImage("hud/titleScreen.png");
   WaypointImg = loadImage("Waypoint.png");
-  themeSong = loadSound("music/themeSong.mp3"); 
-  
+  themeSong = loadSound("music/themeSong.mp3");
+
   BunkerImg = loadImage("Buschwick Industries.png");
   PrometheusIntroImg = loadImage("PrometheusIntro.png");
   CryochamberImg = loadImage("Cryochamber.png");
@@ -736,7 +736,7 @@ function setup() {
 function draw() {
   if (gameState === "menu") {
     drawMenuScreen();
-    drawUI(); 
+    drawUI();
     return;
   }
 
@@ -856,7 +856,7 @@ function drawGameplay() {
   updateParticlesForLayer(3);
 
   // Rotate sprayer
-  drawGunDebugRect(); 
+  drawGunDebugRect();
 
   mainHand();
   drawEnemies();
@@ -1146,7 +1146,7 @@ function worldToString(world) {
           if (t.rotation && t.rotation !== 0) s += ":" + t.rotation;
           // Flip notation
           if (t.flipH || t.flipV) {
-            if (!t.rotation) s += ":0"; 
+            if (!t.rotation) s += ":0";
             s += ":" + (t.flipH ? "H" : "") + (t.flipV ? "V" : "");
           }
           // Color index notation
@@ -2468,7 +2468,7 @@ function drawGunDebugRect() {
 function getGunBarrelPosition() {
   const angle = calculateAim();
   const sprayerLength = 30;
-  const sprayerOffset = 25; 
+  const sprayerOffset = 25;
   const barrelDistance = sprayerOffset + sprayerLength; // total distance to barrel tip
 
   const playerCenterX = pX + 600 + pWidth / 2;
@@ -2746,12 +2746,12 @@ function initializeHardcodes() {
   droppedItems.push(new DroppedItem(new Item("projectile", "old wrench", 1), 16500, 14250));
 }
 function startBloodMoonEffect() {
-  messages.push(new Message("dialogue", "PROMETHEUS IV: Khronos has initiated a System Reboot. His minions are repaired and redeployed. Watch out."));
+  messages.push(new Message("dialogue", ["PROMETHEUS IV: Khronos has initiated a System Reboot. His minions are repaired and redeployed. Watch out."]));
   bloodMoonActive = true;
   bloodMoonOverlayAlpha = 0;
   bloodMoonParticles = [];
   // create effect particles
-  
+
   for (let i = 0; i < 50; i++) {
     bloodMoonParticles.push({
       x: Math.random() * width,
@@ -2762,7 +2762,7 @@ function startBloodMoonEffect() {
       life: 255
     });
   }
-  
+
   // End effect after 5 seconds
   setTimeout(() => {
     bloodMoonActive = false;
@@ -2797,7 +2797,7 @@ function drawBloodMoonOverlay() {
       fill(150, 255, 255, p.life * (bloodMoonOverlayAlpha / 60));
       noStroke();
       ellipse(p.x, p.y, p.size);
-      
+
       // Add a small square for "tech" feel
       if (p.life > 100) {
         rect(p.x - p.size, p.y - p.size, p.size / 2, p.size / 2);

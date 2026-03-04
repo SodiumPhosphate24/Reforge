@@ -41,15 +41,17 @@ class NPC {
           this.scale = 1.4;
           this.name = "Daedalus";
           this.hasTalkedAfterRescue = false;
+          messages.push(new Message("quest", "Lvl 2 Completed"));
           this.message = [
             "Daedalus: Finally, some fresh air. Thank you.",
-            "Daedalus: Hm? A robot—GET BACK! YOU'LL NEVER TAKE ME ALIVE!",
+            "Daedalus: Hm? A robo—GET BACK! YOU'LL NEVER TAKE ME ALIVE!",
             "PROMETHEUS IV: Daedalus. We are with Hephaestus. No time to explain.",
             "Daedalus: ...Sorry. I've learned not to trust machines. You're different—steam-powered, too. I didn't think anyone still built like this.",
             "Daedalus: We need to move. Hephaestus and Atlas are still waiting."
           ];
           console.log("Cleared crate and freed Daedalus");
           triggerList.Objective.freeDaedalus = true;
+          
           return;
         }
       }

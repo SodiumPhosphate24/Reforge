@@ -3,17 +3,17 @@ class Enemy {
     this.x = x;
     this.y = y;
     this.aggro = false;
-    this.vx = 0; 
-    this.vy = 0; 
+    this.vx = 0;
+    this.vy = 0;
     this.aggroRange = 325;
-    this.deaggroRange = 700; 
-    this.currentBreadcrumbIndex = 0; 
-    this.raycastTarget = null; 
-    this.wallAvoidanceMode = false; 
-    this.wallAvoidanceVx = 0; 
+    this.deaggroRange = 700;
+    this.currentBreadcrumbIndex = 0;
+    this.raycastTarget = null;
+    this.wallAvoidanceMode = false;
+    this.wallAvoidanceVx = 0;
     this.wallAvoidanceVy = 0;
-    this.wallAvoidanceDistance = 0; 
-    this.wallAvoidanceMaxDistance = 0; 
+    this.wallAvoidanceDistance = 0;
+    this.wallAvoidanceMaxDistance = 0;
 
     if (type == "harpy") {//Basic Melee Damage, Medium Speed, Low Health
       this.type = "harpy";
@@ -56,7 +56,7 @@ class Enemy {
       this.health = 4;
       this.maxHealth = 4;
       this.speed = 2;
-      this.acceleration = 0.15; 
+      this.acceleration = 0.15;
       this.image = OGBuschy;
       this.width = 48;
       this.height = 56;
@@ -77,7 +77,7 @@ class Enemy {
       this.lootPool = [["material", "legendary wheel", 2], ["consumable", "legendary cartridge", 5]];
       this.aggroRange = 600;
       this.deaggroRange = 1200;
-      
+
       // Boss-specific properties
       this.isBoss = true;
       this.phase = 1;
@@ -86,7 +86,7 @@ class Enemy {
       this.phaseTransitionDuration = 120;
       this.phase2Threshold = 0.66;
       this.phase3Threshold = 0.33;
-      
+
       this.attackCooldown = 0;
       this.attackPattern = 0;
       this.chargeSpeed = 0;
@@ -97,15 +97,15 @@ class Enemy {
       this.shootRange = 400;
       this.burstCount = 0;
       this.burstCooldown = 0;
-      
+
       this.minionSpawnCooldown = 0;
       this.minionsSpawned = 0;
-      
+
       this.flashTimer = 0;
       this.shakeIntensity = 0;
       this.auraRadius = 0;
       this.auraAngle = 0;
-      
+
       activeBoss = this;
     }
   }
@@ -152,25 +152,25 @@ class Enemy {
   }
 
   // Enemy-specific methods
-  shoot(){
+  shoot() {
     const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
     if (distToPlayer < this.shootRange) {
       const angle = atan2(pY + 340 - this.y, pX + 600 - this.x);
-      bullets.push(new Bullet("enemy", 1, angle, this.x+(this.width/2), this.y+(this.height/2)));
+      bullets.push(new Bullet("enemy", 1, angle, this.x + (this.width / 2), this.y + (this.height / 2)));
       return;
     }
   }
-  
+
   // Enemy attack method
-  attack(){
-    if(this.attackCooldown > 0){
+  attack() {
+    if (this.attackCooldown > 0) {
       this.attackCooldown--;
     }
-    if(this.attackCooldown <= 0){
-      if(this.type == "greg"){
+    if (this.attackCooldown <= 0) {
+      if (this.type == "greg") {
         this.shoot();
       }
-      if(this.type == "hydra"){
+      if (this.type == "hydra") {
         this.spawnMinions(1, "hydra");
       }
       this.attackCooldown = this.attackRate;
@@ -180,16 +180,16 @@ class Enemy {
   // Boss-specific methods
   bossUpdate() {
     if (!this.isBoss) return;
-    
+
     if (!this.aggro) return;
-    
+
     this.auraAngle += 0.02;
     this.auraRadius = 60 + sin(this.auraAngle * 3) * 10;
     if (this.flashTimer > 0) this.flashTimer--;
     if (this.shakeIntensity > 0) this.shakeIntensity *= 0.95;
-    
+
     const healthPercent = this.health / this.maxHealth;
-    
+
     if (!this.phaseTransitioning) {
       if (this.phase === 1 && healthPercent <= this.phase2Threshold) {
         this.startPhaseTransition(2);
@@ -197,12 +197,12 @@ class Enemy {
         this.startPhaseTransition(3);
       }
     }
-    
+
     // Handle phase transition
     if (this.phaseTransitioning) {
       this.phaseTransitionTimer++;
       this.shakeIntensity = 5;
-      
+
       if (this.phaseTransitionTimer >= this.phaseTransitionDuration) {
         this.phaseTransitioning = false;
         this.phaseTransitionTimer = 0;
@@ -210,17 +210,17 @@ class Enemy {
       }
       return;
     }
-    
+
     this.executePhaseAttacks();
   }
-  
+
   startPhaseTransition(newPhase) {
     this.phase = newPhase;
     this.phaseTransitioning = true;
     this.phaseTransitionTimer = 0;
     this.flashTimer = 60;
     this.shakeIntensity = 8;
-    
+
     this.speed += 0.5;
     this.acceleration += 0.02;
   }
@@ -233,7 +233,7 @@ class Enemy {
       this.spawnMinions(2, "greg");
     }
   }
-  
+
   spawnMinions(count, type) {
     for (let i = 0; i < count; i++) {
       const angle = (TWO_PI / count) * i;
@@ -242,20 +242,20 @@ class Enemy {
       enemies.push(new Enemy(type, spawnX, spawnY));
     }
   }
-  
+
   executePhaseAttacks() {
     if (this.attackCooldown > 0) {
       this.attackCooldown--;
     }
-    
-    const distToPlayer = distance(this.x + this.width/2, this.y + this.height/2, pX + 600, pY + 340);
-    
+
+    const distToPlayer = distance(this.x + this.width / 2, this.y + this.height / 2, pX + 600, pY + 340);
+
     // Charge attack
     if (this.isCharging) {
       const dx = this.chargeTargetX - this.x;
       const dy = this.chargeTargetY - this.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      
+
       if (dist < 30 || this.checkWallCollision()) {
         this.isCharging = false;
         this.shakeIntensity = 3;
@@ -266,10 +266,10 @@ class Enemy {
       }
       return;
     }
-    
+
     if (this.attackCooldown <= 0 && distToPlayer < this.shootRange * 1.5) {
       const attackRoll = Math.random();
-      
+
       if (this.phase === 1) {
         // Phase 1: Single shots, charge
         if (attackRoll < 0.7) {
@@ -306,12 +306,12 @@ class Enemy {
         }
       }
     }
-    
+
     // Burst Shot
     if (this.burstCount > 0) {
       if (this.burstCooldown <= 0) {
-        const angle = atan2(pY + 340 - (this.y + this.height/2), pX + 600 - (this.x + this.width/2));
-        bullets.push(new Bullet("enemy", 2, angle, this.x + this.width/2, this.y + this.height/2));
+        const angle = atan2(pY + 340 - (this.y + this.height / 2), pX + 600 - (this.x + this.width / 2));
+        bullets.push(new Bullet("enemy", 2, angle, this.x + this.width / 2, this.y + this.height / 2));
         this.burstCount--;
         this.burstCooldown = 8;
       } else {
@@ -319,12 +319,12 @@ class Enemy {
       }
     }
   }
-  
+
   bossShoot(burstSize) {
     this.burstCount = burstSize;
     this.burstCooldown = 0;
   }
-  
+
   startCharge() {
     this.isCharging = true;
     this.chargeTargetX = pX + 600;
@@ -332,15 +332,15 @@ class Enemy {
     this.chargeSpeed = 6 + this.phase * 2;
     this.attackCooldown = 90;
   }
-  
+
   sprayAttack() {
-    const centerAngle = atan2(pY + 340 - (this.y + this.height/2), pX + 600 - (this.x + this.width/2));
+    const centerAngle = atan2(pY + 340 - (this.y + this.height / 2), pX + 600 - (this.x + this.width / 2));
     const spreadCount = 3 + this.phase * 2;
     const spreadAngle = PI / 6;
-    
+
     for (let i = 0; i < spreadCount; i++) {
-      const angle = centerAngle - spreadAngle/2 + (spreadAngle / (spreadCount - 1)) * i;
-      bullets.push(new Bullet("enemy", 2, angle, this.x + this.width/2, this.y + this.height/2));
+      const angle = centerAngle - spreadAngle / 2 + (spreadAngle / (spreadCount - 1)) * i;
+      bullets.push(new Bullet("enemy", 2, angle, this.x + this.width / 2, this.y + this.height / 2));
     }
     this.attackCooldown = 80;
   }
@@ -350,10 +350,10 @@ class Enemy {
     if (this.isBoss) {
       this.bossUpdate();
     }
-    
+
     // Find distance to closest breadcrumb
     let closestDist = Infinity;
-    
+
     if (breadcrumbs.length > 0) {
       // Check distance to all breadcrumbs and find the closest
       for (let i = 0; i < breadcrumbs.length; i++) {
@@ -380,16 +380,16 @@ class Enemy {
     if (this.aggro) {
       // Breadcrumb AI
       let targetX, targetY;
-      if(this.type != "boss"){
+      if (this.type != "boss") {
         this.attack();
       }
-      
+
 
       if (breadcrumbs.length === 0) {
         // No breadcrumbs, stop moving
         this.vx *= 0.9;
         this.vy *= 0.9;
-        return; 
+        return;
       } else {
         if (this.currentBreadcrumbIndex >= breadcrumbs.length) {
           this.currentBreadcrumbIndex = breadcrumbs.length - 1;
@@ -408,7 +408,7 @@ class Enemy {
             targetY = testBreadcrumb.y;
             targetIndex = searchIndex;
             foundReachable = true;
-            this.raycastTarget = { x: targetX, y: targetY, blocked: false }; 
+            this.raycastTarget = { x: targetX, y: targetY, blocked: false };
             break;
           }
         }
@@ -483,13 +483,13 @@ class Enemy {
 
           // Test which directions are blocked
           const testDist = 3;
-          
+
           this.x = prevX + testDist;
           const rightBlocked = this.checkWallCollision();
           this.x = prevX - testDist;
           const leftBlocked = this.checkWallCollision();
           this.x = prevX;
-          
+
           this.y = prevY + testDist;
           const downBlocked = this.checkWallCollision();
           this.y = prevY - testDist;
@@ -522,7 +522,7 @@ class Enemy {
             this.x = prevX + this.vx;
             const canMoveX = !this.checkWallCollision();
             this.x = prevX;
-            
+
             this.y = prevY + this.vy;
             const canMoveY = !this.checkWallCollision();
             this.y = prevY;
@@ -547,10 +547,10 @@ class Enemy {
             const testAngle = atan2(targetY - (this.y + 10), targetX - (this.x + 10));
             const testVx = this.speed * cos(testAngle);
             const testVy = this.speed * sin(testAngle);
-            
+
             this.x = prevX + testVx;
             this.y = prevY + testVy;
-            
+
             if (!this.checkWallCollision()) {
               this.x = prevX;
               this.y = prevY;
@@ -559,17 +559,17 @@ class Enemy {
               const stepAwayDist = 0.5;
               this.x -= this.wallAvoidanceVx * stepAwayDist / this.speed;
               this.y -= this.wallAvoidanceVy * stepAwayDist / this.speed;
-              
+
               // Exit avoidance mode
               this.wallAvoidanceMode = false;
               this.wallAvoidanceDistance = 0;
-              
+
               this.vx = testVx;
               this.vy = testVy;
             } else { // Continue wall avoidance
               this.x = prevX + this.wallAvoidanceVx;
               this.y = prevY + this.wallAvoidanceVy;
-              
+
               if (this.checkWallCollision()) {
                 // Stuck
                 this.x = prevX;
@@ -588,7 +588,7 @@ class Enemy {
             // Continue wall avoidance
             this.x = prevX + this.wallAvoidanceVx;
             this.y = prevY + this.wallAvoidanceVy;
-            
+
             if (this.checkWallCollision()) {
               // Stuck
               this.x = prevX;
@@ -636,7 +636,7 @@ class Enemy {
   checkWallCollision() {
     const hitboxCushionX = 4;
     const hitboxCushionTop = 10;
-    
+
     const w = this.width - (hitboxCushionX * 2);
     const h = this.height - hitboxCushionTop;
     const left = this.x + hitboxCushionX;
@@ -687,15 +687,15 @@ class Enemy {
   hitsPlayer() {
     const hitboxCushionX = 4;
     const hitboxCushionTop = 10;
-    
+
     return checkCollision(
-      this.x + hitboxCushionX, 
-      this.y + hitboxCushionTop, 
-      pX + 600, 
-      pY + 340, 
-      this.width - (hitboxCushionX * 2), 
-      this.height - hitboxCushionTop, 
-      pWidth, 
+      this.x + hitboxCushionX,
+      this.y + hitboxCushionTop,
+      pX + 600,
+      pY + 340,
+      this.width - (hitboxCushionX * 2),
+      this.height - hitboxCushionTop,
+      pWidth,
       pHeight + 35
     );
   }
@@ -712,12 +712,12 @@ function drawEnemies() {
 
   for (let i = 0; i < enemies.length; i++) {
     const enemy = enemies[count];
-    
+
     enemy.update();
 
     // Check if enemy is within view to draw
     const inView = enemy.x >= viewLeft && enemy.x <= viewRight &&
-                   enemy.y >= viewTop && enemy.y <= viewBottom;
+      enemy.y >= viewTop && enemy.y <= viewBottom;
 
     if (inView) {
       if (enemy.isBoss) {
@@ -730,7 +730,7 @@ function drawEnemies() {
           drawX += random(-enemy.shakeIntensity, enemy.shakeIntensity);
           drawY += random(-enemy.shakeIntensity, enemy.shakeIntensity);
         }
-        
+
         // Aura effect
         noStroke();
         let auraColor;
@@ -741,25 +741,25 @@ function drawEnemies() {
         } else {
           auraColor = color(150, 0, 255, 90);
         }
-        
+
         // Aura Pulse
         for (let r = enemy.auraRadius; r > 0; r -= 15) {
           fill(red(auraColor), green(auraColor), blue(auraColor), alpha(auraColor) * (r / enemy.auraRadius));
-          ellipse(drawX + enemy.width/2, drawY + enemy.height/2, r * 2, r * 2);
+          ellipse(drawX + enemy.width / 2, drawY + enemy.height / 2, r * 2, r * 2);
         }
-        
+
         // Flash effecct
         if (enemy.flashTimer > 0) {
           tint(255, 255, 255, 150 + sin(enemy.flashTimer * 0.5) * 100);
         } else if (enemy.phaseTransitioning) {
           tint(255, 100 + sin(frameCount * 0.3) * 100, 100 + sin(frameCount * 0.3) * 100);
         }
-        
+
         image(enemy.image, drawX, drawY, enemy.width, enemy.height);
-        
+
         noTint();
         pop();
-        
+
       } else {
         if (enemy.aggro) {
           fill(255, 0, 0);
@@ -768,7 +768,7 @@ function drawEnemies() {
         }
 
         image(enemy.image, enemy.x, enemy.y, enemy.width, enemy.height);
-        if(enemy.health < enemy.maxHealth){
+        if (enemy.health < enemy.maxHealth) {
           fill(255, 0, 0);
           rect(enemy.x, enemy.y - 10, enemy.width, 5);
           fill(0, 255, 0);
@@ -779,7 +779,7 @@ function drawEnemies() {
 
     // Deal damage to player if colliding
     if (enemy.hitsPlayer()) {
-      if(pIFrames <= 0) {
+      if (pIFrames <= 0) {
         if (enemy.type == "harpy" || enemy.type == "hydra") {
           players[activePlayer].health -= 10;
           healthPoints = players[activePlayer].health;
@@ -798,6 +798,7 @@ function drawEnemies() {
     if (enemy.isDead()) {
       if (enemy.isBoss) {
         activeBoss = null;
+        messages.push(new Message("quest", "Lvl 4 Completed"));
       }
 
       // Drop loot
@@ -815,26 +816,26 @@ function drawEnemies() {
 // Boss health bar
 function drawBossBar() {
   if (!activeBoss || activeBoss.isDead() || !activeBoss.aggro) return;
-  
+
   push();
-  
+
   const barWidth = 500;
   const barHeight = 30;
   const barX = (width - barWidth) / 2;
   const barY = 80;
-  
+
   // Background
   fill(30, 30, 30, 220);
   stroke(60, 60, 60);
   strokeWeight(3);
   rect(barX - 10, barY - 15, barWidth + 20, barHeight + 50, 8);
-  
+
   // Boss name
   noStroke();
   textFont(Silkscreen);
   textSize(16);
   textAlign(CENTER, CENTER);
-  
+
   // Phase indicator colors
   let nameColor;
   if (activeBoss.phase === 1) {
@@ -844,19 +845,19 @@ function drawBossBar() {
   } else {
     nameColor = color(200, 100, 255);
   }
-  
+
   fill(nameColor);
   text(activeBoss.name || "BOSS", width / 2, barY - 2);
-  
+
   // Health bar background
   fill(80, 0, 0);
   noStroke();
   rect(barX, barY + 15, barWidth, barHeight, 4);
-  
+
   // Health bar fill
   const healthPercent = activeBoss.health / activeBoss.maxHealth;
   let healthColor;
-  
+
   if (activeBoss.phase === 1) {
     healthColor = lerpColor(color(255, 150, 0), color(255, 200, 50), sin(frameCount * 0.05) * 0.5 + 0.5);
   } else if (activeBoss.phase === 2) {
@@ -864,27 +865,27 @@ function drawBossBar() {
   } else {
     healthColor = lerpColor(color(150, 50, 255), color(200, 100, 255), sin(frameCount * 0.1) * 0.5 + 0.5);
   }
-  
+
   fill(healthColor);
   rect(barX, barY + 15, barWidth * healthPercent, barHeight, 4);
-  
+
   // Health bar shine 
   for (let i = 0; i < 3; i++) {
     fill(255, 255, 255, 30 - i * 10);
     rect(barX, barY + 15 + i * 2, barWidth * healthPercent, 4, 2);
   }
-  
+
   if (activeBoss.phaseTransitioning) {
     const progress = activeBoss.phaseTransitionTimer / activeBoss.phaseTransitionDuration;
     fill(255, 255, 255, 150 * (1 - progress));
     rect(barX, barY + 15, barWidth, barHeight, 4);
-    
+
     // Phase text
     fill(255, 255, 255, 255 * sin(progress * PI));
     textSize(24);
     text("PHASE " + activeBoss.phase, width / 2, barY + 30);
   }
-  
+
   pop();
 }
 // Draw breadcrumbs in editor mode
@@ -959,18 +960,18 @@ function drawEnemyRaycasts() {
 }
 
 // Blood moon functionality, respawns enemies
-function bloodMoon(){
-  if (bloodMoonCooldown > 0){
+function bloodMoon() {
+  if (bloodMoonCooldown > 0) {
     bloodMoonCooldown--;
   }
   else {
     let aggroed = false;
-    for (let i = 0; i < enemies.length; i++){
-      if (enemies[i].aggro){
+    for (let i = 0; i < enemies.length; i++) {
+      if (enemies[i].aggro) {
         aggroed = true;
       }
     }
-    if (!aggroed){
+    if (!aggroed) {
       bloodMoonCooldown = 18000;
       enemies = [];
       spawnEnemies();
