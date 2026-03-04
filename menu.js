@@ -338,10 +338,10 @@ function drawCreditsScreen() {
   for (let i = 0; i < 3; i++) {
     strokeWeight(8 - i * 2);
     stroke(255, 180, 50, 50);
-    text("CREDITS", width / 2, 150);
+    text("CREDITS", width / 2, 100);
   }
   noStroke();
-  text("CREDITS", width / 2, 150);
+  text("CREDITS", width / 2, 100);
 
   // Credits content
   textSize(24);
@@ -390,7 +390,7 @@ function drawCreditsScreen() {
   // Page indicator and navigation hint
   textSize(14);
   text("Page " + (creditsPage + 1) + " of " + totalCreditsPages, width / 2, height - 120);
-  text("Use LEFT / RIGHT arrows to flip pages", width / 6, height - 140);
+  text("Use LEFT / RIGHT arrows to flip pages", width / 2, height - 600);
   pop();
 
   // Handle navigation
