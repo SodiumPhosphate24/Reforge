@@ -210,8 +210,19 @@ function drawEditorUI() {
 
     // Draw player indicator
     drawMinimapPlayerIndicator();
+  } else {
+    // If P is not held, check if we need to clear the cache or hide it
+    // The current implementation just stops calling drawCachedMinimap
   }
   
+  // Save map as image when P is pressed (once)
+  if (pKeyPressed && !lastMinimapPress) {
+    if (minimapCache) {
+      minimapCache.save("map", "png");
+      console.log("Minimap saved as map.png");
+    }
+  }
+
   lastMinimapPress = pKeyPressed;
 }
 
