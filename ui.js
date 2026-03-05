@@ -68,30 +68,42 @@ function drawMinimapOverlay() {
   if (typeof gameWorld !== 'undefined' && gameWorld.length > 0) {
     const rows = gameWorld.length;
     const cols = gameWorld[0].length;
-    const tileSize = minimapSize / Math.max(rows, cols);
-    const mapWidth = cols * tileSize;
-    const mapHeight = rows * tileSize;
-    const offsetX = x + (minimapSize - mapWidth) / 2;
-    const offsetY = y + (minimapSize - mapHeight) / 2;
 
-    const playerGridX = (pX + 600) / 50;
-    const playerGridY = (pY + 375) / 50;
-    
+    // The cache was rendered by editor.js using these exact parameters:
+    // buffer = 290x290 (250 minimap + 20px border on each side)
+    // tileSize = Math.min(250/cols, 250/rows)
+    // offsetX within buffer = 20 + (250 - mapWidth) / 2
+    const editorMinimapSize = 250;
+    const cacheBufferSize = editorMinimapSize + 40; // 290
+
+    const editorTileSize = Math.min(editorMinimapSize / cols, editorMinimapSize / rows);
+    const editorMapWidth = cols * editorTileSize;
+    const editorMapHeight = rows * editorTileSize;
+    const editorOffsetX = 20 + (editorMinimapSize - editorMapWidth) / 2;
+    const editorOffsetY = 20 + (editorMinimapSize - editorMapHeight) / 2;
+
+    // Scale factor: cache buffer → display size
+    const scale = minimapSize / cacheBufferSize;
+
+    const playerGridX = Math.floor((pX + 600) / 50);
+    const playerGridY = Math.floor((pY + 375) / 50);
+
+    const dotX = x + (editorOffsetX + playerGridX * editorTileSize + editorTileSize / 2) * scale;
+    const dotY = y + (editorOffsetY + playerGridY * editorTileSize + editorTileSize / 2) * scale;
+
     noStroke();
-    // Use the exact same coordinate mapping as the render cache
-    const dotX = offsetX + (playerGridX * tileSize);
-    const dotY = offsetY + (playerGridY * tileSize);
-    
     fill(255, 0, 0, alphaValue);
     ellipse(dotX, dotY, 3, 3);
 
-    // Draw waypoint dot
+    // Draw waypoint dot using same transform
     if (typeof waypointCoordinates !== 'undefined' && typeof currentWaypointIndex !== 'undefined' && waypointCoordinates[currentWaypointIndex]) {
       const wp = waypointCoordinates[currentWaypointIndex];
-      const wpGridX = wp[0] / 50;
-      const wpGridY = wp[1] / 50;
+      const wpGridX = Math.floor(wp[0] / 50);
+      const wpGridY = Math.floor(wp[1] / 50);
+      const wpDotX = x + (editorOffsetX + wpGridX * editorTileSize + editorTileSize / 2) * scale;
+      const wpDotY = y + (editorOffsetY + wpGridY * editorTileSize + editorTileSize / 2) * scale;
       fill(0, 255, 255, alphaValue);
-      ellipse(offsetX + wpGridX * tileSize, offsetY + wpGridY * tileSize, 3, 3);
+      ellipse(wpDotX, wpDotY, 3, 3);
     }
   }
   pop();
