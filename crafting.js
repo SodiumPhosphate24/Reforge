@@ -31,7 +31,7 @@ var craftingRecipes = [
     category: "Robots",
     type: "player",
     unlocked: false,
-    playerConstructor: { width: 50, height: 40, speed: 1.7, health: 75, damage: 1 },
+    playerConstructor: { width: 45, height: 35, speed: 1.7, health: 75, damage: 1 },
     ingredients: [
       { itemName: "rare wheel", amount: 2 },
       { itemName: "rare cartridge", amount: 2 },

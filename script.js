@@ -727,6 +727,13 @@ function setup() {
   indicatorTargetX = indicatorCurrentX;
   indicatorTargetY = indicatorCurrentY;
 
+  // Initial minimap cache
+  setTimeout(() => {
+    if (typeof renderMinimapToCache === 'function') {
+      renderMinimapToCache();
+    }
+  }, 1000); // Wait for assets and world to fully load
+
   fixBoilerPrompt = createPrompt();
   boilerCartridgeCooldownPrompt = createPrompt();
   pickupCartridgePrompt = createPrompt();

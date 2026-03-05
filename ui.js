@@ -5,6 +5,10 @@ var itemLabelAlpha = 0;
 var lastInventorySlot = 1;
 function drawUI() {
   buffs();
+  
+  if (gameState === "playing") {
+    drawMinimapOverlay();
+  }
 
   // current Objective indicator
   if (typeof currentObjective !== 'undefined' && gameState == "playing") {
@@ -36,11 +40,49 @@ function drawUI() {
     textAlign(LEFT, TOP);
     text("ESC to view controls", 20, 20);
     textAlign(RIGHT, TOP); 
+    // Positioned relative to the map or screen edge
     text("ESC to Pause", width - 20, 20); 
   }
   pop();
 
   drawCartridgeTutorial();
+}
+
+function drawMinimapOverlay() {
+  if (typeof minimapCache === 'undefined' || !minimapCache) return;
+  
+  const minimapSize = 150;
+  const x = width - minimapSize - 20;
+  const y = 50; // Positioned below the ESC hint
+  
+  let alphaValue = 80; // Faint by default
+  if (mouseX > x && mouseX < x + minimapSize && mouseY > y && mouseY < y + minimapSize) {
+    alphaValue = 200; // Increase opacity on hover
+  }
+  
+  push();
+  resetMatrix(); // Ensure it's screen-space
+  tint(255, alphaValue);
+  image(minimapCache, x, y, minimapSize, minimapSize);
+  
+  // Draw player dot on overlay
+  if (typeof gameWorld !== 'undefined' && gameWorld.length > 0) {
+    const rows = gameWorld.length;
+    const cols = gameWorld[0].length;
+    const tileSize = minimapSize / Math.max(rows, cols);
+    const mapWidth = cols * tileSize;
+    const mapHeight = rows * tileSize;
+    const offsetX = x + (minimapSize - mapWidth) / 2;
+    const offsetY = y + (minimapSize - mapHeight) / 2;
+    
+    const playerGridX = (pX + 600) / 50;
+    const playerGridY = (pY + 375) / 50;
+    
+    noStroke();
+    fill(255, 0, 0, alphaValue);
+    ellipse(offsetX + playerGridX * tileSize, offsetY + playerGridY * tileSize, 6, 6);
+  }
+  pop();
 }
 
 var hasUsedCartridge = false;
