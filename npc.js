@@ -212,6 +212,16 @@ function drawNPCs() {
 function drawNPCPromptIfNeeded() {
   if (nearestNPC && !craftingMenuOpen) {
     const nameLower = nearestNPC.name.toLowerCase();
+    
+    // Blacklist specific sprites from showing interaction prompt
+    if (nameLower === "fieldgoal" || nameLower === "hoop") {
+      if (interactionPrompt) {
+        interactionPrompt.update(false);
+        interactionPrompt.draw("", [255, 150, 0], 80, true);
+      }
+      return;
+    }
+
     const isReadable = nameLower.includes("book") || nameLower.includes("journal") || nameLower.includes("sign");
     const isLock = nameLower.includes("lock");
 

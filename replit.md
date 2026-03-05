@@ -4,9 +4,8 @@ This is a 2D top-down action game built with p5.js called "Reforge". Players con
 
 ## Key Features
 - **Ending Sequence**: Fully implemented transition from boss death to title card.
-- **Minimap HUD**: Persistent top-right corner with player and waypoint indicators.
-- **NPC Decorations**: Added FieldGoal and Hoop as atmospheric NPC entities.
-- **UI Labels**: Static "OBJECTIVES" and "CONTROLS" labels with keybindings.
+- **Minimap HUD**: Persistent top-right corner, red dot for player (synchronized), cyan dot for current waypoint.
+- **NPC Decorations**: Added FieldGoal (4x scale) and Hoop (2x scale) NPCs as non-interactable decorations with interaction labels disabled.
 - **Sewer System**: Linked teleportation and unique sewer rooms.
 
 # Gameplay Guide: Chronological Walkthrough

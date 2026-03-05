@@ -3344,8 +3344,8 @@ function initializeHardcodes() {
   NonPlayerCharacters.push(new NPC(23200, 22650, "Atlas", ["Atlas: I'm Atlas... Responsible for keeping tabs on the geography of the area post incident."], Atlas, "Atlas", 2));
   NonPlayerCharacters.push(new NPC(8467, 23200, "Crate", ["Crate: Help! Hey! I'm stuck in here! Let me out!", "Crate: I'm starving, at least try to slip some cheese in here? Get me out!", "PROMETHEUS IV: That crate is sealed tight... We need a tool to pry it open."], Daedalus, "Daedalus", .001));
   NonPlayerCharacters.push(new NPC(12867, 12875, "Lock", ["Enter Code: ____ "], LockNpc, "Lock", .5));
-  NonPlayerCharacters.push(new NPC(20350, 2150, "FieldGoal", [], FieldGoalImg, "FieldGoal", 1));
-  NonPlayerCharacters.push(new NPC(21425, 2150, "Hoop", [], HoopImg, "Hoop", 1));
+  NonPlayerCharacters.push(new NPC(20350, 2150, "FieldGoal", [], FieldGoalImg, "FieldGoal", 4));
+  NonPlayerCharacters.push(new NPC(21425, 2150, "Hoop", [], HoopImg, "Hoop", 2));
   NonPlayerCharacters.push(new NPC(
     12950,
     12450,

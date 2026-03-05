@@ -8,9 +8,6 @@ function drawUI() {
 
   if (gameState === "playing" || gameState === "paused" || (gameState === "ending" && (typeof endingPhase === 'undefined' || endingPhase < 2))) {
     drawMinimapOverlay();
-    
-    // Draw static labels (Objectives/Controls)
-    drawUILabels();
   }
 
   // current Objective indicator
@@ -78,7 +75,7 @@ function drawMinimapOverlay() {
     const offsetY = y + (minimapSize - mapHeight) / 2;
 
     const playerGridX = (pX + 600) / 50;
-    const playerGridY = (pY + 375) / 50;
+    const playerGridY = (pY + 340) / 50;
     
     noStroke();
     // Use the exact same coordinate mapping as the render cache
@@ -89,10 +86,10 @@ function drawMinimapOverlay() {
     ellipse(dotX, dotY, 6, 6);
 
     // Draw waypoint dot
-    if (typeof waypoints !== 'undefined' && typeof currentwaypointIndex !== 'undefined' && waypoints[currentwaypointIndex]) {
-      const wp = waypoints[currentwaypointIndex];
-      const wpGridX = wp.x / 50;
-      const wpGridY = wp.y / 50;
+    if (typeof waypointCoordinates !== 'undefined' && typeof currentWaypointIndex !== 'undefined' && waypointCoordinates[currentWaypointIndex]) {
+      const wp = waypointCoordinates[currentWaypointIndex];
+      const wpGridX = wp[0] / 50;
+      const wpGridY = wp[1] / 50;
       fill(0, 255, 255, alphaValue);
       ellipse(offsetX + wpGridX * tileSize, offsetY + wpGridY * tileSize, 6, 6);
     }
@@ -102,6 +99,8 @@ function drawMinimapOverlay() {
 
 var hasUsedCartridge = false;
 function drawUILabels() {
+  // Disabled labels
+  return;
   push();
   resetMatrix();
   textFont(Silkscreen);
