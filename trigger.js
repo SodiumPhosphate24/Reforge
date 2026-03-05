@@ -176,8 +176,6 @@ function handleTriggers(trigger, ID = -1) {
   if (trigger === "Ending") {
     if (typeof endingPhase !== 'undefined') {
       endingPhase = 4;
-    } else {
-      location.reload();
     }
   }
 }

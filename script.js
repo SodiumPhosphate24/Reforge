@@ -1147,9 +1147,7 @@ function updateEnding() {
     reforgeTitleAlpha = lerp(reforgeTitleAlpha, 255, 0.02);
     if (reforgeTitleAlpha > 250) {
       reforgeTitleAlpha = 255;
-      if (frameCount % 300 === 0) { // Stay on screen for a bit before reset
-         location.reload();
-      }
+      // Removed location.reload() - the game ends here on the title card
     }
   }
 }
@@ -2762,6 +2760,45 @@ function spawnEnemies() {
   enemies.push(new Enemy("greg", 12676, 19725));
   enemies.push(new Enemy("greg", 12672, 19424));
   enemies.push(new Enemy("greg", 12972, 19425));
+  enemies.push(new Enemy("harpy", 12957, 14766));
+  enemies.push(new Enemy("harpy", 13913, 15952));
+  enemies.push(new Enemy("harpy", 12682, 16637));
+  enemies.push(new Enemy("harpy", 11510, 16115));
+  enemies.push(new Enemy("harpy", 11529, 17531));
+  enemies.push(new Enemy("harpy", 9945, 18981));
+  enemies.push(new Enemy("harpy", 11438, 20232));
+  enemies.push(new Enemy("harpy", 12472, 21285));
+  enemies.push(new Enemy("harpy", 11068, 23192));
+  enemies.push(new Enemy("harpy", 12066, 24196));
+  enemies.push(new Enemy("harpy", 10433, 24706));
+  enemies.push(new Enemy("harpy", 9243, 24118));
+  enemies.push(new Enemy("harpy", 7408, 24765));
+  enemies.push(new Enemy("harpy", 7138, 23968));
+  enemies.push(new Enemy("harpy", 7883, 22782));
+  enemies.push(new Enemy("harpy", 7507, 21848));
+  enemies.push(new Enemy("harpy", 8114, 21529));
+  enemies.push(new Enemy("harpy", 7286, 21277));
+  enemies.push(new Enemy("harpy", 8077, 20580));
+  enemies.push(new Enemy("harpy", 7631, 19967));
+  enemies.push(new Enemy("harpy", 6831, 19732));
+  enemies.push(new Enemy("harpy", 5632, 19820));
+  enemies.push(new Enemy("harpy", 5129, 19241));
+  enemies.push(new Enemy("harpy", 4387, 19807));
+  enemies.push(new Enemy("harpy", 4992, 20474));
+  enemies.push(new Enemy("harpy", 4272, 21149));
+  enemies.push(new Enemy("harpy", 3603, 21234));
+  enemies.push(new Enemy("harpy", 3214, 20824));
+  enemies.push(new Enemy("harpy", 3513, 20383));
+  enemies.push(new Enemy("harpy", 2404, 20025));
+  enemies.push(new Enemy("harpy", 2540, 19479));
+  enemies.push(new Enemy("harpy", 1816, 20484));
+  enemies.push(new Enemy("harpy", 2045, 21067));
+  enemies.push(new Enemy("harpy", 2667, 21644));
+  enemies.push(new Enemy("harpy", 2167, 22293));
+  enemies.push(new Enemy("harpy", 2923, 22591));
+  enemies.push(new Enemy("harpy", 3521, 22969));
+  enemies.push(new Enemy("harpy", 3214, 23573));
+  enemies.push(new Enemy("harpy", 2761, 24025));
 }
 
 function initializeHardcodes() {

@@ -79,8 +79,8 @@ function drawMinimapOverlay() {
     const playerGridY = (pY + 375) / 50;
     
     noStroke();
-    fill(255, 0, 0, alphaValue);
-    ellipse(offsetX + playerGridX * tileSize, offsetY + playerGridY * tileSize, 6, 6);
+    fill(255, 255, 255, alphaValue);
+    ellipse(offsetX + playerGridX * tileSize, offsetY + playerGridY * tileSize, 1, 1);
   }
   pop();
 }
