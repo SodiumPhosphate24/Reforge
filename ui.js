@@ -81,6 +81,15 @@ function drawMinimapOverlay() {
     noStroke();
     fill(255, 255, 255, alphaValue);
     ellipse(offsetX + playerGridX * tileSize, offsetY + playerGridY * tileSize, 2, 2);
+
+    // Draw waypoint dot
+    if (typeof waypoints !== 'undefined' && typeof currentwaypointIndex !== 'undefined' && waypoints[currentwaypointIndex]) {
+      const wp = waypoints[currentwaypointIndex];
+      const wpGridX = wp.x / 50;
+      const wpGridY = wp.y / 50;
+      fill(0, 255, 255, alphaValue);
+      ellipse(offsetX + wpGridX * tileSize, offsetY + wpGridY * tileSize, 4, 4);
+    }
   }
   pop();
 }
