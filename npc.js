@@ -32,7 +32,7 @@ class NPC {
     }
 
     const distToPlayer = distance(this.x, this.y, pX + 600, pY + 340);
-    if (distToPlayer < 120 && keyPressedOnce(69)) {
+    if (this.message && this.message.length > 0 && distToPlayer < 120 && keyPressedOnce(69)) {
       const heldItem = inventoryList[inventorySlot - 1];
       const isHoldingCrowbar = heldItem && heldItem.name.toLowerCase().includes("crowbar");
       if (isHoldingCrowbar && this.name.toLowerCase() === "crate") {

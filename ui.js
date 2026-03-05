@@ -6,8 +6,11 @@ var lastInventorySlot = 1;
 function drawUI() {
   buffs();
 
-  if (gameState === "playing") {
+  if (gameState === "playing" || gameState === "paused" || (gameState === "ending" && (typeof endingPhase === 'undefined' || endingPhase < 2))) {
     drawMinimapOverlay();
+    
+    // Draw static labels (Objectives/Controls)
+    drawUILabels();
   }
 
   // current Objective indicator
@@ -40,7 +43,6 @@ function drawUI() {
     textAlign(LEFT, TOP);
     text("ESC to view controls", 20, 20);
     textAlign(RIGHT, TOP);
-    // Positioned relative to the map or screen edge
     text("ESC to Pause", width - 20, 20);
   }
   pop();
@@ -77,10 +79,14 @@ function drawMinimapOverlay() {
 
     const playerGridX = (pX + 600) / 50;
     const playerGridY = (pY + 375) / 50;
-
+    
     noStroke();
-    fill(255, 255, 255, alphaValue);
-    ellipse(offsetX + playerGridX * tileSize, offsetY + playerGridY * tileSize, 2, 2);
+    // Use the exact same coordinate mapping as the render cache
+    const dotX = offsetX + (playerGridX * tileSize);
+    const dotY = offsetY + (playerGridY * tileSize);
+    
+    fill(255, 0, 0, alphaValue);
+    ellipse(dotX, dotY, 6, 6);
 
     // Draw waypoint dot
     if (typeof waypoints !== 'undefined' && typeof currentwaypointIndex !== 'undefined' && waypoints[currentwaypointIndex]) {
@@ -88,13 +94,47 @@ function drawMinimapOverlay() {
       const wpGridX = wp.x / 50;
       const wpGridY = wp.y / 50;
       fill(0, 255, 255, alphaValue);
-      ellipse(offsetX + wpGridX * tileSize, offsetY + wpGridY * tileSize, 4, 4);
+      ellipse(offsetX + wpGridX * tileSize, offsetY + wpGridY * tileSize, 6, 6);
     }
   }
   pop();
 }
 
 var hasUsedCartridge = false;
+function drawUILabels() {
+  push();
+  resetMatrix();
+  textFont(Silkscreen);
+  
+  // Objectives Label
+  fill(255, 150, 0, 200);
+  textSize(18);
+  textAlign(LEFT, TOP);
+  text("OBJECTIVES", 20, 20);
+  
+  // Controls Label
+  textAlign(RIGHT, TOP);
+  text("CONTROLS", width - 20, 20);
+  
+  // Control details
+  textSize(12);
+  fill(255, 255, 255, 150);
+  let controlsLabels = [
+    "WASD - Move",
+    "Mouse - Aim/Shoot",
+    "E - Interact",
+    "Q (Hold) - Switch Robot",
+    "1-8 - Hotbar",
+    "X - Drop Item",
+    "R (Hold) - Transfer",
+    "ESC - Pause"
+  ];
+  for(let i = 0; i < controlsLabels.length; i++) {
+    text(controlsLabels[i], width - 20, 45 + (i * 18));
+  }
+  pop();
+}
+
 function drawCartridgeTutorial() {
   //if the player hasn't yet used a cartridge, and they are low on health, this message will guide them to use a cartridge to replenish their energy
   if (hasUsedCartridge || activePlayer === 0) return;

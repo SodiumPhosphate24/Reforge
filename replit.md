@@ -2,6 +2,13 @@
 
 This is a 2D top-down action game built with p5.js called "Reforge". Players control engineer robots that can craft new robots, weapons, and items while fighting zombies in a tile-based world. The game features a crafting system, inventory management, multiple playable characters, enemy AI with pathfinding, a particle system, NPCs with dialogue, and a built-in level editor.
 
+## Key Features
+- **Ending Sequence**: Fully implemented transition from boss death to title card.
+- **Minimap HUD**: Persistent top-right corner with player and waypoint indicators.
+- **NPC Decorations**: Added FieldGoal and Hoop as atmospheric NPC entities.
+- **UI Labels**: Static "OBJECTIVES" and "CONTROLS" labels with keybindings.
+- **Sewer System**: Linked teleportation and unique sewer rooms.
+
 # Gameplay Guide: Chronological Walkthrough
 
 ## Phase 1: The Awakening (Cryochamber & Tutorial)
