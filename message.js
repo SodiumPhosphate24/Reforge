@@ -202,10 +202,17 @@ function messageDisplay() {
       textSize(20);
       text(person, messages[i].x, messages[i].y - 75);
 
-      fill(255, 255, 255, messages[i].alpha);
       textSize(18);
       var lineHeight = 30;
       var startY = messages[i].y - 40;
+      
+      // Force white text for ending dialogue to be visible on black
+      if (messages[i].id === "Ending") {
+        fill(255);
+      } else {
+        fill(255, 255, 255, messages[i].alpha);
+      }
+      
       for (var lineIdx = 0; lineIdx < wrappedLines.length; lineIdx++) {
         text(wrappedLines[lineIdx], messages[i].x, startY + (lineIdx * lineHeight));
       }
