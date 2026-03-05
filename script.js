@@ -1136,32 +1136,45 @@ function updateEnding() {
       messages.push(new Message("dialogue", endDialogue, "Ending", true));
     }
   } else if (endingPhase === 4) {
-    // Fade back to menu
-    endingFadeAlpha = lerp(endingFadeAlpha, 0, 0.05);
-    if (endingFadeAlpha < 5) {
-      endingFadeAlpha = 0;
-      endingPhase = 0;
-      gameState = "menu";
-      // Optional: reload to ensure clean state
-      location.reload();
+    // Fade in "REFORGE" title
+    reforgeTitleAlpha = lerp(reforgeTitleAlpha, 255, 0.02);
+    if (reforgeTitleAlpha > 250) {
+      reforgeTitleAlpha = 255;
+      if (frameCount % 300 === 0) { // Stay on screen for a bit before reset
+         location.reload();
+      }
     }
   }
 }
 
+let reforgeTitleAlpha = 0;
+
 function drawEndingOverlay() {
   if (endingFadeAlpha > 0) {
     push();
-    // Ensure the overlay is truly on top by resetting any translations
     resetMatrix();
     fill(0, 0, 0, endingFadeAlpha);
     noStroke();
     rect(0, 0, width, height);
     
-    // Draw messages over the black overlay if in the ending phase
-    if (endingPhase >= 3) {
-      // Ensure text is centered and readable
+    if (endingPhase === 3) {
       textAlign(CENTER, CENTER);
       messageDisplay();
+    }
+    
+    if (endingPhase === 4) {
+      textAlign(CENTER, CENTER);
+      textFont(Silkscreen);
+      
+      // Glow effect for title
+      drawingContext.shadowBlur = 25;
+      drawingContext.shadowColor = 'rgba(255, 150, 0, 0.8)';
+      
+      fill(255, 150, 0, reforgeTitleAlpha);
+      textSize(100);
+      text("REFORGE", width / 2, height / 2);
+      
+      drawingContext.shadowBlur = 0;
     }
     pop();
   }
