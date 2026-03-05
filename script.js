@@ -1147,7 +1147,9 @@ function updateEnding() {
     reforgeTitleAlpha = lerp(reforgeTitleAlpha, 255, 0.02);
     if (reforgeTitleAlpha > 250) {
       reforgeTitleAlpha = 255;
-      // Removed location.reload() - the game ends here on the title card
+      if (frameCount % 300 === 0) { // Stay on screen for a bit before reset
+         location.reload();
+      }
     }
   }
 }
@@ -2799,6 +2801,97 @@ function spawnEnemies() {
   enemies.push(new Enemy("harpy", 3521, 22969));
   enemies.push(new Enemy("harpy", 3214, 23573));
   enemies.push(new Enemy("harpy", 2761, 24025));
+  enemies.push(new Enemy("harpy", 15147, 11119));
+  enemies.push(new Enemy("harpy", 14878, 10368));
+  enemies.push(new Enemy("harpy", 13591, 9745));
+  enemies.push(new Enemy("harpy", 14032, 8872));
+  enemies.push(new Enemy("harpy", 12949, 8300));
+  enemies.push(new Enemy("harpy", 13612, 7464));
+  enemies.push(new Enemy("harpy", 14745, 7490));
+  enemies.push(new Enemy("harpy", 15585, 7487));
+  enemies.push(new Enemy("harpy", 16814, 7490));
+  enemies.push(new Enemy("harpy", 17320, 6616));
+  enemies.push(new Enemy("harpy", 18367, 6896));
+  enemies.push(new Enemy("harpy", 19588, 6346));
+  enemies.push(new Enemy("harpy", 19068, 5254));
+  enemies.push(new Enemy("harpy", 19560, 3862));
+  enemies.push(new Enemy("harpy", 20695, 3814));
+  enemies.push(new Enemy("harpy", 21156, 4406));
+  enemies.push(new Enemy("harpy", 21094, 4991));
+  enemies.push(new Enemy("harpy", 21420, 5933));
+  enemies.push(new Enemy("harpy", 22200, 5694));
+  enemies.push(new Enemy("harpy", 22176, 5085));
+  enemies.push(new Enemy("harpy", 22176, 4419));
+  enemies.push(new Enemy("harpy", 22176, 3726));
+  enemies.push(new Enemy("harpy", 21353, 3441));
+  enemies.push(new Enemy("harpy", 21242, 2743));
+  enemies.push(new Enemy("harpy", 20562, 2162));
+  enemies.push(new Enemy("harpy", 21947, 1909));
+  enemies.push(new Enemy("harpy", 21451, 1131));
+  enemies.push(new Enemy("harpy", 22497, 952));
+  enemies.push(new Enemy("harpy", 23426, 1172));
+  enemies.push(new Enemy("harpy", 23831, 344));
+  enemies.push(new Enemy("harpy", 21421, 585));
+  enemies.push(new Enemy("harpy", 20450, 1269));
+  enemies.push(new Enemy("harpy", 19453, 1938));
+  enemies.push(new Enemy("harpy", 19029, 2503));
+  enemies.push(new Enemy("harpy", 18277, 2251));
+  enemies.push(new Enemy("harpy", 18003, 1632));
+  enemies.push(new Enemy("harpy", 17610, 1332));
+  enemies.push(new Enemy("harpy", 18036, 849));
+  enemies.push(new Enemy("harpy", 17484, 217));
+  enemies.push(new Enemy("harpy", 16279, 1209));
+  enemies.push(new Enemy("harpy", 16493, 1689));
+  enemies.push(new Enemy("harpy", 15643, 1731));
+  enemies.push(new Enemy("harpy", 14931, 1255));
+  enemies.push(new Enemy("harpy", 14337, 1868));
+  enemies.push(new Enemy("harpy", 14538, 2317));
+  enemies.push(new Enemy("harpy", 13861, 2616));
+  enemies.push(new Enemy("harpy", 13577, 2973));
+  enemies.push(new Enemy("harpy", 12954, 2066));
+  enemies.push(new Enemy("harpy", 13291, 1534));
+  enemies.push(new Enemy("harpy", 11942, 1042));
+  enemies.push(new Enemy("harpy", 10855, 1145));
+  enemies.push(new Enemy("harpy", 9713, 1549));
+  enemies.push(new Enemy("harpy", 8849, 1811));
+  enemies.push(new Enemy("harpy", 8258, 1254));
+  enemies.push(new Enemy("harpy", 7230, 735));
+  enemies.push(new Enemy("harpy", 6123, 1797));
+  enemies.push(new Enemy("harpy", 5545, 2148));
+  enemies.push(new Enemy("harpy", 4868, 1609));
+  enemies.push(new Enemy("harpy", 4458, 1061));
+  enemies.push(new Enemy("harpy", 4243, 2070));
+  enemies.push(new Enemy("harpy", 4557, 3074));
+  enemies.push(new Enemy("harpy", 4768, 3531));
+  enemies.push(new Enemy("harpy", 4165, 4333));
+  enemies.push(new Enemy("harpy", 5027, 4665));
+  enemies.push(new Enemy("harpy", 3987, 5124));
+  enemies.push(new Enemy("harpy", 3469, 4833));
+  enemies.push(new Enemy("harpy", 2578, 4822));
+  enemies.push(new Enemy("harpy", 1855, 4823));
+  enemies.push(new Enemy("harpy", 1413, 5303));
+  enemies.push(new Enemy("harpy", 533, 5330));
+  enemies.push(new Enemy("harpy", 1299, 6132));
+  enemies.push(new Enemy("harpy", 1931, 6607));
+  enemies.push(new Enemy("harpy", 812, 6874));
+  enemies.push(new Enemy("harpy", 2204, 7507));
+  enemies.push(new Enemy("harpy", 2983, 7943));
+  enemies.push(new Enemy("harpy", 1845, 8241));
+  enemies.push(new Enemy("harpy", 1252, 8794));
+  enemies.push(new Enemy("harpy", 2341, 8788));
+  enemies.push(new Enemy("harpy", 3254, 8683));
+  enemies.push(new Enemy("harpy", 3682, 8690));
+  enemies.push(new Enemy("harpy", 11878, 14915));
+  enemies.push(new Enemy("harpy", 11170, 14999));
+  enemies.push(new Enemy("harpy", 10638, 14475));
+  enemies.push(new Enemy("harpy", 9754, 14478));
+  enemies.push(new Enemy("harpy", 8929, 15054));
+  enemies.push(new Enemy("harpy", 8289, 15718));
+  enemies.push(new Enemy("harpy", 7620, 16620));
+  enemies.push(new Enemy("harpy", 7092, 15951));
+  enemies.push(new Enemy("harpy", 5991, 16489));
+  enemies.push(new Enemy("harpy", 6332, 17420));
+  enemies.push(new Enemy("harpy", 4881, 17667));
 }
 
 function initializeHardcodes() {
