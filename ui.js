@@ -75,7 +75,7 @@ function drawMinimapOverlay() {
     const offsetY = y + (minimapSize - mapHeight) / 2;
 
     const playerGridX = (pX + 600) / 50;
-    const playerGridY = (pY + 340) / 50;
+    const playerGridY = (pY + 375) / 50;
     
     noStroke();
     // Use the exact same coordinate mapping as the render cache
@@ -83,7 +83,7 @@ function drawMinimapOverlay() {
     const dotY = offsetY + (playerGridY * tileSize);
     
     fill(255, 0, 0, alphaValue);
-    ellipse(dotX, dotY, 6, 6);
+    ellipse(dotX, dotY, 3, 3);
 
     // Draw waypoint dot
     if (typeof waypointCoordinates !== 'undefined' && typeof currentWaypointIndex !== 'undefined' && waypointCoordinates[currentWaypointIndex]) {
@@ -91,7 +91,7 @@ function drawMinimapOverlay() {
       const wpGridX = wp[0] / 50;
       const wpGridY = wp[1] / 50;
       fill(0, 255, 255, alphaValue);
-      ellipse(offsetX + wpGridX * tileSize, offsetY + wpGridY * tileSize, 6, 6);
+      ellipse(offsetX + wpGridX * tileSize, offsetY + wpGridY * tileSize, 3, 3);
     }
   }
   pop();
