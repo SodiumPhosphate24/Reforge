@@ -734,7 +734,6 @@ function setup() {
 }
 
 function draw() {
-  updateEnding();
   if (gameState === "menu") {
     drawMenuScreen();
     drawUI();
@@ -769,6 +768,7 @@ function draw() {
 
   drawGameplay();
   updateLeakDetection();
+  updateEnding();
   drawEndingOverlay();
 }
 
@@ -1117,6 +1117,9 @@ function updateEnding() {
       endingFadeAlpha = 255;
       endingPhase = 3;
       
+      // Clear any existing messages before ending dialogue
+      messages = [];
+      
       const endDialogue = [
         "Hephaestus: It's... over. The machines are silent.",
         "Atlas: I still can't believe it. The network is gone.",
@@ -1132,15 +1135,34 @@ function updateEnding() {
       
       messages.push(new Message("dialogue", endDialogue, "Ending", true));
     }
+  } else if (endingPhase === 4) {
+    // Fade back to menu
+    endingFadeAlpha = lerp(endingFadeAlpha, 0, 0.05);
+    if (endingFadeAlpha < 5) {
+      endingFadeAlpha = 0;
+      endingPhase = 0;
+      gameState = "menu";
+      // Optional: reload to ensure clean state
+      location.reload();
+    }
   }
 }
 
 function drawEndingOverlay() {
   if (endingFadeAlpha > 0) {
     push();
+    // Ensure the overlay is truly on top by resetting any translations
+    resetMatrix();
     fill(0, 0, 0, endingFadeAlpha);
     noStroke();
     rect(0, 0, width, height);
+    
+    // Draw messages over the black overlay if in the ending phase
+    if (endingPhase >= 3) {
+      // Ensure text is centered and readable
+      textAlign(CENTER, CENTER);
+      messageDisplay();
+    }
     pop();
   }
 }

@@ -172,6 +172,14 @@ function handleTriggers(trigger, ID = -1) {
     updateCurrentObjective();
     return;
   }
+
+  if (trigger === "Ending") {
+    if (typeof endingPhase !== 'undefined') {
+      endingPhase = 4;
+    } else {
+      location.reload();
+    }
+  }
 }
 
 function softlockPrevention() {
