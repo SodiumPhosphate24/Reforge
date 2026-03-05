@@ -325,10 +325,8 @@ class DroppedItem {
     // Determine base size based on item type
     let baseSize = 35; // Default
 
-    if (this.item.name == "steam sprayer") {
+    if (this.item.type == "sprayer") {
       baseSize = 52;
-    } else if (this.item.type === "sprayer" && this.item.name != "steam sprayer") {
-      baseSize = 40;
     } else if (this.item.type === "consumable" || this.item.type == "material") {
       baseSize = 30; // Consumables are medium
     } else if (this.item.type === "projectile") {
