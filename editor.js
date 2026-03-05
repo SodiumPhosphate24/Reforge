@@ -1,46 +1,46 @@
 var editorMode = false;
-var selectedTileType = 0; 
+var selectedTileType = 0;
 // Use global variable, fallback to tileImgs length if missing:
 function __getMaxTileTypes() {
   if (typeof maxTileTypes !== "undefined") return maxTileTypes;
   if (typeof tileImgs !== "undefined" && tileImgs) return tileImgs.length;
   return 0;
 }
-var tileRotation = 0;       
-var tileFlipH = false;       
-var tileFlipV = false;      
-var tileColorIndex = 0;      
+var tileRotation = 0;
+var tileFlipH = false;
+var tileFlipV = false;
+var tileColorIndex = 0;
 var editorLayer = 0;         // 5 layers: 0-1 behind, 2-4 in front
 const EDIT_TILE_SIZE = 50;
-var cratePlacementPaused = false; 
-var lastCrateRow = -1;       
-var lastCrateCol = -1;       
-var selectedItemIndex = 0;   
-var selectedCrateItems = []; 
-var crateInventories = new Map(); 
+var cratePlacementPaused = false;
+var lastCrateRow = -1;
+var lastCrateCol = -1;
+var selectedItemIndex = 0;
+var selectedCrateItems = [];
+var crateInventories = new Map();
 
 var selectedEnemyIndex = 0;
 var enemyTypes = ["harpy", "cyclops", "greg", "hydra", "boss"]
 
-var particleSources = []; 
-var placingParticleSource = false; 
-var editingParticleSourceIndex = -1; 
+var particleSources = [];
+var placingParticleSource = false;
+var editingParticleSourceIndex = -1;
 var particleSourceConfig = {
   x: 0,
   y: 0,
-  arcStart: 0,      
-  arcEnd: 360,      
-  color: [255, 100, 50], 
-  size: 5,          
-  sizeVariance: 2,  
-  speed: 2,         
-  spawnRate: 5,     
-  duration: 60      
+  arcStart: 0,
+  arcEnd: 360,
+  color: [255, 100, 50],
+  size: 5,
+  sizeVariance: 2,
+  speed: 2,
+  spawnRate: 5,
+  duration: 60
 };
 
-var minimapCache = null;     
-var lastMinimapPress = false; 
-var minimapNeedsRedraw = true; 
+var minimapCache = null;
+var lastMinimapPress = false;
+var minimapNeedsRedraw = true;
 
 // Enable Right-Click in Editor Mode
 if (typeof window !== "undefined") {
@@ -161,7 +161,7 @@ function drawEditorUI() {
   const worldY = mouseY - camY;
   const gridCol = Math.floor(worldX / 50);
   const gridRow = Math.floor(worldY / 50);
-  
+
   fill(255, 255, 0);
   textSize(14);
   textAlign(LEFT);
@@ -171,7 +171,7 @@ function drawEditorUI() {
   text("Press T to spawn enemy", 930, 650);
   text("Current Enemy Type: " + enemyTypes[selectedEnemyIndex], 930, 670);
   text("J/K: change enemy type", 930, 690);
-  
+
   textAlign(CENTER);
 
   // Pause overlay if crate placed
@@ -313,7 +313,7 @@ function renderMinimapToCache() {
         const variantColor = tileColors[tileType][colorIndex];
         // Check if white tint (no color change)
         const isWhiteTint = variantColor[0] === 255 && variantColor[1] === 255 && variantColor[2] === 255;
-        
+
         if (isWhiteTint) {
           minimapCache.fill(baseColor[0], baseColor[1], baseColor[2]);
         } else {
@@ -330,9 +330,6 @@ function renderMinimapToCache() {
   // Label
   minimapCache.noStroke();
   minimapCache.fill(255, 255, 0);
-  minimapCache.textSize(14);
-  minimapCache.textAlign(LEFT);
-  minimapCache.text("MINIMAP (Hold P)", 25, 15);
 }
 
 function drawCachedMinimap() {
@@ -390,20 +387,20 @@ function drawTilePreview() {
   if (placingParticleSource) {
     var worldX = mouseX - camX;
     var worldY = mouseY - camY;
-    
+
     noFill();
     stroke(255, 255, 0, 200);
     strokeWeight(2);
     ellipse(worldX, worldY, 20, 20);
-    
+
     // Arc indicator
     stroke(particleSourceConfig.color[0], particleSourceConfig.color[1], particleSourceConfig.color[2], 150);
     strokeWeight(3);
     const arcRadius = 40;
-    arc(worldX, worldY, arcRadius, arcRadius, 
-        radians(particleSourceConfig.arcStart), 
-        radians(particleSourceConfig.arcEnd));
-    
+    arc(worldX, worldY, arcRadius, arcRadius,
+      radians(particleSourceConfig.arcStart),
+      radians(particleSourceConfig.arcEnd));
+
     pop();
     return;
   }
@@ -426,7 +423,7 @@ function drawTilePreview() {
     translate(snapX + 25, snapY + 25);
     rotate(radians(tileRotation));
     scale(tileFlipH ? -1 : 1, tileFlipV ? -1 : 1);
-    tint(255, 150); 
+    tint(255, 150);
     image(tintedTileCache[selectedTileType][tileColorIndex], -25, -25, 50, 50);
     noTint();
     pop();
@@ -462,22 +459,22 @@ function drawTilePreview() {
 // Draw all particle sources
 function drawParticleSources() {
   if (!editorMode) return;
-  
+
   for (let i = 0; i < particleSources.length; i++) {
     const ps = particleSources[i];
-    
+
     // Source marker
     fill(ps.color[0], ps.color[1], ps.color[2], 100);
     stroke(255, 255, 0);
     strokeWeight(2);
     ellipse(ps.x, ps.y, 15, 15);
-    
+
     // Arc indicator
     noFill();
     stroke(ps.color[0], ps.color[1], ps.color[2], 100);
     strokeWeight(2);
     arc(ps.x, ps.y, 30, 30, radians(ps.arcStart), radians(ps.arcEnd));
-    
+
     // Index number
     noStroke();
     fill(255, 255, 0);
@@ -491,7 +488,7 @@ function drawParticleSources() {
 function handleEditorClick() {
   if (!(editorMode && gameWorld && gameWorld.length > 0)) return;
   if (cratePlacementPaused) return;
-  
+
 
   var worldX = mouseX - camX;
   var worldY = mouseY - camY;
@@ -678,7 +675,7 @@ function handleEditorKeyPress() {
     console.log("Particle source mode:", placingParticleSource);
     console.log("Tile editor mode:", !placingParticleSource);
   }
-    
+
   // T: spawn enemy
   if (keyCode == 84) {
     enemies.push(new Enemy(enemyTypes[selectedEnemyIndex], pX + mouseX, pY + mouseY));
@@ -689,13 +686,13 @@ function handleEditorKeyPress() {
   // J/K: change enemy type
   if (keyCode == 74) {
     selectedEnemyIndex--;
-    if(selectedEnemyIndex < 0){
+    if (selectedEnemyIndex < 0) {
       selectedEnemyIndex = enemyTypes.length - 1;
     }
   }
   if (keyCode == 75) {
     selectedEnemyIndex++;
-    if(selectedEnemyIndex >= enemyTypes.length){
+    if (selectedEnemyIndex >= enemyTypes.length) {
       selectedEnemyIndex = 0;
     }
   }
@@ -717,59 +714,59 @@ function handleEditorKeyPress() {
       placingParticleSource = false;
       console.log("Cancelled particle source placement");
     }
-    
+
     // +/=: increase arc end
     if (keyCode == 187 || keyCode == 107) {
       particleSourceConfig.arcEnd = (particleSourceConfig.arcEnd + 15) % 360;
       console.log("Arc end:", particleSourceConfig.arcEnd);
     }
-    
+
     // -: decrease arc end
     if (keyCode == 189 || keyCode == 109) {
       particleSourceConfig.arcEnd = (particleSourceConfig.arcEnd - 15 + 360) % 360;
       console.log("Arc end:", particleSourceConfig.arcEnd);
     }
-    
+
     // 1: increase arc start
     if (keyCode == 49) {
       particleSourceConfig.arcStart = (particleSourceConfig.arcStart + 15) % 360;
       console.log("Arc start:", particleSourceConfig.arcStart);
     }
-    
+
     // 2: decrease arc start
     if (keyCode == 50) {
       particleSourceConfig.arcStart = (particleSourceConfig.arcStart - 15 + 360) % 360;
       console.log("Arc start:", particleSourceConfig.arcStart);
     }
-    
+
     // 3: adjust size
     if (keyCode == 51) {
       const delta = keyIsDown(SHIFT) ? -1 : 1;
       particleSourceConfig.size = constrain(particleSourceConfig.size + delta, 1, 20);
       console.log("Size:", particleSourceConfig.size);
     }
-    
+
     // 4: adjust size variance
     if (keyCode == 52) {
       const delta = keyIsDown(SHIFT) ? -1 : 1;
       particleSourceConfig.sizeVariance = constrain(particleSourceConfig.sizeVariance + delta, 0, 10);
       console.log("Size variance:", particleSourceConfig.sizeVariance);
     }
-    
+
     // 5: adjust speed
     if (keyCode == 53) {
       const delta = keyIsDown(SHIFT) ? -0.5 : 0.5;
       particleSourceConfig.speed = constrain(particleSourceConfig.speed + delta, 0.5, 10);
       console.log("Speed:", particleSourceConfig.speed);
     }
-    
+
     // 6: adjust spawn rate
     if (keyCode == 54) {
       const delta = keyIsDown(SHIFT) ? -1 : 1;
       particleSourceConfig.spawnRate = constrain(particleSourceConfig.spawnRate + delta, 1, 20);
       console.log("Spawn rate:", particleSourceConfig.spawnRate);
     }
-    
+
     // 7-9: adjust RGB color
     if (keyCode == 55) {
       const delta = keyIsDown(SHIFT) ? -5 : 5;
@@ -823,16 +820,16 @@ function handleEditorMouseWheel(event) {
 function handleEditorMouseReleased() {
   if (!editorMode) return false;
   if (cratePlacementPaused) return false;
-  
+
   // Particle source placement
   if (placingParticleSource && mouseButton === LEFT) {
     var worldX = mouseX - camX;
     var worldY = mouseY - camY;
-    
+
     particleSources.push({
       x: worldX,
       y: worldY,
-      layer: editorLayer, 
+      layer: editorLayer,
       arcStart: particleSourceConfig.arcStart,
       arcEnd: particleSourceConfig.arcEnd,
       color: [...particleSourceConfig.color],
@@ -845,6 +842,6 @@ function handleEditorMouseReleased() {
     console.log("Placed particle source at", worldX, worldY, "on layer", editorLayer);
     return true;
   }
-  
+
   return false;
 }
