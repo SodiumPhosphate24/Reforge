@@ -373,8 +373,8 @@ function preload() {
   Hephaestus = loadImage("Characters/Hephaestus.png");
   Atlas = loadImage("Characters/Atlas.png");
   Daedalus = loadImage("Characters/Daedalus.png");
-  HoopImg = loadImage("Hoop.png");
-  FieldGoalImg = loadImage("FieldGoal.png");
+  HoopImg = loadImage("Characters/Hoop.png");
+  FieldGoalImg = loadImage("Characters/FieldGoal.png");
   LockNpc = loadImage("Characters/Lock.png");
   BadGuy = loadImage("Characters/Enemy.png");
   Harpy = loadImage("Characters/Harpy.png");
@@ -1125,10 +1125,10 @@ function updateEnding() {
     if (endingFadeAlpha > 250) {
       endingFadeAlpha = 255;
       endingPhase = 3;
-      
+
       // Clear any existing messages before ending dialogue
       messages = [];
-      
+
       const endDialogue = [
         "Hephaestus: It's... over. The machines are silent.",
         "Atlas: I still can't believe it. The network is gone.",
@@ -1141,7 +1141,7 @@ function updateEnding() {
         "Hephaestus: The age of machines is finished.",
         "Prometheus: The world has been reforged."
       ];
-      
+
       messages.push(new Message("dialogue", endDialogue, "Ending", true));
     }
   } else if (endingPhase === 4) {
@@ -1150,7 +1150,7 @@ function updateEnding() {
     if (reforgeTitleAlpha > 250) {
       reforgeTitleAlpha = 255;
       if (frameCount % 300 === 0) { // Stay on screen for a bit before reset
-         location.reload();
+        location.reload();
       }
     }
   }
@@ -1165,24 +1165,24 @@ function drawEndingOverlay() {
     fill(0, 0, 0, endingFadeAlpha);
     noStroke();
     rect(0, 0, width, height);
-    
+
     if (endingPhase === 3) {
       textAlign(CENTER, CENTER);
       messageDisplay();
     }
-    
+
     if (endingPhase === 4) {
       textAlign(CENTER, CENTER);
       textFont(Silkscreen);
-      
+
       // Glow effect for title
       drawingContext.shadowBlur = 25;
       drawingContext.shadowColor = 'rgba(255, 150, 0, 0.8)';
-      
+
       fill(255, 150, 0, reforgeTitleAlpha);
       textSize(100);
       text("REFORGE", width / 2, height / 2);
-      
+
       drawingContext.shadowBlur = 0;
     }
     pop();
@@ -1190,7 +1190,7 @@ function drawEndingOverlay() {
 }
 
 function resetToMainMenu() {
-  location.reload(); 
+  location.reload();
 }
 
 // Editor helper functions
