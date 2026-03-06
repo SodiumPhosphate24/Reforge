@@ -1,5 +1,5 @@
 // Menu state management
-var gameState = "menu"; // "menu", "playing", "credits", "controls"
+var gameState = "menu"; //stores the state the user is in to apply controls menu, playing, credits, controls
 var isPaused = false;
 let menuFadeAlpha = 255;
 let gameplayFadeAlpha = 0;
@@ -7,52 +7,46 @@ let transitionSpeed = 5;
 let menuAnimationTime = 0;
 let ReforgeLogo;
 
-// Credits pagination
 let creditsPage = 0;
 const totalCreditsPages = 2;
 
-// Menu options
 let menuOptions = ["Play", "Controls", "Credits"];
 let selectedMenuOption = 0;
 let menuOptionHoverAlpha = [0, 0, 0];
 let lastMenuKeyPress = 0;
-let menuKeyDelay = 150; // Delay between key presses in ms
+let menuKeyDelay = 150; 
 
-// New variables for menu animation
 let menuOptionSlideProgress = [0, 0, 0];
-let menuOptionTargetSlide = [0, 0, 0]; // 0 for off-screen right, 1 for on-screen
-let menuOptionXOffset = 500; // Starting X offset for animation
-let menuAnimationDelay = 10; // Frames delay between each option
-let menuAnimationTimer = 0; // Timer for staggered animation
-let pendingStateChange = null; // Store next state to transition to after animation
+let menuOptionTargetSlide = [0, 0, 0]; 
+let menuOptionXOffset = 500; 
+let menuAnimationDelay = 10; 
+let menuAnimationTimer = 0; 
+let pendingStateChange = null; 
 
-// Selection effect variables
 let selectionPulse = 0;
 let selectionFlash = 0;
 let selectionParticles = [];
 
 function drawMenuScreen() {
-  // Handle keyboard navigation
   handleMenuKeyboard();
 
   background(20, 20, 30);
 
-  // Draw titlescreen background
+  // titlescreen
   if (titleScreenImg) {
     push();
     imageMode(CENTER);
 
-    // Calculate scaling to cover the canvas while maintaining aspect ratio
+    // Calculate scaling 
     const imgAspect = titleScreenImg.width / titleScreenImg.height;
     const canvasAspect = width / height;
 
     let drawWidth, drawHeight;
+    //determines whether width or height is bigger and scales appropriately
     if (canvasAspect > imgAspect) {
-      // Canvas is wider - fit to width
       drawWidth = width;
       drawHeight = width / imgAspect;
     } else {
-      // Canvas is taller - fit to height
       drawHeight = height;
       drawWidth = height * imgAspect;
     }
@@ -61,12 +55,11 @@ function drawMenuScreen() {
     pop();
   }
 
-  menuAnimationTime += 0.016; // Approximate 60fps
-
-  // Increment animation timer for staggered menu options
+  menuAnimationTime += 0.016; 
+  
   menuAnimationTimer++;
 
-  // Draw REFORGE logo with floating animation
+  // Draw REFORGE logo
 
   push();
   imageMode(CENTER);
@@ -102,9 +95,7 @@ function drawMenuScreen() {
       }
     }
 
-    // Once all options are off-screen, change state
     if (allOptionsOut) {
-      // Handle Play by starting game transition
       if (pendingStateChange === "play") {
         startGameTransition();
       } else {
@@ -118,41 +109,39 @@ function drawMenuScreen() {
   for (let i = 0; i < menuOptions.length; i++) {
     const optionY = menuStartY + i * menuSpacing;
 
-    // Update slide progress towards target with staggered delay
     if (gameState === "menu" && !pendingStateChange) {
       // Entrance: top to bottom (0, 1, 2, 3)
       const delayFrames = i * menuAnimationDelay;
       if (menuAnimationTimer >= delayFrames) {
-        menuOptionTargetSlide[i] = 1; // Target on-screen
+        menuOptionTargetSlide[i] = 1; 
       }
     } else if (pendingStateChange) {
       // Exit: top to bottom (0, 1, 2, 3)
       const delayFrames = i * menuAnimationDelay;
       if (menuAnimationTimer >= delayFrames) {
-        menuOptionTargetSlide[i] = 0; // Target off-screen right
+        menuOptionTargetSlide[i] = 0; 
       }
     }
 
     menuOptionSlideProgress[i] = lerp(menuOptionSlideProgress[i], menuOptionTargetSlide[i], 0.1);
 
-    // Calculate current X position with slide animation
+    // X position slide animation
     const currentMenuX = lerp(menuX + menuOptionXOffset, menuX, menuOptionSlideProgress[i]);
 
-    // Measure text width for this option
     textSize(28);
     const optionTextWidth = textWidth(menuOptions[i]);
     const arrowWidth = 30; // Space for arrow
     const totalWidth = optionTextWidth + arrowWidth + 10; // 10px padding
     const optionHeight = 50;
 
-    // Smooth hover animation - animate selected option
+    // hover animation
     if (selectedMenuOption === i) {
       menuOptionHoverAlpha[i] = lerp(menuOptionHoverAlpha[i], 255, 0.2);
     } else {
       menuOptionHoverAlpha[i] = lerp(menuOptionHoverAlpha[i], 0, 0.15);
     }
 
-    // Draw selection effect for selected option
+    // selection effect for selected option
     if (selectedMenuOption === i) {
       selectionPulse = sin(frameCount / 10) * 5;
 
@@ -177,7 +166,7 @@ function drawMenuScreen() {
       }
     }
 
-    // Update and draw selection particles
+    // draw selection particles
     for (let p = selectionParticles.length - 1; p >= 0; p--) {
       let part = selectionParticles[p];
       part.x += part.vx;
@@ -192,7 +181,7 @@ function drawMenuScreen() {
       ellipse(part.x, part.y, 3, 3);
     }
 
-    // Draw arrow indicator with bounce
+    // Draw arrow indicator
     if (selectedMenuOption === i) {
       push();
       let arrowBounce = sin(frameCount / 8) * 5;

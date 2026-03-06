@@ -4,7 +4,7 @@ class IntroScene {
     this.type = sceneData.type; // 'text', 'dialogue', 'gameplay', 'transition'
     this.duration = sceneData.duration || 0;
     this.dialogue = sceneData.dialogue || [];
-    this.onEnter = sceneData.onEnter || (() => { }); // Cheesy Goodness
+    this.onEnter = sceneData.onEnter || (() => { });
     this.onUpdate = sceneData.onUpdate || (() => { });
     this.onExit = sceneData.onExit || (() => { });
     this.backgroundImage = sceneData.backgroundImage || null;
@@ -47,11 +47,9 @@ var introState = {
   skipPromptAlpha: 0
 };
 
-// Glitch effect variables
 var glitchIntensity = 0;
 var glitchTimer = 0;
 
-// Camera shake for dramatic effect
 var cameraShakeX = 0;
 var cameraShakeY = 0;
 
@@ -117,7 +115,7 @@ function initializeIntro() {
       }
     }),
 
-    // SCENE 3 - Location Reveal
+    // SCENE 3 - Location
     new IntroScene({
       id: "location_reveal",
       type: "dialogue",

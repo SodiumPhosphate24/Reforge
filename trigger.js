@@ -155,7 +155,6 @@ function handleTriggers(trigger, ID = -1) {
       groupDiscussionComplete = true;
       currentWaypointIndex = 7;
       updateCurrentObjective();
-      console.log("Group discussion completed. The trio will relocate when the player leaves.");
       return;
     }
   }
@@ -221,7 +220,7 @@ function updateCurrentObjective() {
   } else if (!triggerList.LockOpened.unlockedBoilerRoom) {
     currentObjective = "Find the code and unlock the boiler room";
   } else if (!triggerList.Objective.fixBoiler) {
-    currentObjective = "Repair the boiler with a special cartridge";
+    currentObjective = "Find and repair the boiler with a \"boiler cartridge\"";
   } else if (!triggerList.Hephaestus.talkToHephaestus) {
     currentObjective = "Investigate activity in the military base AEGIS";
   } else if (!triggerList.Objective.freeDaedalus) {

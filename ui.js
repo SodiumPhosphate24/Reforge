@@ -23,7 +23,6 @@ function drawUI() {
     fill(0, 0, 0, 150);
     rect(width / 2 - objWidth / 2 - 15, 15, objWidth + 30, 35, 5);
 
-    // draw text with pulse effect
     const pulse = sin(frameCount * 0.05) * 30;
     fill(255, 255, 255, 225 + pulse);
     text(objText, width / 2, 22);

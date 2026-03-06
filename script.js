@@ -5,9 +5,8 @@ var activeBoss = null;
 let themeSong;
 let maxTileTypes = 0;
 
-var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875], [23983, 21925], [8475, 23225], [4425, 950], [13850, 850], [350, 1450]];
+var waypointCoordinates = [[13005, 12687], [13375, 12875], [16500, 14250], [13100, 12875], [12637, 12875], [23983, 21925], [8475, 23225], [4425, 950], [13850, 850], [1900, 2700]];
 var currentWaypointIndex = 0;
-//var puzzleCoordinates = [[400, 600], [200, 4250], [3150, 4250], [3450, 200]];
 var itemConstructors = [];
 var nearestSpecialObject = null;
 var nearestLeak = null;

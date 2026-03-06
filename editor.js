@@ -1,7 +1,7 @@
 var editorMode = false;
 var selectedTileType = 0;
-// Use global variable, fallback to tileImgs length if missing:
 function __getMaxTileTypes() {
+  //in response to a bug report, this function was added to prevent the game from crashing when the tileImgs array is undefined
   if (typeof maxTileTypes !== "undefined") return maxTileTypes;
   if (typeof tileImgs !== "undefined" && tileImgs) return tileImgs.length;
   return 0;

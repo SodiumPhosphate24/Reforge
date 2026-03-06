@@ -1,11 +1,11 @@
 var sewerLinks = new Map();
-var sewerFirstInPair = new Map(); // Tracks which sewer is "first" (left exit) in each pair
+var sewerFirstInPair = new Map(); // Tracks which sewer is first in each pair to make it left exit.
 var pendingSewerLink = null;
-var puzzleSolved = new Map(); // Map of linkKey -> [leftOpen, rightOpen]
-var puzzlePressurePlates = new Map(); // Map of linkKey -> [{x, y, active}]
-var puzzleInteractionCount = new Map(); // Map of linkKey -> interactionCount
+var puzzleSolved = new Map(); // room status linkKey
+var puzzlePressurePlates = new Map(); // pressure plate status linkKey
+var puzzleInteractionCount = new Map(); // interaction count linkKey
 var inSewer = false;
-var sewerRooms = new Map(); // Map of linkKey -> roomData
+var sewerRooms = new Map(); // room data linkKey
 var sewerEntryPoint = null;
 var sewerExitA = null;
 var sewerExitB = null;
@@ -18,12 +18,12 @@ const SEWER_BORDER_TILE = 26;
 const SEWER_CENTER_TILE = 39;
 const SEWER_FENCE_TILE = 34;
 
-var mazePaths = new Map(); // Map of linkKey -> Set of "r,c" safe tiles
-var mazeFlashTimers = new Map(); // Map of linkKey -> timer
-var mazeScanProgress = new Map(); // Map of linkKey -> scan column progress (for animation)
-var mazeTileAlpha = new Map(); // Map of linkKey -> Map of "r,c" -> alpha (for smooth fade)
+var mazePaths = new Map(); // safe tiles linkKey
+var mazeFlashTimers = new Map(); // timer linkKey
+var mazeScanProgress = new Map(); // columnProgress linkKey
+var mazeTileAlpha = new Map(); // alpha linkKey
 
-// Fixed constant path for the shadow maze (always the same)
+// maze path
 const FIXED_MAZE_PATH = new Set([
   "7,3", "7,4", "6,4", "6,5", "5,5", "5,6", "5,7", "6,7", "7,7", "7,8",
   "8,8", "8,9", "8,10", "7,10", "6,10", "6,11", "6,12", "7,12", "8,12",
@@ -38,7 +38,6 @@ function generateSewerRoom(roomType = "empty", linkKey = null) {
 
   let plates = [];
   if (roomType === "puzzle1") {
-    // 3x3 grid of pressure plates centered vertically, moved 2 tiles to the right
     const startX = 4;
     const startY = midRow - 1;
     for (let r = 0; r < 3; r++) {
