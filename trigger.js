@@ -74,7 +74,7 @@ function handleTriggers(trigger, ID = -1) {
       triggerList.Hephaestus.talkToHephaestus = true;
       droppedItems.push(new DroppedItem(new Item("sprayer", "steam sprayer", 1), 23075, 22675));
       NonPlayerCharacters[1].message = ["Hephaestus: ..."];
-      messages.push(new Message("dialogue", ["Hephaestus: Take this. This is a steam sprayer. It takes some of your steam reserves to operate, but it can be used to short circuit enemy robots", "Hephaestus: I hope it will help you survive out there"], "Hephaestus", true));
+      messages.push(new Message("dialogue", ["Hephaestus: Take this. This is a steam sprayer. It takes some of your steam reserves to operate, but it can be used to short circuit enemy robots", "Hephaestus: I hope it will help you survive out there", "Hephaestus: And you should probably grab some supplies from the storage room here"], "Hephaestus", true));
       unlockRecipe("steam sprayer");
       unlockRecipe("steam spreader");
       unlockRecipe("steam pulser");
@@ -102,7 +102,7 @@ function handleTriggers(trigger, ID = -1) {
     if (triggerList.Objective.fixLeaks == false) {
       triggerList.Objective.fixLeaks = true;
       if (triggerList.LockOpened.unlockedBoilerRoom) {
-        messages.push(new Message("dialogue", ["Prometheus IV: Head to the boiler room to fix the boiler", "Prometheus IV: You will need to find a special cartridge to power it again"], "Prometheus", true));
+        messages.push(new Message("dialogue", ["Prometheus IV: Head to the boiler room to fix the boiler", "Prometheus IV: You will need to find a special cartridge to power it again. I'd look around the factory, where the wrench was"], "Prometheus", true));
       }
       else {
         messages.push(new Message("dialogue", ["Prometheus IV: Now you need to fix the boiler. You'll need to find a special cartridge to power it again. I'd look around the factory, where the wrench was", "Prometheus IV: The door is locked, try looking around for the code..."], "Prometheus", true));
@@ -214,7 +214,7 @@ function updateCurrentObjective() {
   } else if (!triggerList.Crafting.craftedFirstRobot) {
     currentObjective = "Create a SPUD at the workbench";
   } else if (!triggerList.Pickup.pickedUpWrench) {
-    currentObjective = "Find the Old Wrench in the factory";
+    currentObjective = "Send the SPUD to find the Old Wrench in the factory";
   } else if (!triggerList.Objective.fixLeaks) {
     currentObjective = "Repair the steam leaks with the wrench";
   } else if (!triggerList.LockOpened.unlockedBoilerRoom) {
