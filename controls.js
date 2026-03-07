@@ -135,7 +135,7 @@ function keyPressed() {
             }
             else {
               inventoryList[i] = new Item("consumable", "common cartridge", 1);
-              generateCooldown = 750;
+              generateCooldown = 300;
               return;
             }
           }

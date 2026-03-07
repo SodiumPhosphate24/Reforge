@@ -781,11 +781,11 @@ function drawEnemies() {
     if (enemy.hitsPlayer()) {
       if (pIFrames <= 0) {
         if (enemy.type == "harpy" || enemy.type == "hydra") {
-          players[activePlayer].health -= 10;
+          players[activePlayer].health -= 5;
           healthPoints = players[activePlayer].health;
           healthPoints = constrain(healthPoints, 0, players[activePlayer].maxHealth);
         } else if (enemy.type == "boss") {
-          players[activePlayer].health -= 20;
+          players[activePlayer].health -= 10;
           healthPoints = players[activePlayer].health;
           healthPoints = constrain(healthPoints, 0, players[activePlayer].maxHealth);
         }

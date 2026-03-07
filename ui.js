@@ -295,7 +295,7 @@ class Item {
         this.name = name;
         this.image = SprayerImgs[2];
         this.damage = 1;
-        this.fireRate = .3;
+        this.fireRate = .5;
         this.HtoW = .16;
       }
     }

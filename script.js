@@ -34,7 +34,7 @@ var lastScroll = 0;
 var scrollDelay = 20;
 var hotbar = [];
 var recoil = 10;
-var generateCooldown = 750;
+var generateCooldown = 300;
 var softlockPreventionOn = false;
 var bloodMoonCooldown = 18000;
 var bloodMoonActive = false;
@@ -2859,8 +2859,6 @@ function spawnEnemies() {
   enemies.push(new Enemy("harpy", 7230, 735));
   enemies.push(new Enemy("harpy", 6123, 1797));
   enemies.push(new Enemy("harpy", 5545, 2148));
-  enemies.push(new Enemy("harpy", 4868, 1609));
-  enemies.push(new Enemy("harpy", 4458, 1061));
   enemies.push(new Enemy("harpy", 4243, 2070));
   enemies.push(new Enemy("harpy", 4557, 3074));
   enemies.push(new Enemy("harpy", 4768, 3531));

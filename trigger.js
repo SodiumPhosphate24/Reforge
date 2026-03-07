@@ -231,10 +231,12 @@ function updateCurrentObjective() {
     currentObjective = "Reach Khronos' Labyrinth";
   } else if (!triggerList.Labyrinth.trainTalk) {
     currentObjective = "Reach the train station";
+    currentWaypointIndex = 8;
   } else if (!triggerList.Crafting.trainBuilt) {
     currentObjective = "Find materials to build a train";
   } else if (!triggerList.Labyrinth.wallBreached) {
     currentObjective = "Breach the Labyrinth's wall";
+    currentWaypointIndex = 9;
   } else {
     currentObjective = "Confront Khronos";
   }
