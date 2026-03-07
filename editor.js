@@ -106,7 +106,7 @@ function drawSelectedItemImage() {
 
 // Toggle editor mode
 function toggleEditorMode() {
-  editorMode = !editorMode;
+  //editorMode = !editorMode;
   console.log("Editor mode:", editorMode ? "ON" : "OFF");
 }
 

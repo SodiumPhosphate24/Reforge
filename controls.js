@@ -236,10 +236,11 @@ function keyPressed() {
   }
 
   // V key: Drop legendary cartridge (Dev tool)
+  /*
   if (keyCode == 86) {
     droppedItems.push(new DroppedItem(new Item("consumable", "legendary cartridge", 5), pX + 600, pY + 340));
   }
-
+*/
   // Number keys 0-9: Lock Code Input
   if (lockCodeActive && keyCode >= 48 && keyCode <= 57) {
     if (lockCodeInput.length < 4) {
@@ -298,11 +299,12 @@ function keyPressed() {
   }
 
   // C key: Drop random item (Dev tool)
+  /*
   if (keyCode == 67) {
     let r = Math.floor(Math.random() * itemConstructors.length);
     droppedItems.push(new DroppedItem(new Item(itemConstructors[r][0], itemConstructors[r][1], itemConstructors[r][2]), pX + 600, pY + 340));
   }
-
+*/
   // Arrow Keys: Player Selection Menu
   if (playerSelectionMenuOpen) {
     if (keyCode === UP_ARROW) {
