@@ -159,6 +159,7 @@ function keyPressed() {
               droppedItems.splice(itemIndex, 1);
               stacked = true;
               itemLabelAlpha = 1.5;
+              if (typeof playPickupSound === "function") playPickupSound();
               handleTriggers("Pickup");
               return;
             }
@@ -171,6 +172,7 @@ function keyPressed() {
               inventoryList[j] = item.item;
               droppedItems.splice(itemIndex, 1);
               itemLabelAlpha = 1.5;
+              if (typeof playPickupSound === "function") playPickupSound();
               handleTriggers("Pickup");
               return;
             }
@@ -181,6 +183,7 @@ function keyPressed() {
           inventoryList[inventorySlot - 1] = item.item;
           droppedItems.splice(itemIndex, 1);
           itemLabelAlpha = 1.5;
+          if (typeof playPickupSound === "function") playPickupSound();
           handleTriggers("Pickup");
           return;
         }
@@ -192,6 +195,7 @@ function keyPressed() {
             inventoryList[j] = item.item;
             droppedItems.splice(itemIndex, 1);
             itemLabelAlpha = 1.5;
+            if (typeof playPickupSound === "function") playPickupSound();
             handleTriggers("Pickup");
             return;
           }
@@ -202,6 +206,7 @@ function keyPressed() {
         inventoryList[inventorySlot - 1] = item.item;
         droppedItems.splice(itemIndex, 1);
         itemLabelAlpha = 1.5;
+        if (typeof playPickupSound === "function") playPickupSound();
         handleTriggers("Pickup");
         return;
       }

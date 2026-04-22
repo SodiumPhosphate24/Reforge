@@ -40,6 +40,7 @@ var bloodMoonCooldown = 18000;
 var bloodMoonActive = false;
 var bloodMoonOverlayAlpha = 0;
 var bloodMoonParticles = [];
+var pickupSound = null;
 
 var breadcrumbs = [];
 var lastBreadcrumbTime = 0;
@@ -475,6 +476,7 @@ function preload() {
   titleScreenImg = loadImage("hud/titleScreen.png");
   WaypointImg = loadImage("Waypoint.png");
   themeSong = loadSound("music/themeSong.mp3");
+  pickupSound = loadSound("@assets/Coins_1_1776888125726.mp3");
 
   BunkerImg = loadImage("Buschwick Industries.png");
   PrometheusIntroImg = loadImage("PrometheusIntro.png");
