@@ -1,5 +1,6 @@
 function playAdvanceDialogueSfx() {
   if (!AdvanceDialogueSfx) return;
+  AdvanceDialogueSfx.stop();
   AdvanceDialogueSfx.play();
 }
 
@@ -39,20 +40,24 @@ function updateAlarmSfx() {
 
 function playCraftItemSfx() {
   if (!CraftItemSfx) return;
+  CraftItemSfx.stop();
   CraftItemSfx.play();
 }
 
 function playCrateDestroyedSfx() {
   if (!CrateDestroyedSfx) return;
+  CrateDestroyedSfx.stop();
   CrateDestroyedSfx.play();
 }
 
 function playMenuSelectSfx() {
   if (!MenuSelectSfx) return;
+  MenuSelectSfx.stop();
   MenuSelectSfx.play();
 }
 
 function playMenuSwitchSfx() {
   if (!MenuSwitchSfx) return;
+  MenuSwitchSfx.stop();
   MenuSwitchSfx.play();
 }

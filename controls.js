@@ -16,11 +16,13 @@ function controls() {
       playerSelectionMenuOpen = true;
       selectedPlayerIndex = activePlayer;
       frozen = true;
+      if (typeof playMenuSwitchSfx === "function") playMenuSwitchSfx();
     }
   } else {
     if (playerSelectionMenuOpen) {
       // Q released
       frozen = false;
+      if (typeof playMenuSelectSfx === "function") playMenuSelectSfx();
     }
   }
 
@@ -114,6 +116,7 @@ function keyPressed() {
           if (inventoryList[inventorySlot - 1] != null) {
             if (inventoryList[inventorySlot - 1].name == "boiler cartridge") {
               useItem();
+              if (typeof playMenuSelectSfx === "function") playMenuSelectSfx();
               handleTriggers("Objective");
             }
           }
@@ -130,12 +133,14 @@ function keyPressed() {
               if (inventoryList[i].name == "common cartridge") {
                 inventoryList[i].amount++;
                 generateCooldown = 1000;
+              if (typeof playMenuSelectSfx === "function") playMenuSelectSfx();
                 return;
               }
             }
             else {
               inventoryList[i] = new Item("consumable", "common cartridge", 1);
               generateCooldown = 300;
+            if (typeof playMenuSelectSfx === "function") playMenuSelectSfx();
               return;
             }
           }
