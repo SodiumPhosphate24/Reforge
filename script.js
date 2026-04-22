@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], SprayerImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, ARGOImage, KhronosImage, Book, Greg, LockNpc, Hephaestus, Atlas, OGBuschy, Daedalus, HoopImg, FieldGoalImg;
+let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], SprayerImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, ARGOImage, KhronosImage, Book, Greg, LockNpc, Hephaestus, Atlas, OGBuschy, Daedalus, HoopImg, FieldGoalImg, AdvanceDialogueSfx, AlarmSfx, CraftItemSfx, CrateDestroyedSfx, MenuSelectSfx, MenuSwitchSfx;
 
 var activeBoss = null;
 
@@ -40,7 +40,8 @@ var bloodMoonCooldown = 18000;
 var bloodMoonActive = false;
 var bloodMoonOverlayAlpha = 0;
 var bloodMoonParticles = [];
-var pickupSound = null;
+var alarmBaseVolume = 0.28;
+var alarmMaxVolume = 0.55;
 
 var breadcrumbs = [];
 var lastBreadcrumbTime = 0;
@@ -476,7 +477,12 @@ function preload() {
   titleScreenImg = loadImage("hud/titleScreen.png");
   WaypointImg = loadImage("Waypoint.png");
   themeSong = loadSound("music/themeSong.mp3");
-  pickupSound = loadSound("@assets/Coins_1_1776888125726.mp3");
+  AdvanceDialogueSfx = loadSound("SFX/AdvanceDialogue.mp3");
+  AlarmSfx = loadSound("SFX/Alarm.mp3");
+  CraftItemSfx = loadSound("SFX/CraftItem.mp3");
+  CrateDestroyedSfx = loadSound("SFX/CrateDestroyed.mp3");
+  MenuSelectSfx = loadSound("SFX/MenuSelect.mp3");
+  MenuSwitchSfx = loadSound("SFX/MenuSwitch.mp3");
 
   BunkerImg = loadImage("Buschwick Industries.png");
   PrometheusIntroImg = loadImage("PrometheusIntro.png");

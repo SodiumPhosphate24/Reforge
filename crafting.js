@@ -187,6 +187,7 @@ function toggleCraftingMenu() {
   if (craftingMenuOpen) {
     craftingMenuClosing = true;
   } else if (!inSewer && isNearWorkbench()) {
+    if (typeof playMenuSwitchSfx === "function") playMenuSwitchSfx();
     craftingMenuOpen = true;
     craftingMenuClosing = false;
 
@@ -377,6 +378,7 @@ function craftItem(recipe) {
   }
 
   handleTriggers("Crafting");
+  if (typeof playCraftItemSfx === "function") playCraftItemSfx();
 
   // Close crafting menu
   craftingMenuClosing = true;

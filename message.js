@@ -175,6 +175,10 @@ function messageDisplay() {
         }
       }
 
+      if (!messages[i].closing && messages[i].index === 0 && messages[i].alpha > 0 && typeof playAdvanceDialogueSfx === "function") {
+        playAdvanceDialogueSfx();
+      }
+
       push();
       translate(0, messages[i].slideY);
 
@@ -235,6 +239,7 @@ function messageDisplay() {
         if (messages[i].id === "Lock" && lockCodeActive) {
           return;
         }
+        if (typeof playAdvanceDialogueSfx === "function") playAdvanceDialogueSfx();
         
         messages[i].index++;
         if (messages[i].index >= messages[i].message.length) {
