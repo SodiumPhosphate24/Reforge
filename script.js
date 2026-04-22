@@ -477,12 +477,12 @@ function preload() {
   titleScreenImg = loadImage("hud/titleScreen.png");
   WaypointImg = loadImage("Waypoint.png");
   themeSong = loadSound("music/themeSong.mp3");
-  AdvanceDialogueSfx = loadSound("SFX/AdvanceDialogue.mp3");
-  AlarmSfx = loadSound("SFX/Alarm.mp3");
-  CraftItemSfx = loadSound("SFX/CraftItem.mp3");
-  CrateDestroyedSfx = loadSound("SFX/CrateDestroyed.mp3");
-  MenuSelectSfx = loadSound("SFX/MenuSelect.mp3");
-  MenuSwitchSfx = loadSound("SFX/MenuSwitch.mp3");
+  AdvanceDialogueSfx = loadSound("SFX/AdvanceDialogue.wav");
+  AlarmSfx = loadSound("SFX/Alarm.wav");
+  CraftItemSfx = loadSound("SFX/CraftItem.wav");
+  CrateDestroyedSfx = loadSound("SFX/CrateDestroyed.wav");
+  MenuSelectSfx = loadSound("SFX/MenuSelect.wav");
+  MenuSwitchSfx = loadSound("SFX/MenuSwitch.wav");
 
   BunkerImg = loadImage("Buschwick Industries.png");
   PrometheusIntroImg = loadImage("PrometheusIntro.png");
