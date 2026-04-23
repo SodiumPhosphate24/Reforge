@@ -786,6 +786,7 @@ function draw() {
   updateLeakDetection();
   updateEnding();
   drawEndingOverlay();
+  if (typeof updateAlarmSfx === "function") updateAlarmSfx();
 }
 
 function updateLeakDetection() {

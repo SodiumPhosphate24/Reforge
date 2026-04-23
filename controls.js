@@ -319,9 +319,11 @@ function keyPressed() {
   if (playerSelectionMenuOpen) {
     if (keyCode === UP_ARROW) {
       selectedPlayerIndex = (selectedPlayerIndex - 1 + players.length) % players.length;
+      if (typeof playMenuSwitchSfx === "function") playMenuSwitchSfx();
     }
     if (keyCode === DOWN_ARROW) {
       selectedPlayerIndex = (selectedPlayerIndex + 1) % players.length;
+      if (typeof playMenuSwitchSfx === "function") playMenuSwitchSfx();
     }
   }
 
@@ -329,9 +331,11 @@ function keyPressed() {
   if (playerTransferMenuOpen) {
     if (keyCode === UP_ARROW) {
       selectedTransferPlayerIndex = (selectedTransferPlayerIndex - 1 + players.length) % players.length;
+      if (typeof playMenuSwitchSfx === "function") playMenuSwitchSfx();
     }
     if (keyCode === DOWN_ARROW) {
       selectedTransferPlayerIndex = (selectedTransferPlayerIndex + 1) % players.length;
+      if (typeof playMenuSwitchSfx === "function") playMenuSwitchSfx();
     }
   }
 

@@ -606,6 +606,7 @@ function handleCraftingInput() {
     selectedTab--;
     if (selectedTab < 0) selectedTab = craftingTabs.length - 1;
     craftingScrollOffset = 0;
+    if (typeof playMenuSwitchSfx === "function") playMenuSwitchSfx();
 
     for (let i = 0; i < craftingRecipes.length; i++) {
       if (craftingRecipes[i].unlocked && craftingRecipes[i].category === craftingTabs[selectedTab]) {
@@ -618,6 +619,7 @@ function handleCraftingInput() {
     selectedTab++;
     if (selectedTab >= craftingTabs.length) selectedTab = 0;
     craftingScrollOffset = 0;
+    if (typeof playMenuSwitchSfx === "function") playMenuSwitchSfx();
 
     for (let i = 0; i < craftingRecipes.length; i++) {
       if (craftingRecipes[i].unlocked && craftingRecipes[i].category === craftingTabs[selectedTab]) {
@@ -644,6 +646,7 @@ function handleCraftingInput() {
     } else {
       selectedRecipe = unlockedIndices[unlockedIndices.length - 1];
     }
+    if (typeof playMenuSwitchSfx === "function") playMenuSwitchSfx();
   }
   if (keyPressedOnce(DOWN_ARROW)) {
     let currentPos = unlockedIndices.indexOf(selectedRecipe);
@@ -652,6 +655,7 @@ function handleCraftingInput() {
     } else {
       selectedRecipe = unlockedIndices[0];
     }
+    if (typeof playMenuSwitchSfx === "function") playMenuSwitchSfx();
   }
 
   // Enter: craft recipe

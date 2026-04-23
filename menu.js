@@ -222,17 +222,20 @@ function handleMenuKeyboard() {
   if (keyIsDown(UP_ARROW)) {
     selectedMenuOption = (selectedMenuOption - 1 + menuOptions.length) % menuOptions.length;
     lastMenuKeyPress = currentTime;
+    if (typeof playMenuSwitchSfx === "function") playMenuSwitchSfx();
   }
 
   if (keyIsDown(DOWN_ARROW)) {
     selectedMenuOption = (selectedMenuOption + 1) % menuOptions.length;
     lastMenuKeyPress = currentTime;
+    if (typeof playMenuSwitchSfx === "function") playMenuSwitchSfx();
   }
 
   // Select with Enter
   if (keyIsDown(ENTER)) {
     handleMenuClick(selectedMenuOption);
     lastMenuKeyPress = currentTime;
+    if (typeof playMenuSelectSfx === "function") playMenuSelectSfx();
   }
 }
 

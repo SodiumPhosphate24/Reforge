@@ -113,6 +113,7 @@ class Bullet {
                   }
 
                   clearTile(row, col, L);
+                  if (typeof playCrateDestroyedSfx === "function") playCrateDestroyedSfx();
                   particle(col * 50 + 25, row * 50 + 25, [139, 69, 19], 30, 5);
                 }
                 return true;
@@ -125,6 +126,7 @@ class Bullet {
             if (left < tR && right > tL && top < tB && bottom > tT) {
               if (cell.type === 5) {
                 clearTile(row, col, 0);
+                if (typeof playCrateDestroyedSfx === "function") playCrateDestroyedSfx();
               }
               return true;
             }
