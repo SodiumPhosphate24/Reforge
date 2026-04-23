@@ -2258,6 +2258,7 @@ function checkCrateCollisions(x, y, w, h) {
               }
 
               clearTile(row, col, L);
+              if (typeof playCrateDestroyedSfx === "function") playCrateDestroyedSfx();
               particle(col * 50 + 25, row * 50 + 25, [139, 69, 19], 30, 5);
             }
           }
@@ -2288,6 +2289,7 @@ function checkCrateCollisions(x, y, w, h) {
             }
 
             clearTile(row, col, 0);
+            if (typeof playCrateDestroyedSfx === "function") playCrateDestroyedSfx();
             particle(col * 50 + 25, row * 50 + 25, [139, 69, 19], 30, 5);
           }
         }
