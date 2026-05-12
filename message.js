@@ -235,8 +235,6 @@ function messageDisplay() {
         if (messages[i].id === "Lock" && lockCodeActive) {
           return;
         }
-        if (typeof playAdvanceDialogueSfx === "function") playAdvanceDialogueSfx();
-        
         messages[i].index++;
         if (messages[i].index >= messages[i].message.length) {
           messages[i].closing = true;

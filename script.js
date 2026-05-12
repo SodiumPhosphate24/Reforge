@@ -40,8 +40,8 @@ var bloodMoonCooldown = 18000;
 var bloodMoonActive = false;
 var bloodMoonOverlayAlpha = 0;
 var bloodMoonParticles = [];
-var alarmBaseVolume = 0.28;
-var alarmMaxVolume = 0.55;
+var alarmBaseVolume = 0.14;
+var alarmMaxVolume = 0.275;
 
 var breadcrumbs = [];
 var lastBreadcrumbTime = 0;
