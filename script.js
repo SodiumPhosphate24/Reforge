@@ -359,7 +359,7 @@ function handleInteractionPrompt(promptObj, targetX, targetY, proximity, message
 }
 
 function preload() {
-  console.log("Cheesy Goodness Update");
+
   arrayCopy(tileImgs, 0, tileNames, 0, tileImgs.length);
   worldString = loadStrings("world.txt");
   sewer1String = loadStrings("sewer.txt");
@@ -539,6 +539,13 @@ function preload() {
       'corner': loadImage("Tiles/WaterCorner.png")
     }
   }
+  console.log("REFORGE - V1.35.16 - 2026-05-12 */ Compiled Successfully /*");
+  console.log(String.raw`              ________________________________________ __________  ___________________            
+    /\|\/\    \______   \_   _____/\_   _____/\_____  \\______   \/  _____/\_   _____/   /\|\/\   
+   _)    (__   |       _/|    __)_  |    __)   /   |   \|       _/   \  ___ |    __)_   _)    (__ 
+   \_     _/   |    |   \|        \ |     \   /    |    \    |   \    \_\  \|        \  \_     _/ 
+     )    \    |____|_  /_______  / \___  /   \_______  /____|_  /\______  /_______  /    )    \  
+     \/\|\/           \/        \/      \/            \/       \/        \/        \/     \/\|\/  `);
 }
 
 // Generate multi-tile tiles by splitting into grid
@@ -1852,7 +1859,7 @@ function getTileVariant(row, col, layer, tileType) {
   if (!tileVariants[tileType]) {
     return { variant: 'full', rotation: 0, img: null };
   }
-
+  //Buschy year
   const config = tileVariants[tileType];
 
   // Check all cardinal neighbors
@@ -1863,7 +1870,6 @@ function getTileVariant(row, col, layer, tileType) {
 
   let variant = 'full';
   let rotation = 0;
-  // Buschy year
   // Count cardinal neighbors
   const cardinalCount = [n, s, e, w].filter(Boolean).length;
 
