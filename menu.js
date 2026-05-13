@@ -363,15 +363,27 @@ function drawCreditsScreen() {
     text("The Reforge Art Team", width / 2, startY + spacing * 8);
   } else {
     fill(255, 255, 255, 220);
-    text("LITERARY CITATIONS", width / 2, startY);
+    textSize(24);
+    text("SOUND EFFECTS", width / 2, startY);
     fill(255, 220, 100);
     textSize(18);
-    text("'Frankenstein; or, The Modern Prometheus' by Mary Shelley", width / 2, startY + spacing * 1.5);
-    text("'Walden; or, Life in the Woods' by Henry David Thoreau", width / 2, startY + spacing * 2.5);
+    text('"512 Sound Effects (8-bit style)" by SubspaceAudio', width / 2, startY + spacing * 1.5);
+    fill(200, 200, 200, 200);
+    textSize(14);
+    text("Published on OpenGameArt.org", width / 2, startY + spacing * 2.2);
+    text("Licensed under CC0 1.0 Universal / Public Domain Dedication", width / 2, startY + spacing * 2.8);
+
+    fill(255, 255, 255, 220);
+    textSize(24);
+    text("LITERARY CITATIONS", width / 2, startY + spacing * 4.3);
+    fill(255, 220, 100);
+    textSize(18);
+    text("'Frankenstein; or, The Modern Prometheus' by Mary Shelley", width / 2, startY + spacing * 5.8);
+    text("'Walden; or, Life in the Woods' by Henry David Thoreau", width / 2, startY + spacing * 6.8);
 
     fill(255, 255, 255, 200);
     textSize(14);
-    text("(Used for atmosphere and narrative depth)", width / 2, startY + spacing * 3.5);
+    text("(Used for atmosphere and narrative depth)", width / 2, startY + spacing * 7.8);
   }
 
   // Back instruction
