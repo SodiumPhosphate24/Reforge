@@ -472,6 +472,7 @@ function mouseClicked() {
 function shoot(type){
   var currentItem = inventoryList[inventorySlot - 1];
   if (recoil >= 10) {
+    if (typeof playLaserSfx === "function") playLaserSfx();
     if(type == "steam sprayer") {
       bullets.push(new Bullet("common", currentItem.damage));
     }

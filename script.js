@@ -1,4 +1,4 @@
-let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], SprayerImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, ARGOImage, KhronosImage, Book, Greg, LockNpc, Hephaestus, Atlas, OGBuschy, Daedalus, HoopImg, FieldGoalImg, AdvanceDialogueSfx, AlarmSfx, CraftItemSfx, CrateDestroyedSfx, MenuSelectSfx, MenuSwitchSfx;
+let Buschy, InventoryImg, FrameImg, Fog, IndicatorImg, BulletImgs = [0, 0, 0, 0, 0], SprayerImgs = [0, 0, 0], itemImgs = [0, 0, 0, 0, 0, 0], projImgs = [0, 0, 0], matImgs = [0, 0, 0, 0, 0, 0], Silkscreen, PlayerImage, titleScreenImg, BunkerImg, PrometheusIntroImg, CryochamberImg, Prometheus, WaypointImg, SPUDImage, ARGOImage, KhronosImage, Book, Greg, LockNpc, Hephaestus, Atlas, OGBuschy, Daedalus, HoopImg, FieldGoalImg, AdvanceDialogueSfx, AlarmSfx, CraftItemSfx, CrateDestroyedSfx, MenuSelectSfx, MenuSwitchSfx, LaserSfx;
 
 var activeBoss = null;
 
@@ -483,6 +483,7 @@ function preload() {
   CrateDestroyedSfx = loadSound("SFX/CrateDestroyed.wav");
   MenuSelectSfx = loadSound("SFX/MenuSelect.wav");
   MenuSwitchSfx = loadSound("SFX/MenuSwitch.wav");
+  LaserSfx = loadSound("SFX/Laser.wav");
 
   BunkerImg = loadImage("Buschwick Industries.png");
   PrometheusIntroImg = loadImage("PrometheusIntro.png");

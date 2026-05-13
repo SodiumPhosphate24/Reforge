@@ -39,6 +39,13 @@ function updateAlarmSfx() {
   }
 }
 
+function playLaserSfx() {
+  if (!LaserSfx) return;
+  LaserSfx.setVolume(0.5);
+  LaserSfx.stop();
+  LaserSfx.play();
+}
+
 function playCraftItemSfx() {
   if (!CraftItemSfx) return;
   CraftItemSfx.setVolume(0.5);
