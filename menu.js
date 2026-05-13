@@ -8,7 +8,7 @@ let menuAnimationTime = 0;
 let ReforgeLogo;
 
 let creditsPage = 0;
-const totalCreditsPages = 2;
+const totalCreditsPages = 3;
 
 let menuOptions = ["Play", "Controls", "Credits"];
 let selectedMenuOption = 0;
@@ -336,65 +336,86 @@ function drawCreditsScreen() {
   text("CREDITS", width / 2, 100);
 
   // Credits content
-  textSize(24);
-  fill(255, 255, 255, 220);
-
-  let startY = 280;
-  let spacing = 40;
+  textFont(Silkscreen);
+  textAlign(CENTER, CENTER);
 
   if (creditsPage === 0) {
-    text("GAME DESIGN & PROGRAMMING", width / 2, startY);
-    fill(255, 220, 100);
-    text("The Reforge Programming Team", width / 2, startY + spacing);
-
+    // --- Page 1: The Team ---
+    textSize(22);
     fill(255, 255, 255, 220);
-    text("MUSIC", width / 2, startY + spacing * 3);
+    text("GAME DESIGN & PROGRAMMING", width / 2, 210);
+    textSize(18);
     fill(255, 220, 100);
-    text("'Mysterious' by Infrared Scale", width / 2, startY + spacing * 4);
-    textSize(14);
+    text("The Reforge Programming Team", width / 2, 248);
+
+    textSize(22);
+    fill(255, 255, 255, 220);
+    text("ART ASSETS", width / 2, 330);
+    textSize(18);
+    fill(255, 220, 100);
+    text("The Reforge Art Team", width / 2, 368);
+
+  } else if (creditsPage === 1) {
+    // --- Page 2: Music & Sound Effects ---
+    textSize(22);
+    fill(255, 255, 255, 220);
+    text("MUSIC", width / 2, 195);
+    textSize(17);
+    fill(255, 220, 100);
+    text("'Mysterious' by Infrared Scale", width / 2, 230);
+    textSize(13);
     fill(200, 200, 200, 200);
-    text("Creative Commons Attribution license (reuse allowed)", width / 2, startY + spacing * 4.8);
-    text("Source: https://www.youtube.com/watch?v=neXbwN3zJ5Q", width / 2, startY + spacing * 5.4);
+    text("Creative Commons Attribution license (reuse allowed)", width / 2, 258);
+    text("Source: youtube.com/watch?v=neXbwN3zJ5Q", width / 2, 278);
 
-    textSize(24);
+    textSize(22);
     fill(255, 255, 255, 220);
-    text("ART ASSETS", width / 2, startY + spacing * 7);
+    text("SOUND EFFECTS", width / 2, 340);
+    textSize(17);
     fill(255, 220, 100);
-    text("The Reforge Art Team", width / 2, startY + spacing * 8);
+    text('"512 Sound Effects (8-bit style)" by SubspaceAudio', width / 2, 375);
+    textSize(13);
+    fill(200, 200, 200, 200);
+    text("Published on OpenGameArt.org", width / 2, 403);
+    text("Licensed under CC0 1.0 Universal / Public Domain Dedication", width / 2, 423);
+
   } else {
+    // --- Page 3: Literary Citations ---
+    textSize(22);
     fill(255, 255, 255, 220);
-    textSize(24);
-    text("SOUND EFFECTS", width / 2, startY);
+    text("LITERARY CITATIONS", width / 2, 210);
+    textSize(16);
     fill(255, 220, 100);
-    textSize(18);
-    text('"512 Sound Effects (8-bit style)" by SubspaceAudio', width / 2, startY + spacing * 1.5);
-    fill(200, 200, 200, 200);
-    textSize(14);
-    text("Published on OpenGameArt.org", width / 2, startY + spacing * 2.2);
-    text("Licensed under CC0 1.0 Universal / Public Domain Dedication", width / 2, startY + spacing * 2.8);
-
-    fill(255, 255, 255, 220);
-    textSize(24);
-    text("LITERARY CITATIONS", width / 2, startY + spacing * 4.3);
-    fill(255, 220, 100);
-    textSize(18);
-    text("'Frankenstein; or, The Modern Prometheus' by Mary Shelley", width / 2, startY + spacing * 5.8);
-    text("'Walden; or, Life in the Woods' by Henry David Thoreau", width / 2, startY + spacing * 6.8);
-
-    fill(255, 255, 255, 200);
-    textSize(14);
-    text("(Used for atmosphere and narrative depth)", width / 2, startY + spacing * 7.8);
+    text("'Frankenstein; or, The Modern Prometheus'", width / 2, 265);
+    text("by Mary Shelley", width / 2, 288);
+    text("'Walden; or, Life in the Woods'", width / 2, 338);
+    text("by Henry David Thoreau", width / 2, 361);
+    textSize(13);
+    fill(200, 200, 200, 180);
+    text("(Used for atmosphere and narrative depth)", width / 2, 410);
   }
 
-  // Back instruction
-  textSize(18);
-  fill(255, 255, 255, 150);
-  text("Press ESC to return to menu", width / 2, height - 80);
+  // Navigation hint
+  textSize(13);
+  fill(255, 255, 255, 120);
+  text("LEFT / RIGHT to navigate   •   ESC to return", width / 2, height - 45);
 
-  // Page indicator and navigation hint
-  textSize(14);
-  text("Page " + (creditsPage + 1) + " of " + totalCreditsPages, width / 2, height - 120);
-  text("Use LEFT / RIGHT arrows to flip pages", width / 2, height - 600);
+  // Dot page indicator
+  const dotSpacing = 22;
+  const dotY = height - 80;
+  const dotCenterX = width / 2;
+  noStroke();
+  for (let d = 0; d < totalCreditsPages; d++) {
+    const dotX = dotCenterX + (d - (totalCreditsPages - 1) / 2) * dotSpacing;
+    if (d === creditsPage) {
+      fill(255, 220, 100, 255);
+      ellipse(dotX, dotY, 10, 10);
+    } else {
+      fill(255, 255, 255, 80);
+      ellipse(dotX, dotY, 7, 7);
+    }
+  }
+
   pop();
 
   // Handle navigation
