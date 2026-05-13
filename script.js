@@ -1852,14 +1852,13 @@ function getPipeVariant(row, col, layer, tileType) {
   const config = tileVariants[27];
   return { variant, rotation, flipH, baseImg: config.variants[variant] };
 }
-
+// Buschy year
 // Get the appropriate tile variant and rotation based on neighbors
 // Assumes edge piece has border on bottom, corner piece has borders on bottom-left
 function getTileVariant(row, col, layer, tileType) {
   if (!tileVariants[tileType]) {
     return { variant: 'full', rotation: 0, img: null };
   }
-  //Buschy year
   const config = tileVariants[tileType];
 
   // Check all cardinal neighbors
